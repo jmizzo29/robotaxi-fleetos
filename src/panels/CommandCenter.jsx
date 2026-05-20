@@ -1,14 +1,12 @@
 export default function CommandCenter({
   setReplayMode,
   replayMode,
-  fleet
+  fleet,
+  enqueueCommand = () => {}
 }) {
 
-  const executeCommand = (command) => {
-
-    console.log(`COMMAND EXECUTED: ${command}`)
-
-    alert(`Command Executed: ${command}`)
+  const executeCommand = (command, priority = 'NORMAL') => {
+    enqueueCommand(command, priority)
   }
 
   return (
@@ -31,7 +29,7 @@ export default function CommandCenter({
 
         <button
           onClick={() =>
-            executeCommand('Emergency Fleet Rebalance')
+            executeCommand('Emergency Fleet Rebalance', 'HIGH')
           }
           className="bg-cyan-500/10 border border-cyan-500/20 hover:bg-cyan-500/20 transition-all rounded-2xl p-5 text-left"
         >
@@ -52,7 +50,7 @@ export default function CommandCenter({
 
         <button
           onClick={() =>
-            executeCommand('Regional Lockdown Activated')
+            executeCommand('Regional Lockdown Activated', 'CRITICAL')
           }
           className="bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 transition-all rounded-2xl p-5 text-left"
         >
@@ -73,7 +71,7 @@ export default function CommandCenter({
 
         <button
           onClick={() =>
-            executeCommand('Charging Optimization Triggered')
+            executeCommand('Charging Optimization Triggered', 'NORMAL')
           }
           className="bg-green-500/10 border border-green-500/20 hover:bg-green-500/20 transition-all rounded-2xl p-5 text-left"
         >

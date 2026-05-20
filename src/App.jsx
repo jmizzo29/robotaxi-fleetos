@@ -1,27 +1,15 @@
-import { useMemo, useState } from 'react'
-
-/* COMPONENTS */
-import Sidebar from './components/Sidebar'
-import KPIGrid from './components/KPIGrid'
-import Timeline from './components/Timeline'
-import FleetMap from './components/FleetMap'
-
-/* PANELS */
-import ForecastPanel from './panels/ForecastPanel'
-import AlertCenter from './panels/AlertCenter'
-import CommandCenter from './panels/CommandCenter'
-
-/* DATA */
-import chargingStations from './data/chargingStations'
-import weatherZones from './data/weatherZones'
-import demandZones from './data/demandZones'
-
-/* HOOKS */
-import useFleetSimulation from './hooks/useFleetSimulation'
-
-/* =========================================================
-   INITIAL FLEET
-========================================================= */
+import { useMemo, useState } from 'react';
+import FleetMap from './components/FleetMap';
+import KPIGrid from './components/KPIGrid';
+import Sidebar from './components/Sidebar';
+import Timeline from './components/Timeline';
+import AlertCenter from './panels/AlertCenter';
+import CommandCenter from './panels/CommandCenter';
+import ForecastPanel from './panels/ForecastPanel';
+import chargingStations from './data/chargingStations';
+import demandZones from './data/demandZones';
+import weatherZones from './data/weatherZones';
+import { useFleetSimulation } from './hooks/useFleetSimulation';
 
 const initialFleet = [
   {
@@ -42,7 +30,7 @@ const initialFleet = [
     downtime: 1.2,
     profitability: 87,
     anomalyRisk: 8,
-    maintenanceScore: 92
+    maintenanceScore: 92,
   },
   {
     id: 'CAR-002',
@@ -62,7 +50,7 @@ const initialFleet = [
     downtime: 0.4,
     profitability: 93,
     anomalyRisk: 4,
-    maintenanceScore: 97
+    maintenanceScore: 97,
   },
   {
     id: 'CAR-003',
@@ -82,7 +70,7 @@ const initialFleet = [
     downtime: 2.1,
     profitability: 84,
     anomalyRisk: 24,
-    maintenanceScore: 71
+    maintenanceScore: 71,
   },
   {
     id: 'CAR-004',
@@ -90,7 +78,7 @@ const initialFleet = [
     latitude: 25.7617,
     longitude: -80.1918,
     targetLat: 25.7907,
-    targetLng: -80.1300,
+    targetLng: -80.13,
     battery: 84,
     revenue: 5202,
     utilization: 69,
@@ -102,102 +90,55 @@ const initialFleet = [
     downtime: 0.8,
     profitability: 90,
     anomalyRisk: 6,
-    maintenanceScore: 95
-  }
-]
+    maintenanceScore: 95,
+  },
+];
 
 export default function App() {
-
-  /* =========================================================
-     APP STATE
-  ========================================================== */
-
-  const [selectedVehicle, setSelectedVehicle] = useState(null)
-
-  const [replayMode, setReplayMode] = useState(false)
-
-  /* =========================================================
-     COMMAND QUEUE
-  ========================================================== */
-
-  const [commandQueue] = useState([
-    {
-      priority: 'HIGH',
-      command: 'Rebalance Orlando corridor fleet capacity'
-    },
-    {
-      priority: 'MEDIUM',
-      command: 'Delay Miami charging cycle until off-peak pricing'
-    },
-    {
-      priority: 'CRITICAL',
-      command: 'Investigate anomaly spike on CAR-003'
-    }
-  ])
-
-  /* =========================================================
-     LIVE SIMULATION HOOK
-  ========================================================== */
+  const [selectedVehicle, setSelectedVehicle] = useState(null);
 
   const {
     fleet,
     timelineEvents,
     forecast,
-    systemLoad
+    systemLoad,
+    replayMode,
+    setReplayMode,
+    commandQueue,
+    enqueueCommand,
+    refreshRealTesla,
+    isLoadingReal,
   } = useFleetSimulation({
     initialFleet,
     chargingStations,
-    replayMode
-  })
-
-  /* =========================================================
-     CALCULATED VALUES
-  ========================================================== */
+    replayModeInitial: false,
+  });
 
   const totalRevenue = useMemo(
-    () =>
-      fleet.reduce(
-        (sum, vehicle) => sum + vehicle.revenue,
-        0
-      ),
-    [fleet]
-  )
+    () => fleet.reduce((sum, vehicle) => sum + (vehicle.revenue || 0), 0),
+    [fleet],
+  );
 
   const avgProfitability = useMemo(
-    () =>
-      Math.round(
-        fleet.reduce(
-          (sum, vehicle) =>
-            sum + vehicle.profitability,
-          0
-        ) / fleet.length
-      ),
-    [fleet]
-  )
+    () => Math.round(fleet.reduce((sum, vehicle) => sum + vehicle.profitability, 0) / fleet.length),
+    [fleet],
+  );
 
   const avgAnomalyRisk = useMemo(
-    () =>
-      Math.round(
-        fleet.reduce(
-          (sum, vehicle) =>
-            sum + vehicle.anomalyRisk,
-          0
-        ) / fleet.length
-      ),
-    [fleet]
-  )
+    () => Math.round(fleet.reduce((sum, vehicle) => sum + vehicle.anomalyRisk, 0) / fleet.length),
+    [fleet],
+  );
 
-  /* =========================================================
-     UI
-  ========================================================== */
+  const combinedTimeline = [
+    ...commandQueue.map((cmd) => ({
+      message: cmd.command,
+      time: cmd.priority,
+    })),
+    ...timelineEvents,
+  ];
 
   return (
     <div className="min-h-screen bg-[#050816] text-white flex">
-
-      {/* =====================================================
-          SIDEBAR
-      ====================================================== */}
-
       <Sidebar
         replayMode={replayMode}
         setReplayMode={setReplayMode}
@@ -205,106 +146,58 @@ export default function App() {
         demandZones={demandZones}
       />
 
-      {/* =====================================================
-          MAIN
-      ====================================================== */}
-
       <main className="flex-1 p-6 lg:p-8 overflow-y-auto">
-
         <div className="max-w-[1900px] mx-auto">
-
-          {/* =====================================================
-              HEADER
-          ====================================================== */}
-
           <header className="mb-8">
-
             <div className="flex items-center gap-3 mb-3">
-
-              <div className="h-3 w-3 rounded-full bg-green-400 animate-pulse"></div>
-
+              <div className="h-3 w-3 rounded-full bg-green-400 animate-pulse" />
               <span className="uppercase tracking-[0.3em] text-green-300 text-xs">
                 Fleet Live
               </span>
-
             </div>
 
             <div className="flex items-center justify-between flex-wrap gap-6">
-
               <div>
-
                 <h1 className="text-5xl xl:text-6xl font-black mb-4 leading-none">
-
                   Autonomous Fleet
-
-                  <span className="block text-cyan-300">
-                    Operations Center
-                  </span>
-
+                  <span className="block text-cyan-300">Operations Center</span>
                 </h1>
 
                 <p className="text-slate-400 max-w-3xl text-lg">
                   Real-time AI orchestration platform for autonomous ride-sharing,
                   dispatch optimization, anomaly monitoring, and operational forecasting.
                 </p>
-
               </div>
 
               <div className="bg-[#0b1220] border border-cyan-500/10 rounded-3xl p-5 min-w-[260px]">
-
                 <p className="text-xs uppercase tracking-[0.2em] text-cyan-300 mb-3">
                   Global Fleet Status
                 </p>
 
                 <div className="space-y-3">
-
                   <div className="flex justify-between">
-                    <span className="text-slate-400">
-                      Active Vehicles
-                    </span>
-
-                    <span className="font-bold text-green-300">
-                      {fleet.length}
-                    </span>
+                    <span className="text-slate-400">Active Vehicles</span>
+                    <span className="font-bold text-green-300">{fleet.length}</span>
                   </div>
 
                   <div className="flex justify-between">
-                    <span className="text-slate-400">
-                      Replay Engine
-                    </span>
-
-                    <span
-                      className={`font-bold ${
-                        replayMode
-                          ? 'text-cyan-300'
-                          : 'text-slate-500'
-                      }`}
-                    >
+                    <span className="text-slate-400">Replay Engine</span>
+                    <span className={`font-bold ${replayMode ? 'text-cyan-300' : 'text-slate-500'}`}>
                       {replayMode ? 'ACTIVE' : 'OFFLINE'}
                     </span>
                   </div>
 
-                  <div className="flex justify-between">
-                    <span className="text-slate-400">
-                      AI Forecasting
-                    </span>
-
-                    <span className="font-bold text-purple-300">
-                      ONLINE
-                    </span>
-                  </div>
-
+                  <button
+                    onClick={refreshRealTesla}
+                    disabled={isLoadingReal}
+                    className="w-full rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-4 py-3 text-sm font-bold text-cyan-200 transition hover:bg-cyan-500/20 disabled:cursor-wait disabled:opacity-60"
+                  >
+                    {isLoadingReal ? 'Syncing Tesla...' : 'Sync Tesla Feed'}
+                  </button>
                 </div>
-
               </div>
-
             </div>
-
           </header>
-
-          {/* =====================================================
-              KPI GRID
-          ====================================================== */}
 
           <KPIGrid
             totalRevenue={totalRevenue}
@@ -314,44 +207,17 @@ export default function App() {
             forecast={forecast}
           />
 
-          {/* =====================================================
-              FORECAST PANEL
-          ====================================================== */}
-
-          <ForecastPanel
-            forecast={forecast}
-          />
-
-          {/* =====================================================
-              ALERT CENTER
-          ====================================================== */}
-
-          <AlertCenter
-            fleet={fleet}
-          />
-
-          {/* =====================================================
-              COMMAND CENTER
-          ====================================================== */}
+          <ForecastPanel forecast={forecast} />
+          <AlertCenter fleet={fleet} />
 
           <CommandCenter
             replayMode={replayMode}
             setReplayMode={setReplayMode}
             fleet={fleet}
+            enqueueCommand={enqueueCommand}
           />
 
-          {/* =====================================================
-              TIMELINE
-          ====================================================== */}
-
-          <Timeline
-            timelineEvents={timelineEvents}
-            replayMode={replayMode}
-          />
-
-          {/* =====================================================
-              MAP
-          ====================================================== */}
+          <Timeline timelineEvents={combinedTimeline} replayMode={replayMode} />
 
           <FleetMap
             fleet={fleet}
@@ -361,11 +227,8 @@ export default function App() {
             demandZones={demandZones}
             chargingStations={chargingStations}
           />
-
         </div>
-
       </main>
-
     </div>
-  )
+  );
 }
