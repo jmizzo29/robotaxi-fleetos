@@ -19,6 +19,7 @@ import FleetListPanel from './panels/FleetListPanel';
 import IntelligentAlertCenter from './panels/IntelligentAlertCenter';
 import IntegrationsPanel from './panels/IntegrationsPanel';
 import MemoryEventsPanel from './panels/MemoryEventsPanel';
+import MobileCommandDashboard from './panels/MobileCommandDashboard';
 import OperationsReportPanel from './panels/OperationsReportPanel';
 import QuickActionGrid from './panels/QuickActionGrid';
 import SettingsPanel from './panels/SettingsPanel';
@@ -214,43 +215,55 @@ export default function App() {
   const pages = {
     overview: (
       <>
-        <PageHeader
-          eyebrow="Live Operations"
-          title={<><span>FleetOS</span><span className="block text-sky-300">Operations Console</span></>}
-          description="A fleet operating system for live Tesla telemetry, dispatch simulation, charging intelligence, and operational risk monitoring."
-          action={operationsStatus}
-        />
-        <KPIGrid
-          totalRevenue={totalRevenue}
-          systemLoad={systemLoad}
-          avgProfitability={avgProfitability}
-          avgAnomalyRisk={avgAnomalyRisk}
-          forecast={forecast}
-        />
-        <TeslaTelemetryPanel
-          vehicle={primaryTesla}
-          syncStatus={realSyncStatus}
-          isLoading={isLoadingReal}
-          onSync={refreshRealTesla}
-        />
-        <VehicleShowcasePanel
-          vehicle={primaryTesla}
+        <MobileCommandDashboard
           fleet={fleet}
-          onSync={refreshRealTesla}
-          isLoading={isLoadingReal}
-        />
-        <AgentOrchestrationPanel
-          analysis={aiAnalysis}
-          isAnalyzing={isAnalyzing}
-          realVehicleCount={realVehicles.length}
-          commandCount={commandQueue.length}
-        />
-        <QuickActionGrid
+          primaryTesla={primaryTesla}
+          totalRevenue={totalRevenue}
+          avgAnomalyRisk={avgAnomalyRisk}
           onSync={refreshRealTesla}
           onExecute={enqueueCommand}
+          onNavigate={navigate}
           isLoading={isLoadingReal}
         />
-        <ForecastPanel forecast={forecast} />
+        <div className="hidden lg:block">
+          <PageHeader
+            eyebrow="Live Operations"
+            title={<><span>FleetOS</span><span className="block text-sky-300">Operations Console</span></>}
+            description="A fleet operating system for live Tesla telemetry, dispatch simulation, charging intelligence, and operational risk monitoring."
+            action={operationsStatus}
+          />
+          <KPIGrid
+            totalRevenue={totalRevenue}
+            systemLoad={systemLoad}
+            avgProfitability={avgProfitability}
+            avgAnomalyRisk={avgAnomalyRisk}
+            forecast={forecast}
+          />
+          <TeslaTelemetryPanel
+            vehicle={primaryTesla}
+            syncStatus={realSyncStatus}
+            isLoading={isLoadingReal}
+            onSync={refreshRealTesla}
+          />
+          <VehicleShowcasePanel
+            vehicle={primaryTesla}
+            fleet={fleet}
+            onSync={refreshRealTesla}
+            isLoading={isLoadingReal}
+          />
+          <AgentOrchestrationPanel
+            analysis={aiAnalysis}
+            isAnalyzing={isAnalyzing}
+            realVehicleCount={realVehicles.length}
+            commandCount={commandQueue.length}
+          />
+          <QuickActionGrid
+            onSync={refreshRealTesla}
+            onExecute={enqueueCommand}
+            isLoading={isLoadingReal}
+          />
+          <ForecastPanel forecast={forecast} />
+        </div>
       </>
     ),
     map: (
