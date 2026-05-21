@@ -49,11 +49,18 @@ function VehiclePopup({ vehicle }) {
 
         <div className="space-y-2.5 p-3 text-[11px]">
           <div className="grid grid-cols-2 gap-2 border-b border-white/10 pb-2.5">
-            <MetricRow
-              label="Battery"
-              value={Number.isFinite(vehicle.battery) ? `${Math.round(vehicle.battery)}%` : '--'}
-            />
-            <MetricRow label="Speed" value={`${vehicle.speed || 0} mph`} />
+            <div className="min-w-0 rounded-md border border-white/10 bg-white/[0.05] px-2.5 py-2">
+              <p className="text-[10px] text-slate-400">Battery</p>
+              <p className="mt-0.5 text-lg font-black leading-none">
+                {Number.isFinite(vehicle.battery) ? `${Math.round(vehicle.battery)}%` : '--'}
+              </p>
+            </div>
+            <div className="min-w-0 rounded-md border border-white/10 bg-white/[0.05] px-2.5 py-2">
+              <p className="text-[10px] text-slate-400">Speed</p>
+              <p className="mt-0.5 text-lg font-black leading-none">
+                {vehicle.speed || 0}<span className="ml-0.5 text-[10px] text-slate-400">mph</span>
+              </p>
+            </div>
           </div>
 
           <div className="space-y-1.5">
