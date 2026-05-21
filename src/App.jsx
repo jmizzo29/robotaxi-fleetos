@@ -3,13 +3,15 @@ import FleetMap from './components/FleetMap';
 import KPIGrid from './components/KPIGrid';
 import Sidebar from './components/Sidebar';
 import Timeline from './components/Timeline';
-import AlertCenter from './panels/AlertCenter';
+import AIRecommendationPanel from './panels/AIRecommendationPanel';
 import CommandCenter from './panels/CommandCenter';
 import ForecastPanel from './panels/ForecastPanel';
+import IntelligentAlertCenter from './panels/IntelligentAlertCenter';
 import TeslaTelemetryPanel from './panels/TeslaTelemetryPanel';
 import chargingStations from './data/chargingStations';
 import demandZones from './data/demandZones';
 import weatherZones from './data/weatherZones';
+import useAiFleetAnalysis from './hooks/useAiFleetAnalysis';
 import { useFleetSimulation } from './hooks/useFleetSimulation';
 
 const initialFleet = [
@@ -142,6 +144,10 @@ export default function App() {
   );
 
   const primaryTesla = realVehicles[0] || null;
+  const { analysis: aiAnalysis, isAnalyzing } = useAiFleetAnalysis({
+    fleet,
+    realSyncStatus,
+  });
 
   const combinedTimeline = [
     ...commandQueue.map((cmd) => ({
@@ -239,7 +245,12 @@ export default function App() {
           />
 
           <ForecastPanel forecast={forecast} />
-          <AlertCenter fleet={fleet} />
+          <IntelligentAlertCenter analysis={aiAnalysis} isAnalyzing={isAnalyzing} />
+          <AIRecommendationPanel
+            recommendations={aiAnalysis.recommendations}
+            isAnalyzing={isAnalyzing}
+            onExecute={enqueueCommand}
+          />
 
           <CommandCenter
             replayMode={replayMode}
