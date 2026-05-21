@@ -18,7 +18,10 @@ async function refreshTeslaAccessToken() {
     form.set('client_secret', process.env.TESLA_CLIENT_SECRET);
   }
 
-  const response = await fetch(TESLA_AUTH_URL, {
+  const tokenUrl = new URL(TESLA_AUTH_URL);
+  tokenUrl.searchParams.set('redirect_uri', TESLA_REDIRECT_URI);
+
+  const response = await fetch(tokenUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
     body: form.toString(),
