@@ -15,6 +15,93 @@ function vehicleRoute(vehicle) {
   };
 }
 
+function formatValue(value, fallback = 'Unavailable') {
+  return value === undefined || value === null || value === '' ? fallback : value;
+}
+
+function MetricRow({ label, value, emphasize = false }) {
+  return (
+    <div className="flex items-center justify-between gap-4">
+      <span className="text-slate-500">{label}</span>
+      <span className={emphasize ? 'font-black text-slate-950' : 'font-semibold text-slate-800'}>{value}</span>
+    </div>
+  );
+}
+
+function VehiclePopup({ vehicle }) {
+  if (vehicle.isReal) {
+    return (
+      <div className="w-[280px] overflow-hidden rounded-2xl bg-white text-slate-950 shadow-2xl">
+        <div className="bg-slate-950 p-4 text-white">
+          <div className="flex items-start justify-between gap-3">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-green-300">Tesla Telemetry</p>
+              <h3 className="mt-1 text-xl font-black">{vehicle.name || vehicle.display_name || 'My Tesla'}</h3>
+            </div>
+            <span className="rounded-full bg-green-400 px-2 py-1 text-[10px] font-black text-slate-950">
+              {formatValue(vehicle.status)}
+            </span>
+          </div>
+          {vehicle.vin && <p className="mt-2 text-[10px] text-slate-400">{vehicle.vin}</p>}
+        </div>
+
+        <div className="space-y-3 p-4 text-xs">
+          <div className="grid grid-cols-2 gap-3">
+            <div className="rounded-xl bg-slate-100 p-3">
+              <p className="text-slate-500">Battery</p>
+              <p className="mt-1 text-2xl font-black">
+                {Number.isFinite(vehicle.battery) ? `${Math.round(vehicle.battery)}%` : '--'}
+              </p>
+            </div>
+            <div className="rounded-xl bg-slate-100 p-3">
+              <p className="text-slate-500">Speed</p>
+              <p className="mt-1 text-2xl font-black">{vehicle.speed || 0}<span className="text-xs"> mph</span></p>
+            </div>
+          </div>
+
+          <div className="space-y-2 border-t border-slate-200 pt-3">
+            <MetricRow label="Charging" value={formatValue(vehicle.chargingState)} />
+            <MetricRow
+              label="Odometer"
+              value={vehicle.odometer !== undefined ? `${Math.round(vehicle.odometer).toLocaleString()} mi` : 'Unavailable'}
+            />
+            <MetricRow label="Software" value={formatValue(vehicle.softwareVersion)} />
+            <MetricRow label="Locked" value={vehicle.locked === undefined ? 'Unavailable' : vehicle.locked ? 'Yes' : 'No'} />
+            <MetricRow label="Service Mode" value={vehicle.serviceMode ? 'On' : 'Off'} />
+          </div>
+
+          <div className="rounded-xl bg-green-50 p-3 text-green-950">
+            <p className="font-black">Current State</p>
+            <p className="mt-1">{vehicle.assignment || 'Synced Tesla telemetry'}</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-[260px] rounded-2xl bg-white p-4 text-xs text-slate-950 shadow-2xl">
+      <h3 className="text-lg font-black">{vehicle.id}</h3>
+      <p className="mb-3 text-slate-500">{vehicle.city || 'Fleet vehicle'}</p>
+
+      <div className="space-y-2">
+        <MetricRow label="Status" value={vehicle.status} emphasize />
+        <MetricRow label="Battery" value={`${Math.round(vehicle.battery)}%`} />
+        <MetricRow label="Profitability" value={`${Math.round(vehicle.profitability)}%`} />
+        <MetricRow label="Anomaly Risk" value={`${Math.round(vehicle.anomalyRisk)}%`} />
+        <MetricRow label="Maintenance" value={`${Math.round(vehicle.maintenanceScore)}%`} />
+        <MetricRow label="Passengers" value={vehicle.passengers} />
+        <MetricRow label="Efficiency" value={`${vehicle.efficiency}%`} />
+      </div>
+
+      <div className="mt-4 rounded-xl bg-slate-100 p-3">
+        <p className="font-black">Current Assignment</p>
+        <p className="mt-1">{vehicle.assignment}</p>
+      </div>
+    </div>
+  );
+}
+
 export default function FleetMap({
   fleet = [],
   selectedVehicle,
@@ -56,7 +143,7 @@ export default function FleetMap({
           {weatherZones.map((zone) => (
             <Marker key={zone.id} longitude={zone.longitude} latitude={zone.latitude}>
               <div
-                className={`rounded-full opacity-25 animate-pulse ${
+                className={`pointer-events-none rounded-full opacity-25 animate-pulse ${
                   zone.severity === 'CRITICAL'
                     ? 'bg-red-600'
                     : zone.severity === 'HIGH'
@@ -89,7 +176,7 @@ export default function FleetMap({
           {demandZones.map((zone) => (
             <Marker key={zone.name} longitude={zone.longitude} latitude={zone.latitude}>
               <div
-                className="rounded-full animate-pulse opacity-20"
+                className="pointer-events-none rounded-full animate-pulse opacity-20"
                 style={{
                   width: `${zone.radius}px`,
                   height: `${zone.radius}px`,
@@ -109,25 +196,46 @@ export default function FleetMap({
           ))}
 
           {fleet.map((vehicle) => (
-            <Marker key={vehicle.id} longitude={vehicle.longitude} latitude={vehicle.latitude}>
-              <button
-                type="button"
-                className="cursor-pointer"
-                onClick={() => setSelectedVehicle(vehicle)}
+            <Marker
+              key={vehicle.id}
+              longitude={vehicle.longitude}
+              latitude={vehicle.latitude}
+              style={{ zIndex: vehicle.isReal ? 50 : 20 }}
+            >
+              <div
+                role="button"
+                tabIndex={0}
+                className="pointer-events-auto flex -translate-y-2 flex-col items-center gap-1 rounded-full p-3"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setSelectedVehicle(vehicle);
+                }}
+                onMouseDown={(event) => event.stopPropagation()}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    setSelectedVehicle(vehicle);
+                  }
+                }}
                 aria-label={`Select ${vehicle.id}`}
               >
                 <span
-                  className={`block h-5 w-5 rounded-full border-4 shadow-[0_0_20px] ${
+                  className={`block rounded-full border-4 shadow-[0_0_24px] ${
                     vehicle.anomalyRisk > 20
-                      ? 'bg-red-500 border-red-200 shadow-red-500'
+                      ? 'h-6 w-6 bg-red-500 border-red-200 shadow-red-500'
                       : vehicle.battery < 30
-                        ? 'bg-yellow-400 border-yellow-200 shadow-yellow-400'
+                        ? 'h-6 w-6 bg-yellow-400 border-yellow-200 shadow-yellow-400'
                         : vehicle.isReal
-                          ? 'bg-green-400 border-green-200 shadow-green-400'
-                          : 'bg-cyan-400 border-cyan-200 shadow-cyan-400'
+                          ? 'h-8 w-8 bg-green-400 border-green-100 shadow-green-400'
+                          : 'h-6 w-6 bg-cyan-400 border-cyan-200 shadow-cyan-400'
                   }`}
                 />
-              </button>
+                {vehicle.isReal && (
+                  <span className="rounded-full border border-green-300/40 bg-black/80 px-2 py-0.5 text-[10px] font-bold text-green-200 shadow-lg">
+                    {vehicle.name || vehicle.display_name || 'TESLA'}
+                  </span>
+                )}
+              </div>
             </Marker>
           ))}
 
@@ -140,57 +248,7 @@ export default function FleetMap({
               onClose={() => setSelectedVehicle(null)}
               anchor="top"
             >
-              <div className="text-black p-1 min-w-[240px]">
-                <h3 className="font-bold mb-3">{selectedVehicle.id}</h3>
-
-                <div className="space-y-2 text-xs">
-                  <div className="flex justify-between">
-                    <span>Status</span>
-                    <span className="font-bold">{selectedVehicle.status}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Battery</span>
-                    <span>{Math.round(selectedVehicle.battery)}%</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Profitability</span>
-                    <span>{Math.round(selectedVehicle.profitability)}%</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Anomaly Risk</span>
-                    <span>{Math.round(selectedVehicle.anomalyRisk)}%</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Maintenance</span>
-                    <span>{Math.round(selectedVehicle.maintenanceScore)}%</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Passengers</span>
-                    <span>{selectedVehicle.passengers}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span>Efficiency</span>
-                    <span>{selectedVehicle.efficiency}%</span>
-                  </div>
-                  {selectedVehicle.speed !== undefined && (
-                    <div className="flex justify-between">
-                      <span>Speed</span>
-                      <span>{selectedVehicle.speed || 0} mph</span>
-                    </div>
-                  )}
-                  {selectedVehicle.odometer !== undefined && (
-                    <div className="flex justify-between">
-                      <span>Odometer</span>
-                      <span>{Math.round(selectedVehicle.odometer).toLocaleString()} mi</span>
-                    </div>
-                  )}
-                </div>
-
-                <div className="mt-4 p-3 rounded-xl bg-slate-100 text-xs">
-                  <p className="font-bold mb-1">Current Assignment</p>
-                  <p>{selectedVehicle.assignment}</p>
-                </div>
-              </div>
+              <VehiclePopup vehicle={selectedVehicle} />
             </Popup>
           )}
         </Map>

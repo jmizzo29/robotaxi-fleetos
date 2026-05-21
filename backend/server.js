@@ -17,6 +17,11 @@ const DEFAULT_REDIRECT_URI = process.env.TESLA_REDIRECT_URI || `http://localhost
 const DEFAULT_SCOPES = process.env.TESLA_SCOPES || 'openid offline_access user_data vehicle_device_data vehicle_location';
 const TESLA_PARTNER_DOMAIN = process.env.TESLA_PARTNER_DOMAIN || '';
 const ENV_PATH = path.join(__dirname, '.env');
+const DEFAULT_ALLOWED_ORIGINS = [
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+  'https://robotaxi-fleetos.vercel.app',
+];
 
 let tokenCache = {
   accessToken: process.env.TESLA_ACCESS_TOKEN || '',
@@ -25,7 +30,25 @@ let tokenCache = {
 };
 const pendingAuthStates = new Map();
 
-app.use(cors({ origin: process.env.CORS_ORIGIN || '*' }));
+function getAllowedOrigins() {
+  const configured = (process.env.CORS_ORIGIN || '')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean);
+
+  return [...new Set([...configured, ...DEFAULT_ALLOWED_ORIGINS])];
+}
+
+app.use(cors({
+  origin(origin, callback) {
+    if (!origin || getAllowedOrigins().includes(origin)) {
+      callback(null, true);
+      return;
+    }
+
+    callback(new Error(`CORS origin not allowed: ${origin}`));
+  },
+}));
 app.use(express.json());
 
 function updateLocalEnv(updates) {
@@ -221,19 +244,29 @@ function normalizeVehicle(vehicle, telemetry = {}) {
   const driveState = telemetry.drive_state || vehicle.drive_state || {};
   const vehicleState = telemetry.vehicle_state || vehicle.vehicle_state || {};
   const vin = vehicle.vin || telemetry.vin;
+  const state = vehicle.state || telemetry.state || 'unknown';
+  const status = driveState.shift_state
+    ? 'DRIVING'
+    : state === 'online'
+      ? 'PARKED'
+      : state;
 
   return {
     id: vehicle.id_s || vehicle.id || vin,
     vin,
     display_name: vehicle.display_name || vehicleState.vehicle_name || 'My Tesla',
-    state: vehicle.state || telemetry.state || 'unknown',
+    state,
     charge_state: chargeState,
     drive_state: driveState,
     vehicle_state: vehicleState,
-    status: driveState.shift_state ? 'IN SERVICE' : vehicle.state === 'online' ? 'ONLINE' : vehicle.state || 'OFFLINE',
+    status,
     battery: chargeState.battery_level,
     latitude: driveState.latitude,
     longitude: driveState.longitude,
+    chargingState: chargeState.charging_state,
+    softwareVersion: vehicleState.car_version,
+    locked: vehicleState.locked,
+    serviceMode: vehicleState.service_mode,
     odometer: vehicleState.odometer,
     speed: driveState.speed,
     heading: driveState.heading,
