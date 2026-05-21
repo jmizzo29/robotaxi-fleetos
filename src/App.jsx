@@ -12,6 +12,7 @@ import ChargingReadinessPanel from './panels/ChargingReadinessPanel';
 import CommandCenter from './panels/CommandCenter';
 import CommandInboxPanel from './panels/CommandInboxPanel';
 import DispatchPlannerPanel from './panels/DispatchPlannerPanel';
+import DriverlessReadinessPanel from './panels/DriverlessReadinessPanel';
 import FleetFinancePanel from './panels/FleetFinancePanel';
 import ForecastPanel from './panels/ForecastPanel';
 import FleetListPanel from './panels/FleetListPanel';
@@ -357,6 +358,20 @@ export default function App() {
           chargingStations={chargingStations}
           onQueueCommand={enqueueCommand}
           onShowMap={() => navigate('map')}
+        />
+      </>
+    ),
+    readiness: (
+      <>
+        <PageHeader
+          eyebrow="Robotaxi Readiness"
+          title="Driverless Readiness"
+          description="Score each vehicle for future driverless operations across battery, telemetry, maintenance, risk, compliance, and Tesla autonomy dependency."
+          action={operationsStatus}
+        />
+        <DriverlessReadinessPanel
+          fleet={fleet}
+          onQueueCommand={enqueueCommand}
         />
       </>
     ),

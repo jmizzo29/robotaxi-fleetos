@@ -5,7 +5,6 @@ function NavIcon({ type }) {
     home: 'M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3V10.5Z',
     map: 'M9 18 3 21V6l6-3 6 3 6-3v15l-6 3-6-3Zm0 0V3m6 18V6',
     fleet: 'M5 11h14l2 5v4h-2a2 2 0 0 1-4 0H9a2 2 0 0 1-4 0H3v-4l2-5Zm2-5h10l2 5H5l2-5Z',
-    alerts: 'M12 3 2.5 20h19L12 3Zm0 6v5m0 3h.01',
     ai: 'M12 3l1.9 5.2L19 10l-5.1 1.8L12 17l-1.9-5.2L5 10l5.1-1.8L12 3Zm6 10 1 2.7 2.7 1-2.7 1-1 2.7-1-2.7-2.7-1 2.7-1 1-2.7Z',
     more: 'M5 10a2 2 0 1 1 0 4 2 2 0 0 1 0-4Zm7 0a2 2 0 1 1 0 4 2 2 0 0 1 0-4Zm7 0a2 2 0 1 1 0 4 2 2 0 0 1 0-4Z',
   };
@@ -34,6 +33,7 @@ const menuItems = [
   ['finance', 'Finance', 'ROI and owner economics'],
   ['charging', 'Charging', 'Battery and dispatch readiness'],
   ['dispatch', 'Dispatch', 'Nightly staging planner'],
+  ['readiness', 'Readiness', 'Driverless readiness scoring'],
   ['ai', 'AI Command', 'Recommendations and one-click actions'],
   ['alerts', 'Alerts', 'AI alert triage'],
   ['memory', 'Memory', 'Fleet event history'],
@@ -73,7 +73,7 @@ export default function MobileBottomNav({ route, onNavigate }) {
               className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-300"
               aria-label="Close mobile menu"
             >
-              ×
+              X
             </button>
           </div>
 
