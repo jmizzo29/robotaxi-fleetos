@@ -30,7 +30,7 @@ function FleetRow({ vehicle, onSelect }) {
           </span>
         </div>
         <p className="mt-1 truncate text-xs text-slate-500">
-          {ownership ? `${ownership.model} - ${ownership.color} - ${ownership.tag}` : vehicle.assignment || vehicle.status || vehicle.state}
+          {ownership ? `${ownership.modelYear} ${ownership.model} - ${ownership.color} - ${ownership.tag}` : vehicle.assignment || vehicle.status || vehicle.state}
         </p>
       </div>
       <div className="col-span-2 grid grid-cols-2 gap-2 text-xs lg:col-span-1">

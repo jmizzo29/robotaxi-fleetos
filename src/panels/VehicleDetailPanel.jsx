@@ -94,10 +94,12 @@ export default function VehicleDetailPanel({
           <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-emerald-300">
             Ownership & Finance
           </p>
+          <DetailRow label="Model Year" value={ownership?.modelYear || 'Unavailable'} />
           <DetailRow label="Model" value={ownership?.model || 'Unavailable'} />
           <DetailRow label="Trim" value={ownership?.trim || 'Unavailable'} />
           <DetailRow label="Color" value={ownership?.color || 'Unavailable'} />
           <DetailRow label="Tag" value={ownership?.tag || 'Unavailable'} />
+          <DetailRow label="Year Purchased" value={ownership?.purchaseYear || 'Unavailable'} />
           <DetailRow label="Purchased" value={formatDate(ownership?.purchaseDate)} />
           <DetailRow label="Price Paid" value={formatCurrency(ownership?.pricePaid)} />
           <DetailRow label="Balance" value={formatCurrency(ownership?.currentBalance)} />
