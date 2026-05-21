@@ -11,6 +11,7 @@ import AssetManagementPanel from './panels/AssetManagementPanel';
 import ChargingReadinessPanel from './panels/ChargingReadinessPanel';
 import CommandCenter from './panels/CommandCenter';
 import CommandInboxPanel from './panels/CommandInboxPanel';
+import DispatchPlannerPanel from './panels/DispatchPlannerPanel';
 import FleetFinancePanel from './panels/FleetFinancePanel';
 import ForecastPanel from './panels/ForecastPanel';
 import FleetListPanel from './panels/FleetListPanel';
@@ -339,6 +340,23 @@ export default function App() {
         <ChargingReadinessPanel
           fleet={fleet}
           onQueueCommand={enqueueCommand}
+        />
+      </>
+    ),
+    dispatch: (
+      <>
+        <PageHeader
+          eyebrow="AI Planning"
+          title="Dispatch Planner"
+          description="Plan tonight's staging, charging, and revenue opportunities while keeping Tesla autonomous execution boundaries clear."
+          action={operationsStatus}
+        />
+        <DispatchPlannerPanel
+          fleet={fleet}
+          demandZones={demandZones}
+          chargingStations={chargingStations}
+          onQueueCommand={enqueueCommand}
+          onShowMap={() => navigate('map')}
         />
       </>
     ),

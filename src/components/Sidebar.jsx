@@ -14,6 +14,7 @@ export default function Sidebar({
     ['assets', 'Assets'],
     ['finance', 'Finance'],
     ['charging', 'Charging'],
+    ['dispatch', 'Dispatch'],
     ['ai', 'AI Command'],
     ['alerts', 'Alerts'],
     ['memory', 'Memory'],
