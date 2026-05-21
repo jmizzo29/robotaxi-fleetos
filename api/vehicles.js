@@ -14,10 +14,6 @@ async function refreshTeslaAccessToken() {
     redirect_uri: TESLA_REDIRECT_URI,
   });
 
-  if (process.env.TESLA_CLIENT_SECRET) {
-    form.set('client_secret', process.env.TESLA_CLIENT_SECRET);
-  }
-
   const tokenUrl = new URL(TESLA_AUTH_URL);
   tokenUrl.searchParams.set('redirect_uri', TESLA_REDIRECT_URI);
 
@@ -105,7 +101,6 @@ export default async function handler(req, res) {
         'client_id',
         'refresh_token',
         'redirect_uri',
-        ...(process.env.TESLA_CLIENT_SECRET ? ['client_secret'] : []),
       ],
       redirectUri: TESLA_REDIRECT_URI,
       teslaConfigured: hasTeslaConfig(),
