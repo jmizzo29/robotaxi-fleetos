@@ -21,7 +21,7 @@ async function refreshTeslaAccessToken() {
   const response = await fetch(TESLA_AUTH_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: form,
+    body: form.toString(),
   });
 
   if (!response.ok) {
@@ -91,6 +91,22 @@ export default async function handler(req, res) {
   if (req.method !== 'GET') {
     res.setHeader('Allow', 'GET');
     res.status(405).json({ error: 'METHOD_NOT_ALLOWED' });
+    return;
+  }
+
+  if (req.query?.debug === '1') {
+    res.status(200).json({
+      ok: true,
+      refreshFormKeys: [
+        'grant_type',
+        'client_id',
+        'refresh_token',
+        'redirect_uri',
+        ...(process.env.TESLA_CLIENT_SECRET ? ['client_secret'] : []),
+      ],
+      redirectUri: TESLA_REDIRECT_URI,
+      teslaConfigured: hasTeslaConfig(),
+    });
     return;
   }
 
