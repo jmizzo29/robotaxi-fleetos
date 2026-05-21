@@ -8,7 +8,9 @@ import AIRecommendationPanel from './panels/AIRecommendationPanel';
 import CommandCenter from './panels/CommandCenter';
 import ForecastPanel from './panels/ForecastPanel';
 import IntelligentAlertCenter from './panels/IntelligentAlertCenter';
+import QuickActionGrid from './panels/QuickActionGrid';
 import TeslaTelemetryPanel from './panels/TeslaTelemetryPanel';
+import VehicleShowcasePanel from './panels/VehicleShowcasePanel';
 import chargingStations from './data/chargingStations';
 import demandZones from './data/demandZones';
 import weatherZones from './data/weatherZones';
@@ -249,7 +251,24 @@ export default function App() {
             />
           </section>
 
-          <section id="ai-actions" className="order-3 scroll-mt-4 lg:order-5">
+          <section className="order-3">
+            <VehicleShowcasePanel
+              vehicle={primaryTesla}
+              fleet={fleet}
+              onSync={refreshRealTesla}
+              isLoading={isLoadingReal}
+            />
+          </section>
+
+          <section className="order-4">
+            <QuickActionGrid
+              onSync={refreshRealTesla}
+              onExecute={enqueueCommand}
+              isLoading={isLoadingReal}
+            />
+          </section>
+
+          <section id="ai-actions" className="order-5 scroll-mt-4 lg:order-7">
             <AIRecommendationPanel
               recommendations={aiAnalysis.recommendations}
               isAnalyzing={isAnalyzing}
@@ -257,7 +276,7 @@ export default function App() {
             />
           </section>
 
-          <section id="map" className="order-4 scroll-mt-4 lg:order-8">
+          <section id="map" className="order-6 scroll-mt-4 lg:order-10">
             <FleetMap
               fleet={fleet}
               selectedVehicle={selectedVehicle}
@@ -268,15 +287,15 @@ export default function App() {
             />
           </section>
 
-          <section id="alerts" className="order-5 scroll-mt-4 lg:order-4">
+          <section id="alerts" className="order-7 scroll-mt-4 lg:order-6">
             <IntelligentAlertCenter analysis={aiAnalysis} isAnalyzing={isAnalyzing} />
           </section>
 
-          <section className="order-6 lg:order-3">
+          <section className="order-8 lg:order-5">
             <ForecastPanel forecast={forecast} />
           </section>
 
-          <section className="order-7 lg:order-6">
+          <section className="order-9 lg:order-8">
             <CommandCenter
               replayMode={replayMode}
               setReplayMode={setReplayMode}
@@ -285,7 +304,7 @@ export default function App() {
             />
           </section>
 
-          <section className="order-8 lg:order-7">
+          <section className="order-10 lg:order-9">
             <Timeline timelineEvents={combinedTimeline} replayMode={replayMode} />
           </section>
         </div>
