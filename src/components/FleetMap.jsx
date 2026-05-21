@@ -160,7 +160,7 @@ export default function FleetMap({
             </Marker>
           ))}
 
-          {fleet.map((vehicle) => (
+          {fleet.filter((vehicle) => !vehicle.isReal).map((vehicle) => (
             <Source key={`route-${vehicle.id}`} id={`route-${vehicle.id}`} type="geojson" data={vehicleRoute(vehicle)}>
               <Layer
                 id={`line-${vehicle.id}`}

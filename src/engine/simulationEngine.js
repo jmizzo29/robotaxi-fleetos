@@ -16,6 +16,10 @@ function nearestChargingStation(latitude, longitude, chargingStations) {
 
 export function updateFleet({ fleet, chargingStations = [], replayMode = false }) {
   return fleet.map((vehicle) => {
+    if (vehicle.isReal) {
+      return vehicle;
+    }
+
     let { 
       latitude = 28.5383, 
       longitude = -81.3792, 
