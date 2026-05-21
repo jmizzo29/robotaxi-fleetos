@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-const validRoutes = new Set(['overview', 'map', 'fleet', 'vehicle', 'ai', 'alerts', 'settings']);
+const validRoutes = new Set(['overview', 'map', 'fleet', 'vehicle', 'ai', 'alerts', 'reports', 'settings']);
 
 function readRoute() {
   const route = window.location.hash.replace('#/', '').replace('#', '') || 'overview';

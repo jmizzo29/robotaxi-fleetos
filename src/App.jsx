@@ -12,6 +12,7 @@ import CommandInboxPanel from './panels/CommandInboxPanel';
 import ForecastPanel from './panels/ForecastPanel';
 import FleetListPanel from './panels/FleetListPanel';
 import IntelligentAlertCenter from './panels/IntelligentAlertCenter';
+import OperationsReportPanel from './panels/OperationsReportPanel';
 import QuickActionGrid from './panels/QuickActionGrid';
 import SettingsPanel from './panels/SettingsPanel';
 import TeslaTelemetryPanel from './panels/TeslaTelemetryPanel';
@@ -328,6 +329,22 @@ export default function App() {
         />
         <IntelligentAlertCenter analysis={aiAnalysis} isAnalyzing={isAnalyzing} />
         <Timeline timelineEvents={combinedTimeline} replayMode={replayMode} />
+      </>
+    ),
+    reports: (
+      <>
+        <PageHeader
+          eyebrow="Operations Intelligence"
+          title="Reports"
+          description="Review fleet health, AI analysis quality, telemetry freshness, and operator command history."
+          action={operationsStatus}
+        />
+        <OperationsReportPanel
+          fleet={fleet}
+          analysis={aiAnalysis}
+          commandQueue={commandQueue}
+          realSyncStatus={realSyncStatus}
+        />
       </>
     ),
     settings: (

@@ -13,6 +13,7 @@ export default function Sidebar({
     ['vehicle', 'Vehicle Detail'],
     ['ai', 'AI Command'],
     ['alerts', 'Alerts'],
+    ['reports', 'Reports'],
     ['settings', 'Settings'],
   ];
 
