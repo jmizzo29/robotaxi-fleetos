@@ -44,6 +44,27 @@ export async function getTeslaVehicles() {
   }
 }
 
+export async function wakeTeslaVehicle(vehicle) {
+  const vehicleId = vehicle?.vin || vehicle?.id;
+
+  if (!vehicleId) {
+    throw new Error('No Tesla vehicle ID is available to wake.');
+  }
+
+  const response = await fetch(`${API_BASE}/vehicles/${encodeURIComponent(vehicleId)}/wake_up`, {
+    method: 'POST',
+    cache: 'no-store',
+  });
+
+  const data = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new Error(data.message || data.error || `Tesla wake request failed with ${response.status}`);
+  }
+
+  return data.response || data;
+}
+
 export function mergeWithSimulation(realVehicles, simulatedVehicles) {
   if (!realVehicles || realVehicles.length === 0) {
     return simulatedVehicles;

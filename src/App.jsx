@@ -18,6 +18,7 @@ import MemoryEventsPanel from './panels/MemoryEventsPanel';
 import OperationsReportPanel from './panels/OperationsReportPanel';
 import QuickActionGrid from './panels/QuickActionGrid';
 import SettingsPanel from './panels/SettingsPanel';
+import TeslaCapabilitiesPanel from './panels/TeslaCapabilitiesPanel';
 import TeslaTelemetryPanel from './panels/TeslaTelemetryPanel';
 import VehicleDetailPanel from './panels/VehicleDetailPanel';
 import VehicleShowcasePanel from './panels/VehicleShowcasePanel';
@@ -388,6 +389,24 @@ export default function App() {
         <IntegrationsPanel
           aiAnalysis={aiAnalysis}
           realSyncStatus={realSyncStatus}
+        />
+      </>
+    ),
+    tesla: (
+      <>
+        <PageHeader
+          eyebrow="Tesla Fleet API"
+          title="Capabilities"
+          description="See exactly which Tesla APIs FleetOS uses today, which controls are safe to operate, and which commands should be added next."
+          action={operationsStatus}
+        />
+        <TeslaCapabilitiesPanel
+          vehicle={primaryTesla}
+          syncStatus={realSyncStatus}
+          isLoading={isLoadingReal}
+          onSync={refreshRealTesla}
+          onShowMap={() => navigate('map')}
+          onQueueCommand={enqueueCommand}
         />
       </>
     ),

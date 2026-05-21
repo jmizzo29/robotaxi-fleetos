@@ -17,6 +17,7 @@ export default function Sidebar({
     ['memory', 'Memory'],
     ['reports', 'Reports'],
     ['integrations', 'Integrations'],
+    ['tesla', 'Tesla API'],
     ['settings', 'Settings'],
   ];
 
