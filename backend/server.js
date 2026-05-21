@@ -13,8 +13,9 @@ const PORT = process.env.PORT || 3001;
 const TESLA_AUTHORIZE_URL = process.env.TESLA_AUTHORIZE_URL || 'https://auth.tesla.com/oauth2/v3/authorize';
 const TESLA_AUTH_URL = process.env.TESLA_AUTH_URL || 'https://fleet-auth.prd.vn.cloud.tesla.com/oauth2/v3/token';
 const DEFAULT_FLEET_API_BASE = process.env.TESLA_API_BASE || 'https://fleet-api.prd.na.vn.cloud.tesla.com';
-const DEFAULT_REDIRECT_URI = process.env.TESLA_REDIRECT_URI || `http://127.0.0.1:${PORT}/api/tesla/callback`;
+const DEFAULT_REDIRECT_URI = process.env.TESLA_REDIRECT_URI || `http://localhost:${PORT}/callback`;
 const DEFAULT_SCOPES = process.env.TESLA_SCOPES || 'openid offline_access user_data vehicle_device_data vehicle_location';
+const TESLA_PARTNER_DOMAIN = process.env.TESLA_PARTNER_DOMAIN || '';
 const ENV_PATH = path.join(__dirname, '.env');
 
 let tokenCache = {
@@ -22,7 +23,7 @@ let tokenCache = {
   refreshToken: process.env.TESLA_REFRESH_TOKEN || '',
   expiresAt: process.env.TESLA_ACCESS_TOKEN ? Date.now() + 10 * 60 * 1000 : 0,
 };
-const pendingAuthStates = new Set();
+const pendingAuthStates = new Map();
 
 app.use(cors({ origin: process.env.CORS_ORIGIN || '*' }));
 app.use(express.json());
@@ -80,7 +81,7 @@ async function refreshTeslaAccessToken() {
   return tokenCache.accessToken;
 }
 
-async function exchangeAuthorizationCode(code) {
+async function exchangeAuthorizationCode(code, redirectUri = DEFAULT_REDIRECT_URI) {
   if (!process.env.TESLA_CLIENT_ID) {
     const error = new Error('TESLA_CLIENT_ID is required before starting Tesla OAuth');
     error.status = 400;
@@ -91,7 +92,7 @@ async function exchangeAuthorizationCode(code) {
     grant_type: 'authorization_code',
     client_id: process.env.TESLA_CLIENT_ID,
     code,
-    redirect_uri: DEFAULT_REDIRECT_URI,
+    redirect_uri: redirectUri,
   });
 
   if (process.env.TESLA_CLIENT_SECRET) {
@@ -114,7 +115,7 @@ async function exchangeAuthorizationCode(code) {
     TESLA_API_BASE: DEFAULT_FLEET_API_BASE,
     TESLA_AUTH_URL,
     TESLA_AUTHORIZE_URL,
-    TESLA_REDIRECT_URI: DEFAULT_REDIRECT_URI,
+    TESLA_REDIRECT_URI: redirectUri,
     TESLA_SCOPES: DEFAULT_SCOPES,
     TESLA_CLIENT_ID: process.env.TESLA_CLIENT_ID,
     TESLA_CLIENT_SECRET: process.env.TESLA_CLIENT_SECRET,
@@ -124,12 +125,70 @@ async function exchangeAuthorizationCode(code) {
   return tokenCache;
 }
 
+function buildTeslaAuthorizeUrl(redirectUri = DEFAULT_REDIRECT_URI) {
+  const state = crypto.randomBytes(24).toString('hex');
+  pendingAuthStates.set(state, redirectUri);
+
+  const url = new URL(TESLA_AUTHORIZE_URL);
+  url.searchParams.set('response_type', 'code');
+  url.searchParams.set('client_id', process.env.TESLA_CLIENT_ID);
+  url.searchParams.set('redirect_uri', redirectUri);
+  url.searchParams.set('scope', DEFAULT_SCOPES);
+  url.searchParams.set('state', state);
+  url.searchParams.set('prompt_missing_scopes', 'true');
+
+  return { state, redirectUri, url };
+}
+
+function getRedirectUriFromRequest(req) {
+  if (req.query.redirect_uri) {
+    return String(req.query.redirect_uri);
+  }
+
+  if (req.query.path) {
+    const callbackPath = String(req.query.path).startsWith('/') ? String(req.query.path) : `/${req.query.path}`;
+    return `http://localhost:${PORT}${callbackPath}`;
+  }
+
+  if (req.query.host === 'localhost') {
+    return DEFAULT_REDIRECT_URI;
+  }
+
+  if (req.query.host === '127') {
+    return `http://127.0.0.1:${PORT}/api/tesla/callback`;
+  }
+
+  return DEFAULT_REDIRECT_URI;
+}
+
 async function getTeslaAccessToken() {
   if (tokenCache.accessToken && Date.now() < tokenCache.expiresAt) {
     return tokenCache.accessToken;
   }
 
   return refreshTeslaAccessToken();
+}
+
+async function getTeslaPartnerToken(audience = DEFAULT_FLEET_API_BASE) {
+  if (!process.env.TESLA_CLIENT_ID || !process.env.TESLA_CLIENT_SECRET) {
+    const error = new Error('TESLA_CLIENT_ID and TESLA_CLIENT_SECRET are required for partner registration');
+    error.status = 400;
+    throw error;
+  }
+
+  const form = new URLSearchParams({
+    grant_type: 'client_credentials',
+    client_id: process.env.TESLA_CLIENT_ID,
+    client_secret: process.env.TESLA_CLIENT_SECRET,
+    audience,
+    scope: process.env.TESLA_PARTNER_SCOPES || 'openid vehicle_device_data vehicle_cmds vehicle_charging_cmds',
+  });
+
+  const { data } = await axios.post(TESLA_AUTH_URL, form, {
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+  });
+
+  return data.access_token;
 }
 
 async function teslaRequest(path, options = {}) {
@@ -212,7 +271,111 @@ app.get('/api/health', (req, res) => {
     ok: true,
     teslaConfigured: Boolean(tokenCache.accessToken || hasRefreshConfig()),
     hasRefreshToken: hasRefreshConfig(),
+    redirectUri: DEFAULT_REDIRECT_URI,
+    partnerDomain: TESLA_PARTNER_DOMAIN || null,
+    alternateRedirectUris: [
+      `http://localhost:${PORT}/callback`,
+      `http://localhost:${PORT}/api/tesla/callback`,
+      `http://localhost:${PORT}/auth/callback`,
+    ],
   });
+});
+
+app.get('/api/tesla/diagnostics', async (req, res) => {
+  const checks = {
+    oauthRefreshToken: Boolean(tokenCache.refreshToken),
+    clientSecret: Boolean(process.env.TESLA_CLIENT_SECRET),
+    partnerDomain: TESLA_PARTNER_DOMAIN || null,
+    fleetApiBase: DEFAULT_FLEET_API_BASE,
+    publicKeyUrl: TESLA_PARTNER_DOMAIN
+      ? `https://${TESLA_PARTNER_DOMAIN}/.well-known/appspecific/com.tesla.3p.public-key.pem`
+      : null,
+    vehicles: null,
+    partnerPublicKey: null,
+  };
+
+  try {
+    const payload = await teslaRequest('/api/1/vehicles');
+    checks.vehicles = {
+      ok: true,
+      count: payload.response?.length || 0,
+    };
+  } catch (error) {
+    checks.vehicles = {
+      ok: false,
+      status: error.status || error.response?.status || null,
+      message: error.response?.data?.error || error.message,
+    };
+  }
+
+  if (TESLA_PARTNER_DOMAIN) {
+    try {
+      const partnerToken = await getTeslaPartnerToken();
+      const { data } = await axios.get(`${DEFAULT_FLEET_API_BASE}/api/1/partner_accounts/public_key`, {
+        headers: { Authorization: `Bearer ${partnerToken}` },
+        params: { domain: TESLA_PARTNER_DOMAIN },
+        timeout: 15000,
+      });
+      checks.partnerPublicKey = {
+        ok: true,
+        response: data,
+      };
+    } catch (error) {
+      checks.partnerPublicKey = {
+        ok: false,
+        status: error.response?.status || null,
+        message: error.response?.data?.error || error.message,
+      };
+    }
+  }
+
+  res.json(checks);
+});
+
+app.post('/api/tesla/register-partner', async (req, res) => {
+  const domain = req.body?.domain || TESLA_PARTNER_DOMAIN;
+  const fleetApiBase = req.body?.fleetApiBase || DEFAULT_FLEET_API_BASE;
+
+  if (!domain) {
+    res.status(400).json({
+      error: 'TESLA_PARTNER_DOMAIN_MISSING',
+      message: 'Set TESLA_PARTNER_DOMAIN to your deployed HTTPS app domain, without https://.',
+    });
+    return;
+  }
+
+  try {
+    const publicKeyUrl = `https://${domain}/.well-known/appspecific/com.tesla.3p.public-key.pem`;
+    await axios.get(publicKeyUrl, { timeout: 15000 });
+    const partnerToken = await getTeslaPartnerToken(fleetApiBase);
+    const { data } = await axios.post(
+      `${fleetApiBase}/api/1/partner_accounts`,
+      { domain },
+      {
+        headers: { Authorization: `Bearer ${partnerToken}` },
+        timeout: 15000,
+      },
+    );
+
+    updateLocalEnv({
+      TESLA_PARTNER_DOMAIN: domain,
+      TESLA_API_BASE: fleetApiBase,
+    });
+
+    res.json({
+      ok: true,
+      domain,
+      fleetApiBase,
+      publicKeyUrl,
+      response: data,
+    });
+  } catch (error) {
+    res.status(error.response?.status || error.status || 500).json({
+      error: 'TESLA_PARTNER_REGISTER_FAILED',
+      message: error.response?.data?.error || error.message,
+      response: error.response?.data,
+    });
+  }
 });
 
 app.get('/api/tesla/auth-url', (req, res) => {
@@ -224,20 +387,12 @@ app.get('/api/tesla/auth-url', (req, res) => {
     return;
   }
 
-  const state = crypto.randomBytes(24).toString('hex');
-  pendingAuthStates.add(state);
-
-  const url = new URL(TESLA_AUTHORIZE_URL);
-  url.searchParams.set('response_type', 'code');
-  url.searchParams.set('client_id', process.env.TESLA_CLIENT_ID);
-  url.searchParams.set('redirect_uri', DEFAULT_REDIRECT_URI);
-  url.searchParams.set('scope', DEFAULT_SCOPES);
-  url.searchParams.set('state', state);
-  url.searchParams.set('prompt_missing_scopes', 'true');
+  const redirectUri = getRedirectUriFromRequest(req);
+  const { url } = buildTeslaAuthorizeUrl(redirectUri);
 
   res.json({
     url: url.toString(),
-    redirectUri: DEFAULT_REDIRECT_URI,
+    redirectUri,
     scopes: DEFAULT_SCOPES,
   });
 });
@@ -248,21 +403,17 @@ app.get('/api/tesla/login', (req, res) => {
     return;
   }
 
-  const state = crypto.randomBytes(24).toString('hex');
-  pendingAuthStates.add(state);
-
-  const url = new URL(TESLA_AUTHORIZE_URL);
-  url.searchParams.set('response_type', 'code');
-  url.searchParams.set('client_id', process.env.TESLA_CLIENT_ID);
-  url.searchParams.set('redirect_uri', DEFAULT_REDIRECT_URI);
-  url.searchParams.set('scope', DEFAULT_SCOPES);
-  url.searchParams.set('state', state);
-  url.searchParams.set('prompt_missing_scopes', 'true');
+  const redirectUri = getRedirectUriFromRequest(req);
+  const { url } = buildTeslaAuthorizeUrl(redirectUri);
 
   res.redirect(url.toString());
 });
 
-app.get('/api/tesla/callback', async (req, res) => {
+app.get('/api/tesla/login-localhost', (req, res) => {
+  res.redirect('/api/tesla/login?host=localhost');
+});
+
+async function handleTeslaCallback(req, res) {
   const { code, state, error, error_description: errorDescription } = req.query;
 
   if (error) {
@@ -275,10 +426,11 @@ app.get('/api/tesla/callback', async (req, res) => {
     return;
   }
 
+  const redirectUri = pendingAuthStates.get(state);
   pendingAuthStates.delete(state);
 
   try {
-    await exchangeAuthorizationCode(code);
+    await exchangeAuthorizationCode(code, redirectUri);
     res.send(`
       <html>
         <body style="font-family: system-ui; background: #050816; color: white; padding: 32px;">
@@ -293,7 +445,11 @@ app.get('/api/tesla/callback', async (req, res) => {
       `Tesla token exchange failed: ${callbackError.response?.data?.error_description || callbackError.message}`,
     );
   }
-});
+}
+
+app.get('/callback', handleTeslaCallback);
+app.get('/auth/callback', handleTeslaCallback);
+app.get('/api/tesla/callback', handleTeslaCallback);
 
 app.get('/api/vehicles', async (req, res) => {
   try {
@@ -304,7 +460,8 @@ app.get('/api/vehicles', async (req, res) => {
     console.error('Tesla API request failed:', error.response?.data || error.message);
     res.status(status).json({
       error: 'TESLA_API_UNAVAILABLE',
-      message: error.message,
+      message: error.response?.data?.error || error.message,
+      response: error.response?.data,
     });
   }
 });
@@ -326,7 +483,7 @@ app.post('/api/vehicles/:vin/wake_up', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`Backend running on http://127.0.0.1:${PORT}`);
+  console.log(`Backend running on http://localhost:${PORT}`);
   console.log(
     tokenCache.accessToken || hasRefreshConfig()
       ? 'Tesla Fleet API telemetry is configured'
