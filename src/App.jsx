@@ -167,6 +167,9 @@ export default function App() {
                   Real-time AI orchestration platform for autonomous ride-sharing,
                   dispatch optimization, anomaly monitoring, and operational forecasting.
                 </p>
+                <p className="mt-3 text-xs uppercase tracking-[0.25em] text-slate-600">
+                  Build 0b12fa4 · Tesla partner key live
+                </p>
               </div>
 
               <div className="bg-[#0b1220] border border-cyan-500/10 rounded-3xl p-5 min-w-[260px]">
