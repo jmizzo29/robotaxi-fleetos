@@ -1,4 +1,5 @@
 // src/services/teslaService.js
+import { getVehicleOwnership } from '../data/vehicleOwnership';
 function resolveApiBase() {
   const configuredBase = import.meta.env.VITE_TESLA_API_BASE;
   const isLocalBrowser = (
@@ -52,7 +53,7 @@ export function mergeWithSimulation(realVehicles, simulatedVehicles) {
   const realMarked = realVehicles.map((vehicle, index) => {
     const previousReal = simulatedVehicles.find((existing) => existing.isReal && existing.vin === vehicle.vin);
 
-    return {
+    const normalized = {
       ...vehicle,
       id: `tesla-${vehicle.id || vehicle.vin || vehicle.display_name}`,
       vin: vehicle.vin,
@@ -93,6 +94,11 @@ export function mergeWithSimulation(realVehicles, simulatedVehicles) {
       serviceMode: vehicle.serviceMode,
       syncedAt: vehicle.syncedAt,
       color: '#00ff9f',
+    };
+
+    return {
+      ...normalized,
+      ownership: getVehicleOwnership(normalized),
     };
   });
 

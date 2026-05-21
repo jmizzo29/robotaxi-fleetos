@@ -1,4 +1,23 @@
 import VehicleSilhouette from '../components/VehicleSilhouette';
+import { getVehicleOwnership } from '../data/vehicleOwnership';
+
+function formatCurrency(value) {
+  if (!Number.isFinite(value)) return 'Unavailable';
+  return value.toLocaleString('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 0,
+  });
+}
+
+function formatDate(value) {
+  if (!value) return 'Unavailable';
+  return new Date(value).toLocaleDateString([], {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
+}
 
 function StatCard({ label, value, tone = 'text-slate-100' }) {
   return (
@@ -36,6 +55,8 @@ export default function VehicleDetailPanel({
   const name = vehicle.name || vehicle.display_name || vehicle.id;
   const status = vehicle.status || vehicle.state || 'Unknown';
   const battery = Number.isFinite(vehicle.battery) ? Math.round(vehicle.battery) : 0;
+  const ownership = vehicle.ownership || getVehicleOwnership(vehicle);
+  const equity = ownership ? Math.max(0, ownership.pricePaid - ownership.currentBalance) : null;
 
   return (
     <section className="grid grid-cols-1 gap-4 xl:grid-cols-[1.05fr_0.95fr]">
@@ -69,6 +90,23 @@ export default function VehicleDetailPanel({
       </article>
 
       <div className="space-y-4">
+        <article className="rounded-lg border border-white/10 bg-slate-900/80 p-5 shadow-lg shadow-black/10">
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-emerald-300">
+            Ownership & Finance
+          </p>
+          <DetailRow label="Model" value={ownership?.model || 'Unavailable'} />
+          <DetailRow label="Trim" value={ownership?.trim || 'Unavailable'} />
+          <DetailRow label="Color" value={ownership?.color || 'Unavailable'} />
+          <DetailRow label="Tag" value={ownership?.tag || 'Unavailable'} />
+          <DetailRow label="Purchased" value={formatDate(ownership?.purchaseDate)} />
+          <DetailRow label="Price Paid" value={formatCurrency(ownership?.pricePaid)} />
+          <DetailRow label="Balance" value={formatCurrency(ownership?.currentBalance)} />
+          <DetailRow label="Estimated Equity" value={formatCurrency(equity)} />
+          <DetailRow label="Monthly Payment" value={formatCurrency(ownership?.monthlyPayment)} />
+          <DetailRow label="Lender" value={ownership?.lender || 'Unavailable'} />
+          <DetailRow label="Registration" value={ownership ? `${ownership.registrationState} - renews ${formatDate(ownership.insuranceRenewal)}` : 'Unavailable'} />
+        </article>
+
         <article className="rounded-lg border border-white/10 bg-slate-900/80 p-5 shadow-lg shadow-black/10">
           <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-sky-300">
             Telemetry
