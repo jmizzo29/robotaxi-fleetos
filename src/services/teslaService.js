@@ -1,16 +1,16 @@
 // src/services/teslaService.js
 function resolveApiBase() {
   const configuredBase = import.meta.env.VITE_TESLA_API_BASE;
+  const isLocalBrowser = (
+    typeof window !== 'undefined' &&
+    ['localhost', '127.0.0.1'].includes(window.location.hostname)
+  );
 
-  if (import.meta.env.DEV) {
-    return configuredBase || 'http://localhost:3001/api';
+  if (configuredBase && !configuredBase.includes('localhost') && !configuredBase.includes('127.0.0.1')) {
+    return configuredBase;
   }
 
-  if (!configuredBase || configuredBase.includes('localhost') || configuredBase.includes('127.0.0.1')) {
-    return '/api';
-  }
-
-  return configuredBase;
+  return isLocalBrowser ? 'http://localhost:3001/api' : '/api';
 }
 
 const API_BASE = resolveApiBase();
