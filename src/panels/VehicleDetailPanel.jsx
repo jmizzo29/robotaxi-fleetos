@@ -1,4 +1,4 @@
-import VehicleSilhouette from '../components/VehicleSilhouette';
+import TeslaVehicleRender from '../components/TeslaVehicleRender';
 import { getVehicleOwnership } from '../data/vehicleOwnership';
 
 function formatCurrency(value) {
@@ -77,7 +77,7 @@ export default function VehicleDetailPanel({
               </span>
             </div>
 
-            <VehicleSilhouette className="mx-auto my-5 w-full max-w-[560px]" />
+            <TeslaVehicleRender vehicle={vehicle} ownership={ownership} className="mx-auto my-5 w-full max-w-[640px]" />
 
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
               <StatCard label="Battery" value={`${battery}%`} tone={battery < 30 ? 'text-amber-300' : 'text-emerald-300'} />

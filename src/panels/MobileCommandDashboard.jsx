@@ -1,4 +1,4 @@
-import MobileVehicleRender from '../components/MobileVehicleRender';
+import TeslaVehicleRender from '../components/TeslaVehicleRender';
 
 function formatCurrency(value) {
   if (!Number.isFinite(value)) return '$0';
@@ -171,7 +171,7 @@ export default function MobileCommandDashboard({
 
       <article className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.06] shadow-xl shadow-black/20">
         <div className="relative h-40 overflow-hidden bg-[radial-gradient(circle_at_25%_18%,rgba(14,165,233,0.24),transparent_34%),linear-gradient(135deg,#171a20,#070914)]">
-          <MobileVehicleRender className="absolute inset-x-[-10px] bottom-[-12px] mx-auto h-40 w-[108%]" />
+          <TeslaVehicleRender vehicle={vehicle} className="absolute inset-x-[-22px] bottom-[-34px] mx-auto h-48 w-[118%]" />
           <div className="absolute left-4 top-4">
             <p className="text-[10px] font-black uppercase tracking-[0.22em] text-emerald-300">Primary Vehicle</p>
             <h2 className="mt-1 text-2xl font-black text-white">{vehicle.name || vehicle.display_name || vehicle.id || 'No Vehicle'}</h2>

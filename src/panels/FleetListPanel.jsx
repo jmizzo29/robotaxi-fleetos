@@ -1,4 +1,4 @@
-import VehicleSilhouette from '../components/VehicleSilhouette';
+import TeslaVehicleRender from '../components/TeslaVehicleRender';
 import { getVehicleOwnership } from '../data/vehicleOwnership';
 
 function formatCurrency(value) {
@@ -20,7 +20,7 @@ function FleetRow({ vehicle, onSelect }) {
       className="grid w-full grid-cols-[auto_minmax(0,1fr)] gap-3 rounded-lg border border-white/10 bg-slate-950/50 p-3 text-left transition hover:border-sky-400/30 hover:bg-slate-900 lg:grid-cols-[auto_minmax(0,1fr)_220px_110px]"
     >
       <div className={`flex h-14 w-16 shrink-0 items-center justify-center rounded-lg border ${vehicle.isReal ? 'border-emerald-300/30 bg-emerald-400/10' : 'border-sky-300/20 bg-sky-400/10'}`}>
-        <VehicleSilhouette className="w-14" />
+        <TeslaVehicleRender vehicle={vehicle} ownership={ownership} compact className="w-16" />
       </div>
       <div className="min-w-0">
         <div className="flex items-center gap-2">

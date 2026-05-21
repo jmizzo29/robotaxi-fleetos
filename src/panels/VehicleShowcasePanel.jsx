@@ -1,4 +1,4 @@
-import VehicleSilhouette from '../components/VehicleSilhouette';
+import TeslaVehicleRender from '../components/TeslaVehicleRender';
 
 function BatteryBar({ value = 0 }) {
   const battery = Number.isFinite(value) ? Math.max(0, Math.min(100, value)) : 0;
@@ -71,7 +71,7 @@ export default function VehicleShowcasePanel({ vehicle, fleet = [], onSync, isLo
               </span>
             </div>
 
-            <VehicleSilhouette className="mx-auto my-2 w-full max-w-[440px]" />
+            <TeslaVehicleRender vehicle={vehicle} className="mx-auto my-2 w-full max-w-[520px]" />
 
             <div className="mt-4 grid grid-cols-1 gap-4 md:grid-cols-[1fr_1.1fr]">
               <BatteryBar value={vehicle?.battery || 0} />
@@ -103,7 +103,7 @@ export default function VehicleShowcasePanel({ vehicle, fleet = [], onSync, isLo
           {[vehicle, ...simulatedPreview].filter(Boolean).map((item) => (
             <div key={item.id} className="flex items-center gap-3 rounded-lg border border-white/10 bg-slate-950/50 p-3">
               <div className={`h-10 w-10 rounded-lg border ${item.isReal ? 'border-emerald-300/30 bg-emerald-400/10' : 'border-sky-300/20 bg-sky-400/10'} flex items-center justify-center`}>
-                <VehicleSilhouette className="w-9" />
+                <TeslaVehicleRender vehicle={item} compact className="w-12" />
               </div>
               <div className="min-w-0 flex-1">
                 <p className="truncate text-sm font-black text-slate-100">{item.name || item.display_name || item.id}</p>
