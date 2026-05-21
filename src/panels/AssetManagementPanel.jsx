@@ -1,4 +1,10 @@
-import { getVehicleOwnership } from '../data/vehicleOwnership';
+import { useEffect, useState } from 'react';
+import {
+  getVehicleOwnership,
+  getVehicleOwnershipKey,
+  resetVehicleOwnership,
+  saveVehicleOwnership,
+} from '../data/vehicleOwnership';
 
 function formatCurrency(value) {
   if (!Number.isFinite(value)) return '$0';
@@ -27,15 +33,33 @@ function SummaryCard({ label, value, tone = 'text-slate-100' }) {
   );
 }
 
-function Field({ label, value }) {
+const fields = [
+  ['modelYear', 'Model Year', 'number'],
+  ['purchaseYear', 'Year Purchased', 'number'],
+  ['model', 'Model', 'text'],
+  ['trim', 'Trim', 'text'],
+  ['color', 'Color', 'text'],
+  ['tag', 'Tag', 'text'],
+  ['purchaseDate', 'Purchased', 'date'],
+  ['pricePaid', 'Price Paid', 'number'],
+  ['currentBalance', 'Balance', 'number'],
+  ['monthlyPayment', 'Monthly Payment', 'number'],
+  ['lender', 'Lender', 'text'],
+  ['registrationState', 'Registration', 'text'],
+  ['insuranceRenewal', 'Insurance Renewal', 'date'],
+];
+
+function Field({ label, name, type, value, onChange }) {
   return (
     <label className="block">
       <span className="mb-1 block text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-500">
         {label}
       </span>
       <input
-        readOnly
-        value={value || ''}
+        type={type}
+        name={name}
+        value={value ?? ''}
+        onChange={onChange}
         className="w-full rounded-md border border-white/10 bg-slate-950/70 px-3 py-2 text-sm font-semibold text-slate-100 outline-none"
       />
     </label>
@@ -43,6 +67,18 @@ function Field({ label, value }) {
 }
 
 export default function AssetManagementPanel({ fleet = [] }) {
+  const [, setRevision] = useState(0);
+
+  useEffect(() => {
+    const refresh = () => setRevision((current) => current + 1);
+    window.addEventListener('fleetos-ownership-updated', refresh);
+    window.addEventListener('storage', refresh);
+    return () => {
+      window.removeEventListener('fleetos-ownership-updated', refresh);
+      window.removeEventListener('storage', refresh);
+    };
+  }, []);
+
   const assets = fleet
     .map((vehicle) => ({
       vehicle,
@@ -66,41 +102,88 @@ export default function AssetManagementPanel({ fleet = [] }) {
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         {assets.map(({ vehicle, ownership }) => (
-          <article key={vehicle.id} className="rounded-lg border border-white/10 bg-slate-900/80 p-5 shadow-lg shadow-black/10">
-            <div className="mb-5 flex items-start justify-between gap-4">
-              <div>
-                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-emerald-300">
-                  Asset Record
-                </p>
-                <h2 className="text-2xl font-black tracking-tight">
-                  {vehicle.name || vehicle.display_name || vehicle.id}
-                </h2>
-                <p className="mt-1 text-sm text-slate-400">
-                  {ownership.modelYear} {ownership.model} - {ownership.tag}
-                </p>
-              </div>
-              <span className="rounded-full border border-white/10 bg-slate-950/70 px-3 py-1 text-xs font-black uppercase text-slate-300">
-                {vehicle.isReal ? 'Real' : 'Sim'}
-              </span>
-            </div>
-
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-              <Field label="Model Year" value={ownership.modelYear} />
-              <Field label="Year Purchased" value={ownership.purchaseYear} />
-              <Field label="Model" value={ownership.model} />
-              <Field label="Trim" value={ownership.trim} />
-              <Field label="Color" value={ownership.color} />
-              <Field label="Tag" value={ownership.tag} />
-              <Field label="Purchased" value={formatDate(ownership.purchaseDate)} />
-              <Field label="Price Paid" value={formatCurrency(ownership.pricePaid)} />
-              <Field label="Balance" value={formatCurrency(ownership.currentBalance)} />
-              <Field label="Monthly Payment" value={formatCurrency(ownership.monthlyPayment)} />
-              <Field label="Lender" value={ownership.lender} />
-              <Field label="Registration" value={ownership.registrationState} />
-            </div>
-          </article>
+          <EditableAssetCard
+            key={`${vehicle.id}-${JSON.stringify(ownership)}`}
+            vehicle={vehicle}
+            ownership={ownership}
+            onSaved={() => setRevision((current) => current + 1)}
+          />
         ))}
       </div>
     </section>
+  );
+}
+
+function EditableAssetCard({ vehicle, ownership, onSaved }) {
+  const [draft, setDraft] = useState(() => ownership);
+  const key = getVehicleOwnershipKey(vehicle);
+
+  const handleChange = (event) => {
+    const { name, value } = event.target;
+    setDraft((current) => ({ ...current, [name]: value }));
+  };
+
+  const handleSave = () => {
+    saveVehicleOwnership(key, draft);
+    onSaved?.();
+  };
+
+  const handleReset = () => {
+    resetVehicleOwnership(key);
+    onSaved?.();
+  };
+
+  return (
+    <article className="rounded-lg border border-white/10 bg-slate-900/80 p-5 shadow-lg shadow-black/10">
+      <div className="mb-5 flex items-start justify-between gap-4">
+        <div>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-emerald-300">
+            Editable Asset Record
+          </p>
+          <h2 className="text-2xl font-black tracking-tight">
+            {vehicle.name || vehicle.display_name || vehicle.id}
+          </h2>
+          <p className="mt-1 text-sm text-slate-400">
+            {draft.modelYear} {draft.model} - {draft.tag}
+          </p>
+        </div>
+        <span className="rounded-full border border-white/10 bg-slate-950/70 px-3 py-1 text-xs font-black uppercase text-slate-300">
+          {vehicle.isReal ? 'Real' : 'Sim'}
+        </span>
+      </div>
+
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        {fields.map(([name, label, type]) => (
+          <Field
+            key={name}
+            label={label}
+            name={name}
+            type={type}
+            value={draft[name]}
+            onChange={handleChange}
+          />
+        ))}
+      </div>
+
+      <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+        <button
+          type="button"
+          onClick={handleSave}
+          className="rounded-md border border-emerald-400/30 bg-emerald-400/10 px-4 py-3 text-sm font-bold text-emerald-100 transition hover:bg-emerald-400/20"
+        >
+          Save Record
+        </button>
+        <button
+          type="button"
+          onClick={handleReset}
+          className="rounded-md border border-white/10 bg-white/5 px-4 py-3 text-sm font-bold text-slate-200 transition hover:bg-white/10"
+        >
+          Reset Defaults
+        </button>
+        <div className="rounded-md border border-white/10 bg-slate-950/60 px-4 py-3 text-sm font-semibold text-slate-400">
+          Purchased {formatDate(draft.purchaseDate)} / {formatCurrency(Number(draft.pricePaid))}
+        </div>
+      </div>
+    </article>
   );
 }

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { updateFleet } from '../engine/simulationEngine';
 import chargingStationsFallback from '../data/chargingStations';
 import demandZones from '../data/demandZones';
+import { getVehicleOwnership } from '../data/vehicleOwnership';
 import { appendFleetMemory } from '../services/fleetMemory';
 import { getTeslaVehicles, mergeWithSimulation } from '../services/teslaService';
 
@@ -86,6 +87,22 @@ export function useFleetSimulation({
     { priority: 'MEDIUM', command: 'Delay Miami charging cycle until off-peak pricing' },
     { priority: 'CRITICAL', command: 'Investigate anomaly spike on CAR-003' },
   ]);
+
+  useEffect(() => {
+    const refreshOwnership = () => {
+      setFleet((current) => current.map((vehicle) => ({
+        ...vehicle,
+        ownership: getVehicleOwnership(vehicle) || vehicle.ownership,
+      })));
+    };
+
+    window.addEventListener('fleetos-ownership-updated', refreshOwnership);
+    window.addEventListener('storage', refreshOwnership);
+    return () => {
+      window.removeEventListener('fleetos-ownership-updated', refreshOwnership);
+      window.removeEventListener('storage', refreshOwnership);
+    };
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(() => {

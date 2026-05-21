@@ -76,9 +76,73 @@ const vehicleOwnership = {
   },
 };
 
+const OWNERSHIP_STORAGE_KEY = 'fleetos.assetRecords.v1';
+const numericFields = new Set([
+  'modelYear',
+  'purchaseYear',
+  'pricePaid',
+  'currentBalance',
+  'monthlyPayment',
+]);
+
+function canUseStorage() {
+  return typeof window !== 'undefined' && Boolean(window.localStorage);
+}
+
+export function getVehicleOwnershipKey(vehicle) {
+  return vehicle?.name || vehicle?.display_name || vehicle?.id || vehicle?.vin;
+}
+
+export function readSavedOwnershipRecords() {
+  if (!canUseStorage()) return {};
+
+  try {
+    const parsed = JSON.parse(window.localStorage.getItem(OWNERSHIP_STORAGE_KEY) || '{}');
+    return parsed && typeof parsed === 'object' ? parsed : {};
+  } catch {
+    return {};
+  }
+}
+
+function normalizeOwnershipRecord(record = {}) {
+  return Object.fromEntries(
+    Object.entries(record).map(([key, value]) => [
+      key,
+      numericFields.has(key) && value !== '' && value !== null ? Number(value) : value,
+    ]),
+  );
+}
+
+export function saveVehicleOwnership(key, record) {
+  if (!canUseStorage() || !key) return null;
+
+  const current = readSavedOwnershipRecords();
+  const next = {
+    ...current,
+    [key]: normalizeOwnershipRecord(record),
+  };
+
+  window.localStorage.setItem(OWNERSHIP_STORAGE_KEY, JSON.stringify(next));
+  window.dispatchEvent(new CustomEvent('fleetos-ownership-updated', { detail: next }));
+  return next[key];
+}
+
+export function resetVehicleOwnership(key) {
+  if (!canUseStorage() || !key) return;
+
+  const current = readSavedOwnershipRecords();
+  delete current[key];
+  window.localStorage.setItem(OWNERSHIP_STORAGE_KEY, JSON.stringify(current));
+  window.dispatchEvent(new CustomEvent('fleetos-ownership-updated', { detail: current }));
+}
+
 export function getVehicleOwnership(vehicle) {
-  const key = vehicle?.name || vehicle?.display_name || vehicle?.id;
-  return vehicleOwnership[key] || vehicleOwnership[vehicle?.id] || null;
+  const key = getVehicleOwnershipKey(vehicle);
+  const saved = readSavedOwnershipRecords();
+  const base = vehicleOwnership[key] || vehicleOwnership[vehicle?.id] || {};
+  const override = saved[key] || saved[vehicle?.id] || {};
+  const merged = { ...base, ...override };
+  return Object.keys(merged).length ? merged : null;
 }
 
 export default vehicleOwnership;
