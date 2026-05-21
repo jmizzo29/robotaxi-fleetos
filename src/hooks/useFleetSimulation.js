@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { updateFleet } from '../engine/simulationEngine';
 import chargingStationsFallback from '../data/chargingStations';
 import demandZones from '../data/demandZones';
+import { appendFleetMemory } from '../services/fleetMemory';
 import { getTeslaVehicles, mergeWithSimulation } from '../services/teslaService';
 
 const generatedFleet = Array.from({ length: 10 }, (_, i) => ({
@@ -133,6 +134,25 @@ export function useFleetSimulation({
 
       const syncedAt = new Date().toISOString();
       setFleet((current) => mergeWithSimulation(realVehicles, current));
+      realVehicles.forEach((vehicle) => {
+        appendFleetMemory({
+          type: 'Telemetry',
+          title: `${vehicle.display_name || vehicle.name || vehicle.vin || 'Tesla'} telemetry sync`,
+          detail: `${vehicle.status || vehicle.state || 'Online'} with ${Math.round(vehicle.battery || 0)}% battery and ${vehicle.chargingState || 'unknown charge state'}.`,
+          timestamp: syncedAt,
+          source: 'Tesla Fleet API',
+          status: 'synced',
+          ragReady: true,
+          metadata: {
+            vin: vehicle.vin,
+            battery: vehicle.battery,
+            latitude: vehicle.latitude,
+            longitude: vehicle.longitude,
+            chargingState: vehicle.chargingState,
+            odometer: vehicle.odometer,
+          },
+        });
+      });
       setRealSyncStatus({
         state: 'success',
         lastSyncedAt: syncedAt,
@@ -158,8 +178,18 @@ export function useFleetSimulation({
   }, []);
 
   const enqueueCommand = (command, priority = 'NORMAL') => {
+    appendFleetMemory({
+      type: 'Command',
+      title: command,
+      detail: 'Operator command queued from FleetOS workflow.',
+      source: priority,
+      status: 'queued',
+      ragReady: false,
+      metadata: { priority },
+    });
+
     setCommandQueue((current) => [
-      { priority, command },
+      { priority, command, timestamp: new Date().toISOString() },
       ...current.slice(0, 5),
     ]);
   };
