@@ -1,7 +1,19 @@
 // src/services/teslaService.js
-const API_BASE = import.meta.env.VITE_TESLA_API_BASE || (
-  import.meta.env.DEV ? 'http://localhost:3001/api' : '/api'
-);
+function resolveApiBase() {
+  const configuredBase = import.meta.env.VITE_TESLA_API_BASE;
+
+  if (import.meta.env.DEV) {
+    return configuredBase || 'http://localhost:3001/api';
+  }
+
+  if (!configuredBase || configuredBase.includes('localhost') || configuredBase.includes('127.0.0.1')) {
+    return '/api';
+  }
+
+  return configuredBase;
+}
+
+const API_BASE = resolveApiBase();
 const PARKED_TESLA_ANCHOR = {
   latitude: 28.62,
   longitude: -81.22,
@@ -14,7 +26,9 @@ export async function getTeslaVehicles() {
   }
 
   try {
-    const response = await fetch(`${API_BASE}/vehicles`);
+    const response = await fetch(`${API_BASE}/vehicles?ts=${Date.now()}`, {
+      cache: 'no-store',
+    });
     if (!response.ok) {
       const detail = await response.json().catch(() => ({}));
       console.warn('Backend returned an error, using simulation only:', detail.message || response.status);
