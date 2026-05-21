@@ -1,3 +1,9 @@
+import crypto from 'node:crypto';
+
+function fingerprint(value) {
+  return value ? crypto.createHash('sha256').update(value).digest('hex').slice(0, 12) : null;
+}
+
 export default function handler(req, res) {
   res.status(200).json({
     ok: true,
@@ -7,5 +13,11 @@ export default function handler(req, res) {
     redirectUri: process.env.TESLA_REDIRECT_URI || 'http://localhost:3001/callback',
     fleetApiBase: process.env.TESLA_API_BASE || 'https://fleet-api.prd.na.vn.cloud.tesla.com',
     partnerDomain: process.env.TESLA_PARTNER_DOMAIN || null,
+    envFingerprint: {
+      clientId: fingerprint(process.env.TESLA_CLIENT_ID),
+      refreshToken: fingerprint(process.env.TESLA_REFRESH_TOKEN),
+      clientIdLength: process.env.TESLA_CLIENT_ID?.length || 0,
+      refreshTokenLength: process.env.TESLA_REFRESH_TOKEN?.length || 0,
+    },
   });
 }
