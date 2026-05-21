@@ -1,6 +1,6 @@
 // src/services/teslaService.js
 const API_BASE = import.meta.env.VITE_TESLA_API_BASE || (
-  import.meta.env.DEV ? 'http://localhost:3001/api' : ''
+  import.meta.env.DEV ? 'http://localhost:3001/api' : '/api'
 );
 const PARKED_TESLA_ANCHOR = {
   latitude: 28.62,

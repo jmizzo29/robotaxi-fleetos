@@ -19,10 +19,9 @@ export default defineConfig([
     },
   },
   {
-    files: ['backend/**/*.js'],
+    files: ['backend/**/*.js', 'api/**/*.js'],
     languageOptions: {
       globals: globals.node,
-      sourceType: 'commonjs',
     },
   },
 ])
