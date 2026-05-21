@@ -1,4 +1,4 @@
-import TeslaVehicleRender from '../components/TeslaVehicleRender';
+import VehicleIdentityPlate from '../components/VehicleIdentityPlate';
 
 function formatCurrency(value) {
   if (!Number.isFinite(value)) return '$0';
@@ -170,15 +170,8 @@ export default function MobileCommandDashboard({
       <MapPreview fleet={fleet} onNavigate={onNavigate} />
 
       <article className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.06] shadow-xl shadow-black/20">
-        <div className="relative h-40 overflow-hidden bg-[radial-gradient(circle_at_25%_18%,rgba(14,165,233,0.24),transparent_34%),linear-gradient(135deg,#171a20,#070914)]">
-          <TeslaVehicleRender vehicle={vehicle} className="absolute inset-x-[-22px] bottom-[-34px] mx-auto h-48 w-[118%]" />
-          <div className="absolute left-4 top-4">
-            <p className="text-[10px] font-black uppercase tracking-[0.22em] text-emerald-300">Primary Vehicle</p>
-            <h2 className="mt-1 text-2xl font-black text-white">{vehicle.name || vehicle.display_name || vehicle.id || 'No Vehicle'}</h2>
-          </div>
-          <span className="absolute right-4 top-4 rounded-full border border-emerald-300/30 bg-emerald-400/15 px-3 py-1 text-[10px] font-black uppercase text-emerald-200">
-            {vehicle.status || vehicle.state || 'Ready'}
-          </span>
+        <div className="p-3">
+          <VehicleIdentityPlate vehicle={vehicle} />
         </div>
 
         <div className="grid grid-cols-3 gap-px bg-white/10">
