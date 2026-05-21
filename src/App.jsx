@@ -6,6 +6,7 @@ import Timeline from './components/Timeline';
 import AlertCenter from './panels/AlertCenter';
 import CommandCenter from './panels/CommandCenter';
 import ForecastPanel from './panels/ForecastPanel';
+import TeslaTelemetryPanel from './panels/TeslaTelemetryPanel';
 import chargingStations from './data/chargingStations';
 import demandZones from './data/demandZones';
 import weatherZones from './data/weatherZones';
@@ -108,6 +109,7 @@ export default function App() {
     enqueueCommand,
     refreshRealTesla,
     isLoadingReal,
+    realSyncStatus,
   } = useFleetSimulation({
     initialFleet,
     chargingStations,
@@ -128,6 +130,18 @@ export default function App() {
     () => Math.round(fleet.reduce((sum, vehicle) => sum + vehicle.anomalyRisk, 0) / fleet.length),
     [fleet],
   );
+
+  const realVehicles = useMemo(
+    () => fleet.filter((vehicle) => vehicle.isReal),
+    [fleet],
+  );
+
+  const simulatedVehicles = useMemo(
+    () => fleet.filter((vehicle) => !vehicle.isReal),
+    [fleet],
+  );
+
+  const primaryTesla = realVehicles[0] || null;
 
   const combinedTimeline = [
     ...commandQueue.map((cmd) => ({
@@ -181,6 +195,16 @@ export default function App() {
                   </div>
 
                   <div className="flex justify-between">
+                    <span className="text-slate-400">Real Tesla</span>
+                    <span className="font-bold text-emerald-300">{realVehicles.length}</span>
+                  </div>
+
+                  <div className="flex justify-between">
+                    <span className="text-slate-400">Simulation Fleet</span>
+                    <span className="font-bold text-slate-300">{simulatedVehicles.length}</span>
+                  </div>
+
+                  <div className="flex justify-between">
                     <span className="text-slate-400">Replay Engine</span>
                     <span className={`font-bold ${replayMode ? 'text-sky-300' : 'text-slate-500'}`}>
                       {replayMode ? 'ACTIVE' : 'OFFLINE'}
@@ -205,6 +229,13 @@ export default function App() {
             avgProfitability={avgProfitability}
             avgAnomalyRisk={avgAnomalyRisk}
             forecast={forecast}
+          />
+
+          <TeslaTelemetryPanel
+            vehicle={primaryTesla}
+            syncStatus={realSyncStatus}
+            isLoading={isLoadingReal}
+            onSync={refreshRealTesla}
           />
 
           <ForecastPanel forecast={forecast} />

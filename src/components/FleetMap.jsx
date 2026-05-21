@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import Map, { Layer, Marker, Popup, Source } from 'react-map-gl/mapbox';
 import HeatmapLayer from './HeatmapLayer';
 import heatmapData from '../data/heatmapData';
@@ -112,7 +113,20 @@ export default function FleetMap({
   demandZones = [],
   chargingStations = [],
 }) {
+  const mapRef = useRef(null);
   const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
+  const realVehicle = fleet.find((vehicle) => vehicle.isReal && vehicle.latitude && vehicle.longitude);
+
+  useEffect(() => {
+    if (!realVehicle || !mapRef.current) return;
+
+    mapRef.current.flyTo({
+      center: [realVehicle.longitude, realVehicle.latitude],
+      zoom: 11,
+      duration: 900,
+      essential: true,
+    });
+  }, [realVehicle]);
 
   if (!mapboxToken) {
     return (
@@ -128,6 +142,7 @@ export default function FleetMap({
     <div className="overflow-hidden rounded-lg border border-white/10 bg-slate-900/80 shadow-xl shadow-black/20">
       <div className="h-[900px]">
         <Map
+          ref={mapRef}
           mapboxAccessToken={mapboxToken}
           initialViewState={{
             longitude: -81.7,

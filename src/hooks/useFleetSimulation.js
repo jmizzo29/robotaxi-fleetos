@@ -63,6 +63,11 @@ export function useFleetSimulation({
   const [fleet, setFleet] = useState(initialFleet);
   const [replayMode, setReplayMode] = useState(replayModeInitial);
   const [isLoadingReal, setIsLoadingReal] = useState(false);
+  const [realSyncStatus, setRealSyncStatus] = useState({
+    state: 'idle',
+    lastSyncedAt: null,
+    message: 'Tesla telemetry has not synced yet.',
+  });
   const [timelineEvents, setTimelineEvents] = useState([
     {
       time: '7:42 PM',
@@ -108,9 +113,40 @@ export function useFleetSimulation({
 
   const refreshRealTesla = async () => {
     setIsLoadingReal(true);
-    const realVehicles = await getTeslaVehicles();
-    setFleet((current) => mergeWithSimulation(realVehicles, current));
-    setIsLoadingReal(false);
+    setRealSyncStatus((current) => ({
+      ...current,
+      state: 'loading',
+      message: 'Syncing Tesla telemetry...',
+    }));
+
+    try {
+      const realVehicles = await getTeslaVehicles();
+
+      if (!realVehicles || realVehicles.length === 0) {
+        setRealSyncStatus({
+          state: 'error',
+          lastSyncedAt: null,
+          message: 'No Tesla vehicles returned from the telemetry API.',
+        });
+        return;
+      }
+
+      const syncedAt = new Date().toISOString();
+      setFleet((current) => mergeWithSimulation(realVehicles, current));
+      setRealSyncStatus({
+        state: 'success',
+        lastSyncedAt: syncedAt,
+        message: `${realVehicles.length} Tesla vehicle${realVehicles.length === 1 ? '' : 's'} synced.`,
+      });
+    } catch (error) {
+      setRealSyncStatus({
+        state: 'error',
+        lastSyncedAt: null,
+        message: error.message || 'Tesla telemetry sync failed.',
+      });
+    } finally {
+      setIsLoadingReal(false);
+    }
   };
 
   useEffect(() => {
@@ -143,6 +179,7 @@ export function useFleetSimulation({
     enqueueCommand,
     refreshRealTesla,
     isLoadingReal,
+    realSyncStatus,
     demandZones,
     chargingStations,
   };
