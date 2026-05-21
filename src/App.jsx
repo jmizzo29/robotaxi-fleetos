@@ -6,7 +6,9 @@ import PageHeader from './components/PageHeader';
 import Sidebar from './components/Sidebar';
 import Timeline from './components/Timeline';
 import AIRecommendationPanel from './panels/AIRecommendationPanel';
+import AgentOrchestrationPanel from './panels/AgentOrchestrationPanel';
 import CommandCenter from './panels/CommandCenter';
+import CommandInboxPanel from './panels/CommandInboxPanel';
 import ForecastPanel from './panels/ForecastPanel';
 import FleetListPanel from './panels/FleetListPanel';
 import IntelligentAlertCenter from './panels/IntelligentAlertCenter';
@@ -228,6 +230,12 @@ export default function App() {
           onSync={refreshRealTesla}
           isLoading={isLoadingReal}
         />
+        <AgentOrchestrationPanel
+          analysis={aiAnalysis}
+          isAnalyzing={isAnalyzing}
+          realVehicleCount={realVehicles.length}
+          commandCount={commandQueue.length}
+        />
         <QuickActionGrid
           onSync={refreshRealTesla}
           onExecute={enqueueCommand}
@@ -301,6 +309,7 @@ export default function App() {
           isAnalyzing={isAnalyzing}
           onExecute={enqueueCommand}
         />
+        <CommandInboxPanel commandQueue={commandQueue} />
         <CommandCenter
           replayMode={replayMode}
           setReplayMode={setReplayMode}
