@@ -86,6 +86,11 @@ export default function TeslaCapabilitiesPanel({
 
   const handleWake = async () => {
     if (!vehicle) return;
+    const confirmed = window.confirm(
+      'Wake Vehicle asks Tesla to bring the vehicle online. This may wake the car and use vehicle power. Continue?',
+    );
+
+    if (!confirmed) return;
 
     setWakeStatus({ state: 'loading', message: 'Sending wake request to Tesla...' });
 

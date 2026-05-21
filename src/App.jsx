@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import CommandSafetyModal from './components/CommandSafetyModal';
 import FleetMap from './components/FleetMap';
 import KPIGrid from './components/KPIGrid';
 import MobileBottomNav from './components/MobileBottomNav';
@@ -119,6 +120,7 @@ const initialFleet = [
 
 export default function App() {
   const [selectedVehicle, setSelectedVehicle] = useState(null);
+  const [pendingCommand, setPendingCommand] = useState(null);
   const [route, navigate] = useHashRoute();
 
   const {
@@ -170,6 +172,19 @@ export default function App() {
     fleet,
     realSyncStatus,
   });
+  const requestCommand = (command, priority = 'NORMAL') => {
+    setPendingCommand({
+      command,
+      priority,
+      requestedAt: new Date().toISOString(),
+    });
+  };
+
+  const confirmCommand = () => {
+    if (!pendingCommand) return;
+    enqueueCommand(pendingCommand.command, pendingCommand.priority);
+    setPendingCommand(null);
+  };
 
   const combinedTimeline = [
     ...commandQueue.map((cmd) => ({
@@ -222,7 +237,7 @@ export default function App() {
             totalRevenue={totalRevenue}
             avgAnomalyRisk={avgAnomalyRisk}
             onSync={refreshRealTesla}
-            onExecute={enqueueCommand}
+            onExecute={requestCommand}
             onNavigate={navigate}
             isLoading={isLoadingReal}
             syncStatus={realSyncStatus}
@@ -262,7 +277,7 @@ export default function App() {
           />
           <QuickActionGrid
             onSync={refreshRealTesla}
-            onExecute={enqueueCommand}
+            onExecute={requestCommand}
             isLoading={isLoadingReal}
           />
           <ForecastPanel forecast={forecast} />
@@ -317,7 +332,7 @@ export default function App() {
           onSync={refreshRealTesla}
           isLoading={isLoadingReal}
           onShowMap={() => navigate('map')}
-          onQueueCommand={enqueueCommand}
+          onQueueCommand={requestCommand}
         />
       </>
     ),
@@ -342,7 +357,7 @@ export default function App() {
         />
         <FleetFinancePanel
           fleet={fleet}
-          onQueueCommand={enqueueCommand}
+          onQueueCommand={requestCommand}
         />
       </>
     ),
@@ -356,7 +371,7 @@ export default function App() {
         />
         <ChargingReadinessPanel
           fleet={fleet}
-          onQueueCommand={enqueueCommand}
+          onQueueCommand={requestCommand}
         />
       </>
     ),
@@ -372,7 +387,7 @@ export default function App() {
           fleet={fleet}
           demandZones={demandZones}
           chargingStations={chargingStations}
-          onQueueCommand={enqueueCommand}
+          onQueueCommand={requestCommand}
           onShowMap={() => navigate('map')}
         />
       </>
@@ -387,7 +402,7 @@ export default function App() {
         />
         <DriverlessReadinessPanel
           fleet={fleet}
-          onQueueCommand={enqueueCommand}
+          onQueueCommand={requestCommand}
         />
       </>
     ),
@@ -402,14 +417,14 @@ export default function App() {
         <AIRecommendationPanel
           recommendations={aiAnalysis.recommendations}
           isAnalyzing={isAnalyzing}
-          onExecute={enqueueCommand}
+          onExecute={requestCommand}
         />
         <CommandInboxPanel commandQueue={commandQueue} />
         <CommandCenter
           replayMode={replayMode}
           setReplayMode={setReplayMode}
           fleet={fleet}
-          enqueueCommand={enqueueCommand}
+          enqueueCommand={requestCommand}
         />
       </>
     ),
@@ -485,7 +500,7 @@ export default function App() {
           isLoading={isLoadingReal}
           onSync={refreshRealTesla}
           onShowMap={() => navigate('map')}
-          onQueueCommand={enqueueCommand}
+          onQueueCommand={requestCommand}
         />
       </>
     ),
@@ -526,6 +541,11 @@ export default function App() {
       </main>
 
       <MobileBottomNav route={route} onNavigate={navigate} />
+      <CommandSafetyModal
+        pendingCommand={pendingCommand}
+        onCancel={() => setPendingCommand(null)}
+        onConfirm={confirmCommand}
+      />
     </div>
   );
 }
