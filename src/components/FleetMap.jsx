@@ -21,9 +21,11 @@ function formatValue(value, fallback = 'Unavailable') {
 
 function MetricRow({ label, value, emphasize = false }) {
   return (
-    <div className="flex items-center justify-between gap-4">
+    <div className="grid grid-cols-[86px_minmax(0,1fr)] items-center gap-3">
       <span className="text-slate-400">{label}</span>
-      <span className={emphasize ? 'font-black text-white' : 'font-semibold text-slate-100'}>{value}</span>
+      <span className={`${emphasize ? 'font-black text-white' : 'font-semibold text-slate-100'} min-w-0 truncate text-right`}>
+        {value}
+      </span>
     </div>
   );
 }
@@ -31,29 +33,29 @@ function MetricRow({ label, value, emphasize = false }) {
 function VehiclePopup({ vehicle }) {
   if (vehicle.isReal) {
     return (
-      <div className="w-[268px] overflow-hidden rounded-[14px] border border-emerald-300/20 bg-slate-950/95 text-white backdrop-blur">
-        <div className="border-b border-white/10 p-4">
-          <div className="flex items-start justify-between gap-3">
-            <div>
+      <div className="w-[260px] overflow-hidden rounded-[14px] border border-emerald-300/20 bg-slate-950/95 text-white backdrop-blur">
+        <div className="border-b border-white/10 p-4 pr-10">
+          <div className="flex items-start justify-between gap-2">
+            <div className="min-w-0">
               <p className="text-[10px] font-bold uppercase tracking-[0.22em] text-emerald-300">Tesla Telemetry</p>
-              <h3 className="mt-1 text-2xl font-black leading-none">{vehicle.name || vehicle.display_name || 'My Tesla'}</h3>
+              <h3 className="mt-1 truncate text-2xl font-black leading-none">{vehicle.name || vehicle.display_name || 'My Tesla'}</h3>
             </div>
-            <span className="rounded-full border border-emerald-300/30 bg-emerald-400/15 px-2.5 py-1 text-[10px] font-black text-emerald-200">
+            <span className="mt-0.5 shrink-0 rounded-full border border-emerald-300/30 bg-emerald-400/15 px-2 py-1 text-[9px] font-black text-emerald-200">
               {formatValue(vehicle.status)}
             </span>
           </div>
-          {vehicle.vin && <p className="mt-2 text-[10px] text-slate-500">{vehicle.vin}</p>}
+          {vehicle.vin && <p className="mt-2 truncate text-[10px] text-slate-500">{vehicle.vin}</p>}
         </div>
 
         <div className="space-y-3 p-4 text-xs">
           <div className="grid grid-cols-2 gap-2">
-            <div className="rounded-lg border border-white/10 bg-white/[0.06] p-3">
+            <div className="min-w-0 rounded-lg border border-white/10 bg-white/[0.06] p-3">
               <p className="text-slate-400">Battery</p>
               <p className="mt-1 text-2xl font-black leading-none">
                 {Number.isFinite(vehicle.battery) ? `${Math.round(vehicle.battery)}%` : '--'}
               </p>
             </div>
-            <div className="rounded-lg border border-white/10 bg-white/[0.06] p-3">
+            <div className="min-w-0 rounded-lg border border-white/10 bg-white/[0.06] p-3">
               <p className="text-slate-400">Speed</p>
               <p className="mt-1 text-2xl font-black leading-none">{vehicle.speed || 0}<span className="text-xs text-slate-400"> mph</span></p>
             </div>
@@ -72,10 +74,10 @@ function VehiclePopup({ vehicle }) {
 
           <div className="rounded-lg border border-emerald-300/15 bg-emerald-400/10 p-3 text-emerald-100">
             <p className="font-black">Current State</p>
-            <p className="mt-1 text-emerald-50/80">{vehicle.assignment || 'Synced Tesla telemetry'}</p>
+              <p className="mt-1 break-words text-emerald-50/80">{vehicle.assignment || 'Synced Tesla telemetry'}</p>
+            </div>
           </div>
         </div>
-      </div>
     );
   }
 
@@ -248,6 +250,7 @@ export default function FleetMap({
               closeOnClick={false}
               onClose={() => setSelectedVehicle(null)}
               anchor="top"
+              offset={18}
             >
               <VehiclePopup vehicle={selectedVehicle} />
             </Popup>
