@@ -10,6 +10,7 @@ export default function Sidebar({
     ['overview', 'Overview'],
     ['map', 'Live Map'],
     ['fleet', 'Fleet'],
+    ['vehicle', 'Vehicle Detail'],
     ['ai', 'AI Command'],
     ['alerts', 'Alerts'],
     ['settings', 'Settings'],

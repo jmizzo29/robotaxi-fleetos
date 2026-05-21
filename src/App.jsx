@@ -13,6 +13,7 @@ import IntelligentAlertCenter from './panels/IntelligentAlertCenter';
 import QuickActionGrid from './panels/QuickActionGrid';
 import SettingsPanel from './panels/SettingsPanel';
 import TeslaTelemetryPanel from './panels/TeslaTelemetryPanel';
+import VehicleDetailPanel from './panels/VehicleDetailPanel';
 import VehicleShowcasePanel from './panels/VehicleShowcasePanel';
 import chargingStations from './data/chargingStations';
 import demandZones from './data/demandZones';
@@ -152,6 +153,7 @@ export default function App() {
   );
 
   const primaryTesla = realVehicles[0] || null;
+  const activeVehicle = selectedVehicle || primaryTesla || fleet[0] || null;
   const { analysis: aiAnalysis, isAnalyzing } = useAiFleetAnalysis({
     fleet,
     realSyncStatus,
@@ -264,8 +266,25 @@ export default function App() {
           fleet={fleet}
           onSelect={(vehicle) => {
             setSelectedVehicle(vehicle);
-            navigate('map');
+            navigate('vehicle');
           }}
+        />
+      </>
+    ),
+    vehicle: (
+      <>
+        <PageHeader
+          eyebrow="Vehicle Detail"
+          title={activeVehicle ? activeVehicle.name || activeVehicle.display_name || activeVehicle.id : 'Vehicle Detail'}
+          description="Inspect telemetry, readiness, controls, and AI actions for the selected fleet vehicle."
+          action={operationsStatus}
+        />
+        <VehicleDetailPanel
+          vehicle={activeVehicle}
+          onSync={refreshRealTesla}
+          isLoading={isLoadingReal}
+          onShowMap={() => navigate('map')}
+          onQueueCommand={enqueueCommand}
         />
       </>
     ),
