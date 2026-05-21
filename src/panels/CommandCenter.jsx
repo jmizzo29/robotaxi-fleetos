@@ -11,16 +11,16 @@ export default function CommandCenter({
 
   return (
 
-    <div className="bg-[#0b1220] border border-cyan-500/10 rounded-[32px] p-6 mb-8">
+    <div className="mb-8 rounded-lg border border-white/10 bg-slate-900/80 p-6 shadow-lg shadow-black/10">
 
       <div className="flex items-center justify-between mb-6">
 
-        <h2 className="text-3xl font-black">
-          Fleet Command Center
+        <h2 className="text-2xl font-black tracking-tight">
+          Command Center
         </h2>
 
-        <div className="text-sm text-cyan-300 font-semibold">
-          Operator Access Level: OMEGA
+        <div className="text-sm font-semibold text-sky-300">
+          Operator Mode: Live
         </div>
 
       </div>
@@ -31,10 +31,10 @@ export default function CommandCenter({
           onClick={() =>
             executeCommand('Emergency Fleet Rebalance', 'HIGH')
           }
-          className="bg-cyan-500/10 border border-cyan-500/20 hover:bg-cyan-500/20 transition-all rounded-2xl p-5 text-left"
+          className="rounded-lg border border-sky-500/20 bg-sky-500/10 p-5 text-left transition-all hover:bg-sky-500/20"
         >
 
-          <p className="text-cyan-300 text-sm font-bold mb-2">
+          <p className="mb-2 text-sm font-bold text-sky-300">
             DISPATCH
           </p>
 
@@ -52,7 +52,7 @@ export default function CommandCenter({
           onClick={() =>
             executeCommand('Regional Lockdown Activated', 'CRITICAL')
           }
-          className="bg-red-500/10 border border-red-500/20 hover:bg-red-500/20 transition-all rounded-2xl p-5 text-left"
+          className="rounded-lg border border-red-500/20 bg-red-500/10 p-5 text-left transition-all hover:bg-red-500/20"
         >
 
           <p className="text-red-300 text-sm font-bold mb-2">
@@ -73,10 +73,10 @@ export default function CommandCenter({
           onClick={() =>
             executeCommand('Charging Optimization Triggered', 'NORMAL')
           }
-          className="bg-green-500/10 border border-green-500/20 hover:bg-green-500/20 transition-all rounded-2xl p-5 text-left"
+          className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-5 text-left transition-all hover:bg-emerald-500/20"
         >
 
-          <p className="text-green-300 text-sm font-bold mb-2">
+          <p className="mb-2 text-sm font-bold text-emerald-300">
             ENERGY
           </p>
 
@@ -94,10 +94,10 @@ export default function CommandCenter({
           onClick={() =>
             setReplayMode(!replayMode)
           }
-          className="bg-purple-500/10 border border-purple-500/20 hover:bg-purple-500/20 transition-all rounded-2xl p-5 text-left"
+          className="rounded-lg border border-violet-500/20 bg-violet-500/10 p-5 text-left transition-all hover:bg-violet-500/20"
         >
 
-          <p className="text-purple-300 text-sm font-bold mb-2">
+          <p className="mb-2 text-sm font-bold text-violet-300">
             SIMULATION
           </p>
 
@@ -117,7 +117,7 @@ export default function CommandCenter({
 
       {/* LIVE FLEET SUMMARY */}
 
-      <div className="mt-8 bg-black/20 rounded-2xl p-5 border border-white/5">
+      <div className="mt-8 rounded-lg border border-white/5 bg-slate-950/50 p-5">
 
         <div className="flex items-center justify-between mb-4">
 
@@ -125,7 +125,7 @@ export default function CommandCenter({
             Fleet Readiness
           </h3>
 
-          <span className="text-green-300 font-bold">
+          <span className="font-bold text-emerald-300">
             {fleet.length} ACTIVE VEHICLES
           </span>
 
@@ -137,12 +137,12 @@ export default function CommandCenter({
 
             <div
               key={vehicle.id}
-              className="bg-[#111827] rounded-xl p-4 border border-cyan-500/10"
+              className="rounded-lg border border-white/10 bg-slate-900 p-4"
             >
 
               <div className="flex justify-between mb-2">
 
-                <span className="font-bold text-cyan-300">
+                <span className="font-bold text-sky-300">
                   {vehicle.id}
                 </span>
 
@@ -151,7 +151,7 @@ export default function CommandCenter({
                     ${
                       vehicle.battery < 30
                         ? 'text-yellow-300'
-                        : 'text-green-300'
+                        : 'text-emerald-300'
                     }`}
                 >
                   {Math.round(vehicle.battery)}%
@@ -170,7 +170,7 @@ export default function CommandCenter({
                     ${
                       vehicle.anomalyRisk > 20
                         ? 'bg-red-500'
-                        : 'bg-cyan-400'
+                        : 'bg-sky-400'
                     }`}
                   style={{
                     width: `${vehicle.utilization}%`

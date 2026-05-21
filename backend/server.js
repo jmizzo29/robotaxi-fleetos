@@ -242,6 +242,7 @@ async function teslaRequest(path, options = {}) {
 function normalizeVehicle(vehicle, telemetry = {}) {
   const chargeState = telemetry.charge_state || vehicle.charge_state || {};
   const driveState = telemetry.drive_state || vehicle.drive_state || {};
+  const locationData = telemetry.location_data || vehicle.location_data || {};
   const vehicleState = telemetry.vehicle_state || vehicle.vehicle_state || {};
   const vin = vehicle.vin || telemetry.vin;
   const state = vehicle.state || telemetry.state || 'unknown';
@@ -257,19 +258,27 @@ function normalizeVehicle(vehicle, telemetry = {}) {
     display_name: vehicle.display_name || vehicleState.vehicle_name || 'My Tesla',
     state,
     charge_state: chargeState,
-    drive_state: driveState,
+    drive_state: {
+      ...driveState,
+      latitude: driveState.latitude ?? locationData.latitude,
+      longitude: driveState.longitude ?? locationData.longitude,
+      heading: driveState.heading ?? locationData.heading,
+      gps_as_of: driveState.gps_as_of ?? locationData.gps_as_of,
+    },
+    location_data: locationData,
     vehicle_state: vehicleState,
     status,
     battery: chargeState.battery_level,
-    latitude: driveState.latitude,
-    longitude: driveState.longitude,
+    latitude: driveState.latitude ?? locationData.latitude,
+    longitude: driveState.longitude ?? locationData.longitude,
     chargingState: chargeState.charging_state,
     softwareVersion: vehicleState.car_version,
     locked: vehicleState.locked,
     serviceMode: vehicleState.service_mode,
     odometer: vehicleState.odometer,
     speed: driveState.speed,
-    heading: driveState.heading,
+    heading: driveState.heading ?? locationData.heading,
+    gpsAsOf: driveState.gps_as_of ?? locationData.gps_as_of,
     syncedAt: new Date().toISOString(),
   };
 }
@@ -287,7 +296,11 @@ async function fetchVehicles() {
       }
 
       try {
-        const telemetryPayload = await teslaRequest(`/api/1/vehicles/${vin}/vehicle_data`);
+        const telemetryPayload = await teslaRequest(`/api/1/vehicles/${vin}/vehicle_data`, {
+          params: {
+            endpoints: 'charge_state;drive_state;location_data;vehicle_state',
+          },
+        });
         return normalizeVehicle(vehicle, telemetryPayload.response || {});
       } catch (error) {
         console.warn(`Tesla telemetry unavailable for ${vin}: ${error.response?.status || error.message}`);

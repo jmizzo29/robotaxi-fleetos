@@ -138,7 +138,7 @@ export default function App() {
   ];
 
   return (
-    <div className="min-h-screen bg-[#050816] text-white flex">
+    <div className="min-h-screen bg-[#0f172a] text-slate-100 flex">
       <Sidebar
         replayMode={replayMode}
         setReplayMode={setReplayMode}
@@ -146,46 +146,43 @@ export default function App() {
         demandZones={demandZones}
       />
 
-      <main className="flex-1 p-6 lg:p-8 overflow-y-auto">
+      <main className="flex-1 overflow-y-auto bg-[radial-gradient(circle_at_top_left,rgba(14,165,233,0.08),transparent_34%),linear-gradient(180deg,#111827_0%,#0f172a_100%)] p-6 lg:p-8">
         <div className="max-w-[1900px] mx-auto">
           <header className="mb-8">
             <div className="flex items-center gap-3 mb-3">
-              <div className="h-3 w-3 rounded-full bg-green-400 animate-pulse" />
-              <span className="uppercase tracking-[0.3em] text-green-300 text-xs">
-                Fleet Live
+              <div className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
+              <span className="uppercase tracking-[0.28em] text-emerald-300 text-xs">
+                Live Operations
               </span>
             </div>
 
             <div className="flex items-center justify-between flex-wrap gap-6">
               <div>
-                <h1 className="text-5xl xl:text-6xl font-black mb-4 leading-none">
-                  Autonomous Fleet
-                  <span className="block text-cyan-300">Operations Center</span>
+                <h1 className="text-4xl xl:text-5xl font-black mb-4 leading-tight tracking-tight">
+                  FleetOS
+                  <span className="block text-sky-300">Operations Console</span>
                 </h1>
 
                 <p className="text-slate-400 max-w-3xl text-lg">
-                  Real-time AI orchestration platform for autonomous ride-sharing,
-                  dispatch optimization, anomaly monitoring, and operational forecasting.
-                </p>
-                <p className="mt-3 text-xs uppercase tracking-[0.25em] text-slate-600">
-                  Build 9804322 · Tesla partner key live
+                  A fleet operating system for live Tesla telemetry, dispatch simulation,
+                  charging intelligence, and operational risk monitoring.
                 </p>
               </div>
 
-              <div className="bg-[#0b1220] border border-cyan-500/10 rounded-3xl p-5 min-w-[260px]">
-                <p className="text-xs uppercase tracking-[0.2em] text-cyan-300 mb-3">
-                  Global Fleet Status
+              <div className="min-w-[280px] rounded-lg border border-white/10 bg-slate-900/80 p-5 shadow-xl shadow-black/10">
+                <p className="text-xs uppercase tracking-[0.2em] text-sky-300 mb-3">
+                  Operations Status
                 </p>
 
                 <div className="space-y-3">
                   <div className="flex justify-between">
                     <span className="text-slate-400">Active Vehicles</span>
-                    <span className="font-bold text-green-300">{fleet.length}</span>
+                    <span className="font-bold text-emerald-300">{fleet.length}</span>
                   </div>
 
                   <div className="flex justify-between">
                     <span className="text-slate-400">Replay Engine</span>
-                    <span className={`font-bold ${replayMode ? 'text-cyan-300' : 'text-slate-500'}`}>
+                    <span className={`font-bold ${replayMode ? 'text-sky-300' : 'text-slate-500'}`}>
                       {replayMode ? 'ACTIVE' : 'OFFLINE'}
                     </span>
                   </div>
@@ -193,9 +190,9 @@ export default function App() {
                   <button
                     onClick={refreshRealTesla}
                     disabled={isLoadingReal}
-                    className="w-full rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-4 py-3 text-sm font-bold text-cyan-200 transition hover:bg-cyan-500/20 disabled:cursor-wait disabled:opacity-60"
+                    className="w-full rounded-md border border-sky-400/30 bg-sky-400/10 px-4 py-3 text-sm font-bold text-sky-100 transition hover:bg-sky-400/20 disabled:cursor-wait disabled:opacity-60"
                   >
-                    {isLoadingReal ? 'Syncing Tesla...' : 'Sync Tesla Feed'}
+                    {isLoadingReal ? 'Syncing Tesla...' : 'Sync Tesla Telemetry'}
                   </button>
                 </div>
               </div>

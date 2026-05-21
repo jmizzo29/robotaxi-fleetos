@@ -69,6 +69,7 @@ function VehiclePopup({ vehicle }) {
               label="Miles"
               value={vehicle.odometer !== undefined ? `${Math.round(vehicle.odometer).toLocaleString()} mi` : 'Unavailable'}
             />
+            <MetricRow label="GPS" value={vehicle.gpsAsOf ? 'Live' : 'Fallback'} />
             <MetricRow label="Locked" value={vehicle.locked === undefined ? 'Unavailable' : vehicle.locked ? 'Yes' : 'No'} />
           </div>
 
@@ -115,7 +116,7 @@ export default function FleetMap({
 
   if (!mapboxToken) {
     return (
-      <div className="bg-[#0b1220] border border-cyan-500/10 rounded-[32px] overflow-hidden">
+      <div className="overflow-hidden rounded-lg border border-white/10 bg-slate-900/80 shadow-xl shadow-black/20">
         <div className="h-[900px] flex items-center justify-center text-slate-400">
           Add VITE_MAPBOX_TOKEN to render the live fleet map.
         </div>
@@ -124,7 +125,7 @@ export default function FleetMap({
   }
 
   return (
-    <div className="bg-[#0b1220] border border-cyan-500/10 rounded-[32px] overflow-hidden">
+    <div className="overflow-hidden rounded-lg border border-white/10 bg-slate-900/80 shadow-xl shadow-black/20">
       <div className="h-[900px]">
         <Map
           mapboxAccessToken={mapboxToken}
@@ -228,7 +229,7 @@ export default function FleetMap({
                         ? 'h-6 w-6 bg-yellow-400 border-yellow-200 shadow-yellow-400'
                         : vehicle.isReal
                           ? 'h-8 w-8 bg-green-400 border-green-100 shadow-green-400'
-                          : 'h-6 w-6 bg-cyan-400 border-cyan-200 shadow-cyan-400'
+                          : 'h-6 w-6 bg-sky-400 border-sky-200 shadow-sky-400'
                   }`}
                 />
                 {vehicle.isReal && (

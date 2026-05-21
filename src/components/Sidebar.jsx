@@ -7,38 +7,35 @@ export default function Sidebar({
 
   return (
 
-    <aside className="hidden lg:flex w-[320px] border-r border-cyan-500/10 bg-black/20 flex-col p-6 overflow-y-auto">
+    <aside className="hidden lg:flex w-[320px] border-r border-white/10 bg-slate-950/80 flex-col p-6 overflow-y-auto">
 
       <div className="mb-10">
 
         <div className="flex items-center gap-3 mb-3">
 
-          <div className="h-3 w-3 rounded-full bg-cyan-400 animate-pulse"></div>
+          <div className="h-2.5 w-2.5 rounded-full bg-sky-400"></div>
 
-          <span className="text-cyan-300 uppercase tracking-[0.3em] text-xs">
+          <span className="text-sky-300 uppercase tracking-[0.28em] text-xs">
             FleetOS
           </span>
 
         </div>
 
         <h1 className="text-3xl font-black leading-tight">
-
-          Robotaxi
-
-          <span className="block text-cyan-300">
-            Mission Control
+          FleetOS
+          <span className="block text-sky-300">
+            Operations Console
           </span>
-
         </h1>
 
       </div>
 
       <button
         onClick={() => setReplayMode(!replayMode)}
-        className={`mb-6 py-4 rounded-2xl font-bold transition-all ${
+        className={`mb-6 py-4 rounded-lg font-bold transition-all ${
           replayMode
-            ? 'bg-cyan-400 text-black'
-            : 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/30'
+            ? 'bg-sky-300 text-slate-950'
+            : 'bg-sky-400/10 text-sky-200 border border-sky-400/30'
         }`}
       >
         {replayMode
@@ -48,8 +45,8 @@ export default function Sidebar({
 
       <div className="mb-8">
 
-        <p className="uppercase tracking-[0.25em] text-cyan-300 text-xs mb-4">
-          Live Command Queue
+        <p className="uppercase tracking-[0.22em] text-sky-300 text-xs mb-4">
+          Command Queue
         </p>
 
         <div className="space-y-3">
@@ -58,7 +55,7 @@ export default function Sidebar({
 
             <div
               key={index}
-              className="bg-[#0b1220] border border-cyan-500/10 rounded-2xl p-4"
+              className="bg-slate-900/80 border border-white/10 rounded-lg p-4"
             >
 
               <div className="flex items-center justify-between mb-2">
@@ -70,7 +67,7 @@ export default function Sidebar({
                         ? 'text-red-400'
                         : cmd.priority === 'HIGH'
                         ? 'text-yellow-300'
-                        : 'text-cyan-300'
+                        : 'text-sky-300'
                     }`}
                 >
                   {cmd.priority}
@@ -90,10 +87,10 @@ export default function Sidebar({
 
       </div>
 
-      <div className="bg-[#0b1220] border border-cyan-500/10 rounded-3xl p-5">
+      <div className="bg-slate-900/80 border border-white/10 rounded-lg p-5">
 
-        <p className="uppercase tracking-[0.25em] text-cyan-300 text-xs mb-4">
-          Regional Profitability Matrix
+        <p className="uppercase tracking-[0.22em] text-sky-300 text-xs mb-4">
+          Regional Performance
         </p>
 
         <div className="space-y-4">

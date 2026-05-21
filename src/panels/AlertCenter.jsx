@@ -33,12 +33,12 @@ export default function AlertCenter({
 
   return (
 
-    <div className="bg-[#0b1220] border border-cyan-500/10 rounded-[32px] p-6 mb-8">
+    <div className="mb-8 rounded-lg border border-white/10 bg-slate-900/80 p-6 shadow-lg shadow-black/10">
 
       <div className="flex items-center justify-between mb-6">
 
-        <h2 className="text-3xl font-black">
-          Live Alert Center
+        <h2 className="text-2xl font-black tracking-tight">
+          Alert Center
         </h2>
 
         <div className="text-sm text-slate-400">
@@ -57,7 +57,7 @@ export default function AlertCenter({
 
         {alerts.length === 0 && (
 
-          <div className="bg-green-500/10 border border-green-500/20 rounded-2xl p-4">
+          <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-4">
 
             <p className="text-green-300 font-semibold">
               All systems operating normally.
@@ -71,7 +71,7 @@ export default function AlertCenter({
 
           <div
             key={index}
-            className={`rounded-2xl p-4 border
+            className={`rounded-lg p-4 border
               ${
                 alert.severity === 'CRITICAL'
                   ? 'bg-red-500/10 border-red-500/20'
