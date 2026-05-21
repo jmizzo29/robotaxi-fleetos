@@ -4,13 +4,13 @@ export default function AIRecommendationPanel({
   onExecute,
 }) {
   return (
-    <section className="mb-8 rounded-lg border border-white/10 bg-slate-900/80 p-6 shadow-lg shadow-black/10">
+    <section className="mb-6 rounded-lg border border-white/10 bg-slate-900/80 p-4 shadow-lg shadow-black/10 sm:mb-8 sm:p-6">
       <div className="mb-5 flex items-start justify-between gap-4">
         <div>
           <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-emerald-300">
             AI Recommendations
           </p>
-          <h2 className="text-2xl font-black tracking-tight">Operator Next Best Actions</h2>
+          <h2 className="text-xl font-black tracking-tight sm:text-2xl">Operator Next Best Actions</h2>
         </div>
         <span className="rounded-md border border-white/10 bg-slate-950/60 px-3 py-2 text-xs font-semibold text-slate-300">
           {isAnalyzing ? 'Refreshing' : `${recommendations.length} actions`}

@@ -39,7 +39,7 @@ export default function TeslaTelemetryPanel({
       : 'border-sky-400/30 bg-sky-400/10 text-sky-200';
 
   return (
-    <section className="mb-8 rounded-lg border border-white/10 bg-slate-900/80 p-5 shadow-lg shadow-black/10">
+    <section className="mb-6 rounded-lg border border-white/10 bg-slate-900/80 p-4 shadow-lg shadow-black/10 sm:mb-8 sm:p-5">
       <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
         <div>
           <div className="mb-2 flex items-center gap-2">
@@ -48,12 +48,12 @@ export default function TeslaTelemetryPanel({
               Tesla Telemetry
             </p>
           </div>
-          <h2 className="text-3xl font-black tracking-tight">
+          <h2 className="text-2xl font-black tracking-tight sm:text-3xl">
             {hasVehicle ? vehicle.name || vehicle.display_name || 'My Tesla' : 'Awaiting Vehicle'}
           </h2>
           <p className="mt-2 max-w-2xl text-sm text-slate-400">
             {hasVehicle
-              ? `${vehicle.status || vehicle.state || 'Online'} · ${vehicle.chargingState || 'Charging status unavailable'}`
+              ? `${vehicle.status || vehicle.state || 'Online'} - ${vehicle.chargingState || 'Charging status unavailable'}`
               : 'Sync Tesla telemetry to promote your real vehicle above the simulation layer.'}
           </p>
         </div>
@@ -73,7 +73,7 @@ export default function TeslaTelemetryPanel({
         </div>
       </div>
 
-      <div className="mt-5 grid grid-cols-2 gap-3 md:grid-cols-4 xl:grid-cols-8">
+      <div className="mt-5 grid grid-cols-2 gap-3 sm:grid-cols-4 xl:grid-cols-8">
         <Detail label="Battery" value={hasVehicle ? formatNumber(vehicle.battery, '%') : 'Unavailable'} />
         <Detail label="State" value={hasVehicle ? vehicle.state || vehicle.status || 'Unavailable' : 'Unavailable'} />
         <Detail label="Charge" value={hasVehicle ? vehicle.chargingState || 'Unavailable' : 'Unavailable'} />

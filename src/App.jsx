@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import FleetMap from './components/FleetMap';
 import KPIGrid from './components/KPIGrid';
+import MobileBottomNav from './components/MobileBottomNav';
 import Sidebar from './components/Sidebar';
 import Timeline from './components/Timeline';
 import AIRecommendationPanel from './panels/AIRecommendationPanel';
@@ -166,9 +167,9 @@ export default function App() {
         demandZones={demandZones}
       />
 
-      <main className="flex-1 overflow-y-auto bg-[radial-gradient(circle_at_top_left,rgba(14,165,233,0.08),transparent_34%),linear-gradient(180deg,#111827_0%,#0f172a_100%)] p-6 lg:p-8">
-        <div className="max-w-[1900px] mx-auto">
-          <header className="mb-8">
+      <main className="flex-1 overflow-y-auto bg-[radial-gradient(circle_at_top_left,rgba(14,165,233,0.08),transparent_34%),linear-gradient(180deg,#111827_0%,#0f172a_100%)] p-4 pb-28 sm:p-6 sm:pb-28 lg:p-8">
+        <div className="mx-auto flex max-w-[1900px] flex-col">
+          <header id="home" className="scroll-mt-4 mb-6 sm:mb-8">
             <div className="flex items-center gap-3 mb-3">
               <div className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
               <span className="uppercase tracking-[0.28em] text-emerald-300 text-xs">
@@ -178,18 +179,18 @@ export default function App() {
 
             <div className="flex items-center justify-between flex-wrap gap-6">
               <div>
-                <h1 className="text-4xl xl:text-5xl font-black mb-4 leading-tight tracking-tight">
+                <h1 className="mb-3 text-3xl font-black leading-tight tracking-tight sm:mb-4 sm:text-4xl xl:text-5xl">
                   FleetOS
                   <span className="block text-sky-300">Operations Console</span>
                 </h1>
 
-                <p className="text-slate-400 max-w-3xl text-lg">
+                <p className="max-w-3xl text-sm text-slate-400 sm:text-lg">
                   A fleet operating system for live Tesla telemetry, dispatch simulation,
                   charging intelligence, and operational risk monitoring.
                 </p>
               </div>
 
-              <div className="min-w-[280px] rounded-lg border border-white/10 bg-slate-900/80 p-5 shadow-xl shadow-black/10">
+              <div className="w-full rounded-lg border border-white/10 bg-slate-900/80 p-4 shadow-xl shadow-black/10 sm:min-w-[280px] sm:w-auto sm:p-5">
                 <p className="text-xs uppercase tracking-[0.2em] text-sky-300 mb-3">
                   Operations Status
                 </p>
@@ -229,48 +230,68 @@ export default function App() {
             </div>
           </header>
 
-          <KPIGrid
-            totalRevenue={totalRevenue}
-            systemLoad={systemLoad}
-            avgProfitability={avgProfitability}
-            avgAnomalyRisk={avgAnomalyRisk}
-            forecast={forecast}
-          />
+          <section className="order-1">
+            <KPIGrid
+              totalRevenue={totalRevenue}
+              systemLoad={systemLoad}
+              avgProfitability={avgProfitability}
+              avgAnomalyRisk={avgAnomalyRisk}
+              forecast={forecast}
+            />
+          </section>
 
-          <TeslaTelemetryPanel
-            vehicle={primaryTesla}
-            syncStatus={realSyncStatus}
-            isLoading={isLoadingReal}
-            onSync={refreshRealTesla}
-          />
+          <section className="order-2">
+            <TeslaTelemetryPanel
+              vehicle={primaryTesla}
+              syncStatus={realSyncStatus}
+              isLoading={isLoadingReal}
+              onSync={refreshRealTesla}
+            />
+          </section>
 
-          <ForecastPanel forecast={forecast} />
-          <IntelligentAlertCenter analysis={aiAnalysis} isAnalyzing={isAnalyzing} />
-          <AIRecommendationPanel
-            recommendations={aiAnalysis.recommendations}
-            isAnalyzing={isAnalyzing}
-            onExecute={enqueueCommand}
-          />
+          <section id="ai-actions" className="order-3 scroll-mt-4 lg:order-5">
+            <AIRecommendationPanel
+              recommendations={aiAnalysis.recommendations}
+              isAnalyzing={isAnalyzing}
+              onExecute={enqueueCommand}
+            />
+          </section>
 
-          <CommandCenter
-            replayMode={replayMode}
-            setReplayMode={setReplayMode}
-            fleet={fleet}
-            enqueueCommand={enqueueCommand}
-          />
+          <section id="map" className="order-4 scroll-mt-4 lg:order-8">
+            <FleetMap
+              fleet={fleet}
+              selectedVehicle={selectedVehicle}
+              setSelectedVehicle={setSelectedVehicle}
+              weatherZones={weatherZones}
+              demandZones={demandZones}
+              chargingStations={chargingStations}
+            />
+          </section>
 
-          <Timeline timelineEvents={combinedTimeline} replayMode={replayMode} />
+          <section id="alerts" className="order-5 scroll-mt-4 lg:order-4">
+            <IntelligentAlertCenter analysis={aiAnalysis} isAnalyzing={isAnalyzing} />
+          </section>
 
-          <FleetMap
-            fleet={fleet}
-            selectedVehicle={selectedVehicle}
-            setSelectedVehicle={setSelectedVehicle}
-            weatherZones={weatherZones}
-            demandZones={demandZones}
-            chargingStations={chargingStations}
-          />
+          <section className="order-6 lg:order-3">
+            <ForecastPanel forecast={forecast} />
+          </section>
+
+          <section className="order-7 lg:order-6">
+            <CommandCenter
+              replayMode={replayMode}
+              setReplayMode={setReplayMode}
+              fleet={fleet}
+              enqueueCommand={enqueueCommand}
+            />
+          </section>
+
+          <section className="order-8 lg:order-7">
+            <Timeline timelineEvents={combinedTimeline} replayMode={replayMode} />
+          </section>
         </div>
       </main>
+
+      <MobileBottomNav />
     </div>
   );
 }

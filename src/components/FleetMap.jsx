@@ -131,7 +131,7 @@ export default function FleetMap({
   if (!mapboxToken) {
     return (
       <div className="overflow-hidden rounded-lg border border-white/10 bg-slate-900/80 shadow-xl shadow-black/20">
-        <div className="h-[900px] flex items-center justify-center text-slate-400">
+        <div className="flex h-[430px] items-center justify-center text-slate-400 sm:h-[520px] lg:h-[900px]">
           Add VITE_MAPBOX_TOKEN to render the live fleet map.
         </div>
       </div>
@@ -140,7 +140,7 @@ export default function FleetMap({
 
   return (
     <div className="overflow-hidden rounded-lg border border-white/10 bg-slate-900/80 shadow-xl shadow-black/20">
-      <div className="h-[900px]">
+      <div className="h-[430px] sm:h-[520px] lg:h-[900px]">
         <Map
           ref={mapRef}
           mapboxAccessToken={mapboxToken}
