@@ -168,7 +168,7 @@ export default function App() {
                   dispatch optimization, anomaly monitoring, and operational forecasting.
                 </p>
                 <p className="mt-3 text-xs uppercase tracking-[0.25em] text-slate-600">
-                  Build 0b12fa4 · Tesla partner key live
+                  Build 9804322 · Tesla partner key live
                 </p>
               </div>
 
