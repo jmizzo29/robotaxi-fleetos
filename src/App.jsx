@@ -2,19 +2,23 @@ import { useMemo, useState } from 'react';
 import FleetMap from './components/FleetMap';
 import KPIGrid from './components/KPIGrid';
 import MobileBottomNav from './components/MobileBottomNav';
+import PageHeader from './components/PageHeader';
 import Sidebar from './components/Sidebar';
 import Timeline from './components/Timeline';
 import AIRecommendationPanel from './panels/AIRecommendationPanel';
 import CommandCenter from './panels/CommandCenter';
 import ForecastPanel from './panels/ForecastPanel';
+import FleetListPanel from './panels/FleetListPanel';
 import IntelligentAlertCenter from './panels/IntelligentAlertCenter';
 import QuickActionGrid from './panels/QuickActionGrid';
+import SettingsPanel from './panels/SettingsPanel';
 import TeslaTelemetryPanel from './panels/TeslaTelemetryPanel';
 import VehicleShowcasePanel from './panels/VehicleShowcasePanel';
 import chargingStations from './data/chargingStations';
 import demandZones from './data/demandZones';
 import weatherZones from './data/weatherZones';
 import useAiFleetAnalysis from './hooks/useAiFleetAnalysis';
+import useHashRoute from './hooks/useHashRoute';
 import { useFleetSimulation } from './hooks/useFleetSimulation';
 
 const initialFleet = [
@@ -102,6 +106,7 @@ const initialFleet = [
 
 export default function App() {
   const [selectedVehicle, setSelectedVehicle] = useState(null);
+  const [route, navigate] = useHashRoute();
 
   const {
     fleet,
@@ -160,6 +165,162 @@ export default function App() {
     ...timelineEvents,
   ];
 
+  const operationsStatus = (
+    <div className="w-full rounded-lg border border-white/10 bg-slate-900/80 p-4 shadow-xl shadow-black/10 sm:min-w-[280px] sm:w-auto sm:p-5">
+      <p className="text-xs uppercase tracking-[0.2em] text-sky-300 mb-3">
+        Operations Status
+      </p>
+
+      <div className="space-y-3">
+        <div className="flex justify-between">
+          <span className="text-slate-400">Active Vehicles</span>
+          <span className="font-bold text-emerald-300">{fleet.length}</span>
+        </div>
+
+        <div className="flex justify-between">
+          <span className="text-slate-400">Real Tesla</span>
+          <span className="font-bold text-emerald-300">{realVehicles.length}</span>
+        </div>
+
+        <div className="flex justify-between">
+          <span className="text-slate-400">Simulation Fleet</span>
+          <span className="font-bold text-slate-300">{simulatedVehicles.length}</span>
+        </div>
+
+        <button
+          onClick={refreshRealTesla}
+          disabled={isLoadingReal}
+          className="w-full rounded-md border border-sky-400/30 bg-sky-400/10 px-4 py-3 text-sm font-bold text-sky-100 transition hover:bg-sky-400/20 disabled:cursor-wait disabled:opacity-60"
+        >
+          {isLoadingReal ? 'Syncing Tesla...' : 'Sync Tesla Telemetry'}
+        </button>
+      </div>
+    </div>
+  );
+
+  const pages = {
+    overview: (
+      <>
+        <PageHeader
+          eyebrow="Live Operations"
+          title={<><span>FleetOS</span><span className="block text-sky-300">Operations Console</span></>}
+          description="A fleet operating system for live Tesla telemetry, dispatch simulation, charging intelligence, and operational risk monitoring."
+          action={operationsStatus}
+        />
+        <KPIGrid
+          totalRevenue={totalRevenue}
+          systemLoad={systemLoad}
+          avgProfitability={avgProfitability}
+          avgAnomalyRisk={avgAnomalyRisk}
+          forecast={forecast}
+        />
+        <TeslaTelemetryPanel
+          vehicle={primaryTesla}
+          syncStatus={realSyncStatus}
+          isLoading={isLoadingReal}
+          onSync={refreshRealTesla}
+        />
+        <VehicleShowcasePanel
+          vehicle={primaryTesla}
+          fleet={fleet}
+          onSync={refreshRealTesla}
+          isLoading={isLoadingReal}
+        />
+        <QuickActionGrid
+          onSync={refreshRealTesla}
+          onExecute={enqueueCommand}
+          isLoading={isLoadingReal}
+        />
+        <ForecastPanel forecast={forecast} />
+      </>
+    ),
+    map: (
+      <>
+        <PageHeader
+          eyebrow="Live Map"
+          title="Fleet Map"
+          description="Track real Tesla telemetry, simulated fleet movement, charging hubs, and demand overlays in one operating view."
+          action={operationsStatus}
+        />
+        <FleetMap
+          fleet={fleet}
+          selectedVehicle={selectedVehicle}
+          setSelectedVehicle={setSelectedVehicle}
+          weatherZones={weatherZones}
+          demandZones={demandZones}
+          chargingStations={chargingStations}
+        />
+      </>
+    ),
+    fleet: (
+      <>
+        <PageHeader
+          eyebrow="Fleet Registry"
+          title="Vehicles"
+          description="Separate observed Tesla telemetry from the simulated fleet layer and inspect vehicle readiness."
+          action={operationsStatus}
+        />
+        <FleetListPanel
+          fleet={fleet}
+          onSelect={(vehicle) => {
+            setSelectedVehicle(vehicle);
+            navigate('map');
+          }}
+        />
+      </>
+    ),
+    ai: (
+      <>
+        <PageHeader
+          eyebrow="AI Command"
+          title="AI Operations"
+          description="Review next best actions, confidence scores, and one-click execution recommendations from the FleetOS AI layer."
+          action={operationsStatus}
+        />
+        <AIRecommendationPanel
+          recommendations={aiAnalysis.recommendations}
+          isAnalyzing={isAnalyzing}
+          onExecute={enqueueCommand}
+        />
+        <CommandCenter
+          replayMode={replayMode}
+          setReplayMode={setReplayMode}
+          fleet={fleet}
+          enqueueCommand={enqueueCommand}
+        />
+      </>
+    ),
+    alerts: (
+      <>
+        <PageHeader
+          eyebrow="AI Triage"
+          title="Alerts"
+          description="Prioritized fleet alerts with AI explanations, risk scores, and recommended operator action."
+          action={operationsStatus}
+        />
+        <IntelligentAlertCenter analysis={aiAnalysis} isAnalyzing={isAnalyzing} />
+        <Timeline timelineEvents={combinedTimeline} replayMode={replayMode} />
+      </>
+    ),
+    settings: (
+      <>
+        <PageHeader
+          eyebrow="Administration"
+          title="Settings"
+          description="Manage telemetry sync, AI runtime status, and operating modes."
+        />
+        <SettingsPanel
+          realSyncStatus={realSyncStatus}
+          isLoadingReal={isLoadingReal}
+          onSync={refreshRealTesla}
+          aiAnalysis={aiAnalysis}
+          replayMode={replayMode}
+          setReplayMode={setReplayMode}
+        />
+      </>
+    ),
+  };
+
   return (
     <div className="min-h-screen bg-[#0f172a] text-slate-100 flex">
       <Sidebar
@@ -167,150 +328,17 @@ export default function App() {
         setReplayMode={setReplayMode}
         commandQueue={commandQueue}
         demandZones={demandZones}
+        route={route}
+        onNavigate={navigate}
       />
 
       <main className="flex-1 overflow-y-auto bg-[radial-gradient(circle_at_top_left,rgba(14,165,233,0.08),transparent_34%),linear-gradient(180deg,#111827_0%,#0f172a_100%)] p-4 pb-28 sm:p-6 sm:pb-28 lg:p-8">
-        <div className="mx-auto flex max-w-[1900px] flex-col">
-          <header id="home" className="scroll-mt-4 mb-6 sm:mb-8">
-            <div className="flex items-center gap-3 mb-3">
-              <div className="h-2.5 w-2.5 rounded-full bg-emerald-400" />
-              <span className="uppercase tracking-[0.28em] text-emerald-300 text-xs">
-                Live Operations
-              </span>
-            </div>
-
-            <div className="flex items-center justify-between flex-wrap gap-6">
-              <div>
-                <h1 className="mb-3 text-3xl font-black leading-tight tracking-tight sm:mb-4 sm:text-4xl xl:text-5xl">
-                  FleetOS
-                  <span className="block text-sky-300">Operations Console</span>
-                </h1>
-
-                <p className="max-w-3xl text-sm text-slate-400 sm:text-lg">
-                  A fleet operating system for live Tesla telemetry, dispatch simulation,
-                  charging intelligence, and operational risk monitoring.
-                </p>
-              </div>
-
-              <div className="w-full rounded-lg border border-white/10 bg-slate-900/80 p-4 shadow-xl shadow-black/10 sm:min-w-[280px] sm:w-auto sm:p-5">
-                <p className="text-xs uppercase tracking-[0.2em] text-sky-300 mb-3">
-                  Operations Status
-                </p>
-
-                <div className="space-y-3">
-                  <div className="flex justify-between">
-                    <span className="text-slate-400">Active Vehicles</span>
-                    <span className="font-bold text-emerald-300">{fleet.length}</span>
-                  </div>
-
-                  <div className="flex justify-between">
-                    <span className="text-slate-400">Real Tesla</span>
-                    <span className="font-bold text-emerald-300">{realVehicles.length}</span>
-                  </div>
-
-                  <div className="flex justify-between">
-                    <span className="text-slate-400">Simulation Fleet</span>
-                    <span className="font-bold text-slate-300">{simulatedVehicles.length}</span>
-                  </div>
-
-                  <div className="flex justify-between">
-                    <span className="text-slate-400">Replay Engine</span>
-                    <span className={`font-bold ${replayMode ? 'text-sky-300' : 'text-slate-500'}`}>
-                      {replayMode ? 'ACTIVE' : 'OFFLINE'}
-                    </span>
-                  </div>
-
-                  <button
-                    onClick={refreshRealTesla}
-                    disabled={isLoadingReal}
-                    className="w-full rounded-md border border-sky-400/30 bg-sky-400/10 px-4 py-3 text-sm font-bold text-sky-100 transition hover:bg-sky-400/20 disabled:cursor-wait disabled:opacity-60"
-                  >
-                    {isLoadingReal ? 'Syncing Tesla...' : 'Sync Tesla Telemetry'}
-                  </button>
-                </div>
-              </div>
-            </div>
-          </header>
-
-          <section className="order-1">
-            <KPIGrid
-              totalRevenue={totalRevenue}
-              systemLoad={systemLoad}
-              avgProfitability={avgProfitability}
-              avgAnomalyRisk={avgAnomalyRisk}
-              forecast={forecast}
-            />
-          </section>
-
-          <section className="order-2">
-            <TeslaTelemetryPanel
-              vehicle={primaryTesla}
-              syncStatus={realSyncStatus}
-              isLoading={isLoadingReal}
-              onSync={refreshRealTesla}
-            />
-          </section>
-
-          <section className="order-3">
-            <VehicleShowcasePanel
-              vehicle={primaryTesla}
-              fleet={fleet}
-              onSync={refreshRealTesla}
-              isLoading={isLoadingReal}
-            />
-          </section>
-
-          <section className="order-4">
-            <QuickActionGrid
-              onSync={refreshRealTesla}
-              onExecute={enqueueCommand}
-              isLoading={isLoadingReal}
-            />
-          </section>
-
-          <section id="ai-actions" className="order-5 scroll-mt-4 lg:order-7">
-            <AIRecommendationPanel
-              recommendations={aiAnalysis.recommendations}
-              isAnalyzing={isAnalyzing}
-              onExecute={enqueueCommand}
-            />
-          </section>
-
-          <section id="map" className="order-6 scroll-mt-4 lg:order-10">
-            <FleetMap
-              fleet={fleet}
-              selectedVehicle={selectedVehicle}
-              setSelectedVehicle={setSelectedVehicle}
-              weatherZones={weatherZones}
-              demandZones={demandZones}
-              chargingStations={chargingStations}
-            />
-          </section>
-
-          <section id="alerts" className="order-7 scroll-mt-4 lg:order-6">
-            <IntelligentAlertCenter analysis={aiAnalysis} isAnalyzing={isAnalyzing} />
-          </section>
-
-          <section className="order-8 lg:order-5">
-            <ForecastPanel forecast={forecast} />
-          </section>
-
-          <section className="order-9 lg:order-8">
-            <CommandCenter
-              replayMode={replayMode}
-              setReplayMode={setReplayMode}
-              fleet={fleet}
-              enqueueCommand={enqueueCommand}
-            />
-          </section>
-
-          <section className="order-10 lg:order-9">
-            <Timeline timelineEvents={combinedTimeline} replayMode={replayMode} />
-          </section>
+        <div className="mx-auto max-w-[1900px]">
+          {pages[route] || pages.overview}
         </div>
       </main>
 
-      <MobileBottomNav />
+      <MobileBottomNav route={route} onNavigate={navigate} />
     </div>
   );
 }

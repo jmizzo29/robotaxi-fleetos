@@ -2,8 +2,18 @@ export default function Sidebar({
   replayMode,
   setReplayMode,
   commandQueue,
-  demandZones
+  demandZones,
+  route = 'overview',
+  onNavigate = () => {},
 }) {
+  const navItems = [
+    ['overview', 'Overview'],
+    ['map', 'Live Map'],
+    ['fleet', 'Fleet'],
+    ['ai', 'AI Command'],
+    ['alerts', 'Alerts'],
+    ['settings', 'Settings'],
+  ];
 
   return (
 
@@ -29,6 +39,23 @@ export default function Sidebar({
         </h1>
 
       </div>
+
+      <nav className="mb-6 space-y-2">
+        {navItems.map(([id, label]) => (
+          <button
+            key={id}
+            type="button"
+            onClick={() => onNavigate(id)}
+            className={`w-full rounded-lg px-4 py-3 text-left text-sm font-bold transition ${
+              route === id
+                ? 'bg-sky-400/15 text-sky-200'
+                : 'text-slate-400 hover:bg-white/5 hover:text-slate-100'
+            }`}
+          >
+            {label}
+          </button>
+        ))}
+      </nav>
 
       <button
         onClick={() => setReplayMode(!replayMode)}

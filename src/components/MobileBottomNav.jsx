@@ -14,25 +14,28 @@ function NavIcon({ type }) {
 }
 
 const items = [
-  ['#home', 'home', 'Home'],
-  ['#map', 'map', 'Map'],
-  ['#alerts', 'alerts', 'Alerts'],
-  ['#ai-actions', 'ai', 'AI'],
+  ['overview', 'home', 'Home'],
+  ['map', 'map', 'Map'],
+  ['alerts', 'alerts', 'Alerts'],
+  ['ai', 'ai', 'AI'],
 ];
 
-export default function MobileBottomNav() {
+export default function MobileBottomNav({ route, onNavigate }) {
   return (
     <nav className="fixed inset-x-4 bottom-4 z-50 rounded-2xl border border-white/10 bg-slate-950/92 p-2 shadow-2xl shadow-black/40 backdrop-blur lg:hidden">
       <div className="grid grid-cols-4 gap-1">
-        {items.map(([href, icon, label]) => (
-          <a
-            key={href}
-            href={href}
-            className="flex flex-col items-center gap-1 rounded-xl px-2 py-2 text-[11px] font-semibold text-slate-400 transition hover:bg-white/5 hover:text-sky-300"
+        {items.map(([id, icon, label]) => (
+          <button
+            key={id}
+            type="button"
+            onClick={() => onNavigate(id)}
+            className={`flex flex-col items-center gap-1 rounded-xl px-2 py-2 text-[11px] font-semibold transition ${
+              route === id ? 'bg-sky-400/10 text-sky-300' : 'text-slate-400 hover:bg-white/5 hover:text-sky-300'
+            }`}
           >
             <NavIcon type={icon} />
             <span>{label}</span>
-          </a>
+          </button>
         ))}
       </div>
     </nav>
