@@ -11,6 +11,7 @@ export default function Sidebar({
     ['map', 'Live Map'],
     ['fleet', 'Fleet'],
     ['vehicle', 'Vehicle Detail'],
+    ['assets', 'Assets'],
     ['ai', 'AI Command'],
     ['alerts', 'Alerts'],
     ['reports', 'Reports'],

@@ -7,6 +7,7 @@ import Sidebar from './components/Sidebar';
 import Timeline from './components/Timeline';
 import AIRecommendationPanel from './panels/AIRecommendationPanel';
 import AgentOrchestrationPanel from './panels/AgentOrchestrationPanel';
+import AssetManagementPanel from './panels/AssetManagementPanel';
 import CommandCenter from './panels/CommandCenter';
 import CommandInboxPanel from './panels/CommandInboxPanel';
 import ForecastPanel from './panels/ForecastPanel';
@@ -296,6 +297,17 @@ export default function App() {
           onShowMap={() => navigate('map')}
           onQueueCommand={enqueueCommand}
         />
+      </>
+    ),
+    assets: (
+      <>
+        <PageHeader
+          eyebrow="Asset Management"
+          title="Fleet Financials"
+          description="Track acquisition cost, outstanding balances, tags, model years, registration, and ownership details across the fleet."
+          action={operationsStatus}
+        />
+        <AssetManagementPanel fleet={fleet} />
       </>
     ),
     ai: (
