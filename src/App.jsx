@@ -215,18 +215,20 @@ export default function App() {
   const pages = {
     overview: (
       <>
-        <MobileCommandDashboard
-          fleet={fleet}
-          primaryTesla={primaryTesla}
-          totalRevenue={totalRevenue}
-          avgAnomalyRisk={avgAnomalyRisk}
-          onSync={refreshRealTesla}
-          onExecute={enqueueCommand}
-          onNavigate={navigate}
-          isLoading={isLoadingReal}
-          syncStatus={realSyncStatus}
-        />
-        <div className="hidden lg:block">
+        <div className="md:hidden">
+          <MobileCommandDashboard
+            fleet={fleet}
+            primaryTesla={primaryTesla}
+            totalRevenue={totalRevenue}
+            avgAnomalyRisk={avgAnomalyRisk}
+            onSync={refreshRealTesla}
+            onExecute={enqueueCommand}
+            onNavigate={navigate}
+            isLoading={isLoadingReal}
+            syncStatus={realSyncStatus}
+          />
+        </div>
+        <div className="hidden md:block">
           <PageHeader
             eyebrow="Live Operations"
             title={<><span>FleetOS</span><span className="block text-sky-300">Operations Console</span></>}
