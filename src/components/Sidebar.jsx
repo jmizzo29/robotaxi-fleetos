@@ -14,6 +14,7 @@ export default function Sidebar({
     ['assets', 'Assets'],
     ['ai', 'AI Command'],
     ['alerts', 'Alerts'],
+    ['memory', 'Memory'],
     ['reports', 'Reports'],
     ['integrations', 'Integrations'],
     ['settings', 'Settings'],

@@ -14,6 +14,7 @@ import ForecastPanel from './panels/ForecastPanel';
 import FleetListPanel from './panels/FleetListPanel';
 import IntelligentAlertCenter from './panels/IntelligentAlertCenter';
 import IntegrationsPanel from './panels/IntegrationsPanel';
+import MemoryEventsPanel from './panels/MemoryEventsPanel';
 import OperationsReportPanel from './panels/OperationsReportPanel';
 import QuickActionGrid from './panels/QuickActionGrid';
 import SettingsPanel from './panels/SettingsPanel';
@@ -342,6 +343,22 @@ export default function App() {
         />
         <IntelligentAlertCenter analysis={aiAnalysis} isAnalyzing={isAnalyzing} />
         <Timeline timelineEvents={combinedTimeline} replayMode={replayMode} />
+      </>
+    ),
+    memory: (
+      <>
+        <PageHeader
+          eyebrow="Fleet Memory"
+          title="Events"
+          description="Capture telemetry, alerts, recommendations, and commands as future retrieval memory for FleetOS AI."
+          action={operationsStatus}
+        />
+        <MemoryEventsPanel
+          fleet={fleet}
+          analysis={aiAnalysis}
+          commandQueue={commandQueue}
+          realSyncStatus={realSyncStatus}
+        />
       </>
     ),
     reports: (
