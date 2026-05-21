@@ -11,6 +11,7 @@ export default function handler(req, res) {
     hasClientSecret: Boolean(process.env.TESLA_CLIENT_SECRET),
     hasRedirectUri: Boolean(process.env.TESLA_REDIRECT_URI),
     redirectUri: process.env.TESLA_REDIRECT_URI || 'http://localhost:3001/callback',
+    authUrl: 'https://fleet-auth.prd.vn.cloud.tesla.com/oauth2/v3/token',
     fleetApiBase: process.env.TESLA_API_BASE || 'https://fleet-api.prd.na.vn.cloud.tesla.com',
     partnerDomain: process.env.TESLA_PARTNER_DOMAIN || null,
     envFingerprint: {
