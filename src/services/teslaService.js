@@ -1,7 +1,14 @@
 // src/services/teslaService.js
-const API_BASE = 'http://localhost:3001/api';
+const API_BASE = import.meta.env.VITE_TESLA_API_BASE || (
+  import.meta.env.DEV ? 'http://localhost:3001/api' : ''
+);
 
 export async function getTeslaVehicles() {
+  if (!API_BASE) {
+    console.warn('Tesla backend URL is not configured for this deployment, using simulation only');
+    return null;
+  }
+
   try {
     const response = await fetch(`${API_BASE}/vehicles`);
     if (!response.ok) {
