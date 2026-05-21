@@ -8,6 +8,7 @@ import Timeline from './components/Timeline';
 import AIRecommendationPanel from './panels/AIRecommendationPanel';
 import AgentOrchestrationPanel from './panels/AgentOrchestrationPanel';
 import AssetManagementPanel from './panels/AssetManagementPanel';
+import ChargingReadinessPanel from './panels/ChargingReadinessPanel';
 import CommandCenter from './panels/CommandCenter';
 import CommandInboxPanel from './panels/CommandInboxPanel';
 import ForecastPanel from './panels/ForecastPanel';
@@ -310,6 +311,20 @@ export default function App() {
           action={operationsStatus}
         />
         <AssetManagementPanel fleet={fleet} />
+      </>
+    ),
+    charging: (
+      <>
+        <PageHeader
+          eyebrow="Energy Operations"
+          title="Charging"
+          description="Translate battery and charging telemetry into dispatch readiness, range planning, and charge-priority decisions."
+          action={operationsStatus}
+        />
+        <ChargingReadinessPanel
+          fleet={fleet}
+          onQueueCommand={enqueueCommand}
+        />
       </>
     ),
     ai: (
