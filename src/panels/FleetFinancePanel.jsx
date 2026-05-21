@@ -137,6 +137,85 @@ function FinanceRow({ item, onQueueCommand }) {
   );
 }
 
+function FinanceInsightBoard({ finance, totalNet, avgRoi, onQueueCommand }) {
+  const weakest = finance.reduce((lowest, item) => (!lowest || item.roi < lowest.roi ? item : lowest), null);
+  const strongest = finance.reduce((highest, item) => (!highest || item.netProfit > highest.netProfit ? item : highest), null);
+  const monthlyDebt = finance.reduce((sum, item) => sum + item.monthlyPayment, 0);
+  const debtCoverage = monthlyDebt ? totalNet / monthlyDebt : 0;
+
+  const insights = [
+    {
+      label: 'Best Performer',
+      value: strongest?.vehicle?.name || strongest?.vehicle?.display_name || strongest?.vehicle?.id || 'Unavailable',
+      detail: strongest ? `${formatCurrency(strongest.netProfit)} monthly net profit` : 'No vehicles available',
+      tone: 'text-emerald-300',
+    },
+    {
+      label: 'Watchlist',
+      value: weakest?.vehicle?.name || weakest?.vehicle?.display_name || weakest?.vehicle?.id || 'Unavailable',
+      detail: weakest ? `${formatPercent(weakest.roi)} annualized ROI estimate` : 'No vehicles available',
+      tone: weakest?.roi < 15 ? 'text-amber-300' : 'text-sky-300',
+    },
+    {
+      label: 'Debt Coverage',
+      value: `${debtCoverage.toFixed(1)}x`,
+      detail: `${formatCurrency(totalNet)} net against ${formatCurrency(monthlyDebt)} loan payments`,
+      tone: debtCoverage < 2 ? 'text-amber-300' : 'text-emerald-300',
+    },
+  ];
+
+  const actions = [
+    ['Generate Owner Report', 'Create a monthly owner finance packet with ROI, equity, and vehicle watchlist', 'HIGH'],
+    ['Prepare Lender Snapshot', 'Package fleet equity, debt coverage, and payment exposure for financing review', 'NORMAL'],
+    ['Find Margin Leaks', 'Ask AI to identify charging, utilization, or maintenance costs dragging margin', 'HIGH'],
+  ];
+
+  return (
+    <article className="rounded-lg border border-emerald-400/15 bg-slate-900/85 p-5 shadow-xl shadow-black/15">
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-[1fr_0.9fr]">
+        <div>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-emerald-300">
+            Finance Copilot
+          </p>
+          <h2 className="text-2xl font-black tracking-tight">Owner Decision Brief</h2>
+          <p className="mt-3 text-sm leading-6 text-slate-300">
+            FleetOS would position this as a paid finance layer: monthly owner reporting, AI margin analysis, and lender-ready snapshots. Current fleet ROI is estimated at <span className="font-black text-emerald-300">{formatPercent(avgRoi)}</span>, with modeled monthly net profit of <span className="font-black text-emerald-300">{formatCurrency(totalNet)}</span>.
+          </p>
+
+          <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-3">
+            {insights.map((insight) => (
+              <div key={insight.label} className="rounded-lg border border-white/10 bg-slate-950/55 p-4">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">{insight.label}</p>
+                <p className={`mt-2 truncate text-xl font-black ${insight.tone}`}>{insight.value}</p>
+                <p className="mt-1 text-xs leading-5 text-slate-400">{insight.detail}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="rounded-lg border border-white/10 bg-slate-950/50 p-4">
+          <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">
+            Paid Reporting Actions
+          </p>
+          <div className="space-y-3">
+            {actions.map(([label, detail, priority]) => (
+              <button
+                key={label}
+                type="button"
+                onClick={() => onQueueCommand?.(`${label}: ${detail}`, priority)}
+                className="w-full rounded-lg border border-white/10 bg-white/5 p-4 text-left transition hover:border-sky-400/30 hover:bg-sky-400/10"
+              >
+                <span className="block text-sm font-black text-slate-100">{label}</span>
+                <span className="mt-1 block text-xs leading-5 text-slate-400">{detail}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+}
+
 export default function FleetFinancePanel({ fleet = [], onQueueCommand }) {
   const finance = fleet.map(vehicleFinance);
   const totalRevenue = finance.reduce((sum, item) => sum + item.revenue, 0);
@@ -166,6 +245,13 @@ export default function FleetFinancePanel({ fleet = [], onQueueCommand }) {
           This is the kind of view an owner pays for: vehicle-level ROI, loan exposure, operating cost, margin, and AI finance review. Current costs are modeled from your asset records and live/simulated operating signals, then can later be replaced with accounting imports.
         </p>
       </article>
+
+      <FinanceInsightBoard
+        finance={finance}
+        totalNet={totalNet}
+        avgRoi={avgRoi}
+        onQueueCommand={onQueueCommand}
+      />
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         {finance
