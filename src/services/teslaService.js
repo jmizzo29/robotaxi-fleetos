@@ -2,6 +2,10 @@
 const API_BASE = import.meta.env.VITE_TESLA_API_BASE || (
   import.meta.env.DEV ? 'http://localhost:3001/api' : ''
 );
+const PARKED_TESLA_ANCHOR = {
+  latitude: 28.62,
+  longitude: -81.22,
+};
 
 export async function getTeslaVehicles() {
   if (!API_BASE) {
@@ -46,12 +50,12 @@ export function mergeWithSimulation(realVehicles, simulatedVehicles) {
         vehicle.drive_state?.latitude ??
         vehicle.latitude ??
         previousReal?.latitude ??
-        28.5383 + index * 0.025,
+        PARKED_TESLA_ANCHOR.latitude + index * 0.018,
       longitude:
         vehicle.drive_state?.longitude ??
         vehicle.longitude ??
         previousReal?.longitude ??
-        -81.3792 - index * 0.025,
+        PARKED_TESLA_ANCHOR.longitude - index * 0.018,
       targetLat: vehicle.targetLat ?? 28.4312,
       targetLng: vehicle.targetLng ?? -81.3081,
       assignment:

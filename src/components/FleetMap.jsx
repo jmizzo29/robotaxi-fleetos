@@ -232,9 +232,14 @@ export default function FleetMap({
                   }`}
                 />
                 {vehicle.isReal && (
-                  <span className="rounded-full border border-green-300/40 bg-black/80 px-2 py-0.5 text-[10px] font-bold text-green-200 shadow-lg">
-                    {vehicle.name || vehicle.display_name || 'TESLA'}
-                  </span>
+                  <div className="flex flex-col items-center gap-0.5">
+                    <span className="rounded-full border border-green-300/40 bg-black/80 px-2 py-0.5 text-[10px] font-bold text-green-200 shadow-lg">
+                      {vehicle.name || vehicle.display_name || 'TESLA'}
+                    </span>
+                    <span className="rounded-full bg-green-400/90 px-1.5 py-0.5 text-[8px] font-black uppercase text-slate-950">
+                      Real Tesla
+                    </span>
+                  </div>
                 )}
               </div>
             </Marker>
