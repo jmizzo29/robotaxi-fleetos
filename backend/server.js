@@ -6,7 +6,8 @@ const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 
-dotenv.config();
+const ENV_PATH = path.join(__dirname, '.env');
+dotenv.config({ path: ENV_PATH });
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -16,7 +17,6 @@ const DEFAULT_FLEET_API_BASE = process.env.TESLA_API_BASE || 'https://fleet-api.
 const DEFAULT_REDIRECT_URI = process.env.TESLA_REDIRECT_URI || `http://localhost:${PORT}/callback`;
 const DEFAULT_SCOPES = process.env.TESLA_SCOPES || 'openid offline_access user_data vehicle_device_data vehicle_location';
 const TESLA_PARTNER_DOMAIN = process.env.TESLA_PARTNER_DOMAIN || '';
-const ENV_PATH = path.join(__dirname, '.env');
 const DEFAULT_ALLOWED_ORIGINS = [
   'http://localhost:5173',
   'http://127.0.0.1:5173',
