@@ -12,6 +12,7 @@ export default function Sidebar({
     ['fleet', 'Fleet'],
     ['vehicle', 'Vehicle Detail'],
     ['assets', 'Assets'],
+    ['finance', 'Finance'],
     ['charging', 'Charging'],
     ['ai', 'AI Command'],
     ['alerts', 'Alerts'],

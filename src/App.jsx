@@ -11,6 +11,7 @@ import AssetManagementPanel from './panels/AssetManagementPanel';
 import ChargingReadinessPanel from './panels/ChargingReadinessPanel';
 import CommandCenter from './panels/CommandCenter';
 import CommandInboxPanel from './panels/CommandInboxPanel';
+import FleetFinancePanel from './panels/FleetFinancePanel';
 import ForecastPanel from './panels/ForecastPanel';
 import FleetListPanel from './panels/FleetListPanel';
 import IntelligentAlertCenter from './panels/IntelligentAlertCenter';
@@ -311,6 +312,20 @@ export default function App() {
           action={operationsStatus}
         />
         <AssetManagementPanel fleet={fleet} />
+      </>
+    ),
+    finance: (
+      <>
+        <PageHeader
+          eyebrow="Owner Economics"
+          title="Finance"
+          description="Track revenue, operating cost, loan exposure, equity, and ROI so FleetOS can prove whether the fleet is making money."
+          action={operationsStatus}
+        />
+        <FleetFinancePanel
+          fleet={fleet}
+          onQueueCommand={enqueueCommand}
+        />
       </>
     ),
     charging: (
