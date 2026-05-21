@@ -12,6 +12,7 @@ import CommandInboxPanel from './panels/CommandInboxPanel';
 import ForecastPanel from './panels/ForecastPanel';
 import FleetListPanel from './panels/FleetListPanel';
 import IntelligentAlertCenter from './panels/IntelligentAlertCenter';
+import IntegrationsPanel from './panels/IntegrationsPanel';
 import OperationsReportPanel from './panels/OperationsReportPanel';
 import QuickActionGrid from './panels/QuickActionGrid';
 import SettingsPanel from './panels/SettingsPanel';
@@ -343,6 +344,20 @@ export default function App() {
           fleet={fleet}
           analysis={aiAnalysis}
           commandQueue={commandQueue}
+          realSyncStatus={realSyncStatus}
+        />
+      </>
+    ),
+    integrations: (
+      <>
+        <PageHeader
+          eyebrow="Platform"
+          title="Integrations"
+          description="Review connected services, AI runtime, Tesla Fleet API telemetry, and planned memory/RAG infrastructure."
+          action={operationsStatus}
+        />
+        <IntegrationsPanel
+          aiAnalysis={aiAnalysis}
           realSyncStatus={realSyncStatus}
         />
       </>

@@ -14,6 +14,7 @@ export default function Sidebar({
     ['ai', 'AI Command'],
     ['alerts', 'Alerts'],
     ['reports', 'Reports'],
+    ['integrations', 'Integrations'],
     ['settings', 'Settings'],
   ];
 
