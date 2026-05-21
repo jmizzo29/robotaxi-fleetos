@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { clearFleetMemory, exportFleetMemory, readFleetMemory } from '../services/fleetMemory';
+import { clearFleetMemory, exportFleetMemory, readFleetMemory, syncFleetMemoryFromBackend } from '../services/fleetMemory';
 
 function formatTime(value) {
   if (!value) return 'Pending';
@@ -71,6 +71,7 @@ export default function MemoryEventsPanel({ fleet, analysis, commandQueue, realS
 
   useEffect(() => {
     const handleMemoryUpdated = () => setStoredEvents(readFleetMemory());
+    syncFleetMemoryFromBackend().then(setStoredEvents);
     window.addEventListener('fleetos-memory-updated', handleMemoryUpdated);
     window.addEventListener('storage', handleMemoryUpdated);
     return () => {

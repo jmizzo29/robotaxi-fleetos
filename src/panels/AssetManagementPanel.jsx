@@ -4,6 +4,7 @@ import {
   getVehicleOwnershipKey,
   resetVehicleOwnership,
   saveVehicleOwnership,
+  syncSavedOwnershipFromBackend,
 } from '../data/vehicleOwnership';
 
 function formatCurrency(value) {
@@ -71,6 +72,7 @@ export default function AssetManagementPanel({ fleet = [] }) {
 
   useEffect(() => {
     const refresh = () => setRevision((current) => current + 1);
+    syncSavedOwnershipFromBackend().then(refresh);
     window.addEventListener('fleetos-ownership-updated', refresh);
     window.addEventListener('storage', refresh);
     return () => {

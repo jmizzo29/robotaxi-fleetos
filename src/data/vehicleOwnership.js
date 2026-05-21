@@ -89,6 +89,22 @@ function canUseStorage() {
   return typeof window !== 'undefined' && Boolean(window.localStorage);
 }
 
+function resolveApiBase() {
+  const configuredBase = import.meta.env.VITE_TESLA_API_BASE;
+  const isLocalBrowser = (
+    typeof window !== 'undefined' &&
+    ['localhost', '127.0.0.1'].includes(window.location.hostname)
+  );
+
+  if (configuredBase && !configuredBase.includes('localhost') && !configuredBase.includes('127.0.0.1')) {
+    return configuredBase;
+  }
+
+  return isLocalBrowser ? 'http://localhost:3001/api' : '/api';
+}
+
+const API_BASE = resolveApiBase();
+
 export function getVehicleOwnershipKey(vehicle) {
   return vehicle?.name || vehicle?.display_name || vehicle?.id || vehicle?.vin;
 }
@@ -123,6 +139,11 @@ export function saveVehicleOwnership(key, record) {
   };
 
   window.localStorage.setItem(OWNERSHIP_STORAGE_KEY, JSON.stringify(next));
+  fetch(`${API_BASE}/assets`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ key, record: next[key] }),
+  }).catch(() => {});
   window.dispatchEvent(new CustomEvent('fleetos-ownership-updated', { detail: next }));
   return next[key];
 }
@@ -133,7 +154,29 @@ export function resetVehicleOwnership(key) {
   const current = readSavedOwnershipRecords();
   delete current[key];
   window.localStorage.setItem(OWNERSHIP_STORAGE_KEY, JSON.stringify(current));
+  fetch(`${API_BASE}/assets?key=${encodeURIComponent(key)}`, { method: 'DELETE' }).catch(() => {});
   window.dispatchEvent(new CustomEvent('fleetos-ownership-updated', { detail: current }));
+}
+
+export async function syncSavedOwnershipFromBackend() {
+  if (!canUseStorage()) return {};
+
+  try {
+    const response = await fetch(`${API_BASE}/assets`, { cache: 'no-store' });
+    if (!response.ok) return readSavedOwnershipRecords();
+
+    const data = await response.json();
+    const records = data.records && typeof data.records === 'object' ? data.records : {};
+    const merged = {
+      ...records,
+      ...readSavedOwnershipRecords(),
+    };
+    window.localStorage.setItem(OWNERSHIP_STORAGE_KEY, JSON.stringify(merged));
+    window.dispatchEvent(new CustomEvent('fleetos-ownership-updated', { detail: merged }));
+    return merged;
+  } catch {
+    return readSavedOwnershipRecords();
+  }
 }
 
 export function getVehicleOwnership(vehicle) {

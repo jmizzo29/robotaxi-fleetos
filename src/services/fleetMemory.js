@@ -1,6 +1,22 @@
 const MEMORY_KEY = 'fleetos.memory.v1';
 const MAX_EVENTS = 120;
 
+function resolveApiBase() {
+  const configuredBase = import.meta.env.VITE_TESLA_API_BASE;
+  const isLocalBrowser = (
+    typeof window !== 'undefined' &&
+    ['localhost', '127.0.0.1'].includes(window.location.hostname)
+  );
+
+  if (configuredBase && !configuredBase.includes('localhost') && !configuredBase.includes('127.0.0.1')) {
+    return configuredBase;
+  }
+
+  return isLocalBrowser ? 'http://localhost:3001/api' : '/api';
+}
+
+const API_BASE = resolveApiBase();
+
 function canUseStorage() {
   return typeof window !== 'undefined' && Boolean(window.localStorage);
 }
@@ -40,16 +56,41 @@ export function writeFleetMemory(events) {
 }
 
 export function appendFleetMemory(event) {
-  const next = [normalizeEvent(event), ...readFleetMemory()].slice(0, MAX_EVENTS);
+  const normalized = normalizeEvent(event);
+  const next = [normalized, ...readFleetMemory()].slice(0, MAX_EVENTS);
+  fetch(`${API_BASE}/memory`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ event: normalized }),
+  }).catch(() => {});
   return writeFleetMemory(next);
 }
 
 export function clearFleetMemory() {
   if (!canUseStorage()) return;
   window.localStorage.removeItem(MEMORY_KEY);
+  fetch(`${API_BASE}/memory`, { method: 'DELETE' }).catch(() => {});
   window.dispatchEvent(new CustomEvent('fleetos-memory-updated', { detail: [] }));
 }
 
 export function exportFleetMemory() {
   return JSON.stringify(readFleetMemory(), null, 2);
+}
+
+export async function syncFleetMemoryFromBackend() {
+  try {
+    const response = await fetch(`${API_BASE}/memory`, { cache: 'no-store' });
+    if (!response.ok) return readFleetMemory();
+
+    const data = await response.json();
+    if (!Array.isArray(data.events)) return readFleetMemory();
+
+    const merged = [...data.events, ...readFleetMemory()]
+      .filter((event, index, all) => all.findIndex((candidate) => candidate.id === event.id) === index)
+      .slice(0, MAX_EVENTS);
+
+    return writeFleetMemory(merged);
+  } catch {
+    return readFleetMemory();
+  }
 }

@@ -764,6 +764,71 @@ app.post('/api/ai/analyze', async (req, res) => {
   }
 });
 
+const memoryEvents = [];
+const assetRecords = {};
+const MAX_MEMORY_EVENTS = 120;
+
+function normalizeMemoryEvent(event = {}) {
+  return {
+    id: event.id || `mem-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    type: event.type || 'Event',
+    title: event.title || 'FleetOS event',
+    detail: event.detail || '',
+    timestamp: event.timestamp || new Date().toISOString(),
+    source: event.source || 'FleetOS',
+    status: event.status || 'recorded',
+    ragReady: Boolean(event.ragReady),
+    metadata: event.metadata || {},
+  };
+}
+
+app.get('/api/memory', (req, res) => {
+  res.json({ events: memoryEvents });
+});
+
+app.post('/api/memory', (req, res) => {
+  const incoming = Array.isArray(req.body?.events)
+    ? req.body.events
+    : req.body?.event
+      ? [req.body.event]
+      : [];
+
+  memoryEvents.unshift(...incoming.map(normalizeMemoryEvent));
+  memoryEvents.splice(MAX_MEMORY_EVENTS);
+  res.json({ events: memoryEvents });
+});
+
+app.delete('/api/memory', (req, res) => {
+  memoryEvents.splice(0);
+  res.json({ events: [] });
+});
+
+app.get('/api/assets', (req, res) => {
+  res.json({ records: assetRecords });
+});
+
+app.post('/api/assets', (req, res) => {
+  const { key, record } = req.body || {};
+
+  if (!key || !record) {
+    res.status(400).json({ error: 'ASSET_RECORD_MISSING' });
+    return;
+  }
+
+  assetRecords[key] = record;
+  res.json({ records: assetRecords });
+});
+
+app.delete('/api/assets', (req, res) => {
+  if (req.query?.key) {
+    delete assetRecords[req.query.key];
+  } else {
+    Object.keys(assetRecords).forEach((key) => delete assetRecords[key]);
+  }
+
+  res.json({ records: assetRecords });
+});
+
 app.listen(PORT, () => {
   console.log(`Backend running on http://localhost:${PORT}`);
   console.log(
