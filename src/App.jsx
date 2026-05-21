@@ -224,6 +224,7 @@ export default function App() {
           onExecute={enqueueCommand}
           onNavigate={navigate}
           isLoading={isLoadingReal}
+          syncStatus={realSyncStatus}
         />
         <div className="hidden lg:block">
           <PageHeader

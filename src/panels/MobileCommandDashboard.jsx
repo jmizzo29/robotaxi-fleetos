@@ -20,12 +20,22 @@ function MiniMetric({ label, value, tone, icon }) {
   );
 }
 
-function ActionTile({ label, detail, tone, onClick }) {
+function formatTime(value) {
+  if (!value) return 'Not synced';
+
+  return new Date(value).toLocaleTimeString([], {
+    hour: 'numeric',
+    minute: '2-digit',
+  });
+}
+
+function ActionTile({ label, detail, tone, onClick, disabled = false }) {
   return (
     <button
       type="button"
       onClick={onClick}
-      className={`min-h-[58px] rounded-2xl border px-3 py-3 text-left shadow-lg shadow-black/15 transition active:scale-[0.98] ${tone}`}
+      disabled={disabled}
+      className={`min-h-[58px] rounded-2xl border px-3 py-3 text-left shadow-lg shadow-black/15 transition active:scale-[0.98] disabled:cursor-wait disabled:opacity-60 ${tone}`}
     >
       <span className="block text-sm font-black text-white">{label}</span>
       <span className="mt-0.5 block truncate text-[11px] font-semibold text-slate-300">{detail}</span>
@@ -103,6 +113,7 @@ export default function MobileCommandDashboard({
   onExecute,
   onNavigate,
   isLoading,
+  syncStatus,
 }) {
   const active = fleet.filter((vehicle) => vehicle.status !== 'OFFLINE').length;
   const utilization = fleet.length
@@ -110,6 +121,11 @@ export default function MobileCommandDashboard({
     : 0;
   const vehicle = primaryTesla || fleet[0] || {};
   const alerts = avgAnomalyRisk > 15 ? 'High' : avgAnomalyRisk > 8 ? 'Med' : 'Low';
+  const syncTone = syncStatus?.state === 'error'
+    ? 'border-rose-400/25 bg-rose-400/10 text-rose-100'
+    : syncStatus?.state === 'success'
+      ? 'border-emerald-400/25 bg-emerald-400/10 text-emerald-100'
+      : 'border-sky-400/25 bg-sky-400/10 text-sky-100';
 
   return (
     <section className="space-y-4 lg:hidden">
@@ -179,14 +195,21 @@ export default function MobileCommandDashboard({
             <p className="mt-1 text-xl font-black text-white">{vehicle.speed || 0}<span className="text-[11px] text-slate-400"> mph</span></p>
           </div>
         </div>
+        <div className={`border-t px-3 py-3 text-xs font-semibold ${syncTone}`}>
+          <div className="flex items-center justify-between gap-3">
+            <span className="truncate">{syncStatus?.message || 'Tesla telemetry ready'}</span>
+            <span className="shrink-0">{formatTime(syncStatus?.lastSyncedAt || vehicle.syncedAt)}</span>
+          </div>
+        </div>
       </article>
 
       <div className="grid grid-cols-2 gap-3">
         <ActionTile
           label={isLoading ? 'Syncing' : 'Sync Tesla'}
-          detail="Refresh telemetry"
+          detail={syncStatus?.state === 'success' ? `Updated ${formatTime(syncStatus.lastSyncedAt)}` : 'Refresh telemetry'}
           tone="border-emerald-400/20 bg-emerald-400/10"
           onClick={onSync}
+          disabled={isLoading}
         />
         <ActionTile
           label="Plan Tonight"
