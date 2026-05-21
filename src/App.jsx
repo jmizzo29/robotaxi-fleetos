@@ -19,6 +19,7 @@ import ForecastPanel from './panels/ForecastPanel';
 import FleetListPanel from './panels/FleetListPanel';
 import IntelligentAlertCenter from './panels/IntelligentAlertCenter';
 import IntegrationsPanel from './panels/IntegrationsPanel';
+import LandingPage from './panels/LandingPage';
 import MemoryEventsPanel from './panels/MemoryEventsPanel';
 import MobileCommandDashboard from './panels/MobileCommandDashboard';
 import OperationsReportPanel from './panels/OperationsReportPanel';
@@ -122,6 +123,7 @@ export default function App() {
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [pendingCommand, setPendingCommand] = useState(null);
   const [route, navigate] = useHashRoute();
+  const isPublicRoute = route === 'landing';
 
   const {
     fleet,
@@ -139,6 +141,7 @@ export default function App() {
     initialFleet,
     chargingStations,
     replayModeInitial: false,
+    autoSyncReal: !isPublicRoute,
   });
 
   const totalRevenue = useMemo(
@@ -171,6 +174,7 @@ export default function App() {
   const { analysis: aiAnalysis, isAnalyzing } = useAiFleetAnalysis({
     fleet,
     realSyncStatus,
+    enabled: !isPublicRoute,
   });
   const requestCommand = (command, priority = 'NORMAL') => {
     setPendingCommand({
@@ -522,6 +526,10 @@ export default function App() {
       </>
     ),
   };
+
+  if (isPublicRoute) {
+    return <LandingPage onNavigate={navigate} />;
+  }
 
   return (
     <div className="min-h-screen bg-[#0f172a] text-slate-100 flex">

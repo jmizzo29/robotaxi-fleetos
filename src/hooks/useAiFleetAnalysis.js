@@ -10,12 +10,13 @@ const initialAnalysis = {
   recommendations: [],
 };
 
-export default function useAiFleetAnalysis({ fleet, realSyncStatus }) {
+export default function useAiFleetAnalysis({ fleet, realSyncStatus, enabled = true }) {
   const [analysis, setAnalysis] = useState(initialAnalysis);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
 
   useEffect(() => {
     const timer = window.setTimeout(async () => {
+      if (!enabled) return;
       if (!fleet || fleet.length === 0) return;
 
       setIsAnalyzing(true);
@@ -43,7 +44,7 @@ export default function useAiFleetAnalysis({ fleet, realSyncStatus }) {
     }, 800);
 
     return () => window.clearTimeout(timer);
-  }, [fleet, realSyncStatus]);
+  }, [enabled, fleet, realSyncStatus]);
 
   return {
     analysis,

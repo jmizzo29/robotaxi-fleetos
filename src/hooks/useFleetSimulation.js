@@ -61,6 +61,7 @@ export function useFleetSimulation({
   initialFleet = generatedFleet,
   chargingStations = chargingStationsFallback,
   replayModeInitial = false,
+  autoSyncReal = true,
 } = {}) {
   const [fleet, setFleet] = useState(initialFleet);
   const [replayMode, setReplayMode] = useState(replayModeInitial);
@@ -187,12 +188,14 @@ export function useFleetSimulation({
   };
 
   useEffect(() => {
+    if (!autoSyncReal) return undefined;
+
     const timer = window.setTimeout(() => {
       refreshRealTesla();
     }, 0);
 
     return () => window.clearTimeout(timer);
-  }, []);
+  }, [autoSyncReal]);
 
   const enqueueCommand = (command, priority = 'NORMAL') => {
     appendFleetMemory({

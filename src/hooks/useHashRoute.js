@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 
-const validRoutes = new Set(['overview', 'map', 'fleet', 'vehicle', 'assets', 'finance', 'charging', 'dispatch', 'readiness', 'ai', 'alerts', 'memory', 'reports', 'integrations', 'tesla', 'settings']);
+const validRoutes = new Set(['landing', 'overview', 'map', 'fleet', 'vehicle', 'assets', 'finance', 'charging', 'dispatch', 'readiness', 'ai', 'alerts', 'memory', 'reports', 'integrations', 'tesla', 'settings']);
 
 function readRoute() {
-  const route = window.location.hash.replace('#/', '').replace('#', '') || 'overview';
-  return validRoutes.has(route) ? route : 'overview';
+  const rawHash = window.location.hash.replace('#/', '').replace('#', '');
+  if (!rawHash) return 'landing';
+  return validRoutes.has(rawHash) ? rawHash : 'landing';
 }
 
 export default function useHashRoute() {
@@ -17,7 +18,7 @@ export default function useHashRoute() {
   }, []);
 
   const navigate = (nextRoute) => {
-    window.location.hash = `/${validRoutes.has(nextRoute) ? nextRoute : 'overview'}`;
+    window.location.hash = `/${validRoutes.has(nextRoute) ? nextRoute : 'landing'}`;
   };
 
   return [route, navigate];
