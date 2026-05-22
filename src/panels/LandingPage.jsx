@@ -1,3 +1,6 @@
+import { useState } from 'react';
+import { submitEarlyAccessLead } from '../services/leadService';
+
 const capabilities = [
   ['Live Fleet Telemetry', 'Connect Tesla Fleet API data for battery, GPS, odometer, charging, and vehicle state.'],
   ['AI Operations', 'Prioritize alerts, recommend next actions, and turn fleet events into operator workflows.'],
@@ -21,6 +24,12 @@ const setupSteps = [
   ['Create FleetOS account', 'Start with one Tesla and keep the first vehicle free while you learn the product.'],
   ['Authenticate with Tesla', 'Use Tesla OAuth to approve telemetry access. FleetOS never needs your Tesla password.'],
   ['Sync and monitor', 'See battery, location, charging, odometer, parking history, and owner economics in one console.'],
+];
+
+const pricing = [
+  ['Free', '$0', '1 Tesla', 'Live telemetry, GPS/location intelligence, parking history, owner finance, and AI brief.'],
+  ['Owner Fleet', '$12', 'per extra Tesla / mo', 'Multi-vehicle monitoring for rental hosts, Turo-style operators, and small fleets.'],
+  ['Operator Pro', 'Custom', 'for larger fleets', 'Dispatch workflows, advanced reporting, RAG memory, and higher-touch onboarding.'],
 ];
 
 function ProductPreview() {
@@ -82,6 +91,110 @@ function ProductPreview() {
         </div>
       </div>
     </div>
+  );
+}
+
+function EarlyAccessForm() {
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    teslaCount: '1',
+    useCase: 'Renting my Tesla',
+    plan: 'First Tesla free',
+  });
+  const [status, setStatus] = useState({ state: 'idle', message: '' });
+
+  const update = (field, value) => {
+    setForm((current) => ({ ...current, [field]: value }));
+  };
+
+  const submit = async (event) => {
+    event.preventDefault();
+    setStatus({ state: 'loading', message: 'Joining early access...' });
+
+    try {
+      await submitEarlyAccessLead(form);
+      setStatus({
+        state: 'success',
+        message: 'You are on the early access list. FleetOS will prioritize owner-renters first.',
+      });
+      setForm((current) => ({ ...current, name: '', email: '' }));
+    } catch (error) {
+      setStatus({
+        state: 'error',
+        message: error.message || 'Could not submit yet. Try again in a moment.',
+      });
+    }
+  };
+
+  return (
+    <form onSubmit={submit} className="rounded-lg border border-white/10 bg-slate-900/80 p-5">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <label className="block">
+          <span className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">Name</span>
+          <input
+            value={form.name}
+            onChange={(event) => update('name', event.target.value)}
+            className="mt-2 w-full rounded-md border border-white/10 bg-slate-950 px-3 py-3 text-sm font-bold text-white outline-none transition focus:border-sky-300"
+            placeholder="Your name"
+          />
+        </label>
+        <label className="block">
+          <span className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">Email</span>
+          <input
+            required
+            type="email"
+            value={form.email}
+            onChange={(event) => update('email', event.target.value)}
+            className="mt-2 w-full rounded-md border border-white/10 bg-slate-950 px-3 py-3 text-sm font-bold text-white outline-none transition focus:border-sky-300"
+            placeholder="you@example.com"
+          />
+        </label>
+        <label className="block">
+          <span className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">Teslas</span>
+          <select
+            value={form.teslaCount}
+            onChange={(event) => update('teslaCount', event.target.value)}
+            className="mt-2 w-full rounded-md border border-white/10 bg-slate-950 px-3 py-3 text-sm font-bold text-white outline-none transition focus:border-sky-300"
+          >
+            <option>1</option>
+            <option>2-3</option>
+            <option>4-10</option>
+            <option>10+</option>
+          </select>
+        </label>
+        <label className="block">
+          <span className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">Use Case</span>
+          <select
+            value={form.useCase}
+            onChange={(event) => update('useCase', event.target.value)}
+            className="mt-2 w-full rounded-md border border-white/10 bg-slate-950 px-3 py-3 text-sm font-bold text-white outline-none transition focus:border-sky-300"
+          >
+            <option>Renting my Tesla</option>
+            <option>Tracking my personal Tesla</option>
+            <option>Managing a small fleet</option>
+            <option>Exploring robotaxi readiness</option>
+          </select>
+        </label>
+      </div>
+
+      <button
+        type="submit"
+        disabled={status.state === 'loading'}
+        className="mt-4 w-full rounded-md bg-sky-300 px-5 py-4 text-sm font-black text-slate-950 transition hover:bg-sky-200 disabled:cursor-wait disabled:opacity-70"
+      >
+        {status.state === 'loading' ? 'Joining...' : 'Join Early Access'}
+      </button>
+
+      {status.message && (
+        <p className={`mt-3 text-sm font-semibold ${
+          status.state === 'error' ? 'text-rose-300' : 'text-emerald-300'
+        }`}
+        >
+          {status.message}
+        </p>
+      )}
+    </form>
   );
 }
 
@@ -225,6 +338,39 @@ export default function LandingPage({ onNavigate }) {
               FleetOS uses Tesla-approved authentication flows and is not affiliated with or endorsed by Tesla.
             </p>
           </div>
+        </section>
+
+        <section className="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-5 py-14 lg:grid-cols-[0.9fr_1.1fr]">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-300">
+              Early Access
+            </p>
+            <h2 className="mt-3 max-w-xl text-4xl font-black tracking-tight text-white">
+              Start free, then pay only when FleetOS helps manage more Teslas.
+            </h2>
+            <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-400">
+              The first version should be generous for regular owners. The business model becomes simple when someone adds a second, third, or tenth Tesla and FleetOS starts saving real operator time.
+            </p>
+
+            <div className="mt-6 grid grid-cols-1 gap-3">
+              {pricing.map(([name, price, unit, detail]) => (
+                <article key={name} className="rounded-lg border border-white/10 bg-white/[0.04] p-4">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+                    <div>
+                      <p className="text-sm font-black text-white">{name}</p>
+                      <p className="mt-2 text-sm leading-6 text-slate-400">{detail}</p>
+                    </div>
+                    <div className="shrink-0 text-left sm:text-right">
+                      <p className="text-2xl font-black text-sky-300">{price}</p>
+                      <p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">{unit}</p>
+                    </div>
+                  </div>
+                </article>
+              ))}
+            </div>
+          </div>
+
+          <EarlyAccessForm />
         </section>
 
         <section className="mx-auto max-w-7xl px-5 py-14">

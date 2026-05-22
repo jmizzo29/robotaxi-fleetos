@@ -766,6 +766,7 @@ app.post('/api/ai/analyze', async (req, res) => {
 
 const memoryEvents = [];
 const assetRecords = {};
+const earlyAccessLeads = [];
 const MAX_MEMORY_EVENTS = 120;
 
 function normalizeMemoryEvent(event = {}) {
@@ -827,6 +828,44 @@ app.delete('/api/assets', (req, res) => {
   }
 
   res.json({ records: assetRecords });
+});
+
+app.get('/api/leads', (req, res) => {
+  res.json({
+    count: earlyAccessLeads.length,
+    leads: earlyAccessLeads.slice(0, 25),
+  });
+});
+
+app.post('/api/leads', (req, res) => {
+  const lead = {
+    id: `lead-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    name: String(req.body?.name || '').trim(),
+    email: String(req.body?.email || '').trim().toLowerCase(),
+    teslaCount: String(req.body?.teslaCount || '1').trim(),
+    useCase: String(req.body?.useCase || 'Owner rental').trim(),
+    plan: String(req.body?.plan || 'First Tesla free').trim(),
+    createdAt: new Date().toISOString(),
+  };
+
+  if (!lead.email || !lead.email.includes('@')) {
+    res.status(400).json({
+      error: 'EMAIL_REQUIRED',
+      message: 'Enter a valid email address.',
+    });
+    return;
+  }
+
+  earlyAccessLeads.unshift(lead);
+  earlyAccessLeads.splice(100);
+  console.log('FleetOS early access lead', {
+    email: lead.email,
+    teslaCount: lead.teslaCount,
+    useCase: lead.useCase,
+    plan: lead.plan,
+  });
+
+  res.status(201).json({ ok: true, lead });
 });
 
 app.listen(PORT, () => {
