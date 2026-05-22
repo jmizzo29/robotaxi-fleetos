@@ -134,6 +134,7 @@ export default function App() {
   const [route, navigate] = useHashRoute();
   const isPublicRoute = route === 'landing';
   const isPublicLegalRoute = route === 'privacy' || route === 'terms';
+  const isPublicOnboardingRoute = route === 'onboarding';
   const teslaConsentReady = canUseTeslaTelemetry();
 
   useEffect(() => {
@@ -649,6 +650,39 @@ export default function App() {
           </button>
         </header>
         <LegalPage type={route} />
+      </div>
+    );
+  }
+
+  if (isPublicOnboardingRoute) {
+    return (
+      <div className="min-h-screen bg-[#0b1120] px-5 py-6 text-slate-100">
+        <header className="mx-auto mb-8 flex max-w-5xl items-center justify-between">
+          <button type="button" onClick={() => navigate('landing')} className="flex items-center gap-3">
+            <span className="h-2.5 w-2.5 rounded-full bg-sky-300 shadow-lg shadow-sky-300/50" />
+            <span className="text-sm font-black uppercase tracking-[0.28em] text-sky-200">FleetOS</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate('landing')}
+            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-slate-200 transition hover:bg-white/10"
+          >
+            Back to Home
+          </button>
+        </header>
+        <main className="mx-auto max-w-5xl">
+          <PageHeader
+            eyebrow="Beta Onboarding"
+            title="Connect Your First Tesla"
+            description="A guided mobile-friendly setup for account creation, data consent, Tesla OAuth, first sync, and dashboard handoff."
+          />
+          <OnboardingPanel
+            realVehicleCount={realVehicles.length}
+            isLoading={isLoadingReal}
+            onSync={refreshRealTesla}
+            onNavigate={navigate}
+          />
+        </main>
       </div>
     );
   }
