@@ -133,6 +133,7 @@ export default function App() {
   const [, setComplianceRevision] = useState(0);
   const [route, navigate] = useHashRoute();
   const isPublicRoute = route === 'landing';
+  const isPublicLegalRoute = route === 'privacy' || route === 'terms';
   const teslaConsentReady = canUseTeslaTelemetry();
 
   useEffect(() => {
@@ -629,6 +630,27 @@ export default function App() {
 
   if (isPublicRoute) {
     return <LandingPage onNavigate={navigate} />;
+  }
+
+  if (isPublicLegalRoute) {
+    return (
+      <div className="min-h-screen bg-[#0b1120] px-5 py-6 text-slate-100">
+        <header className="mx-auto mb-8 flex max-w-5xl items-center justify-between">
+          <button type="button" onClick={() => navigate('landing')} className="flex items-center gap-3">
+            <span className="h-2.5 w-2.5 rounded-full bg-sky-300 shadow-lg shadow-sky-300/50" />
+            <span className="text-sm font-black uppercase tracking-[0.28em] text-sky-200">FleetOS</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate('landing')}
+            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-slate-200 transition hover:bg-white/10"
+          >
+            Back to Home
+          </button>
+        </header>
+        <LegalPage type={route} />
+      </div>
+    );
   }
 
   return (
