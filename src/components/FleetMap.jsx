@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Map, { Layer, Marker, Popup, Source } from 'react-map-gl/mapbox';
 import HeatmapLayer from './HeatmapLayer';
 import heatmapData from '../data/heatmapData';
@@ -28,6 +28,18 @@ function MetricRow({ label, value, emphasize = false }) {
         {value}
       </span>
     </div>
+  );
+}
+
+function HeadingArrow({ heading }) {
+  if (!Number.isFinite(Number(heading))) return null;
+
+  return (
+    <span
+      className="absolute -top-3 left-1/2 h-0 w-0 -translate-x-1/2 border-x-[6px] border-b-[12px] border-x-transparent border-b-emerald-200 drop-shadow-[0_0_8px_rgba(16,185,129,0.9)]"
+      style={{ transform: `translateX(-50%) rotate(${Number(heading)}deg)` }}
+      aria-hidden="true"
+    />
   );
 }
 
@@ -114,8 +126,12 @@ export default function FleetMap({
   chargingStations = [],
 }) {
   const mapRef = useRef(null);
+  const [mapTheme, setMapTheme] = useState('dark');
   const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
   const realVehicle = fleet.find((vehicle) => vehicle.isReal && vehicle.latitude && vehicle.longitude);
+  const mapStyle = mapTheme === 'satellite'
+    ? 'mapbox://styles/mapbox/satellite-streets-v12'
+    : 'mapbox://styles/mapbox/dark-v11';
 
   useEffect(() => {
     if (!realVehicle || !mapRef.current) return;
@@ -140,6 +156,31 @@ export default function FleetMap({
 
   return (
     <div className="overflow-hidden rounded-lg border border-white/10 bg-slate-900/80 shadow-xl shadow-black/20">
+      <div className="flex flex-col gap-3 border-b border-white/10 bg-slate-950/80 px-4 py-3 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-300">Map Context</p>
+          <p className="mt-1 text-sm text-slate-400">Satellite mode gives a street-adjacent view around precise Tesla GPS.</p>
+        </div>
+        <div className="grid grid-cols-2 overflow-hidden rounded-md border border-white/10 bg-white/[0.04] p-1">
+          {[
+            ['dark', 'Ops'],
+            ['satellite', 'Satellite'],
+          ].map(([value, label]) => (
+            <button
+              key={value}
+              type="button"
+              onClick={() => setMapTheme(value)}
+              className={`rounded px-3 py-2 text-xs font-black transition ${
+                mapTheme === value
+                  ? 'bg-sky-300 text-slate-950'
+                  : 'text-slate-300 hover:bg-white/10'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
       <div className="h-[430px] sm:h-[520px] lg:h-[900px]">
         <Map
           ref={mapRef}
@@ -149,7 +190,7 @@ export default function FleetMap({
             latitude: 27.8,
             zoom: 5.8,
           }}
-          mapStyle="mapbox://styles/mapbox/dark-v11"
+          mapStyle={mapStyle}
           style={{
             width: '100%',
             height: '100%',
@@ -237,7 +278,7 @@ export default function FleetMap({
                 aria-label={`Select ${vehicle.id}`}
               >
                 <span
-                  className={`block rounded-full border-4 shadow-[0_0_24px] ${
+                  className={`relative block rounded-full border-4 shadow-[0_0_24px] ${
                     vehicle.anomalyRisk > 20
                       ? 'h-6 w-6 bg-red-500 border-red-200 shadow-red-500'
                       : vehicle.battery < 30
@@ -246,7 +287,9 @@ export default function FleetMap({
                           ? 'h-8 w-8 bg-green-400 border-green-100 shadow-green-400'
                           : 'h-6 w-6 bg-sky-400 border-sky-200 shadow-sky-400'
                   }`}
-                />
+                >
+                  {vehicle.isReal && <HeadingArrow heading={vehicle.heading} />}
+                </span>
                 {vehicle.isReal && (
                   <div className="flex flex-col items-center gap-0.5">
                     <span className="rounded-full border border-green-300/40 bg-black/80 px-2 py-0.5 text-[10px] font-bold text-green-200 shadow-lg">
