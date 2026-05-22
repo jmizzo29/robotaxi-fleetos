@@ -16,12 +16,14 @@ export function getLocalApiBase() {
 }
 
 export async function fetchApiJson(path, options = {}) {
+  const token = await getAuthToken();
   const response = await fetch(`${getApiBase()}${path}`, {
     cache: 'no-store',
     credentials: 'include',
     ...options,
     headers: {
       'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
       ...(options.headers || {}),
     },
   });
@@ -33,3 +35,4 @@ export async function fetchApiJson(path, options = {}) {
 
   return data;
 }
+import { getAuthToken } from './authTokenStore';

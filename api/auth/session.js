@@ -14,6 +14,14 @@ export default async function handler(req, res) {
   }
 
   const session = await getSession(req, res, { create: true });
+  if (!session) {
+    res.status(401).json({
+      authenticated: false,
+      error: 'LOGIN_REQUIRED',
+      message: 'Sign in to FleetOS to continue.',
+    });
+    return;
+  }
   const tesla = await getTeslaConnectionForSession(req, res);
   const billing = await getBillingStatusForSession(req, res, { create: true });
   res.status(200).json({

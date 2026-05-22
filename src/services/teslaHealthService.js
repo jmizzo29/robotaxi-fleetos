@@ -1,4 +1,5 @@
 import { getApiBase } from './apiClient';
+import { getAuthToken } from './authTokenStore';
 
 const API_BASE = getApiBase();
 
@@ -10,9 +11,11 @@ export function getTeslaLoginUrl(returnRoute = 'tesla') {
 }
 
 async function fetchJson(path) {
+  const token = await getAuthToken();
   const response = await fetch(`${API_BASE}${path}?ts=${Date.now()}`, {
     cache: 'no-store',
     credentials: 'include',
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
   });
   const data = await response.json().catch(() => ({}));
 

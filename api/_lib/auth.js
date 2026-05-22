@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { getVerifiedClerkSession, isClerkAuthRequired } from './clerkAuth.js';
 import { ensureFleetSchema, query } from './db.js';
 
 const SESSION_COOKIE = 'fleetos_session';
@@ -120,6 +121,14 @@ export async function createAnonymousSession(res) {
 
 export async function getSession(req, res, { create = false } = {}) {
   await ensureFleetSchema();
+  const clerkSession = await getVerifiedClerkSession(req);
+  if (clerkSession) {
+    await ensureBillingEntitlement(clerkSession.userId, clerkSession.user?.email);
+    return clerkSession;
+  }
+
+  if (isClerkAuthRequired()) return null;
+
   const sessionId = getSessionId(req);
   if (sessionId) {
     const { rows } = await query(

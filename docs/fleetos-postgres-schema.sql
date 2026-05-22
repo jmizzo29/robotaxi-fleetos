@@ -8,6 +8,8 @@ create table if not exists fleetos_users (
   password_hash text,
   email_verified_at timestamptz,
   auth_provider text not null default 'fleetos',
+  external_auth_provider text,
+  external_auth_id text,
   role text not null default 'owner',
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
@@ -16,6 +18,8 @@ create table if not exists fleetos_users (
 alter table fleetos_users add column if not exists password_hash text;
 alter table fleetos_users add column if not exists email_verified_at timestamptz;
 alter table fleetos_users add column if not exists auth_provider text not null default 'fleetos';
+alter table fleetos_users add column if not exists external_auth_provider text;
+alter table fleetos_users add column if not exists external_auth_id text;
 
 create table if not exists fleetos_sessions (
   id text primary key,
@@ -243,6 +247,7 @@ create table if not exists beta_leads (
 create index if not exists idx_fleetos_vehicles_fleet on fleetos_vehicles(fleet_id);
 create index if not exists idx_fleetos_vehicles_vin on fleetos_vehicles(vin);
 create index if not exists idx_fleetos_sessions_user on fleetos_sessions(user_id);
+create unique index if not exists idx_fleetos_users_external_auth on fleetos_users(external_auth_provider, external_auth_id) where external_auth_id is not null;
 create index if not exists idx_fleetos_magic_links_email on fleetos_magic_links(email);
 create index if not exists idx_fleetos_tesla_connections_user on fleetos_tesla_connections(user_id);
 create index if not exists idx_fleetos_telemetry_vehicle_time on fleetos_telemetry_snapshots(vehicle_id, captured_at desc);

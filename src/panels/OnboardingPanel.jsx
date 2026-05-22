@@ -1,4 +1,6 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
+import { ClerkOnboardingAuthStep } from '../auth/ClerkAccountControls';
+import { isClerkConfigured } from '../auth/clerkConfig';
 import BetaConsentPanel from '../components/BetaConsentPanel';
 import {
   canUseTeslaTelemetry,
@@ -76,10 +78,10 @@ export default function OnboardingPanel({
   const [busy, setBusy] = useState(false);
   const [, setComplianceRevision] = useState(0);
 
-  const refreshSession = async () => {
+  const refreshSession = useCallback(async () => {
     const nextSession = await getFleetOsSession();
     setSession(nextSession);
-  };
+  }, []);
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
@@ -91,7 +93,7 @@ export default function OnboardingPanel({
       window.clearTimeout(timer);
       window.removeEventListener('fleetos-compliance-updated', refreshCompliance);
     };
-  }, []);
+  }, [refreshSession]);
 
   const hasAccount = Boolean(session?.user?.email);
   const consentReady = canUseTeslaTelemetry();
@@ -167,11 +169,15 @@ export default function OnboardingPanel({
 
       <StepShell
         number="1"
-        title="Create your FleetOS account"
-        detail="Use the beta invite code so FleetOS can attach telemetry and billing status to the right person."
+        title={isClerkConfigured() ? 'Create your secure FleetOS account' : 'Create your FleetOS account'}
+        detail={isClerkConfigured()
+          ? 'Use Clerk-hosted signup or sign-in. FleetOS maps that verified identity to your private fleet records.'
+          : 'Use the beta invite code so FleetOS can attach telemetry and billing status to the right person.'}
         status={statusFor(1)}
       >
-        {!hasAccount ? (
+        {isClerkConfigured() ? (
+          <ClerkOnboardingAuthStep onAuthChange={refreshSession} />
+        ) : !hasAccount ? (
           <div className="grid gap-3 sm:grid-cols-2">
             <TextInput
               value={form.name}

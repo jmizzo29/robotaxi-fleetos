@@ -1,6 +1,7 @@
 // src/services/teslaService.js
 import { getVehicleOwnership } from '../data/vehicleOwnership';
 import { getApiBase } from './apiClient';
+import { getAuthToken } from './authTokenStore';
 
 const API_BASE = getApiBase();
 const PARKED_TESLA_ANCHOR = {
@@ -15,9 +16,11 @@ export async function getTeslaVehicles() {
   }
 
   try {
+    const token = await getAuthToken();
     const response = await fetch(`${API_BASE}/vehicles?ts=${Date.now()}`, {
       cache: 'no-store',
       credentials: 'include',
+      headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
     if (!response.ok) {
       const detail = await response.json().catch(() => ({}));
@@ -40,10 +43,12 @@ export async function wakeTeslaVehicle(vehicle) {
     throw new Error('No Tesla vehicle ID is available to wake.');
   }
 
+  const token = await getAuthToken();
   const response = await fetch(`${API_BASE}/vehicles/${encodeURIComponent(vehicleId)}/wake_up`, {
     method: 'POST',
     cache: 'no-store',
     credentials: 'include',
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
   });
 
   const data = await response.json().catch(() => ({}));

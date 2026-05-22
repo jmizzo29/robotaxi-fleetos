@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { ClerkAccountSummary } from '../auth/ClerkAccountControls';
+import { isClerkConfigured } from '../auth/clerkConfig';
 import {
   getFleetOsBillingStatus,
   getFleetOsSession,
@@ -100,6 +102,8 @@ export default function AccountPanel() {
 
   return (
     <div className="space-y-6">
+      {isClerkConfigured() && <ClerkAccountSummary />}
+
       {(message || error) && (
         <div className={`rounded-lg border p-4 text-sm font-semibold ${
           error
@@ -141,9 +145,11 @@ export default function AccountPanel() {
         <section className="rounded-lg border border-white/10 bg-slate-900/70 p-5 shadow-xl shadow-black/10">
           <div className="mb-5">
             <p className="text-xs font-bold uppercase tracking-[0.22em] text-sky-300">Beta Access</p>
-            <h2 className="mt-2 text-2xl font-black text-slate-100">Create Account</h2>
+            <h2 className="mt-2 text-2xl font-black text-slate-100">{isClerkConfigured() ? 'Native Backup Account' : 'Create Account'}</h2>
             <p className="mt-2 text-sm leading-6 text-slate-400">
-              Invite-only signup gives each tester a real FleetOS identity, a private Tesla OAuth connection, and first-Tesla-free billing status.
+              {isClerkConfigured()
+                ? 'Clerk is the primary login path. This native beta account remains as a fallback until all tester data has migrated.'
+                : 'Invite-only signup gives each tester a real FleetOS identity, a private Tesla OAuth connection, and first-Tesla-free billing status.'}
             </p>
           </div>
 

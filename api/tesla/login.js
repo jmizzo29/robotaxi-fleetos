@@ -34,6 +34,10 @@ export default async function handler(req, res) {
 
   await ensureFleetSchema();
   const session = await getSession(req, res, { create: true });
+  if (!session) {
+    res.status(401).send('Sign in to FleetOS before connecting Tesla.');
+    return;
+  }
   const redirectUri = redirectUriFromRequest(req);
   const state = crypto.randomBytes(24).toString('hex');
   const returnTo = String(req.query.returnTo || '/#/tesla');

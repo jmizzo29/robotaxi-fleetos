@@ -1,4 +1,5 @@
 import { getApiBase } from './apiClient';
+import { getAuthToken } from './authTokenStore';
 
 const ACCESS_KEY = 'fleetos.betaAccess.v1';
 const CONSENT_KEY = 'fleetos.teslaConsent.v1';
@@ -47,7 +48,12 @@ export function acceptTeslaConsent() {
 export async function revokeTeslaConsent() {
   localStorage.removeItem(CONSENT_KEY);
   const apiBase = getApiBase();
-  await fetch(`${apiBase}/tesla/disconnect`, { method: 'POST', credentials: 'include' }).catch(() => {});
+  const token = await getAuthToken();
+  await fetch(`${apiBase}/tesla/disconnect`, {
+    method: 'POST',
+    credentials: 'include',
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  }).catch(() => {});
   window.dispatchEvent(new CustomEvent('fleetos-compliance-updated'));
 }
 
@@ -58,7 +64,12 @@ export function canUseTeslaTelemetry() {
 export async function deleteUserData() {
   DATA_KEYS.forEach((key) => localStorage.removeItem(key));
   const apiBase = getApiBase();
-  const response = await fetch(`${apiBase}/auth/delete-data`, { method: 'DELETE', credentials: 'include' });
+  const token = await getAuthToken();
+  const response = await fetch(`${apiBase}/auth/delete-data`, {
+    method: 'DELETE',
+    credentials: 'include',
+    headers: token ? { Authorization: `Bearer ${token}` } : {},
+  });
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {
     throw new Error(data.message || data.error || `Delete request failed with ${response.status}`);
