@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import TeslaIndependenceNotice from '../components/TeslaIndependenceNotice';
+import useFleetAuthStatus from '../auth/useFleetAuthStatus';
 import { submitEarlyAccessLead } from '../services/leadService';
 
 const capabilities = [
@@ -207,6 +208,11 @@ function EarlyAccessForm() {
 }
 
 export default function LandingPage({ onNavigate }) {
+  const { isSignedIn } = useFleetAuthStatus();
+  const enterApp = (route = 'overview') => {
+    onNavigate(isSignedIn ? route : 'onboarding');
+  };
+
   return (
     <div className="min-h-screen bg-[#0b1120] text-slate-100">
       <header className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5">
@@ -224,7 +230,7 @@ export default function LandingPage({ onNavigate }) {
           </button>
           <button
             type="button"
-            onClick={() => onNavigate('dispatch')}
+            onClick={() => enterApp('dispatch')}
             className="hidden rounded-full border border-sky-400/30 bg-sky-400/10 px-4 py-2 text-sm font-bold text-sky-100 transition hover:bg-sky-400/20 sm:block"
           >
             View Demo
@@ -262,10 +268,10 @@ export default function LandingPage({ onNavigate }) {
               </button>
               <button
                 type="button"
-                onClick={() => onNavigate('overview')}
+                onClick={() => enterApp('overview')}
                 className="rounded-md border border-white/10 bg-white/5 px-5 py-4 text-sm font-black text-slate-100 transition hover:bg-white/10"
               >
-                Open Console
+                {isSignedIn ? 'Open Console' : 'Sign In to Open Console'}
               </button>
             </div>
             <p className="mt-5 text-sm leading-6 text-slate-500">
@@ -335,10 +341,10 @@ export default function LandingPage({ onNavigate }) {
               </div>
               <button
                 type="button"
-                onClick={() => onNavigate('tesla')}
+                onClick={() => enterApp('tesla')}
                 className="rounded-md border border-sky-400/30 bg-sky-400/10 px-5 py-3 text-sm font-black text-sky-100 transition hover:bg-sky-400/20"
               >
-                View Tesla Integration
+                {isSignedIn ? 'View Tesla Integration' : 'Sign In to Connect Tesla'}
               </button>
             </div>
 
