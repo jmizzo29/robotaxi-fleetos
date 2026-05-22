@@ -767,6 +767,7 @@ app.post('/api/ai/analyze', async (req, res) => {
 const memoryEvents = [];
 const assetRecords = {};
 const earlyAccessLeads = [];
+const revenueRecords = [];
 const MAX_MEMORY_EVENTS = 120;
 
 function normalizeMemoryEvent(event = {}) {
@@ -866,6 +867,33 @@ app.post('/api/leads', (req, res) => {
   });
 
   res.status(201).json({ ok: true, lead });
+});
+
+app.get('/api/revenue', (req, res) => {
+  res.json({ records: revenueRecords });
+});
+
+app.post('/api/revenue', (req, res) => {
+  const incoming = Array.isArray(req.body?.records)
+    ? req.body.records
+    : req.body?.record
+      ? [req.body.record]
+      : [];
+
+  const normalized = incoming.map((record) => ({
+    id: record.id || `rev-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    vehicleKey: String(record.vehicleKey || record.vin || record.vehicle || ''),
+    vehicleLabel: String(record.vehicleLabel || record.vehicle || ''),
+    date: record.date || new Date().toISOString().slice(0, 10),
+    source: record.source || 'Manual',
+    amount: Number(record.amount) || 0,
+    notes: record.notes || '',
+    createdAt: record.createdAt || new Date().toISOString(),
+  }));
+
+  revenueRecords.unshift(...normalized);
+  revenueRecords.splice(1000);
+  res.status(201).json({ records: revenueRecords });
 });
 
 app.listen(PORT, () => {

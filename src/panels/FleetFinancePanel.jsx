@@ -1,4 +1,13 @@
+import { useEffect, useState } from 'react';
 import { getVehicleOwnership } from '../data/vehicleOwnership';
+import {
+  addRevenueRecord,
+  importRevenueRecords,
+  parseRevenueCsv,
+  readRevenueRecords,
+  revenueForVehicle,
+  syncRevenueFromBackend,
+} from '../services/revenueService';
 
 function formatCurrency(value) {
   if (!Number.isFinite(value)) return '$0';
@@ -14,9 +23,10 @@ function formatPercent(value) {
   return `${Math.round(value)}%`;
 }
 
-function vehicleFinance(vehicle) {
+function vehicleFinance(vehicle, revenueRecords = []) {
   const ownership = vehicle.ownership || getVehicleOwnership(vehicle) || {};
-  const revenue = Number(vehicle.revenue) || 0;
+  const importedRevenue = revenueForVehicle(vehicle, revenueRecords);
+  const revenue = importedRevenue || Number(vehicle.revenue) || 0;
   const monthlyPayment = Number(ownership.monthlyPayment) || 0;
   const chargingCost = Math.max(95, Math.round(revenue * 0.075));
   const insuranceCost = vehicle.isReal ? 210 : 185;
@@ -32,6 +42,7 @@ function vehicleFinance(vehicle) {
     vehicle,
     ownership,
     revenue,
+    revenueSource: importedRevenue ? 'Ledger' : 'Modeled',
     monthlyPayment,
     chargingCost,
     insuranceCost,
@@ -66,7 +77,7 @@ function RoiBar({ value }) {
 }
 
 function FinanceRow({ item, onQueueCommand }) {
-  const { vehicle, ownership, revenue, operatingCost, netProfit, margin, roi, equity } = item;
+  const { vehicle, ownership, revenue, revenueSource, operatingCost, netProfit, margin, roi, equity } = item;
   const positive = netProfit >= 0;
 
   const handleReview = () => {
@@ -131,6 +142,114 @@ function FinanceRow({ item, onQueueCommand }) {
             <span className="text-slate-400">Loan Payment</span>
             <span className="font-black text-slate-100">{formatCurrency(item.monthlyPayment)}</span>
           </div>
+          <div className="mt-2 flex justify-between gap-4">
+            <span className="text-slate-400">Revenue Source</span>
+            <span className="font-black text-slate-100">{revenueSource}</span>
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function RevenueTracker({ fleet, records, onRecordsChanged }) {
+  const [draft, setDraft] = useState({
+    vehicleKey: fleet[0]?.vin || fleet[0]?.id || '',
+    amount: '',
+    date: new Date().toISOString().slice(0, 10),
+    source: 'Manual',
+    notes: '',
+  });
+  const [message, setMessage] = useState('');
+
+  const update = (field, value) => setDraft((current) => ({ ...current, [field]: value }));
+
+  const addManual = () => {
+    addRevenueRecord({
+      ...draft,
+      vehicleLabel: fleet.find((vehicle) => [vehicle.vin, vehicle.id].includes(draft.vehicleKey))?.name || draft.vehicleKey,
+    });
+    setDraft((current) => ({ ...current, amount: '', notes: '' }));
+    setMessage('Revenue record added.');
+    onRecordsChanged?.();
+  };
+
+  const importCsv = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const text = await file.text();
+    const parsed = parseRevenueCsv(text);
+    importRevenueRecords(parsed);
+    setMessage(`${parsed.length} CSV revenue records imported.`);
+    onRecordsChanged?.();
+    event.target.value = '';
+  };
+
+  return (
+    <article className="rounded-lg border border-white/10 bg-slate-900/80 p-5 shadow-lg shadow-black/10">
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-[0.9fr_1.1fr]">
+        <div>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-emerald-300">
+            Revenue Tracking
+          </p>
+          <h2 className="text-2xl font-black tracking-tight">Manual + CSV Ledger</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-400">
+            Tesla does not report rental income. FleetOS starts with honest owner-entered revenue and CSV imports from rental platforms, then uses that ledger for ROI.
+          </p>
+          <div className="mt-4 rounded-lg border border-white/10 bg-slate-950/50 p-3 text-sm text-slate-400">
+            {records.length} revenue records saved. CSV headers supported: <span className="font-bold text-slate-200">vin, vehicle, amount, date, source, notes</span>.
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+          <select
+            value={draft.vehicleKey}
+            onChange={(event) => update('vehicleKey', event.target.value)}
+            className="rounded-md border border-white/10 bg-slate-950 px-3 py-3 text-sm font-bold text-white outline-none"
+          >
+            {fleet.map((vehicle) => (
+              <option key={vehicle.vin || vehicle.id} value={vehicle.vin || vehicle.id}>
+                {vehicle.name || vehicle.display_name || vehicle.id}
+              </option>
+            ))}
+          </select>
+          <input
+            type="number"
+            value={draft.amount}
+            onChange={(event) => update('amount', event.target.value)}
+            placeholder="Revenue amount"
+            className="rounded-md border border-white/10 bg-slate-950 px-3 py-3 text-sm font-bold text-white outline-none"
+          />
+          <input
+            type="date"
+            value={draft.date}
+            onChange={(event) => update('date', event.target.value)}
+            className="rounded-md border border-white/10 bg-slate-950 px-3 py-3 text-sm font-bold text-white outline-none"
+          />
+          <input
+            value={draft.source}
+            onChange={(event) => update('source', event.target.value)}
+            placeholder="Turo, Getaround, Manual..."
+            className="rounded-md border border-white/10 bg-slate-950 px-3 py-3 text-sm font-bold text-white outline-none"
+          />
+          <input
+            value={draft.notes}
+            onChange={(event) => update('notes', event.target.value)}
+            placeholder="Notes"
+            className="rounded-md border border-white/10 bg-slate-950 px-3 py-3 text-sm font-bold text-white outline-none sm:col-span-2"
+          />
+          <button
+            type="button"
+            onClick={addManual}
+            className="rounded-md border border-emerald-400/30 bg-emerald-400/10 px-4 py-3 text-sm font-bold text-emerald-100 transition hover:bg-emerald-400/20"
+          >
+            Add Revenue
+          </button>
+          <label className="cursor-pointer rounded-md border border-sky-400/30 bg-sky-400/10 px-4 py-3 text-center text-sm font-bold text-sky-100 transition hover:bg-sky-400/20">
+            Import CSV
+            <input type="file" accept=".csv,text/csv" onChange={importCsv} className="hidden" />
+          </label>
+          {message && <p className="sm:col-span-2 text-sm font-semibold text-emerald-300">{message}</p>}
         </div>
       </div>
     </article>
@@ -217,7 +336,20 @@ function FinanceInsightBoard({ finance, totalNet, avgRoi, onQueueCommand }) {
 }
 
 export default function FleetFinancePanel({ fleet = [], onQueueCommand }) {
-  const finance = fleet.map(vehicleFinance);
+  const [revenueRecords, setRevenueRecords] = useState(() => readRevenueRecords());
+
+  useEffect(() => {
+    const refresh = () => setRevenueRecords(readRevenueRecords());
+    syncRevenueFromBackend().then(setRevenueRecords);
+    window.addEventListener('fleetos-revenue-updated', refresh);
+    window.addEventListener('storage', refresh);
+    return () => {
+      window.removeEventListener('fleetos-revenue-updated', refresh);
+      window.removeEventListener('storage', refresh);
+    };
+  }, []);
+
+  const finance = fleet.map((vehicle) => vehicleFinance(vehicle, revenueRecords));
   const totalRevenue = finance.reduce((sum, item) => sum + item.revenue, 0);
   const totalCost = finance.reduce((sum, item) => sum + item.operatingCost, 0);
   const totalNet = finance.reduce((sum, item) => sum + item.netProfit, 0);
@@ -245,6 +377,12 @@ export default function FleetFinancePanel({ fleet = [], onQueueCommand }) {
           This is the kind of view an owner pays for: vehicle-level ROI, loan exposure, operating cost, margin, and AI finance review. Current costs are modeled from your asset records and live/simulated operating signals, then can later be replaced with accounting imports.
         </p>
       </article>
+
+      <RevenueTracker
+        fleet={fleet}
+        records={revenueRecords}
+        onRecordsChanged={() => setRevenueRecords(readRevenueRecords())}
+      />
 
       <FinanceInsightBoard
         finance={finance}
