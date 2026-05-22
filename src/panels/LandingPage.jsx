@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import TeslaIndependenceNotice from '../components/TeslaIndependenceNotice';
 import { submitEarlyAccessLead } from '../services/leadService';
 
 const capabilities = [
@@ -337,6 +338,9 @@ export default function LandingPage({ onNavigate }) {
             <p className="mt-6 text-xs leading-5 text-slate-600">
               FleetOS uses Tesla-approved authentication flows and is not affiliated with or endorsed by Tesla.
             </p>
+            <div className="mt-5 max-w-3xl">
+              <TeslaIndependenceNotice compact />
+            </div>
           </div>
         </section>
 

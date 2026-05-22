@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import BetaConsentPanel from '../components/BetaConsentPanel';
+import TeslaIndependenceNotice from '../components/TeslaIndependenceNotice';
 import { canUseTeslaTelemetry } from '../services/betaCompliance';
 import { disconnectTeslaForUser, getFleetOsSession } from '../services/sessionService';
 import { getTeslaLoginUrl, getTeslaSyncHealth } from '../services/teslaHealthService';
@@ -237,6 +238,10 @@ export default function TeslaSyncHealthPanel({
           <BetaConsentPanel compact />
         </div>
       )}
+
+      <div className="mt-5">
+        <TeslaIndependenceNotice />
+      </div>
 
       <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
         {checks.map((check) => (
