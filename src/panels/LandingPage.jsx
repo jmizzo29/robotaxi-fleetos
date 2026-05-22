@@ -27,6 +27,13 @@ const setupSteps = [
   ['Sync and monitor', 'See battery, location, charging, odometer, parking history, and owner economics in one console.'],
 ];
 
+const trustPoints = [
+  ['Secure account login', 'FleetOS uses managed identity via Clerk when configured, with verified sessions before Tesla connection.'],
+  ['Tesla password never shared', 'Owners authenticate directly with Tesla OAuth. FleetOS never asks for or stores Tesla account passwords.'],
+  ['Encrypted Tesla tokens', 'Tesla refresh tokens are encrypted in Postgres and tied to the signed-in FleetOS user.'],
+  ['Privacy-first location', 'Precise vehicle location is protected by consent and rounded by default in API responses.'],
+];
+
 const pricing = [
   ['Free', '$0', '1 Tesla', 'Live telemetry, GPS/location intelligence, parking history, owner finance, and AI brief.'],
   ['Owner Fleet', '$12', 'per extra Tesla / mo', 'Multi-vehicle monitoring for rental hosts, Turo-style operators, and small fleets.'],
@@ -267,6 +274,17 @@ export default function LandingPage({ onNavigate }) {
           </div>
 
           <ProductPreview />
+        </section>
+
+        <section className="border-y border-white/10 bg-slate-950/80">
+          <div className="mx-auto grid max-w-7xl grid-cols-1 gap-4 px-5 py-8 md:grid-cols-4">
+            {trustPoints.map(([title, detail]) => (
+              <article key={title} className="rounded-lg border border-emerald-300/15 bg-emerald-400/[0.06] p-4">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-300">{title}</p>
+                <p className="mt-3 text-sm leading-6 text-slate-300">{detail}</p>
+              </article>
+            ))}
+          </div>
         </section>
 
         <section className="border-y border-white/10 bg-white/[0.03]">

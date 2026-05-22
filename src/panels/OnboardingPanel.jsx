@@ -165,6 +165,18 @@ export default function OnboardingPanel({
         <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-400">
           This is the clean beta path for a mobile Tesla owner: create a FleetOS account, approve data use, connect Tesla, sync once, then land on the operating dashboard.
         </p>
+        <div className="mt-5 grid gap-3 md:grid-cols-3">
+          {[
+            ['Tesla password stays with Tesla', 'FleetOS uses OAuth and never asks for your Tesla password.'],
+            ['Owner-controlled access', 'You can disconnect Tesla, revoke consent, or delete FleetOS data from the app.'],
+            ['Private by default', 'Tesla tokens are encrypted and location is handled only after explicit consent.'],
+          ].map(([title, detail]) => (
+            <div key={title} className="rounded-lg border border-emerald-300/15 bg-emerald-400/[0.06] p-4">
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-emerald-300">{title}</p>
+              <p className="mt-2 text-sm leading-6 text-slate-300">{detail}</p>
+            </div>
+          ))}
+        </div>
       </div>
 
       <StepShell
