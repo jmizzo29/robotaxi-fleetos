@@ -1,4 +1,5 @@
 import { getVehicleOwnership } from '../data/vehicleOwnership';
+import { maskVin } from '../utils/vinPrivacy';
 
 const paintClasses = {
   white: 'from-white via-slate-200 to-slate-500',
@@ -16,11 +17,6 @@ function paintKey(color = '') {
   if (value.includes('silver')) return 'silver';
   if (value.includes('graphite') || value.includes('gray') || value.includes('grey')) return 'graphite';
   return 'silver';
-}
-
-function trimVin(value = '') {
-  if (!value) return 'VIN unavailable';
-  return value.length > 10 ? `${value.slice(0, 5)}...${value.slice(-5)}` : value;
 }
 
 function scoreTone(value) {
@@ -113,7 +109,7 @@ export default function VehicleIdentityPlate({
             <span className="text-slate-600">/</span>
             <span>{color}</span>
             <span className="text-slate-600">/</span>
-            <span>{trimVin(vehicle?.vin)}</span>
+            <span>{maskVin(vehicle?.vin)}</span>
           </div>
         </div>
 

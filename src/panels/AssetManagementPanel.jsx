@@ -6,6 +6,8 @@ import {
   saveVehicleOwnership,
   syncSavedOwnershipFromBackend,
 } from '../data/vehicleOwnership';
+import { canRevealVin, maskVin } from '../utils/vinPrivacy';
+import VehicleOnboardingPanel from './VehicleOnboardingPanel';
 
 function formatCurrency(value) {
   if (!Number.isFinite(value)) return '$0';
@@ -67,7 +69,11 @@ function Field({ label, name, type, value, onChange }) {
   );
 }
 
-export default function AssetManagementPanel({ fleet = [] }) {
+export default function AssetManagementPanel({
+  fleet = [],
+  isLoading = false,
+  onSync,
+}) {
   const [, setRevision] = useState(0);
 
   useEffect(() => {
@@ -95,6 +101,8 @@ export default function AssetManagementPanel({ fleet = [] }) {
 
   return (
     <section className="space-y-4">
+      <VehicleOnboardingPanel fleet={fleet} isLoading={isLoading} onSync={onSync} />
+
       <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
         <SummaryCard label="Acquisition Cost" value={formatCurrency(totalAcquisition)} tone="text-sky-300" />
         <SummaryCard label="Outstanding Balance" value={formatCurrency(totalBalance)} tone="text-amber-300" />
@@ -118,6 +126,7 @@ export default function AssetManagementPanel({ fleet = [] }) {
 
 function EditableAssetCard({ vehicle, ownership, onSaved }) {
   const [draft, setDraft] = useState(() => ownership);
+  const [showVin, setShowVin] = useState(false);
   const key = getVehicleOwnershipKey(vehicle);
 
   const handleChange = (event) => {
@@ -148,6 +157,18 @@ function EditableAssetCard({ vehicle, ownership, onSaved }) {
           <p className="mt-1 text-sm text-slate-400">
             {draft.modelYear} {draft.model} - {draft.tag}
           </p>
+          <div className="mt-2 flex flex-wrap items-center gap-2 text-xs font-semibold text-slate-500">
+            <span>{showVin ? vehicle.vin || 'VIN unavailable' : maskVin(vehicle.vin)}</span>
+            {canRevealVin(vehicle.vin) && (
+              <button
+                type="button"
+                onClick={() => setShowVin((current) => !current)}
+                className="text-sky-300 hover:text-sky-200"
+              >
+                {showVin ? 'Hide VIN' : 'Reveal VIN'}
+              </button>
+            )}
+          </div>
         </div>
         <span className="rounded-full border border-white/10 bg-slate-950/70 px-3 py-1 text-xs font-black uppercase text-slate-300">
           {vehicle.isReal ? 'Real' : 'Sim'}

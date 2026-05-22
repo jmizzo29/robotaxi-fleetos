@@ -355,7 +355,11 @@ export default function App() {
           description="Track acquisition cost, outstanding balances, tags, model years, registration, and ownership details across the fleet."
           action={operationsStatus}
         />
-        <AssetManagementPanel fleet={fleet} />
+        <AssetManagementPanel
+          fleet={fleet}
+          isLoading={isLoadingReal}
+          onSync={refreshRealTesla}
+        />
       </>
     ),
     finance: (

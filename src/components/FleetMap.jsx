@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import Map, { Layer, Marker, Popup, Source } from 'react-map-gl/mapbox';
 import HeatmapLayer from './HeatmapLayer';
 import heatmapData from '../data/heatmapData';
+import { maskVin } from '../utils/vinPrivacy';
 
 function vehicleRoute(vehicle) {
   return {
@@ -57,7 +58,7 @@ function VehiclePopup({ vehicle }) {
               {formatValue(vehicle.status)}
             </span>
           </div>
-          {vehicle.vin && <p className="mt-1.5 truncate text-[9px] text-slate-500">{vehicle.vin}</p>}
+          {vehicle.vin && <p className="mt-1.5 truncate text-[9px] text-slate-500">{maskVin(vehicle.vin)}</p>}
         </div>
 
         <div className="space-y-2.5 p-3 text-[11px]">
