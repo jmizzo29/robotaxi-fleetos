@@ -301,18 +301,25 @@ export default function OnboardingPanel({
         detail="Once synced, FleetOS can show the map, finance, health, charging, alerts, and owner intelligence views."
         status={statusFor(5)}
       >
+        {!syncedVehicle && (
+          <p className="mb-3 rounded-lg border border-amber-300/20 bg-amber-400/10 p-4 text-sm font-semibold text-amber-100">
+            Finish Tesla connection and first telemetry sync before opening the FleetOS dashboard.
+          </p>
+        )}
         <div className="grid gap-3 sm:grid-cols-2">
           <button
             type="button"
+            disabled={!syncedVehicle}
             onClick={() => onNavigate?.('overview')}
-            className="rounded-lg bg-sky-300 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-sky-200"
+            className="rounded-lg bg-sky-300 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-sky-200 disabled:pointer-events-none disabled:bg-white/10 disabled:text-slate-500"
           >
             Open Dashboard
           </button>
           <button
             type="button"
+            disabled={!syncedVehicle}
             onClick={() => onNavigate?.('map')}
-            className="rounded-lg border border-white/10 bg-white/10 px-5 py-3 text-sm font-black text-slate-100 transition hover:bg-white/15"
+            className="rounded-lg border border-white/10 bg-white/10 px-5 py-3 text-sm font-black text-slate-100 transition hover:bg-white/15 disabled:pointer-events-none disabled:text-slate-500"
           >
             View Live Map
           </button>
