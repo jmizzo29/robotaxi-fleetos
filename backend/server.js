@@ -794,6 +794,37 @@ async function ensureFeedbackTable() {
   `);
 }
 
+async function ensureLeadTable() {
+  if (!pgPool) return;
+  await pgPool.query(`
+    create table if not exists beta_leads (
+      id text primary key,
+      name text,
+      email text not null,
+      tesla_count text,
+      use_case text,
+      plan text,
+      created_at timestamptz not null default now()
+    )
+  `);
+}
+
+async function ensureRevenueTable() {
+  if (!pgPool) return;
+  await pgPool.query(`
+    create table if not exists beta_revenue_records (
+      id text primary key,
+      vehicle_key text,
+      vehicle_label text,
+      record_date date,
+      source text,
+      amount numeric,
+      notes text,
+      created_at timestamptz not null default now()
+    )
+  `);
+}
+
 function normalizeFeedback(body = {}) {
   return {
     id: body.id || `fb-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
@@ -844,6 +875,107 @@ async function saveFeedback(record) {
     [record.id, record.type, record.rating, record.title, record.detail, record.route, record.email, record.createdAt],
   );
   return record;
+}
+
+function normalizeLead(body = {}) {
+  return {
+    id: body.id || `lead-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    name: String(body.name || '').trim(),
+    email: String(body.email || '').trim().toLowerCase(),
+    teslaCount: String(body.teslaCount || '1').trim(),
+    useCase: String(body.useCase || 'Owner rental').trim(),
+    plan: String(body.plan || 'First Tesla free').trim(),
+    createdAt: body.createdAt || new Date().toISOString(),
+  };
+}
+
+async function listLeads() {
+  if (!pgPool) return earlyAccessLeads;
+  await ensureLeadTable();
+  const { rows } = await pgPool.query('select id, name, email, tesla_count, use_case, plan, created_at from beta_leads order by created_at desc limit 100');
+  return rows.map((row) => ({
+    id: row.id,
+    name: row.name,
+    email: row.email,
+    teslaCount: row.tesla_count,
+    useCase: row.use_case,
+    plan: row.plan,
+    createdAt: row.created_at,
+  }));
+}
+
+async function saveLead(lead) {
+  if (!pgPool) {
+    earlyAccessLeads.unshift(lead);
+    earlyAccessLeads.splice(100);
+    return lead;
+  }
+
+  await ensureLeadTable();
+  await pgPool.query(
+    `insert into beta_leads (id, name, email, tesla_count, use_case, plan, created_at)
+     values ($1, $2, $3, $4, $5, $6, $7)
+     on conflict (id) do update set
+       name = excluded.name,
+       email = excluded.email,
+       tesla_count = excluded.tesla_count,
+       use_case = excluded.use_case,
+       plan = excluded.plan`,
+    [lead.id, lead.name, lead.email, lead.teslaCount, lead.useCase, lead.plan, lead.createdAt],
+  );
+  return lead;
+}
+
+function normalizeRevenueRecord(record = {}) {
+  return {
+    id: record.id || `rev-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    vehicleKey: String(record.vehicleKey || record.vin || record.vehicle || ''),
+    vehicleLabel: String(record.vehicleLabel || record.vehicle || ''),
+    date: record.date || new Date().toISOString().slice(0, 10),
+    source: record.source || 'Manual',
+    amount: Number(record.amount) || 0,
+    notes: record.notes || '',
+    createdAt: record.createdAt || new Date().toISOString(),
+  };
+}
+
+async function listRevenueRecords() {
+  if (!pgPool) return revenueRecords;
+  await ensureRevenueTable();
+  const { rows } = await pgPool.query('select id, vehicle_key, vehicle_label, record_date, source, amount, notes, created_at from beta_revenue_records order by created_at desc limit 1000');
+  return rows.map((row) => ({
+    id: row.id,
+    vehicleKey: row.vehicle_key,
+    vehicleLabel: row.vehicle_label,
+    date: row.record_date,
+    source: row.source,
+    amount: Number(row.amount || 0),
+    notes: row.notes,
+    createdAt: row.created_at,
+  }));
+}
+
+async function saveRevenueRecords(records) {
+  if (!pgPool) {
+    revenueRecords.unshift(...records);
+    revenueRecords.splice(1000);
+    return revenueRecords;
+  }
+
+  await ensureRevenueTable();
+  await Promise.all(records.map((record) => pgPool.query(
+    `insert into beta_revenue_records (id, vehicle_key, vehicle_label, record_date, source, amount, notes, created_at)
+     values ($1, $2, $3, $4, $5, $6, $7, $8)
+     on conflict (id) do update set
+       vehicle_key = excluded.vehicle_key,
+       vehicle_label = excluded.vehicle_label,
+       record_date = excluded.record_date,
+       source = excluded.source,
+       amount = excluded.amount,
+       notes = excluded.notes`,
+    [record.id, record.vehicleKey, record.vehicleLabel, record.date, record.source, record.amount, record.notes, record.createdAt],
+  )));
+  return listRevenueRecords();
 }
 
 function normalizeMemoryEvent(event = {}) {
@@ -907,23 +1039,17 @@ app.delete('/api/assets', (req, res) => {
   res.json({ records: assetRecords });
 });
 
-app.get('/api/leads', (req, res) => {
+app.get('/api/leads', async (req, res) => {
+  const leads = await listLeads();
   res.json({
-    count: earlyAccessLeads.length,
-    leads: earlyAccessLeads.slice(0, 25),
+    count: leads.length,
+    leads: leads.slice(0, 25),
+    postgres: Boolean(pgPool),
   });
 });
 
-app.post('/api/leads', (req, res) => {
-  const lead = {
-    id: `lead-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    name: String(req.body?.name || '').trim(),
-    email: String(req.body?.email || '').trim().toLowerCase(),
-    teslaCount: String(req.body?.teslaCount || '1').trim(),
-    useCase: String(req.body?.useCase || 'Owner rental').trim(),
-    plan: String(req.body?.plan || 'First Tesla free').trim(),
-    createdAt: new Date().toISOString(),
-  };
+app.post('/api/leads', async (req, res) => {
+  const lead = normalizeLead(req.body);
 
   if (!lead.email || !lead.email.includes('@')) {
     res.status(400).json({
@@ -933,8 +1059,6 @@ app.post('/api/leads', (req, res) => {
     return;
   }
 
-  earlyAccessLeads.unshift(lead);
-  earlyAccessLeads.splice(100);
   console.log('FleetOS early access lead', {
     email: lead.email,
     teslaCount: lead.teslaCount,
@@ -942,39 +1066,31 @@ app.post('/api/leads', (req, res) => {
     plan: lead.plan,
   });
 
-  res.status(201).json({ ok: true, lead });
+  res.status(201).json({ ok: true, lead: await saveLead(lead), postgres: Boolean(pgPool) });
 });
 
-app.get('/api/revenue', (req, res) => {
-  res.json({ records: revenueRecords });
+app.get('/api/revenue', async (req, res) => {
+  res.json({ records: await listRevenueRecords(), postgres: Boolean(pgPool) });
 });
 
-app.post('/api/revenue', (req, res) => {
+app.post('/api/revenue', async (req, res) => {
   const incoming = Array.isArray(req.body?.records)
     ? req.body.records
     : req.body?.record
       ? [req.body.record]
       : [];
 
-  const normalized = incoming.map((record) => ({
-    id: record.id || `rev-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
-    vehicleKey: String(record.vehicleKey || record.vin || record.vehicle || ''),
-    vehicleLabel: String(record.vehicleLabel || record.vehicle || ''),
-    date: record.date || new Date().toISOString().slice(0, 10),
-    source: record.source || 'Manual',
-    amount: Number(record.amount) || 0,
-    notes: record.notes || '',
-    createdAt: record.createdAt || new Date().toISOString(),
-  }));
-
-  revenueRecords.unshift(...normalized);
-  revenueRecords.splice(1000);
-  res.status(201).json({ records: revenueRecords });
+  res.status(201).json({ records: await saveRevenueRecords(incoming.map(normalizeRevenueRecord)), postgres: Boolean(pgPool) });
 });
 
-app.delete('/api/revenue', (req, res) => {
-  revenueRecords.splice(0);
-  res.json({ records: [] });
+app.delete('/api/revenue', async (req, res) => {
+  if (pgPool) {
+    await ensureRevenueTable();
+    await pgPool.query('delete from beta_revenue_records');
+  } else {
+    revenueRecords.splice(0);
+  }
+  res.json({ records: [], postgres: Boolean(pgPool) });
 });
 
 app.get('/api/feedback', async (req, res) => {
@@ -1000,13 +1116,17 @@ app.post('/api/feedback', async (req, res) => {
 
 app.get('/api/admin', async (req, res) => {
   const feedback = await listFeedback().catch(() => []);
+  const leads = await listLeads().catch(() => []);
+  const revenue = await listRevenueRecords().catch(() => []);
   res.json({
     postgres: Boolean(pgPool),
     feedbackCount: feedback.length,
-    leadCount: earlyAccessLeads.length,
-    revenueRecordCount: revenueRecords.length,
+    leadCount: leads.length,
+    revenueRecordCount: revenue.length,
+    revenueTotal: revenue.reduce((sum, record) => sum + Number(record.amount || 0), 0),
     memoryEventCount: memoryEvents.length,
     latestFeedback: feedback.slice(0, 10),
+    latestLeads: leads.slice(0, 10),
     generatedAt: new Date().toISOString(),
   });
 });

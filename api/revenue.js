@@ -1,5 +1,30 @@
+import pg from 'pg';
+
+const { Pool } = pg;
 const globalStore = globalThis.__fleetosRevenueStore || { records: [] };
 globalThis.__fleetosRevenueStore = globalStore;
+const pool = process.env.DATABASE_URL
+  ? new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.DATABASE_URL.includes('localhost') ? false : { rejectUnauthorized: false },
+  })
+  : null;
+
+async function ensureTable() {
+  if (!pool) return;
+  await pool.query(`
+    create table if not exists beta_revenue_records (
+      id text primary key,
+      vehicle_key text,
+      vehicle_label text,
+      record_date date,
+      source text,
+      amount numeric,
+      notes text,
+      created_at timestamptz not null default now()
+    )
+  `);
+}
 
 function normalizeRecord(record = {}) {
   return {
@@ -14,15 +39,59 @@ function normalizeRecord(record = {}) {
   };
 }
 
-export default function handler(req, res) {
+async function listRevenue() {
+  if (!pool) return globalStore.records;
+  await ensureTable();
+  const { rows } = await pool.query('select id, vehicle_key, vehicle_label, record_date, source, amount, notes, created_at from beta_revenue_records order by created_at desc limit 1000');
+  return rows.map((row) => ({
+    id: row.id,
+    vehicleKey: row.vehicle_key,
+    vehicleLabel: row.vehicle_label,
+    date: row.record_date,
+    source: row.source,
+    amount: Number(row.amount || 0),
+    notes: row.notes,
+    createdAt: row.created_at,
+  }));
+}
+
+async function saveRevenue(records) {
+  if (!pool) {
+    globalStore.records.unshift(...records);
+    globalStore.records.splice(1000);
+    return globalStore.records;
+  }
+
+  await ensureTable();
+  await Promise.all(records.map((record) => pool.query(
+    `insert into beta_revenue_records (id, vehicle_key, vehicle_label, record_date, source, amount, notes, created_at)
+     values ($1, $2, $3, $4, $5, $6, $7, $8)
+     on conflict (id) do update set
+       vehicle_key = excluded.vehicle_key,
+       vehicle_label = excluded.vehicle_label,
+       record_date = excluded.record_date,
+       source = excluded.source,
+       amount = excluded.amount,
+       notes = excluded.notes`,
+    [record.id, record.vehicleKey, record.vehicleLabel, record.date, record.source, record.amount, record.notes, record.createdAt],
+  )));
+  return listRevenue();
+}
+
+export default async function handler(req, res) {
   if (req.method === 'GET') {
-    res.status(200).json({ records: globalStore.records });
+    res.status(200).json({ records: await listRevenue(), postgres: Boolean(pool) });
     return;
   }
 
   if (req.method === 'DELETE') {
-    globalStore.records = [];
-    res.status(200).json({ records: [] });
+    if (pool) {
+      await ensureTable();
+      await pool.query('delete from beta_revenue_records');
+    } else {
+      globalStore.records = [];
+    }
+    res.status(200).json({ records: [], postgres: Boolean(pool) });
     return;
   }
 
@@ -38,7 +107,5 @@ export default function handler(req, res) {
       ? [req.body.record]
       : [];
 
-  globalStore.records.unshift(...incoming.map(normalizeRecord));
-  globalStore.records.splice(1000);
-  res.status(201).json({ records: globalStore.records });
+  res.status(201).json({ records: await saveRevenue(incoming.map(normalizeRecord)), postgres: Boolean(pool) });
 }

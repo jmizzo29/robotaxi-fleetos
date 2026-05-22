@@ -1,5 +1,29 @@
+import pg from 'pg';
+
+const { Pool } = pg;
 const globalStore = globalThis.__fleetosLeadStore || { leads: [] };
 globalThis.__fleetosLeadStore = globalStore;
+const pool = process.env.DATABASE_URL
+  ? new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.DATABASE_URL.includes('localhost') ? false : { rejectUnauthorized: false },
+  })
+  : null;
+
+async function ensureTable() {
+  if (!pool) return;
+  await pool.query(`
+    create table if not exists beta_leads (
+      id text primary key,
+      name text,
+      email text not null,
+      tesla_count text,
+      use_case text,
+      plan text,
+      created_at timestamptz not null default now()
+    )
+  `);
+}
 
 function normalizeLead(body = {}) {
   return {
@@ -13,11 +37,50 @@ function normalizeLead(body = {}) {
   };
 }
 
-export default function handler(req, res) {
+async function listLeads() {
+  if (!pool) return globalStore.leads;
+  await ensureTable();
+  const { rows } = await pool.query('select id, name, email, tesla_count, use_case, plan, created_at from beta_leads order by created_at desc limit 100');
+  return rows.map((row) => ({
+    id: row.id,
+    name: row.name,
+    email: row.email,
+    teslaCount: row.tesla_count,
+    useCase: row.use_case,
+    plan: row.plan,
+    createdAt: row.created_at,
+  }));
+}
+
+async function saveLead(lead) {
+  if (!pool) {
+    globalStore.leads.unshift(lead);
+    globalStore.leads.splice(100);
+    return lead;
+  }
+
+  await ensureTable();
+  await pool.query(
+    `insert into beta_leads (id, name, email, tesla_count, use_case, plan, created_at)
+     values ($1, $2, $3, $4, $5, $6, $7)
+     on conflict (id) do update set
+       name = excluded.name,
+       email = excluded.email,
+       tesla_count = excluded.tesla_count,
+       use_case = excluded.use_case,
+       plan = excluded.plan`,
+    [lead.id, lead.name, lead.email, lead.teslaCount, lead.useCase, lead.plan, lead.createdAt],
+  );
+  return lead;
+}
+
+export default async function handler(req, res) {
   if (req.method === 'GET') {
+    const leads = await listLeads();
     res.status(200).json({
-      count: globalStore.leads.length,
-      leads: globalStore.leads.slice(0, 25),
+      count: leads.length,
+      leads: leads.slice(0, 25),
+      postgres: Boolean(pool),
     });
     return;
   }
@@ -38,9 +101,6 @@ export default function handler(req, res) {
     return;
   }
 
-  globalStore.leads.unshift(lead);
-  globalStore.leads.splice(100);
-
   console.log('FleetOS early access lead', {
     email: lead.email,
     teslaCount: lead.teslaCount,
@@ -48,5 +108,5 @@ export default function handler(req, res) {
     plan: lead.plan,
   });
 
-  res.status(201).json({ ok: true, lead });
+  res.status(201).json({ ok: true, lead: await saveLead(lead), postgres: Boolean(pool) });
 }
