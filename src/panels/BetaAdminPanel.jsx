@@ -95,10 +95,14 @@ export default function BetaAdminPanel() {
 
       {summary && (
         <>
-          <div className="grid grid-cols-2 gap-3 xl:grid-cols-5">
+          <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
             <Metric label="Storage" value={summary.postgres ? 'Postgres' : 'Memory'} helper={summary.postgres ? 'DATABASE_URL active' : 'Temporary fallback'} />
             <Metric label="Feedback" value={summary.feedbackCount || 0} />
             <Metric label="Leads" value={summary.leadCount ?? 'n/a'} />
+            <Metric label="Vehicles" value={summary.vehicleCount ?? 'n/a'} />
+            <Metric label="Telemetry" value={summary.telemetrySnapshotCount ?? 'n/a'} helper="Snapshots stored" />
+            <Metric label="Assets" value={summary.assetRecordCount ?? 'n/a'} />
+            <Metric label="Memory" value={summary.memoryEventCount ?? 'n/a'} />
             <Metric label="Revenue Records" value={summary.revenueRecordCount ?? 'n/a'} />
             <Metric label="Revenue Total" value={formatCurrency(summary.revenueTotal || 0)} />
           </div>

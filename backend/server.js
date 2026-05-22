@@ -31,6 +31,7 @@ const pgPool = process.env.DATABASE_URL
     ssl: process.env.DATABASE_URL.includes('localhost') ? false : { rejectUnauthorized: false },
   })
   : null;
+let fleetSchemaReady;
 
 let tokenCache = {
   accessToken: process.env.TESLA_ACCESS_TOKEN || '',
@@ -77,6 +78,14 @@ function updateLocalEnv(updates) {
 
 function hasRefreshConfig() {
   return Boolean(process.env.TESLA_CLIENT_ID && tokenCache.refreshToken);
+}
+
+async function ensureFleetSchema() {
+  if (!pgPool) return false;
+  if (fleetSchemaReady) return fleetSchemaReady;
+  const schemaPath = path.join(__dirname, '..', 'docs', 'fleetos-postgres-schema.sql');
+  fleetSchemaReady = pgPool.query(fs.readFileSync(schemaPath, 'utf8')).then(() => true);
+  return fleetSchemaReady;
 }
 
 function buildHeuristicFleetAnalysis(fleet = [], context = {}) {
@@ -538,7 +547,88 @@ async function fetchVehicles() {
     }),
   );
 
+  await saveVehicleTelemetry(enriched);
   return enriched;
+}
+
+async function saveVehicleTelemetry(vehicles) {
+  if (!pgPool) return;
+  await ensureFleetSchema();
+
+  await Promise.all(vehicles.map(async (vehicle) => {
+    const vehicleId = String(vehicle.id || vehicle.vin || `vehicle-${Date.now()}`);
+    await pgPool.query(
+      `insert into fleetos_vehicles (
+        id, vin, tesla_vehicle_id, display_name, state, status, battery_level,
+        latitude, longitude, heading, speed, odometer, charging_state,
+        software_version, locked, service_mode, raw, last_synced_at, updated_at
+      ) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, now())
+      on conflict (id) do update set
+        vin = excluded.vin,
+        tesla_vehicle_id = excluded.tesla_vehicle_id,
+        display_name = excluded.display_name,
+        state = excluded.state,
+        status = excluded.status,
+        battery_level = excluded.battery_level,
+        latitude = excluded.latitude,
+        longitude = excluded.longitude,
+        heading = excluded.heading,
+        speed = excluded.speed,
+        odometer = excluded.odometer,
+        charging_state = excluded.charging_state,
+        software_version = excluded.software_version,
+        locked = excluded.locked,
+        service_mode = excluded.service_mode,
+        raw = excluded.raw,
+        last_synced_at = excluded.last_synced_at,
+        updated_at = now()`,
+      [
+        vehicleId,
+        vehicle.vin || null,
+        String(vehicle.id || '') || null,
+        vehicle.display_name || null,
+        vehicle.state || null,
+        vehicle.status || null,
+        vehicle.battery ?? null,
+        vehicle.latitude ?? null,
+        vehicle.longitude ?? null,
+        vehicle.heading ?? null,
+        vehicle.speed ?? null,
+        vehicle.odometer ?? null,
+        vehicle.chargingState || null,
+        vehicle.softwareVersion || null,
+        vehicle.locked ?? null,
+        vehicle.serviceMode ?? null,
+        JSON.stringify(vehicle),
+        vehicle.syncedAt || new Date().toISOString(),
+      ],
+    );
+
+    await pgPool.query(
+      `insert into fleetos_telemetry_snapshots (
+        vehicle_id, vin, captured_at, state, status, battery_level, latitude, longitude,
+        heading, speed, odometer, charging_state, software_version, locked, service_mode, raw
+      ) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)`,
+      [
+        vehicleId,
+        vehicle.vin || null,
+        vehicle.syncedAt || new Date().toISOString(),
+        vehicle.state || null,
+        vehicle.status || null,
+        vehicle.battery ?? null,
+        vehicle.latitude ?? null,
+        vehicle.longitude ?? null,
+        vehicle.heading ?? null,
+        vehicle.speed ?? null,
+        vehicle.odometer ?? null,
+        vehicle.chargingState || null,
+        vehicle.softwareVersion || null,
+        vehicle.locked ?? null,
+        vehicle.serviceMode ?? null,
+        JSON.stringify(vehicle),
+      ],
+    );
+  }));
 }
 
 app.get('/api/health', (req, res) => {
@@ -811,18 +901,7 @@ async function ensureLeadTable() {
 
 async function ensureRevenueTable() {
   if (!pgPool) return;
-  await pgPool.query(`
-    create table if not exists beta_revenue_records (
-      id text primary key,
-      vehicle_key text,
-      vehicle_label text,
-      record_date date,
-      source text,
-      amount numeric,
-      notes text,
-      created_at timestamptz not null default now()
-    )
-  `);
+  await ensureFleetSchema();
 }
 
 function normalizeFeedback(body = {}) {
@@ -942,7 +1021,7 @@ function normalizeRevenueRecord(record = {}) {
 async function listRevenueRecords() {
   if (!pgPool) return revenueRecords;
   await ensureRevenueTable();
-  const { rows } = await pgPool.query('select id, vehicle_key, vehicle_label, record_date, source, amount, notes, created_at from beta_revenue_records order by created_at desc limit 1000');
+  const { rows } = await pgPool.query('select id, vehicle_key, vehicle_label, record_date, source, amount, notes, created_at from fleetos_revenue_records order by created_at desc limit 1000');
   return rows.map((row) => ({
     id: row.id,
     vehicleKey: row.vehicle_key,
@@ -964,15 +1043,16 @@ async function saveRevenueRecords(records) {
 
   await ensureRevenueTable();
   await Promise.all(records.map((record) => pgPool.query(
-    `insert into beta_revenue_records (id, vehicle_key, vehicle_label, record_date, source, amount, notes, created_at)
-     values ($1, $2, $3, $4, $5, $6, $7, $8)
+    `insert into fleetos_revenue_records (id, vehicle_key, vehicle_label, record_date, source, amount, notes, created_at, updated_at)
+     values ($1, $2, $3, $4, $5, $6, $7, $8, now())
      on conflict (id) do update set
        vehicle_key = excluded.vehicle_key,
        vehicle_label = excluded.vehicle_label,
        record_date = excluded.record_date,
        source = excluded.source,
        amount = excluded.amount,
-       notes = excluded.notes`,
+       notes = excluded.notes,
+       updated_at = now()`,
     [record.id, record.vehicleKey, record.vehicleLabel, record.date, record.source, record.amount, record.notes, record.createdAt],
   )));
   return listRevenueRecords();
@@ -992,32 +1072,166 @@ function normalizeMemoryEvent(event = {}) {
   };
 }
 
-app.get('/api/memory', (req, res) => {
-  res.json({ events: memoryEvents });
+async function listMemoryEvents() {
+  if (!pgPool) return memoryEvents;
+  await ensureFleetSchema();
+  const { rows } = await pgPool.query(
+    `select id, type, title, detail, event_timestamp, source, status, rag_ready, metadata
+     from fleetos_memory_events
+     order by event_timestamp desc
+     limit $1`,
+    [MAX_MEMORY_EVENTS],
+  );
+  return rows.map((row) => ({
+    id: row.id,
+    type: row.type,
+    title: row.title,
+    detail: row.detail || '',
+    timestamp: row.event_timestamp,
+    source: row.source,
+    status: row.status,
+    ragReady: Boolean(row.rag_ready),
+    metadata: row.metadata || {},
+  }));
+}
+
+async function saveMemoryEvents(incoming) {
+  const normalized = incoming.map(normalizeMemoryEvent);
+  if (!pgPool) {
+    memoryEvents.unshift(...normalized);
+    memoryEvents.splice(MAX_MEMORY_EVENTS);
+    return memoryEvents;
+  }
+
+  await ensureFleetSchema();
+  await Promise.all(normalized.map((event) => pgPool.query(
+    `insert into fleetos_memory_events (id, type, title, detail, event_timestamp, source, status, rag_ready, metadata)
+     values ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+     on conflict (id) do update set
+       type = excluded.type,
+       title = excluded.title,
+       detail = excluded.detail,
+       event_timestamp = excluded.event_timestamp,
+       source = excluded.source,
+       status = excluded.status,
+       rag_ready = excluded.rag_ready,
+       metadata = excluded.metadata`,
+    [event.id, event.type, event.title, event.detail, event.timestamp, event.source, event.status, event.ragReady, JSON.stringify(event.metadata || {})],
+  )));
+  return listMemoryEvents();
+}
+
+async function clearMemoryEvents() {
+  if (!pgPool) {
+    memoryEvents.splice(0);
+    return [];
+  }
+
+  await ensureFleetSchema();
+  await pgPool.query('delete from fleetos_memory_events');
+  return [];
+}
+
+async function listAssetRecords() {
+  if (!pgPool) return assetRecords;
+  await ensureFleetSchema();
+  const { rows } = await pgPool.query('select vehicle_key, record from fleetos_vehicle_assets order by updated_at desc');
+  return Object.fromEntries(rows.map((row) => [row.vehicle_key, row.record || {}]));
+}
+
+async function saveAssetRecord(key, record) {
+  if (!pgPool) {
+    assetRecords[key] = record;
+    return assetRecords;
+  }
+
+  await ensureFleetSchema();
+  await pgPool.query(
+    `insert into fleetos_vehicle_assets (
+      vehicle_key, vin, model, model_year, trim, color, tag, purchase_date, purchase_year,
+      price_paid, current_balance, lender, monthly_payment, insurance_renewal, registration_state, record, updated_at
+    ) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, now())
+    on conflict (vehicle_key) do update set
+      vin = excluded.vin,
+      model = excluded.model,
+      model_year = excluded.model_year,
+      trim = excluded.trim,
+      color = excluded.color,
+      tag = excluded.tag,
+      purchase_date = excluded.purchase_date,
+      purchase_year = excluded.purchase_year,
+      price_paid = excluded.price_paid,
+      current_balance = excluded.current_balance,
+      lender = excluded.lender,
+      monthly_payment = excluded.monthly_payment,
+      insurance_renewal = excluded.insurance_renewal,
+      registration_state = excluded.registration_state,
+      record = excluded.record,
+      updated_at = now()`,
+    [
+      key,
+      record.vin || null,
+      record.model || null,
+      record.modelYear || null,
+      record.trim || null,
+      record.color || null,
+      record.tag || null,
+      record.purchaseDate || null,
+      record.purchaseYear || null,
+      record.pricePaid || null,
+      record.currentBalance || null,
+      record.lender || null,
+      record.monthlyPayment || null,
+      record.insuranceRenewal || null,
+      record.registrationState || null,
+      JSON.stringify(record),
+    ],
+  );
+  return listAssetRecords();
+}
+
+async function deleteAssetRecords(key) {
+  if (!pgPool) {
+    if (key) {
+      delete assetRecords[key];
+    } else {
+      Object.keys(assetRecords).forEach((assetKey) => delete assetRecords[assetKey]);
+    }
+    return assetRecords;
+  }
+
+  await ensureFleetSchema();
+  if (key) {
+    await pgPool.query('delete from fleetos_vehicle_assets where vehicle_key = $1', [key]);
+  } else {
+    await pgPool.query('delete from fleetos_vehicle_assets');
+  }
+  return listAssetRecords();
+}
+
+app.get('/api/memory', async (req, res) => {
+  res.json({ events: await listMemoryEvents(), postgres: Boolean(pgPool) });
 });
 
-app.post('/api/memory', (req, res) => {
+app.post('/api/memory', async (req, res) => {
   const incoming = Array.isArray(req.body?.events)
     ? req.body.events
     : req.body?.event
       ? [req.body.event]
       : [];
 
-  memoryEvents.unshift(...incoming.map(normalizeMemoryEvent));
-  memoryEvents.splice(MAX_MEMORY_EVENTS);
-  res.json({ events: memoryEvents });
+  res.json({ events: await saveMemoryEvents(incoming), postgres: Boolean(pgPool) });
 });
 
-app.delete('/api/memory', (req, res) => {
-  memoryEvents.splice(0);
-  res.json({ events: [] });
+app.delete('/api/memory', async (req, res) => {
+  res.json({ events: await clearMemoryEvents(), postgres: Boolean(pgPool) });
 });
 
-app.get('/api/assets', (req, res) => {
-  res.json({ records: assetRecords });
+app.get('/api/assets', async (req, res) => {
+  res.json({ records: await listAssetRecords(), postgres: Boolean(pgPool) });
 });
 
-app.post('/api/assets', (req, res) => {
+app.post('/api/assets', async (req, res) => {
   const { key, record } = req.body || {};
 
   if (!key || !record) {
@@ -1025,18 +1239,11 @@ app.post('/api/assets', (req, res) => {
     return;
   }
 
-  assetRecords[key] = record;
-  res.json({ records: assetRecords });
+  res.json({ records: await saveAssetRecord(key, record), postgres: Boolean(pgPool) });
 });
 
-app.delete('/api/assets', (req, res) => {
-  if (req.query?.key) {
-    delete assetRecords[req.query.key];
-  } else {
-    Object.keys(assetRecords).forEach((key) => delete assetRecords[key]);
-  }
-
-  res.json({ records: assetRecords });
+app.delete('/api/assets', async (req, res) => {
+  res.json({ records: await deleteAssetRecords(req.query?.key), postgres: Boolean(pgPool) });
 });
 
 app.get('/api/leads', async (req, res) => {
@@ -1086,7 +1293,7 @@ app.post('/api/revenue', async (req, res) => {
 app.delete('/api/revenue', async (req, res) => {
   if (pgPool) {
     await ensureRevenueTable();
-    await pgPool.query('delete from beta_revenue_records');
+    await pgPool.query('delete from fleetos_revenue_records');
   } else {
     revenueRecords.splice(0);
   }
@@ -1118,13 +1325,24 @@ app.get('/api/admin', async (req, res) => {
   const feedback = await listFeedback().catch(() => []);
   const leads = await listLeads().catch(() => []);
   const revenue = await listRevenueRecords().catch(() => []);
+  const memory = await listMemoryEvents().catch(() => []);
+  const assets = await listAssetRecords().catch(() => ({}));
+  const [vehicleCount, telemetrySnapshotCount] = pgPool
+    ? await Promise.all([
+      ensureFleetSchema().then(() => pgPool.query('select count(*)::int as count from fleetos_vehicles')).then((result) => result.rows[0]?.count || 0).catch(() => 0),
+      ensureFleetSchema().then(() => pgPool.query('select count(*)::int as count from fleetos_telemetry_snapshots')).then((result) => result.rows[0]?.count || 0).catch(() => 0),
+    ])
+    : [0, 0];
   res.json({
     postgres: Boolean(pgPool),
     feedbackCount: feedback.length,
     leadCount: leads.length,
     revenueRecordCount: revenue.length,
     revenueTotal: revenue.reduce((sum, record) => sum + Number(record.amount || 0), 0),
-    memoryEventCount: memoryEvents.length,
+    memoryEventCount: memory.length,
+    assetRecordCount: Object.keys(assets).length,
+    vehicleCount,
+    telemetrySnapshotCount,
     latestFeedback: feedback.slice(0, 10),
     latestLeads: leads.slice(0, 10),
     generatedAt: new Date().toISOString(),

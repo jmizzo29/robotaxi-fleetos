@@ -1,6 +1,6 @@
-const STORAGE_KEY = 'fleetos.revenueRecords.v1';
 import { getApiBase } from './apiClient';
 
+const STORAGE_KEY = 'fleetos.revenueRecords.v1';
 const API_BASE = getApiBase();
 
 function canUseStorage() {

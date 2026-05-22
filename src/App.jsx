@@ -40,6 +40,7 @@ import useAiFleetAnalysis from './hooks/useAiFleetAnalysis';
 import useHashRoute from './hooks/useHashRoute';
 import { useFleetSimulation } from './hooks/useFleetSimulation';
 import { canUseTeslaTelemetry } from './services/betaCompliance';
+import { migrateLocalFleetDataToPostgres } from './services/dataMigrationService';
 
 const initialFleet = [
   {
@@ -137,6 +138,12 @@ export default function App() {
     window.addEventListener('fleetos-compliance-updated', refreshCompliance);
     return () => window.removeEventListener('fleetos-compliance-updated', refreshCompliance);
   }, []);
+
+  useEffect(() => {
+    if (!isPublicRoute) {
+      migrateLocalFleetDataToPostgres().catch(() => {});
+    }
+  }, [isPublicRoute]);
 
   const {
     fleet,

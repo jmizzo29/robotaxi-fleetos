@@ -1,30 +1,7 @@
-import pg from 'pg';
+import { ensureFleetSchema, hasPostgres, query } from './_lib/db.js';
 
-const { Pool } = pg;
 const globalStore = globalThis.__fleetosRevenueStore || { records: [] };
 globalThis.__fleetosRevenueStore = globalStore;
-const pool = process.env.DATABASE_URL
-  ? new Pool({
-    connectionString: process.env.DATABASE_URL,
-    ssl: process.env.DATABASE_URL.includes('localhost') ? false : { rejectUnauthorized: false },
-  })
-  : null;
-
-async function ensureTable() {
-  if (!pool) return;
-  await pool.query(`
-    create table if not exists beta_revenue_records (
-      id text primary key,
-      vehicle_key text,
-      vehicle_label text,
-      record_date date,
-      source text,
-      amount numeric,
-      notes text,
-      created_at timestamptz not null default now()
-    )
-  `);
-}
 
 function normalizeRecord(record = {}) {
   return {
@@ -40,9 +17,9 @@ function normalizeRecord(record = {}) {
 }
 
 async function listRevenue() {
-  if (!pool) return globalStore.records;
-  await ensureTable();
-  const { rows } = await pool.query('select id, vehicle_key, vehicle_label, record_date, source, amount, notes, created_at from beta_revenue_records order by created_at desc limit 1000');
+  if (!hasPostgres()) return globalStore.records;
+  await ensureFleetSchema();
+  const { rows } = await query('select id, vehicle_key, vehicle_label, record_date, source, amount, notes, created_at from fleetos_revenue_records order by created_at desc limit 1000');
   return rows.map((row) => ({
     id: row.id,
     vehicleKey: row.vehicle_key,
@@ -56,23 +33,24 @@ async function listRevenue() {
 }
 
 async function saveRevenue(records) {
-  if (!pool) {
+  if (!hasPostgres()) {
     globalStore.records.unshift(...records);
     globalStore.records.splice(1000);
     return globalStore.records;
   }
 
-  await ensureTable();
-  await Promise.all(records.map((record) => pool.query(
-    `insert into beta_revenue_records (id, vehicle_key, vehicle_label, record_date, source, amount, notes, created_at)
-     values ($1, $2, $3, $4, $5, $6, $7, $8)
+  await ensureFleetSchema();
+  await Promise.all(records.map((record) => query(
+    `insert into fleetos_revenue_records (id, vehicle_key, vehicle_label, record_date, source, amount, notes, created_at, updated_at)
+     values ($1, $2, $3, $4, $5, $6, $7, $8, now())
      on conflict (id) do update set
        vehicle_key = excluded.vehicle_key,
        vehicle_label = excluded.vehicle_label,
        record_date = excluded.record_date,
        source = excluded.source,
        amount = excluded.amount,
-       notes = excluded.notes`,
+       notes = excluded.notes,
+       updated_at = now()`,
     [record.id, record.vehicleKey, record.vehicleLabel, record.date, record.source, record.amount, record.notes, record.createdAt],
   )));
   return listRevenue();
@@ -80,18 +58,18 @@ async function saveRevenue(records) {
 
 export default async function handler(req, res) {
   if (req.method === 'GET') {
-    res.status(200).json({ records: await listRevenue(), postgres: Boolean(pool) });
+    res.status(200).json({ records: await listRevenue(), postgres: hasPostgres() });
     return;
   }
 
   if (req.method === 'DELETE') {
-    if (pool) {
-      await ensureTable();
-      await pool.query('delete from beta_revenue_records');
+    if (hasPostgres()) {
+      await ensureFleetSchema();
+      await query('delete from fleetos_revenue_records');
     } else {
       globalStore.records = [];
     }
-    res.status(200).json({ records: [], postgres: Boolean(pool) });
+    res.status(200).json({ records: [], postgres: hasPostgres() });
     return;
   }
 
@@ -107,5 +85,5 @@ export default async function handler(req, res) {
       ? [req.body.record]
       : [];
 
-  res.status(201).json({ records: await saveRevenue(incoming.map(normalizeRecord)), postgres: Boolean(pool) });
+  res.status(201).json({ records: await saveRevenue(incoming.map(normalizeRecord)), postgres: hasPostgres() });
 }
