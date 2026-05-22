@@ -1,7 +1,5 @@
 import { ensureFleetSchema, hasPostgres, query } from './_lib/db.js';
 
-globalThis.__fleetosAssetRecords = globalThis.__fleetosAssetRecords || {};
-
 const numericFields = new Set([
   'modelYear',
   'purchaseYear',
@@ -38,7 +36,6 @@ function rowToRecord(row) {
 }
 
 async function listAssetRecords() {
-  if (!hasPostgres()) return globalThis.__fleetosAssetRecords;
   await ensureFleetSchema();
   const { rows } = await query(`
     select vehicle_key, model, model_year, trim, color, tag, purchase_date, purchase_year,
@@ -51,14 +48,6 @@ async function listAssetRecords() {
 
 async function saveAssetRecord(key, record) {
   const normalized = normalizeRecord(record);
-  if (!hasPostgres()) {
-    globalThis.__fleetosAssetRecords = {
-      ...globalThis.__fleetosAssetRecords,
-      [key]: normalized,
-    };
-    return globalThis.__fleetosAssetRecords;
-  }
-
   await ensureFleetSchema();
   await query(
     `insert into fleetos_vehicle_assets (
@@ -105,17 +94,6 @@ async function saveAssetRecord(key, record) {
 }
 
 async function deleteAssetRecords(key) {
-  if (!hasPostgres()) {
-    if (key) {
-      const next = { ...globalThis.__fleetosAssetRecords };
-      delete next[key];
-      globalThis.__fleetosAssetRecords = next;
-    } else {
-      globalThis.__fleetosAssetRecords = {};
-    }
-    return globalThis.__fleetosAssetRecords;
-  }
-
   await ensureFleetSchema();
   if (key) {
     await query('delete from fleetos_vehicle_assets where vehicle_key = $1', [key]);
@@ -126,6 +104,14 @@ async function deleteAssetRecords(key) {
 }
 
 export default async function handler(req, res) {
+  if (!hasPostgres()) {
+    res.status(503).json({
+      error: 'DATABASE_REQUIRED',
+      message: 'Postgres DATABASE_URL is required for asset records.',
+    });
+    return;
+  }
+
   if (req.method === 'GET') {
     res.status(200).json({ records: await listAssetRecords(), postgres: hasPostgres() });
     return;

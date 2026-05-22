@@ -82,7 +82,7 @@ export default function BetaAdminPanel() {
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-emerald-300">Beta Admin</p>
             <h2 className="mt-2 text-3xl font-black text-white">Tester Operations</h2>
             <p className="mt-2 text-sm leading-6 text-slate-400">
-              Track feedback and confirm whether FleetOS is using Postgres or temporary memory storage.
+              Track feedback and confirm whether FleetOS is using Postgres for durable beta storage.
             </p>
           </div>
           <button type="button" onClick={refresh} className="rounded-md border border-sky-400/30 bg-sky-400/10 px-4 py-3 text-sm font-bold text-sky-100">
@@ -96,7 +96,7 @@ export default function BetaAdminPanel() {
       {summary && (
         <>
           <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
-            <Metric label="Storage" value={summary.postgres ? 'Postgres' : 'Memory'} helper={summary.postgres ? 'DATABASE_URL active' : 'Temporary fallback'} />
+            <Metric label="Storage" value={summary.postgres ? 'Postgres' : 'Missing DB'} helper={summary.postgres ? 'DATABASE_URL active' : 'Set DATABASE_URL before collecting beta data'} />
             <Metric label="Feedback" value={summary.feedbackCount || 0} />
             <Metric label="Leads" value={summary.leadCount ?? 'n/a'} />
             <Metric label="Vehicles" value={summary.vehicleCount ?? 'n/a'} />

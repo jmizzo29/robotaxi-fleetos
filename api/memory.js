@@ -1,7 +1,6 @@
 import { ensureFleetSchema, hasPostgres, query } from './_lib/db.js';
 
 const MAX_EVENTS = 120;
-globalThis.__fleetosMemoryEvents = globalThis.__fleetosMemoryEvents || [];
 
 function normalizeEvent(event = {}) {
   return {
@@ -32,7 +31,6 @@ function rowToEvent(row) {
 }
 
 async function listMemoryEvents() {
-  if (!hasPostgres()) return globalThis.__fleetosMemoryEvents;
   await ensureFleetSchema();
   const { rows } = await query(`
     select id, type, title, detail, event_timestamp, source, status, rag_ready, metadata
@@ -45,14 +43,6 @@ async function listMemoryEvents() {
 
 async function saveMemoryEvents(events) {
   const normalized = events.map(normalizeEvent);
-  if (!hasPostgres()) {
-    globalThis.__fleetosMemoryEvents = [
-      ...normalized,
-      ...globalThis.__fleetosMemoryEvents,
-    ].slice(0, MAX_EVENTS);
-    return globalThis.__fleetosMemoryEvents;
-  }
-
   await ensureFleetSchema();
   await Promise.all(normalized.map((event) => query(
     `insert into fleetos_memory_events (id, type, title, detail, event_timestamp, source, status, rag_ready, metadata)
@@ -72,16 +62,20 @@ async function saveMemoryEvents(events) {
 }
 
 async function clearMemoryEvents() {
-  if (!hasPostgres()) {
-    globalThis.__fleetosMemoryEvents = [];
-    return [];
-  }
   await ensureFleetSchema();
   await query('delete from fleetos_memory_events');
   return [];
 }
 
 export default async function handler(req, res) {
+  if (!hasPostgres()) {
+    res.status(503).json({
+      error: 'DATABASE_REQUIRED',
+      message: 'Postgres DATABASE_URL is required for fleet memory.',
+    });
+    return;
+  }
+
   if (req.method === 'GET') {
     res.status(200).json({ events: await listMemoryEvents(), postgres: hasPostgres() });
     return;

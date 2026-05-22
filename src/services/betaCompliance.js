@@ -4,10 +4,7 @@ const ACCESS_KEY = 'fleetos.betaAccess.v1';
 const CONSENT_KEY = 'fleetos.teslaConsent.v1';
 
 const DATA_KEYS = [
-  'fleetos.assetRecords.v1',
   'fleetos.location-history-v1',
-  'fleetos.memory.v1',
-  'fleetos.revenueRecords.v1',
 ];
 
 function inviteCode() {

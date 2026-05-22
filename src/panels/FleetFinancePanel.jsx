@@ -164,14 +164,19 @@ function RevenueTracker({ fleet, records, onRecordsChanged }) {
 
   const update = (field, value) => setDraft((current) => ({ ...current, [field]: value }));
 
-  const addManual = () => {
-    addRevenueRecord({
-      ...draft,
-      vehicleLabel: fleet.find((vehicle) => [vehicle.vin, vehicle.id].includes(draft.vehicleKey))?.name || draft.vehicleKey,
-    });
-    setDraft((current) => ({ ...current, amount: '', notes: '' }));
-    setMessage('Revenue record added.');
-    onRecordsChanged?.();
+  const addManual = async () => {
+    setMessage('Saving revenue record...');
+    try {
+      await addRevenueRecord({
+        ...draft,
+        vehicleLabel: fleet.find((vehicle) => [vehicle.vin, vehicle.id].includes(draft.vehicleKey))?.name || draft.vehicleKey,
+      });
+      setDraft((current) => ({ ...current, amount: '', notes: '' }));
+      setMessage('Revenue record saved to Postgres.');
+      onRecordsChanged?.();
+    } catch (error) {
+      setMessage(error.message || 'Revenue record could not be saved.');
+    }
   };
 
   const importCsv = async (event) => {
@@ -179,10 +184,15 @@ function RevenueTracker({ fleet, records, onRecordsChanged }) {
     if (!file) return;
     const text = await file.text();
     const parsed = parseRevenueCsv(text);
-    importRevenueRecords(parsed);
-    setMessage(`${parsed.length} CSV revenue records imported.`);
-    onRecordsChanged?.();
-    event.target.value = '';
+    setMessage(`Importing ${parsed.length} CSV revenue records...`);
+    try {
+      await importRevenueRecords(parsed);
+      setMessage(`${parsed.length} CSV revenue records saved to Postgres.`);
+      onRecordsChanged?.();
+      event.target.value = '';
+    } catch (error) {
+      setMessage(error.message || 'CSV revenue import failed.');
+    }
   };
 
   return (
@@ -340,7 +350,7 @@ export default function FleetFinancePanel({ fleet = [], onQueueCommand }) {
 
   useEffect(() => {
     const refresh = () => setRevenueRecords(readRevenueRecords());
-    syncRevenueFromBackend().then(setRevenueRecords);
+    syncRevenueFromBackend().then(setRevenueRecords).catch(() => setRevenueRecords(readRevenueRecords()));
     window.addEventListener('fleetos-revenue-updated', refresh);
     window.addEventListener('storage', refresh);
     return () => {

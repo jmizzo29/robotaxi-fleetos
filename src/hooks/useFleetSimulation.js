@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { updateFleet } from '../engine/simulationEngine';
 import chargingStationsFallback from '../data/chargingStations';
 import demandZones from '../data/demandZones';
-import { getVehicleOwnership } from '../data/vehicleOwnership';
+import { getVehicleOwnership, syncSavedOwnershipFromBackend } from '../data/vehicleOwnership';
 import { appendFleetMemory } from '../services/fleetMemory';
 import { appendLocationSnapshot } from '../services/locationHistory';
 import { getTeslaVehicles, mergeWithSimulation } from '../services/teslaService';
@@ -99,6 +99,7 @@ export function useFleetSimulation({
       })));
     };
 
+    syncSavedOwnershipFromBackend().then(refreshOwnership).catch(() => {});
     window.addEventListener('fleetos-ownership-updated', refreshOwnership);
     window.addEventListener('storage', refreshOwnership);
     return () => {
@@ -181,6 +182,8 @@ export function useFleetSimulation({
             chargingState: vehicle.chargingState,
             odometer: vehicle.odometer,
           },
+        }).catch((error) => {
+          console.warn('Fleet memory save failed:', error.message);
         });
       });
       setRealSyncStatus({
@@ -218,6 +221,8 @@ export function useFleetSimulation({
       status: 'queued',
       ragReady: false,
       metadata: { priority },
+    }).catch((error) => {
+      console.warn('Fleet memory save failed:', error.message);
     });
 
     setCommandQueue((current) => [

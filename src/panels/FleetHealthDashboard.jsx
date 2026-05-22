@@ -134,7 +134,7 @@ export default function FleetHealthDashboard({ fleet = [], onQueueCommand }) {
 
   useEffect(() => {
     const refresh = () => setRevenueRecords(readRevenueRecords());
-    syncRevenueFromBackend().then(setRevenueRecords);
+    syncRevenueFromBackend().then(setRevenueRecords).catch(() => setRevenueRecords(readRevenueRecords()));
     window.addEventListener('fleetos-revenue-updated', refresh);
     return () => window.removeEventListener('fleetos-revenue-updated', refresh);
   }, []);

@@ -1,13 +1,9 @@
 import { getApiBase } from './apiClient';
 
-const MEMORY_KEY = 'fleetos.memory.v1';
 const MAX_EVENTS = 120;
 
 const API_BASE = getApiBase();
-
-function canUseStorage() {
-  return typeof window !== 'undefined' && Boolean(window.localStorage);
-}
+let memoryCache = [];
 
 function normalizeEvent(event) {
   return {
@@ -24,41 +20,44 @@ function normalizeEvent(event) {
 }
 
 export function readFleetMemory() {
-  if (!canUseStorage()) return [];
-
-  try {
-    const parsed = JSON.parse(window.localStorage.getItem(MEMORY_KEY) || '[]');
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
+  return memoryCache;
 }
 
 export function writeFleetMemory(events) {
-  if (!canUseStorage()) return [];
-
   const normalized = events.map(normalizeEvent).slice(0, MAX_EVENTS);
-  window.localStorage.setItem(MEMORY_KEY, JSON.stringify(normalized));
-  window.dispatchEvent(new CustomEvent('fleetos-memory-updated', { detail: normalized }));
+  memoryCache = normalized;
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('fleetos-memory-updated', { detail: normalized }));
+  }
   return normalized;
 }
 
-export function appendFleetMemory(event) {
-  const normalized = normalizeEvent(event);
-  const next = [normalized, ...readFleetMemory()].slice(0, MAX_EVENTS);
-  fetch(`${API_BASE}/memory`, {
+async function postMemory(payload) {
+  const response = await fetch(`${API_BASE}/memory`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ event: normalized }),
-  }).catch(() => {});
-  return writeFleetMemory(next);
+    body: JSON.stringify(payload),
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.message || data.error || `Fleet memory save failed with ${response.status}`);
+  }
+  return Array.isArray(data.events) ? data.events.map(normalizeEvent) : [];
 }
 
-export function clearFleetMemory() {
-  if (!canUseStorage()) return;
-  window.localStorage.removeItem(MEMORY_KEY);
-  fetch(`${API_BASE}/memory`, { method: 'DELETE' }).catch(() => {});
-  window.dispatchEvent(new CustomEvent('fleetos-memory-updated', { detail: [] }));
+export async function appendFleetMemory(event) {
+  const normalized = normalizeEvent(event);
+  const events = await postMemory({ event: normalized });
+  return writeFleetMemory(events);
+}
+
+export async function clearFleetMemory() {
+  const response = await fetch(`${API_BASE}/memory`, { method: 'DELETE' });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.message || data.error || `Fleet memory delete failed with ${response.status}`);
+  }
+  return writeFleetMemory([]);
 }
 
 export function exportFleetMemory() {
@@ -66,19 +65,10 @@ export function exportFleetMemory() {
 }
 
 export async function syncFleetMemoryFromBackend() {
-  try {
-    const response = await fetch(`${API_BASE}/memory`, { cache: 'no-store' });
-    if (!response.ok) return readFleetMemory();
-
-    const data = await response.json();
-    if (!Array.isArray(data.events)) return readFleetMemory();
-
-    const merged = [...data.events, ...readFleetMemory()]
-      .filter((event, index, all) => all.findIndex((candidate) => candidate.id === event.id) === index)
-      .slice(0, MAX_EVENTS);
-
-    return writeFleetMemory(merged);
-  } catch {
-    return readFleetMemory();
+  const response = await fetch(`${API_BASE}/memory`, { cache: 'no-store' });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.message || data.error || `Fleet memory load failed with ${response.status}`);
   }
+  return writeFleetMemory(Array.isArray(data.events) ? data.events : []);
 }

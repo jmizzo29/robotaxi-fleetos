@@ -190,6 +190,14 @@ export default async function handler(req, res) {
     return;
   }
 
+  if (!hasPostgres()) {
+    res.status(503).json({
+      error: 'DATABASE_REQUIRED',
+      message: 'Postgres DATABASE_URL is required before syncing Tesla telemetry.',
+    });
+    return;
+  }
+
   if (!hasTeslaConfig()) {
     res.status(503).json({
       error: 'TESLA_CONFIG_MISSING',

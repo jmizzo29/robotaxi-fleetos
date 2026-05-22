@@ -1,18 +1,15 @@
-const STORAGE_KEY = 'fleetos-location-history-v1';
 const MAX_RECORDS_PER_VEHICLE = 80;
+let locationHistoryCache = {};
 
 function readAllHistory() {
-  try {
-    const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
-    return parsed && typeof parsed === 'object' ? parsed : {};
-  } catch {
-    return {};
-  }
+  return locationHistoryCache;
 }
 
 function writeAllHistory(history) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
-  window.dispatchEvent(new CustomEvent('fleetos-location-history-updated'));
+  locationHistoryCache = history;
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('fleetos-location-history-updated'));
+  }
 }
 
 export function vehicleHistoryKey(vehicle) {

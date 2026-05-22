@@ -78,7 +78,7 @@ const vehicleOwnership = {
   },
 };
 
-const OWNERSHIP_STORAGE_KEY = 'fleetos.assetRecords.v1';
+let savedOwnershipRecords = {};
 const numericFields = new Set([
   'modelYear',
   'purchaseYear',
@@ -87,10 +87,6 @@ const numericFields = new Set([
   'monthlyPayment',
 ]);
 
-function canUseStorage() {
-  return typeof window !== 'undefined' && Boolean(window.localStorage);
-}
-
 const API_BASE = getApiBase();
 
 export function getVehicleOwnershipKey(vehicle) {
@@ -98,14 +94,7 @@ export function getVehicleOwnershipKey(vehicle) {
 }
 
 export function readSavedOwnershipRecords() {
-  if (!canUseStorage()) return {};
-
-  try {
-    const parsed = JSON.parse(window.localStorage.getItem(OWNERSHIP_STORAGE_KEY) || '{}');
-    return parsed && typeof parsed === 'object' ? parsed : {};
-  } catch {
-    return {};
-  }
+  return savedOwnershipRecords;
 }
 
 function normalizeOwnershipRecord(record = {}) {
@@ -117,54 +106,51 @@ function normalizeOwnershipRecord(record = {}) {
   );
 }
 
-export function saveVehicleOwnership(key, record) {
-  if (!canUseStorage() || !key) return null;
-
-  const current = readSavedOwnershipRecords();
-  const next = {
-    ...current,
-    [key]: normalizeOwnershipRecord(record),
-  };
-
-  window.localStorage.setItem(OWNERSHIP_STORAGE_KEY, JSON.stringify(next));
-  fetch(`${API_BASE}/assets`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ key, record: next[key] }),
-  }).catch(() => {});
-  window.dispatchEvent(new CustomEvent('fleetos-ownership-updated', { detail: next }));
-  return next[key];
+function publishOwnership(records) {
+  savedOwnershipRecords = records && typeof records === 'object' ? records : {};
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('fleetos-ownership-updated', { detail: savedOwnershipRecords }));
+  }
+  return savedOwnershipRecords;
 }
 
-export function resetVehicleOwnership(key) {
-  if (!canUseStorage() || !key) return;
+export async function saveVehicleOwnership(key, record) {
+  if (!key) return null;
 
-  const current = readSavedOwnershipRecords();
-  delete current[key];
-  window.localStorage.setItem(OWNERSHIP_STORAGE_KEY, JSON.stringify(current));
-  fetch(`${API_BASE}/assets?key=${encodeURIComponent(key)}`, { method: 'DELETE' }).catch(() => {});
-  window.dispatchEvent(new CustomEvent('fleetos-ownership-updated', { detail: current }));
+  const normalized = normalizeOwnershipRecord(record);
+  const response = await fetch(`${API_BASE}/assets`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ key, record: normalized }),
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.message || data.error || `Asset save failed with ${response.status}`);
+  }
+
+  publishOwnership(data.records || { ...savedOwnershipRecords, [key]: normalized });
+  return savedOwnershipRecords[key];
+}
+
+export async function resetVehicleOwnership(key) {
+  if (!key) return;
+
+  const response = await fetch(`${API_BASE}/assets?key=${encodeURIComponent(key)}`, { method: 'DELETE' });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.message || data.error || `Asset delete failed with ${response.status}`);
+  }
+  publishOwnership(data.records || {});
 }
 
 export async function syncSavedOwnershipFromBackend() {
-  if (!canUseStorage()) return {};
-
-  try {
-    const response = await fetch(`${API_BASE}/assets`, { cache: 'no-store' });
-    if (!response.ok) return readSavedOwnershipRecords();
-
-    const data = await response.json();
-    const records = data.records && typeof data.records === 'object' ? data.records : {};
-    const merged = {
-      ...records,
-      ...readSavedOwnershipRecords(),
-    };
-    window.localStorage.setItem(OWNERSHIP_STORAGE_KEY, JSON.stringify(merged));
-    window.dispatchEvent(new CustomEvent('fleetos-ownership-updated', { detail: merged }));
-    return merged;
-  } catch {
-    return readSavedOwnershipRecords();
+  const response = await fetch(`${API_BASE}/assets`, { cache: 'no-store' });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.message || data.error || `Asset load failed with ${response.status}`);
   }
+  const records = data.records && typeof data.records === 'object' ? data.records : {};
+  return publishOwnership(records);
 }
 
 export function getVehicleOwnership(vehicle) {

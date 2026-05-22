@@ -1,8 +1,6 @@
 import pg from 'pg';
 
 const { Pool } = pg;
-const globalStore = globalThis.__fleetosLeadStore || { leads: [] };
-globalThis.__fleetosLeadStore = globalStore;
 const pool = process.env.DATABASE_URL
   ? new Pool({
     connectionString: process.env.DATABASE_URL,
@@ -38,7 +36,6 @@ function normalizeLead(body = {}) {
 }
 
 async function listLeads() {
-  if (!pool) return globalStore.leads;
   await ensureTable();
   const { rows } = await pool.query('select id, name, email, tesla_count, use_case, plan, created_at from beta_leads order by created_at desc limit 100');
   return rows.map((row) => ({
@@ -53,12 +50,6 @@ async function listLeads() {
 }
 
 async function saveLead(lead) {
-  if (!pool) {
-    globalStore.leads.unshift(lead);
-    globalStore.leads.splice(100);
-    return lead;
-  }
-
   await ensureTable();
   await pool.query(
     `insert into beta_leads (id, name, email, tesla_count, use_case, plan, created_at)
@@ -75,6 +66,14 @@ async function saveLead(lead) {
 }
 
 export default async function handler(req, res) {
+  if (!pool) {
+    res.status(503).json({
+      error: 'DATABASE_REQUIRED',
+      message: 'Postgres DATABASE_URL is required for early access leads.',
+    });
+    return;
+  }
+
   if (req.method === 'GET') {
     const leads = await listLeads();
     res.status(200).json({

@@ -1,11 +1,7 @@
 import { getApiBase } from './apiClient';
 
-const STORAGE_KEY = 'fleetos.revenueRecords.v1';
 const API_BASE = getApiBase();
-
-function canUseStorage() {
-  return typeof window !== 'undefined' && Boolean(window.localStorage);
-}
+let revenueCache = [];
 
 function vehicleKey(vehicle) {
   return vehicle?.vin || vehicle?.id || vehicle?.name || vehicle?.display_name || 'unknown';
@@ -25,60 +21,51 @@ function normalizeRecord(record = {}) {
 }
 
 export function readRevenueRecords() {
-  if (!canUseStorage()) return [];
-
-  try {
-    const parsed = JSON.parse(window.localStorage.getItem(STORAGE_KEY) || '[]');
-    return Array.isArray(parsed) ? parsed.map(normalizeRecord) : [];
-  } catch {
-    return [];
-  }
+  return revenueCache;
 }
 
 export function writeRevenueRecords(records) {
-  if (!canUseStorage()) return [];
-
   const normalized = records.map(normalizeRecord).slice(0, 1000);
-  window.localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
-  window.dispatchEvent(new CustomEvent('fleetos-revenue-updated', { detail: normalized }));
+  revenueCache = normalized;
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('fleetos-revenue-updated', { detail: normalized }));
+  }
   return normalized;
 }
 
-export function addRevenueRecord(record) {
-  const normalized = normalizeRecord(record);
-  const next = [normalized, ...readRevenueRecords()];
-  fetch(`${API_BASE}/revenue`, {
+async function postRevenue(payload) {
+  const response = await fetch(`${API_BASE}/revenue`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ record: normalized }),
-  }).catch(() => {});
-  return writeRevenueRecords(next);
+    body: JSON.stringify(payload),
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.message || data.error || `Revenue save failed with ${response.status}`);
+  }
+  return Array.isArray(data.records) ? data.records.map(normalizeRecord) : [];
 }
 
-export function importRevenueRecords(records) {
+export async function addRevenueRecord(record) {
+  const normalized = normalizeRecord(record);
+  const records = await postRevenue({ record: normalized });
+  return writeRevenueRecords(records);
+}
+
+export async function importRevenueRecords(records) {
   const normalized = records.map(normalizeRecord).filter((record) => record.amount !== 0);
-  const next = [...normalized, ...readRevenueRecords()];
-  fetch(`${API_BASE}/revenue`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ records: normalized }),
-  }).catch(() => {});
-  return writeRevenueRecords(next);
+  const saved = await postRevenue({ records: normalized });
+  return writeRevenueRecords(saved);
 }
 
 export async function syncRevenueFromBackend() {
-  try {
-    const response = await fetch(`${API_BASE}/revenue`, { cache: 'no-store' });
-    if (!response.ok) return readRevenueRecords();
-    const data = await response.json();
-    const records = Array.isArray(data.records) ? data.records : [];
-    const merged = [...records, ...readRevenueRecords()]
-      .map(normalizeRecord)
-      .filter((record, index, all) => all.findIndex((candidate) => candidate.id === record.id) === index);
-    return writeRevenueRecords(merged);
-  } catch {
-    return readRevenueRecords();
+  const response = await fetch(`${API_BASE}/revenue`, { cache: 'no-store' });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new Error(data.message || data.error || `Revenue load failed with ${response.status}`);
   }
+  const records = Array.isArray(data.records) ? data.records : [];
+  return writeRevenueRecords(records);
 }
 
 export function revenueForVehicle(vehicle, records = readRevenueRecords()) {

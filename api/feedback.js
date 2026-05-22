@@ -1,8 +1,6 @@
 import pg from 'pg';
 
 const { Pool } = pg;
-const globalStore = globalThis.__fleetosFeedbackStore || { feedback: [] };
-globalThis.__fleetosFeedbackStore = globalStore;
 const pool = process.env.DATABASE_URL
   ? new Pool({
     connectionString: process.env.DATABASE_URL,
@@ -40,7 +38,6 @@ function normalizeFeedback(body = {}) {
 }
 
 async function listFeedback() {
-  if (!pool) return globalStore.feedback;
   await ensureTable();
   const { rows } = await pool.query('select id, type, rating, title, detail, route, email, created_at from beta_feedback order by created_at desc limit 100');
   return rows.map((row) => ({
@@ -56,12 +53,6 @@ async function listFeedback() {
 }
 
 async function saveFeedback(record) {
-  if (!pool) {
-    globalStore.feedback.unshift(record);
-    globalStore.feedback.splice(100);
-    return record;
-  }
-
   await ensureTable();
   await pool.query(
     `insert into beta_feedback (id, type, rating, title, detail, route, email, created_at)
@@ -79,6 +70,14 @@ async function saveFeedback(record) {
 }
 
 export default async function handler(req, res) {
+  if (!pool) {
+    res.status(503).json({
+      error: 'DATABASE_REQUIRED',
+      message: 'Postgres DATABASE_URL is required for beta feedback.',
+    });
+    return;
+  }
+
   if (req.method === 'GET') {
     res.status(200).json({ feedback: await listFeedback(), postgres: Boolean(pool) });
     return;

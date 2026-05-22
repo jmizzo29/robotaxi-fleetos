@@ -78,7 +78,7 @@ export default function AssetManagementPanel({
 
   useEffect(() => {
     const refresh = () => setRevision((current) => current + 1);
-    syncSavedOwnershipFromBackend().then(refresh);
+    syncSavedOwnershipFromBackend().then(refresh).catch(refresh);
     window.addEventListener('fleetos-ownership-updated', refresh);
     window.addEventListener('storage', refresh);
     return () => {
@@ -127,6 +127,7 @@ export default function AssetManagementPanel({
 function EditableAssetCard({ vehicle, ownership, onSaved }) {
   const [draft, setDraft] = useState(() => ownership);
   const [showVin, setShowVin] = useState(false);
+  const [message, setMessage] = useState('');
   const key = getVehicleOwnershipKey(vehicle);
 
   const handleChange = (event) => {
@@ -134,14 +135,26 @@ function EditableAssetCard({ vehicle, ownership, onSaved }) {
     setDraft((current) => ({ ...current, [name]: value }));
   };
 
-  const handleSave = () => {
-    saveVehicleOwnership(key, draft);
-    onSaved?.();
+  const handleSave = async () => {
+    setMessage('Saving asset record...');
+    try {
+      await saveVehicleOwnership(key, draft);
+      setMessage('Asset record saved to Postgres.');
+      onSaved?.();
+    } catch (error) {
+      setMessage(error.message || 'Asset record could not be saved.');
+    }
   };
 
-  const handleReset = () => {
-    resetVehicleOwnership(key);
-    onSaved?.();
+  const handleReset = async () => {
+    setMessage('Resetting asset record...');
+    try {
+      await resetVehicleOwnership(key);
+      setMessage('Asset record reset in Postgres.');
+      onSaved?.();
+    } catch (error) {
+      setMessage(error.message || 'Asset record could not be reset.');
+    }
   };
 
   return (
@@ -207,6 +220,7 @@ function EditableAssetCard({ vehicle, ownership, onSaved }) {
           Purchased {formatDate(draft.purchaseDate)} / {formatCurrency(Number(draft.pricePaid))}
         </div>
       </div>
+      {message && <p className="mt-3 text-sm font-semibold text-slate-400">{message}</p>}
     </article>
   );
 }

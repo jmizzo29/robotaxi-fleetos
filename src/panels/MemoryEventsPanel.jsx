@@ -71,7 +71,7 @@ export default function MemoryEventsPanel({ fleet, analysis, commandQueue, realS
 
   useEffect(() => {
     const handleMemoryUpdated = () => setStoredEvents(readFleetMemory());
-    syncFleetMemoryFromBackend().then(setStoredEvents);
+    syncFleetMemoryFromBackend().then(setStoredEvents).catch(() => setStoredEvents(readFleetMemory()));
     window.addEventListener('fleetos-memory-updated', handleMemoryUpdated);
     window.addEventListener('storage', handleMemoryUpdated);
     return () => {
@@ -85,9 +85,13 @@ export default function MemoryEventsPanel({ fleet, analysis, commandQueue, realS
     await navigator.clipboard?.writeText(payload);
   };
 
-  const handleClear = () => {
-    clearFleetMemory();
-    setStoredEvents([]);
+  const handleClear = async () => {
+    try {
+      await clearFleetMemory();
+      setStoredEvents([]);
+    } catch {
+      setStoredEvents(readFleetMemory());
+    }
   };
 
   return (
@@ -107,7 +111,7 @@ export default function MemoryEventsPanel({ fleet, analysis, commandQueue, realS
         </div>
         <div className="rounded-lg border border-white/10 bg-slate-900/80 p-4">
           <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">Storage</p>
-          <p className="mt-2 text-2xl font-black text-emerald-300">{storedEvents.length ? 'Local' : 'Live'}</p>
+          <p className="mt-2 text-2xl font-black text-emerald-300">{storedEvents.length ? 'Postgres' : 'Live'}</p>
         </div>
       </div>
 
@@ -119,7 +123,7 @@ export default function MemoryEventsPanel({ fleet, analysis, commandQueue, realS
             </p>
             <h2 className="text-2xl font-black tracking-tight">Events For Future RAG</h2>
             <p className="mt-2 max-w-3xl text-sm text-slate-400">
-              These events are the raw material FleetOS will store, embed, retrieve, and use to explain similar future situations. Syncs and operator commands now persist locally as an audit trail.
+              These events are the raw material FleetOS will store, embed, retrieve, and use to explain similar future situations. Syncs and operator commands now persist through the FleetOS backend as an audit trail.
             </p>
           </div>
           <div className="flex gap-2">

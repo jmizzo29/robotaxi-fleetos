@@ -80,6 +80,15 @@ function hasRefreshConfig() {
   return Boolean(process.env.TESLA_CLIENT_ID && tokenCache.refreshToken);
 }
 
+function requirePostgres(res, label = 'FleetOS data') {
+  if (pgPool) return true;
+  res.status(503).json({
+    error: 'DATABASE_REQUIRED',
+    message: `Postgres DATABASE_URL is required for ${label}.`,
+  });
+  return false;
+}
+
 async function ensureFleetSchema() {
   if (!pgPool) return false;
   if (fleetSchemaReady) return fleetSchemaReady;
@@ -817,6 +826,7 @@ app.get('/auth/callback', handleTeslaCallback);
 app.get('/api/tesla/callback', handleTeslaCallback);
 
 app.get('/api/vehicles', async (req, res) => {
+  if (!requirePostgres(res, 'Tesla telemetry sync')) return;
   try {
     const vehicles = await fetchVehicles();
     res.json({ response: vehicles });
@@ -861,11 +871,6 @@ app.post('/api/ai/analyze', async (req, res) => {
   }
 });
 
-const memoryEvents = [];
-const assetRecords = {};
-const earlyAccessLeads = [];
-const revenueRecords = [];
-const feedbackRecords = [];
 const MAX_MEMORY_EVENTS = 120;
 
 async function ensureFeedbackTable() {
@@ -918,7 +923,6 @@ function normalizeFeedback(body = {}) {
 }
 
 async function listFeedback() {
-  if (!pgPool) return feedbackRecords;
   await ensureFeedbackTable();
   const { rows } = await pgPool.query('select id, type, rating, title, detail, route, email, created_at from beta_feedback order by created_at desc limit 100');
   return rows.map((row) => ({
@@ -934,12 +938,6 @@ async function listFeedback() {
 }
 
 async function saveFeedback(record) {
-  if (!pgPool) {
-    feedbackRecords.unshift(record);
-    feedbackRecords.splice(100);
-    return record;
-  }
-
   await ensureFeedbackTable();
   await pgPool.query(
     `insert into beta_feedback (id, type, rating, title, detail, route, email, created_at)
@@ -969,7 +967,6 @@ function normalizeLead(body = {}) {
 }
 
 async function listLeads() {
-  if (!pgPool) return earlyAccessLeads;
   await ensureLeadTable();
   const { rows } = await pgPool.query('select id, name, email, tesla_count, use_case, plan, created_at from beta_leads order by created_at desc limit 100');
   return rows.map((row) => ({
@@ -984,12 +981,6 @@ async function listLeads() {
 }
 
 async function saveLead(lead) {
-  if (!pgPool) {
-    earlyAccessLeads.unshift(lead);
-    earlyAccessLeads.splice(100);
-    return lead;
-  }
-
   await ensureLeadTable();
   await pgPool.query(
     `insert into beta_leads (id, name, email, tesla_count, use_case, plan, created_at)
@@ -1019,7 +1010,6 @@ function normalizeRevenueRecord(record = {}) {
 }
 
 async function listRevenueRecords() {
-  if (!pgPool) return revenueRecords;
   await ensureRevenueTable();
   const { rows } = await pgPool.query('select id, vehicle_key, vehicle_label, record_date, source, amount, notes, created_at from fleetos_revenue_records order by created_at desc limit 1000');
   return rows.map((row) => ({
@@ -1035,12 +1025,6 @@ async function listRevenueRecords() {
 }
 
 async function saveRevenueRecords(records) {
-  if (!pgPool) {
-    revenueRecords.unshift(...records);
-    revenueRecords.splice(1000);
-    return revenueRecords;
-  }
-
   await ensureRevenueTable();
   await Promise.all(records.map((record) => pgPool.query(
     `insert into fleetos_revenue_records (id, vehicle_key, vehicle_label, record_date, source, amount, notes, created_at, updated_at)
@@ -1073,7 +1057,6 @@ function normalizeMemoryEvent(event = {}) {
 }
 
 async function listMemoryEvents() {
-  if (!pgPool) return memoryEvents;
   await ensureFleetSchema();
   const { rows } = await pgPool.query(
     `select id, type, title, detail, event_timestamp, source, status, rag_ready, metadata
@@ -1097,12 +1080,6 @@ async function listMemoryEvents() {
 
 async function saveMemoryEvents(incoming) {
   const normalized = incoming.map(normalizeMemoryEvent);
-  if (!pgPool) {
-    memoryEvents.unshift(...normalized);
-    memoryEvents.splice(MAX_MEMORY_EVENTS);
-    return memoryEvents;
-  }
-
   await ensureFleetSchema();
   await Promise.all(normalized.map((event) => pgPool.query(
     `insert into fleetos_memory_events (id, type, title, detail, event_timestamp, source, status, rag_ready, metadata)
@@ -1122,29 +1099,18 @@ async function saveMemoryEvents(incoming) {
 }
 
 async function clearMemoryEvents() {
-  if (!pgPool) {
-    memoryEvents.splice(0);
-    return [];
-  }
-
   await ensureFleetSchema();
   await pgPool.query('delete from fleetos_memory_events');
   return [];
 }
 
 async function listAssetRecords() {
-  if (!pgPool) return assetRecords;
   await ensureFleetSchema();
   const { rows } = await pgPool.query('select vehicle_key, record from fleetos_vehicle_assets order by updated_at desc');
   return Object.fromEntries(rows.map((row) => [row.vehicle_key, row.record || {}]));
 }
 
 async function saveAssetRecord(key, record) {
-  if (!pgPool) {
-    assetRecords[key] = record;
-    return assetRecords;
-  }
-
   await ensureFleetSchema();
   await pgPool.query(
     `insert into fleetos_vehicle_assets (
@@ -1191,15 +1157,6 @@ async function saveAssetRecord(key, record) {
 }
 
 async function deleteAssetRecords(key) {
-  if (!pgPool) {
-    if (key) {
-      delete assetRecords[key];
-    } else {
-      Object.keys(assetRecords).forEach((assetKey) => delete assetRecords[assetKey]);
-    }
-    return assetRecords;
-  }
-
   await ensureFleetSchema();
   if (key) {
     await pgPool.query('delete from fleetos_vehicle_assets where vehicle_key = $1', [key]);
@@ -1210,10 +1167,12 @@ async function deleteAssetRecords(key) {
 }
 
 app.get('/api/memory', async (req, res) => {
+  if (!requirePostgres(res, 'fleet memory')) return;
   res.json({ events: await listMemoryEvents(), postgres: Boolean(pgPool) });
 });
 
 app.post('/api/memory', async (req, res) => {
+  if (!requirePostgres(res, 'fleet memory')) return;
   const incoming = Array.isArray(req.body?.events)
     ? req.body.events
     : req.body?.event
@@ -1224,14 +1183,17 @@ app.post('/api/memory', async (req, res) => {
 });
 
 app.delete('/api/memory', async (req, res) => {
+  if (!requirePostgres(res, 'fleet memory')) return;
   res.json({ events: await clearMemoryEvents(), postgres: Boolean(pgPool) });
 });
 
 app.get('/api/assets', async (req, res) => {
+  if (!requirePostgres(res, 'asset records')) return;
   res.json({ records: await listAssetRecords(), postgres: Boolean(pgPool) });
 });
 
 app.post('/api/assets', async (req, res) => {
+  if (!requirePostgres(res, 'asset records')) return;
   const { key, record } = req.body || {};
 
   if (!key || !record) {
@@ -1243,10 +1205,12 @@ app.post('/api/assets', async (req, res) => {
 });
 
 app.delete('/api/assets', async (req, res) => {
+  if (!requirePostgres(res, 'asset records')) return;
   res.json({ records: await deleteAssetRecords(req.query?.key), postgres: Boolean(pgPool) });
 });
 
 app.get('/api/leads', async (req, res) => {
+  if (!requirePostgres(res, 'early access leads')) return;
   const leads = await listLeads();
   res.json({
     count: leads.length,
@@ -1256,6 +1220,7 @@ app.get('/api/leads', async (req, res) => {
 });
 
 app.post('/api/leads', async (req, res) => {
+  if (!requirePostgres(res, 'early access leads')) return;
   const lead = normalizeLead(req.body);
 
   if (!lead.email || !lead.email.includes('@')) {
@@ -1277,10 +1242,12 @@ app.post('/api/leads', async (req, res) => {
 });
 
 app.get('/api/revenue', async (req, res) => {
+  if (!requirePostgres(res, 'revenue records')) return;
   res.json({ records: await listRevenueRecords(), postgres: Boolean(pgPool) });
 });
 
 app.post('/api/revenue', async (req, res) => {
+  if (!requirePostgres(res, 'revenue records')) return;
   const incoming = Array.isArray(req.body?.records)
     ? req.body.records
     : req.body?.record
@@ -1291,16 +1258,14 @@ app.post('/api/revenue', async (req, res) => {
 });
 
 app.delete('/api/revenue', async (req, res) => {
-  if (pgPool) {
-    await ensureRevenueTable();
-    await pgPool.query('delete from fleetos_revenue_records');
-  } else {
-    revenueRecords.splice(0);
-  }
+  if (!requirePostgres(res, 'revenue records')) return;
+  await ensureRevenueTable();
+  await pgPool.query('delete from fleetos_revenue_records');
   res.json({ records: [], postgres: Boolean(pgPool) });
 });
 
 app.get('/api/feedback', async (req, res) => {
+  if (!requirePostgres(res, 'beta feedback')) return;
   try {
     res.json({ feedback: await listFeedback(), postgres: Boolean(pgPool) });
   } catch (error) {
@@ -1309,6 +1274,7 @@ app.get('/api/feedback', async (req, res) => {
 });
 
 app.post('/api/feedback', async (req, res) => {
+  if (!requirePostgres(res, 'beta feedback')) return;
   try {
     const record = normalizeFeedback(req.body);
     if (!record.title || !record.detail) {

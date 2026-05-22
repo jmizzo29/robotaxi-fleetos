@@ -87,10 +87,15 @@ export default function VehicleOnboardingPanel({
     setDraft((current) => ({ ...current, [field]: value }));
   };
 
-  const save = () => {
+  const save = async () => {
     if (!selectedVehicle || !draft) return;
-    saveVehicleOwnership(getVehicleOwnershipKey(selectedVehicle), draft);
-    setStatus({ state: 'success', message: 'Vehicle onboarded. FleetOS saved the asset record.' });
+    setStatus({ state: 'loading', message: 'Saving vehicle asset record to Postgres...' });
+    try {
+      await saveVehicleOwnership(getVehicleOwnershipKey(selectedVehicle), draft);
+      setStatus({ state: 'success', message: 'Vehicle onboarded. FleetOS saved the asset record to Postgres.' });
+    } catch (error) {
+      setStatus({ state: 'error', message: error.message || 'Vehicle asset record could not be saved.' });
+    }
   };
 
   return (

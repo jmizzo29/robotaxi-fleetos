@@ -1,8 +1,5 @@
 import { ensureFleetSchema, hasPostgres, query } from './_lib/db.js';
 
-const globalStore = globalThis.__fleetosRevenueStore || { records: [] };
-globalThis.__fleetosRevenueStore = globalStore;
-
 function normalizeRecord(record = {}) {
   return {
     id: record.id || `rev-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
@@ -17,7 +14,6 @@ function normalizeRecord(record = {}) {
 }
 
 async function listRevenue() {
-  if (!hasPostgres()) return globalStore.records;
   await ensureFleetSchema();
   const { rows } = await query('select id, vehicle_key, vehicle_label, record_date, source, amount, notes, created_at from fleetos_revenue_records order by created_at desc limit 1000');
   return rows.map((row) => ({
@@ -33,12 +29,6 @@ async function listRevenue() {
 }
 
 async function saveRevenue(records) {
-  if (!hasPostgres()) {
-    globalStore.records.unshift(...records);
-    globalStore.records.splice(1000);
-    return globalStore.records;
-  }
-
   await ensureFleetSchema();
   await Promise.all(records.map((record) => query(
     `insert into fleetos_revenue_records (id, vehicle_key, vehicle_label, record_date, source, amount, notes, created_at, updated_at)
@@ -57,18 +47,22 @@ async function saveRevenue(records) {
 }
 
 export default async function handler(req, res) {
+  if (!hasPostgres()) {
+    res.status(503).json({
+      error: 'DATABASE_REQUIRED',
+      message: 'Postgres DATABASE_URL is required for revenue records.',
+    });
+    return;
+  }
+
   if (req.method === 'GET') {
     res.status(200).json({ records: await listRevenue(), postgres: hasPostgres() });
     return;
   }
 
   if (req.method === 'DELETE') {
-    if (hasPostgres()) {
-      await ensureFleetSchema();
-      await query('delete from fleetos_revenue_records');
-    } else {
-      globalStore.records = [];
-    }
+    await ensureFleetSchema();
+    await query('delete from fleetos_revenue_records');
     res.status(200).json({ records: [], postgres: hasPostgres() });
     return;
   }

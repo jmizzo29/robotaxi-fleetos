@@ -5,9 +5,9 @@ const legalCopy = {
     sections: [
       ['What FleetOS collects', 'When you connect Tesla, FleetOS may process VIN, precise vehicle location, battery, odometer, charging state, vehicle state, software version, asset records, revenue records, and app usage events.'],
       ['Why it is used', 'FleetOS uses this data to show telemetry, owner finance, parking history, location intelligence, AI recommendations, and beta diagnostics.'],
-      ['Storage', 'This beta stores data in browser local storage and lightweight backend endpoints. Production should move to a durable database with user accounts and deletion guarantees.'],
+      ['Storage', 'FleetOS stores important beta records in Postgres-backed backend endpoints. Browser storage is limited to local consent and session preferences.'],
       ['Sharing', 'FleetOS does not sell Tesla telemetry. Free third-party APIs may receive location or VIN only when features such as weather, air quality, reverse geocoding, or VIN decode are used.'],
-      ['Deletion', 'Beta users can delete local FleetOS data from Settings. Tesla access can be revoked from Tesla account/app third-party access controls.'],
+      ['Deletion', 'Beta users can delete FleetOS backend data from Settings. Tesla access can be revoked from Tesla account/app third-party access controls.'],
     ],
   },
   terms: {

@@ -2,9 +2,9 @@ import { ensureFleetSchema, hasPostgres, query } from './_lib/db.js';
 
 function memoryStore() {
   return {
-    feedback: globalThis.__fleetosFeedbackStore?.feedback || [],
-    leads: globalThis.__fleetosLeadStore?.leads || [],
-    revenue: globalThis.__fleetosRevenueStore?.records || [],
+    feedback: [],
+    leads: [],
+    revenue: [],
   };
 }
 
@@ -16,10 +16,10 @@ export default async function handler(req, res) {
       feedbackCount: store.feedback.length,
       leadCount: store.leads.length,
       revenueRecordCount: store.revenue.length,
-      memoryEventCount: globalThis.__fleetosMemoryEvents?.length || 0,
+      memoryEventCount: 0,
       vehicleCount: 0,
       telemetrySnapshotCount: 0,
-      assetRecordCount: Object.keys(globalThis.__fleetosAssetRecords || {}).length,
+      assetRecordCount: 0,
       latestFeedback: store.feedback.slice(0, 10),
       latestLeads: store.leads.slice(0, 10),
       generatedAt: new Date().toISOString(),

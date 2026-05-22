@@ -6,11 +6,11 @@ export default function DataPrivacyPanel() {
   const [message, setMessage] = useState('');
 
   const deleteData = async () => {
-    const confirmed = window.confirm('Delete local FleetOS beta data and clear backend memory/assets/revenue records? This cannot be undone.');
+    const confirmed = window.confirm('Delete FleetOS backend memory/assets/revenue records and local consent state? This cannot be undone.');
     if (!confirmed) return;
 
     await deleteUserData();
-    setMessage('FleetOS beta data was deleted from this browser and beta backend stores.');
+    setMessage('FleetOS beta data was deleted from backend stores and local consent state was cleared.');
   };
 
   const revoke = () => {
