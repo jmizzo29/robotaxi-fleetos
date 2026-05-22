@@ -9,9 +9,9 @@ const capabilities = [
 ];
 
 const previewRows = [
-  ['OCE', 'Charging', '53%', 'Ready'],
-  ['Dispatch Plan', 'Tonight', '$7.4k', 'AI'],
-  ['Finance', 'Fleet ROI', '31%', 'Owner'],
+  ['Tesla View', 'Battery, parking, odometer', 'Live sync', 'Owner'],
+  ['Operations Plan', 'Charging and staging', 'AI assist', 'Plan'],
+  ['Owner Economics', 'Cost, balance, revenue', 'Private', 'Finance'],
 ];
 
 const plans = [
@@ -56,18 +56,18 @@ function ProductPreview() {
         <div className="mb-5 flex items-center justify-between">
           <div>
             <p className="text-[11px] font-black uppercase tracking-[0.24em] text-sky-300">FleetOS</p>
-            <h2 className="mt-1 text-2xl font-black text-white">AI Command Console</h2>
+            <h2 className="mt-1 text-2xl font-black text-white">FleetOS Product Preview</h2>
           </div>
           <span className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-xs font-black text-emerald-200">
-            Live Ready
+            Preview
           </span>
         </div>
 
         <div className="mb-4 grid grid-cols-3 gap-3">
           {[
-            ['Vehicles', '11'],
-            ['Revenue', '$48k'],
-            ['Risk', 'Low'],
+            ['Fleet View', 'Telemetry'],
+            ['Economics', 'Owner'],
+            ['Risk Signals', 'AI'],
           ].map(([label, value]) => (
             <div key={label} className="rounded-xl border border-white/10 bg-white/[0.06] p-3">
               <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500">{label}</p>
@@ -81,11 +81,11 @@ function ProductPreview() {
           <div className="absolute left-[-16%] top-[28%] h-12 w-[140%] rotate-[26deg] rounded-full border-y border-white/10 bg-white/[0.03]" />
           <div className="absolute left-[46%] top-[-20%] h-[140%] w-14 rotate-[8deg] rounded-full border-x border-white/10 bg-white/[0.03]" />
           {[
-            ['left-[52%] top-[45%] bg-sky-400 shadow-sky-400/50', 'OCE'],
-            ['left-[24%] top-[32%] bg-emerald-400 shadow-emerald-400/50', 'FL'],
+            ['left-[52%] top-[45%] bg-sky-400 shadow-sky-400/50', 'Tesla'],
+            ['left-[24%] top-[32%] bg-emerald-400 shadow-emerald-400/50', 'Fleet'],
             ['left-[78%] top-[66%] bg-rose-400 shadow-rose-400/50', 'AI'],
           ].map(([classes, label]) => (
-            <div key={label} className={`absolute flex h-11 w-11 items-center justify-center rounded-full border border-white/30 text-xs font-black text-slate-950 shadow-xl ${classes}`}>
+            <div key={label} className={`absolute flex h-11 min-w-11 items-center justify-center rounded-full border border-white/30 px-2 text-[11px] font-black text-slate-950 shadow-xl ${classes}`}>
               {label}
             </div>
           ))}
