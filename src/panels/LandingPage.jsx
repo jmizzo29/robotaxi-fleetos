@@ -11,6 +11,18 @@ const previewRows = [
   ['Finance', 'Fleet ROI', '31%', 'Owner'],
 ];
 
+const plans = [
+  ['First Tesla', 'Free', 'Live sync, location intelligence, owner finance, and AI vehicle brief for one Tesla.'],
+  ['Additional Teslas', 'Paid add-on', 'Scale into a rental fleet with multi-vehicle telemetry, history, alerts, and portfolio reporting.'],
+  ['Operator Tools', 'Pro tier', 'Advanced dispatch planning, fleet memory, readiness scoring, and AI workflow automation.'],
+];
+
+const setupSteps = [
+  ['Create FleetOS account', 'Start with one Tesla and keep the first vehicle free while you learn the product.'],
+  ['Authenticate with Tesla', 'Use Tesla OAuth to approve telemetry access. FleetOS never needs your Tesla password.'],
+  ['Sync and monitor', 'See battery, location, charging, odometer, parking history, and owner economics in one console.'],
+];
+
 function ProductPreview() {
   return (
     <div className="relative min-h-[500px] overflow-hidden rounded-2xl border border-white/10 bg-slate-950 shadow-2xl shadow-black/40">
@@ -110,8 +122,15 @@ export default function LandingPage({ onNavigate }) {
               <span className="block text-sky-300">for Tesla fleet owners</span>
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
-              A premium command layer for live telemetry, dispatch planning, charging readiness, owner finance, and AI-assisted fleet decisions.
+              A premium command layer for Tesla owners who rent, share, or operate their vehicles and want live telemetry, finance tracking, location history, and AI-assisted decisions.
             </p>
+            <div className="mt-6 flex flex-wrap gap-2">
+              {['First Tesla free', 'Built for owner-renters', 'Connect with Tesla OAuth'].map((label) => (
+                <span key={label} className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-emerald-200">
+                  {label}
+                </span>
+              ))}
+            </div>
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <button
                 type="button"
@@ -144,6 +163,67 @@ export default function LandingPage({ onNavigate }) {
                 <p className="mt-3 text-sm leading-6 text-slate-400">{detail}</p>
               </article>
             ))}
+          </div>
+        </section>
+
+        <section className="mx-auto grid max-w-7xl grid-cols-1 gap-4 px-5 py-14 lg:grid-cols-[0.9fr_1.1fr]">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-300">
+              Owner Rental Model
+            </p>
+            <h2 className="mt-3 max-w-xl text-4xl font-black tracking-tight text-white">
+              Free for your first Tesla. Built to grow into a rental fleet.
+            </h2>
+            <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-400">
+              FleetOS should feel useful before it asks for money: connect one car, understand its location, battery, utilization, and economics, then pay only when you add more vehicles or need operator-grade automation.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            {plans.map(([title, price, detail]) => (
+              <article key={title} className="rounded-lg border border-white/10 bg-slate-900/80 p-5">
+                <p className="text-xs font-black uppercase tracking-[0.2em] text-sky-300">{title}</p>
+                <h3 className="mt-3 text-2xl font-black text-white">{price}</h3>
+                <p className="mt-4 text-sm leading-6 text-slate-400">{detail}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="border-y border-white/10 bg-slate-950/70">
+          <div className="mx-auto max-w-7xl px-5 py-14">
+            <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-300">
+                  Easy Setup
+                </p>
+                <h2 className="mt-3 text-4xl font-black tracking-tight text-white">
+                  Connect Tesla in minutes
+                </h2>
+              </div>
+              <button
+                type="button"
+                onClick={() => onNavigate('tesla')}
+                className="rounded-md border border-sky-400/30 bg-sky-400/10 px-5 py-3 text-sm font-black text-sky-100 transition hover:bg-sky-400/20"
+              >
+                View Tesla Integration
+              </button>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+              {setupSteps.map(([title, detail], index) => (
+                <article key={title} className="rounded-lg border border-white/10 bg-white/[0.04] p-6">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-md bg-sky-300 text-sm font-black text-slate-950">
+                    {index + 1}
+                  </span>
+                  <h3 className="mt-5 text-xl font-black text-white">{title}</h3>
+                  <p className="mt-3 text-sm leading-6 text-slate-400">{detail}</p>
+                </article>
+              ))}
+            </div>
+            <p className="mt-6 text-xs leading-5 text-slate-600">
+              FleetOS uses Tesla-approved authentication flows and is not affiliated with or endorsed by Tesla.
+            </p>
           </div>
         </section>
 
