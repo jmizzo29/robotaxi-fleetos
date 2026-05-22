@@ -4,6 +4,7 @@ import chargingStationsFallback from '../data/chargingStations';
 import demandZones from '../data/demandZones';
 import { getVehicleOwnership } from '../data/vehicleOwnership';
 import { appendFleetMemory } from '../services/fleetMemory';
+import { appendLocationSnapshot } from '../services/locationHistory';
 import { getTeslaVehicles, mergeWithSimulation } from '../services/teslaService';
 
 const generatedFleet = Array.from({ length: 10 }, (_, i) => ({
@@ -153,6 +154,7 @@ export function useFleetSimulation({
       const syncedAt = new Date().toISOString();
       setFleet((current) => mergeWithSimulation(realVehicles, current));
       realVehicles.forEach((vehicle) => {
+        appendLocationSnapshot(vehicle, syncedAt);
         appendFleetMemory({
           type: 'Telemetry',
           title: `${vehicle.display_name || vehicle.name || vehicle.vin || 'Tesla'} telemetry sync`,

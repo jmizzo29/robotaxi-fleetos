@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { getTeslaSyncHealth } from '../services/teslaHealthService';
+import { getTeslaLoginUrl, getTeslaSyncHealth } from '../services/teslaHealthService';
 
 function healthTone(status) {
   if (status === true) return 'border-emerald-400/25 bg-emerald-400/10 text-emerald-200';
@@ -54,6 +54,7 @@ export default function TeslaSyncHealthPanel({
   const [health, setHealth] = useState(null);
   const [isLoadingHealth, setIsLoadingHealth] = useState(false);
   const [healthError, setHealthError] = useState(null);
+  const teslaLoginUrl = getTeslaLoginUrl();
 
   const refreshHealth = async () => {
     setIsLoadingHealth(true);
@@ -65,6 +66,13 @@ export default function TeslaSyncHealthPanel({
     } finally {
       setIsLoadingHealth(false);
     }
+  };
+
+  const syncAndRecheck = async () => {
+    await onSync?.();
+    window.setTimeout(() => {
+      refreshHealth();
+    }, 700);
   };
 
   useEffect(() => {
@@ -161,12 +169,22 @@ export default function TeslaSyncHealthPanel({
           </button>
           <button
             type="button"
-            onClick={onSync}
+            onClick={syncAndRecheck}
             disabled={isLoading}
             className="rounded-md border border-sky-400/30 bg-sky-400/10 px-4 py-2.5 text-sm font-bold text-sky-100 transition hover:bg-sky-400/20 disabled:cursor-wait disabled:opacity-60"
           >
             {isLoading ? 'Syncing...' : 'Sync Telemetry'}
           </button>
+          {teslaLoginUrl && (
+            <a
+              href={teslaLoginUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="rounded-md border border-emerald-400/30 bg-emerald-400/10 px-4 py-2.5 text-center text-sm font-bold text-emerald-100 transition hover:bg-emerald-400/20"
+            >
+              Reconnect Tesla
+            </a>
+          )}
         </div>
       </div>
 

@@ -1,6 +1,7 @@
 import LocationIntelligencePanel from '../components/LocationIntelligencePanel';
 import VehicleIdentityPlate from '../components/VehicleIdentityPlate';
 import { getVehicleOwnership } from '../data/vehicleOwnership';
+import TripParkingHistoryPanel from './TripParkingHistoryPanel';
 
 function formatCurrency(value) {
   if (!Number.isFinite(value)) return 'Unavailable';
@@ -92,6 +93,7 @@ export default function VehicleDetailPanel({
 
       <div className="space-y-4">
         <LocationIntelligencePanel vehicle={vehicle} onShowMap={onShowMap} />
+        <TripParkingHistoryPanel vehicle={vehicle} />
 
         <article className="rounded-lg border border-white/10 bg-slate-900/80 p-5 shadow-lg shadow-black/10">
           <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-emerald-300">

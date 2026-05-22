@@ -14,6 +14,15 @@ function resolveApiBase() {
 
 const API_BASE = resolveApiBase();
 
+export function getTeslaLoginUrl() {
+  const isLocalBrowser = (
+    typeof window !== 'undefined' &&
+    ['localhost', '127.0.0.1'].includes(window.location.hostname)
+  );
+
+  return isLocalBrowser ? `${API_BASE}/tesla/login-localhost` : null;
+}
+
 async function fetchJson(path) {
   const response = await fetch(`${API_BASE}${path}?ts=${Date.now()}`, {
     cache: 'no-store',

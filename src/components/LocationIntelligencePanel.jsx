@@ -1,6 +1,12 @@
-function hasCoordinates(vehicle) {
-  return Number.isFinite(Number(vehicle?.latitude)) && Number.isFinite(Number(vehicle?.longitude));
-}
+import { useEffect, useState } from 'react';
+import {
+  buildGoogleStreetViewPreviewUrl,
+  buildGoogleStreetViewUrl,
+  buildMapillaryUrl,
+  distanceFromOperatingBase,
+  hasCoordinates,
+  reverseGeocodeLocation,
+} from '../services/locationIntelligence';
 
 function formatCoordinate(value) {
   if (!Number.isFinite(Number(value))) return 'Unavailable';
@@ -45,7 +51,15 @@ function Detail({ label, value }) {
 
 export default function LocationIntelligencePanel({ vehicle, onShowMap }) {
   const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
+  const [place, setPlace] = useState(null);
+  const [placeError, setPlaceError] = useState(null);
   const hasLocation = hasCoordinates(vehicle);
+  const latitude = vehicle?.latitude;
+  const longitude = vehicle?.longitude;
+  const baseDistance = hasLocation ? distanceFromOperatingBase(vehicle) : null;
+  const streetViewPreviewUrl = hasLocation ? buildGoogleStreetViewPreviewUrl(vehicle) : null;
+  const streetViewUrl = hasLocation ? buildGoogleStreetViewUrl(vehicle) : null;
+  const mapillaryUrl = hasLocation ? buildMapillaryUrl(vehicle) : null;
   const previewUrl = hasLocation
     ? buildMapboxPreviewUrl({
       latitude: vehicle.latitude,
@@ -58,6 +72,37 @@ export default function LocationIntelligencePanel({ vehicle, onShowMap }) {
   const mapsUrl = hasLocation
     ? `https://www.google.com/maps/search/?api=1&query=${vehicle.latitude},${vehicle.longitude}`
     : null;
+
+  useEffect(() => {
+    let cancelled = false;
+    const timer = window.setTimeout(async () => {
+      if (!hasLocation) {
+        if (!cancelled) {
+          setPlace(null);
+          setPlaceError(null);
+        }
+        return;
+      }
+
+      try {
+        const nextPlace = await reverseGeocodeLocation({ latitude, longitude });
+        if (!cancelled) {
+          setPlace(nextPlace);
+          setPlaceError(null);
+        }
+      } catch (error) {
+        if (!cancelled) {
+          setPlace(null);
+          setPlaceError(error.message);
+        }
+      }
+    }, 250);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(timer);
+    };
+  }, [hasLocation, latitude, longitude]);
 
   return (
     <article className="overflow-hidden rounded-lg border border-white/10 bg-slate-900/80 shadow-lg shadow-black/10">
@@ -115,6 +160,11 @@ export default function LocationIntelligencePanel({ vehicle, onShowMap }) {
 
         <div className="space-y-4">
           <div className="grid grid-cols-2 gap-3">
+            <Detail label="Nearest Place" value={place?.shortLabel || (placeError ? 'Lookup unavailable' : 'Resolving...')} />
+            <Detail
+              label="From Base"
+              value={Number.isFinite(baseDistance?.miles) ? `${baseDistance.miles.toFixed(2)} mi` : 'Unavailable'}
+            />
             <Detail label="Latitude" value={formatCoordinate(vehicle?.latitude)} />
             <Detail label="Longitude" value={formatCoordinate(vehicle?.longitude)} />
             <Detail label="Heading" value={formatHeading(vehicle?.heading)} />
@@ -125,9 +175,19 @@ export default function LocationIntelligencePanel({ vehicle, onShowMap }) {
 
           <div className="rounded-lg border border-emerald-300/15 bg-emerald-400/10 p-4 text-sm leading-6 text-emerald-50">
             {hasLocation
-              ? 'This position is coming from Tesla telemetry. If the car is parked, FleetOS should anchor it here instead of moving it through simulation.'
+              ? place?.label || 'This position is coming from Tesla telemetry. If the car is parked, FleetOS should anchor it here instead of moving it through simulation.'
               : 'FleetOS does not have a real Tesla GPS fix yet. Re-sync after confirming Vehicle Location scope and in-car data sharing.'}
           </div>
+
+          {streetViewPreviewUrl && (
+            <div className="overflow-hidden rounded-lg border border-white/10 bg-slate-950">
+              <img
+                src={streetViewPreviewUrl}
+                alt="Street-level preview near vehicle location"
+                className="h-40 w-full object-cover"
+              />
+            </div>
+          )}
 
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             <button
@@ -148,6 +208,30 @@ export default function LocationIntelligencePanel({ vehicle, onShowMap }) {
               }`}
             >
               Open Maps
+            </a>
+            <a
+              href={streetViewUrl || undefined}
+              target="_blank"
+              rel="noreferrer"
+              className={`rounded-md border px-4 py-3 text-center text-sm font-bold transition ${
+                streetViewUrl
+                  ? 'border-white/10 bg-white/5 text-slate-100 hover:bg-white/10'
+                  : 'pointer-events-none border-white/5 bg-white/[0.02] text-slate-600'
+              }`}
+            >
+              Street View
+            </a>
+            <a
+              href={mapillaryUrl || undefined}
+              target="_blank"
+              rel="noreferrer"
+              className={`rounded-md border px-4 py-3 text-center text-sm font-bold transition ${
+                mapillaryUrl
+                  ? 'border-white/10 bg-white/5 text-slate-100 hover:bg-white/10'
+                  : 'pointer-events-none border-white/5 bg-white/[0.02] text-slate-600'
+              }`}
+            >
+              Mapillary
             </a>
           </div>
         </div>
