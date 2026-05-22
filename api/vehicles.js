@@ -1,63 +1,8 @@
+import { teslaRequestForSession } from './_lib/auth.js';
 import { ensureFleetSchema, hasPostgres, query } from './_lib/db.js';
 
 const DEFAULT_FLEET_API_BASE = process.env.TESLA_API_BASE || 'https://fleet-api.prd.na.vn.cloud.tesla.com';
-const TESLA_AUTH_URL = 'https://fleet-auth.prd.vn.cloud.tesla.com/oauth2/v3/token';
 const TESLA_REDIRECT_URI = process.env.TESLA_REDIRECT_URI || 'http://localhost:3001/callback';
-
-function hasTeslaConfig() {
-  return Boolean(process.env.TESLA_CLIENT_ID && process.env.TESLA_REFRESH_TOKEN);
-}
-
-async function refreshTeslaAccessToken() {
-  const form = new URLSearchParams({
-    grant_type: 'refresh_token',
-    client_id: process.env.TESLA_CLIENT_ID,
-    refresh_token: process.env.TESLA_REFRESH_TOKEN,
-    redirect_uri: TESLA_REDIRECT_URI,
-  });
-
-  const tokenUrl = new URL(TESLA_AUTH_URL);
-  tokenUrl.searchParams.set('redirect_uri', TESLA_REDIRECT_URI);
-
-  const response = await fetch(tokenUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: form.toString(),
-  });
-
-  if (!response.ok) {
-    const detail = await response.text();
-    throw new Error(`Tesla token refresh failed: ${detail || response.status}`);
-  }
-
-  const data = await response.json();
-  return data.access_token;
-}
-
-async function teslaRequest(path, accessToken, options = {}) {
-  const url = new URL(`${DEFAULT_FLEET_API_BASE}${path}`);
-
-  Object.entries(options.params || {}).forEach(([key, value]) => {
-    if (value !== undefined && value !== null) {
-      url.searchParams.set(key, value);
-    }
-  });
-
-  const response = await fetch(url, {
-    method: options.method || 'GET',
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      'Content-Type': 'application/json',
-    },
-  });
-
-  if (!response.ok) {
-    const detail = await response.text();
-    throw new Error(`Tesla API request failed: ${detail || response.status}`);
-  }
-
-  return response.json();
-}
 
 function normalizeVehicle(vehicle, telemetry = {}) {
   const chargeState = telemetry.charge_state || vehicle.charge_state || {};
@@ -185,7 +130,7 @@ export default async function handler(req, res) {
         'redirect_uri',
       ],
       redirectUri: TESLA_REDIRECT_URI,
-      teslaConfigured: hasTeslaConfig(),
+      teslaConfigured: Boolean(process.env.TESLA_CLIENT_ID),
     });
     return;
   }
@@ -198,17 +143,18 @@ export default async function handler(req, res) {
     return;
   }
 
-  if (!hasTeslaConfig()) {
+  if (!process.env.TESLA_CLIENT_ID) {
     res.status(503).json({
       error: 'TESLA_CONFIG_MISSING',
-      message: 'Tesla Fleet API env vars are not configured in Vercel.',
+      message: 'TESLA_CLIENT_ID is not configured in Vercel.',
     });
     return;
   }
 
   try {
-    const accessToken = await refreshTeslaAccessToken();
-    const vehiclesPayload = await teslaRequest('/api/1/vehicles', accessToken);
+    const vehiclesPayload = await teslaRequestForSession(req, res, '/api/1/vehicles', {
+      baseURL: DEFAULT_FLEET_API_BASE,
+    });
     const vehicles = vehiclesPayload.response || [];
 
     const response = await Promise.all(
@@ -218,7 +164,8 @@ export default async function handler(req, res) {
         }
 
         try {
-          const telemetryPayload = await teslaRequest(`/api/1/vehicles/${vehicle.id_s || vehicle.id}/vehicle_data`, accessToken, {
+          const telemetryPayload = await teslaRequestForSession(req, res, `/api/1/vehicles/${vehicle.id_s || vehicle.id}/vehicle_data`, {
+            baseURL: DEFAULT_FLEET_API_BASE,
             params: {
               endpoints: 'charge_state;drive_state;location_data;vehicle_state',
             },

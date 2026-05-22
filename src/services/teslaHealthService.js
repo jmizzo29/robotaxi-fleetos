@@ -3,12 +3,10 @@ import { getApiBase } from './apiClient';
 const API_BASE = getApiBase();
 
 export function getTeslaLoginUrl() {
-  const isLocalBrowser = (
-    typeof window !== 'undefined' &&
-    ['localhost', '127.0.0.1'].includes(window.location.hostname)
-  );
-
-  return isLocalBrowser ? `${API_BASE}/tesla/login-localhost` : null;
+  const returnTo = typeof window !== 'undefined'
+    ? `${window.location.origin}${window.location.pathname}#/tesla`
+    : '/#/tesla';
+  return `${API_BASE}/tesla/login?returnTo=${encodeURIComponent(returnTo)}`;
 }
 
 async function fetchJson(path) {

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import BetaConsentPanel from '../components/BetaConsentPanel';
 import { canUseTeslaTelemetry } from '../services/betaCompliance';
+import { disconnectTeslaForUser, getFleetOsSession } from '../services/sessionService';
 import { getTeslaLoginUrl, getTeslaSyncHealth } from '../services/teslaHealthService';
 
 function healthTone(status) {
@@ -56,6 +57,7 @@ export default function TeslaSyncHealthPanel({
   const [health, setHealth] = useState(null);
   const [isLoadingHealth, setIsLoadingHealth] = useState(false);
   const [healthError, setHealthError] = useState(null);
+  const [session, setSession] = useState(null);
   const [complianceRevision, setComplianceRevision] = useState(0);
   const teslaLoginUrl = getTeslaLoginUrl();
   const consentReady = canUseTeslaTelemetry();
@@ -64,9 +66,26 @@ export default function TeslaSyncHealthPanel({
     setIsLoadingHealth(true);
     setHealthError(null);
     try {
-      setHealth(await getTeslaSyncHealth());
+      const [nextSession, nextHealth] = await Promise.all([
+        getFleetOsSession(),
+        getTeslaSyncHealth(),
+      ]);
+      setSession(nextSession);
+      setHealth(nextHealth);
     } catch (error) {
       setHealthError(error.message || 'Tesla health check failed.');
+    } finally {
+      setIsLoadingHealth(false);
+    }
+  };
+
+  const disconnectTesla = async () => {
+    setIsLoadingHealth(true);
+    try {
+      await disconnectTeslaForUser();
+      await refreshHealth();
+    } catch (error) {
+      setHealthError(error.message || 'Tesla disconnect failed.');
     } finally {
       setIsLoadingHealth(false);
     }
@@ -107,13 +126,13 @@ export default function TeslaSyncHealthPanel({
       {
         label: 'Tesla Credentials',
         detail: health?.credentials?.ok
-          ? `Redirect: ${health.credentials.redirectUri || 'configured'}`
-          : 'Client ID and refresh token must be present in the backend environment.',
+          ? `Connected for this FleetOS user${health.credentials.connectedAt ? ` since ${formatTime(health.credentials.connectedAt)}` : ''}.`
+          : 'Connect Tesla for this FleetOS user. Tokens are stored per user in Postgres.',
         status: health ? Boolean(health.credentials?.ok) : null,
       },
       {
         label: 'Refresh Token',
-        detail: health?.token?.message || (health?.token?.ok ? 'Tesla accepted the stored refresh token.' : 'Run the Tesla login flow again if this reports login_required.'),
+        detail: health?.token?.message || (health?.token?.ok ? 'Tesla accepted this user connection.' : 'Run the Tesla login flow for this user.'),
         status: health?.token?.ok,
       },
       {
@@ -141,12 +160,17 @@ export default function TeslaSyncHealthPanel({
         status: syncHealthy,
       },
       {
+        label: 'FleetOS User Session',
+        detail: session?.user?.id ? `Session ${String(session.sessionId || '').slice(0, 18)}...` : 'FleetOS session has not been created.',
+        status: Boolean(session?.user?.id),
+      },
+      {
         label: 'Partner Domain',
         detail: health?.partnerDomain || 'Only required for production command/signing flows.',
         status: health?.partnerDomain ? true : null,
       },
     ];
-  }, [health, healthError, realSyncStatus, vehicle]);
+  }, [health, healthError, realSyncStatus, session, vehicle]);
 
   const overallHealthy = checks.filter((check) => check.status === false).length === 0 && checks.some((check) => check.status === true);
 
@@ -190,12 +214,20 @@ export default function TeslaSyncHealthPanel({
           {consentReady && teslaLoginUrl && (
             <a
               href={teslaLoginUrl}
-              target="_blank"
-              rel="noreferrer"
               className="rounded-md border border-emerald-400/30 bg-emerald-400/10 px-4 py-2.5 text-center text-sm font-bold text-emerald-100 transition hover:bg-emerald-400/20"
             >
-              Reconnect Tesla
+              {session?.teslaConnected ? 'Reconnect Tesla' : 'Connect Tesla'}
             </a>
+          )}
+          {session?.teslaConnected && (
+            <button
+              type="button"
+              onClick={disconnectTesla}
+              disabled={isLoadingHealth}
+              className="rounded-md border border-rose-400/30 bg-rose-400/10 px-4 py-2.5 text-sm font-bold text-rose-100 transition hover:bg-rose-400/20 disabled:cursor-wait disabled:opacity-60"
+            >
+              Disconnect
+            </button>
           )}
         </div>
       </div>

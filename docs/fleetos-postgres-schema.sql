@@ -10,6 +10,39 @@ create table if not exists fleetos_users (
   updated_at timestamptz not null default now()
 );
 
+create table if not exists fleetos_sessions (
+  id text primary key,
+  user_id text not null references fleetos_users(id) on delete cascade,
+  created_at timestamptz not null default now(),
+  expires_at timestamptz not null,
+  last_seen_at timestamptz not null default now()
+);
+
+create table if not exists fleetos_oauth_states (
+  state text primary key,
+  session_id text not null references fleetos_sessions(id) on delete cascade,
+  redirect_uri text not null,
+  return_to text,
+  created_at timestamptz not null default now(),
+  expires_at timestamptz not null
+);
+
+create table if not exists fleetos_tesla_connections (
+  id text primary key,
+  user_id text not null references fleetos_users(id) on delete cascade,
+  provider text not null default 'tesla',
+  tesla_subject text,
+  access_token_enc text,
+  refresh_token_enc text not null,
+  token_type text,
+  scope text,
+  expires_at timestamptz,
+  connected_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  revoked_at timestamptz,
+  unique (user_id, provider)
+);
+
 create table if not exists fleetos_fleets (
   id text primary key,
   owner_user_id text references fleetos_users(id) on delete set null,
@@ -183,6 +216,8 @@ create table if not exists beta_leads (
 
 create index if not exists idx_fleetos_vehicles_fleet on fleetos_vehicles(fleet_id);
 create index if not exists idx_fleetos_vehicles_vin on fleetos_vehicles(vin);
+create index if not exists idx_fleetos_sessions_user on fleetos_sessions(user_id);
+create index if not exists idx_fleetos_tesla_connections_user on fleetos_tesla_connections(user_id);
 create index if not exists idx_fleetos_telemetry_vehicle_time on fleetos_telemetry_snapshots(vehicle_id, captured_at desc);
 create index if not exists idx_fleetos_memory_time on fleetos_memory_events(event_timestamp desc);
 create index if not exists idx_fleetos_revenue_vehicle_date on fleetos_revenue_records(vehicle_key, record_date desc);
