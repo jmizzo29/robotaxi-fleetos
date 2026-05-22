@@ -17,6 +17,7 @@ export async function getTeslaVehicles() {
   try {
     const response = await fetch(`${API_BASE}/vehicles?ts=${Date.now()}`, {
       cache: 'no-store',
+      credentials: 'include',
     });
     if (!response.ok) {
       const detail = await response.json().catch(() => ({}));
@@ -42,6 +43,7 @@ export async function wakeTeslaVehicle(vehicle) {
   const response = await fetch(`${API_BASE}/vehicles/${encodeURIComponent(vehicleId)}/wake_up`, {
     method: 'POST',
     cache: 'no-store',
+    credentials: 'include',
   });
 
   const data = await response.json().catch(() => ({}));

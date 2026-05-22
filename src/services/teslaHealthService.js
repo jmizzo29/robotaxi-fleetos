@@ -2,16 +2,17 @@ import { getApiBase } from './apiClient';
 
 const API_BASE = getApiBase();
 
-export function getTeslaLoginUrl() {
+export function getTeslaLoginUrl(returnRoute = 'tesla') {
   const returnTo = typeof window !== 'undefined'
-    ? `${window.location.origin}${window.location.pathname}#/tesla`
-    : '/#/tesla';
+    ? `${window.location.origin}${window.location.pathname}#/${returnRoute}`
+    : `/#/${returnRoute}`;
   return `${API_BASE}/tesla/login?returnTo=${encodeURIComponent(returnTo)}`;
 }
 
 async function fetchJson(path) {
   const response = await fetch(`${API_BASE}${path}?ts=${Date.now()}`, {
     cache: 'no-store',
+    credentials: 'include',
   });
   const data = await response.json().catch(() => ({}));
 

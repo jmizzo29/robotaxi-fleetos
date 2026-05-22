@@ -8,6 +8,7 @@ export default function Sidebar({
 }) {
   const navItems = [
     ['overview', 'Overview'],
+    ['onboarding', 'Onboarding'],
     ['map', 'Live Map'],
     ['fleet', 'Fleet'],
     ['vehicle', 'Vehicle Detail'],

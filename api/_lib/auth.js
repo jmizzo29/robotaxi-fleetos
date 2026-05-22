@@ -20,7 +20,7 @@ export function betaInviteCode() {
 }
 
 export function validateInviteCode(inviteCode) {
-  return String(inviteCode || '').trim() === betaInviteCode();
+  return String(inviteCode || '').trim().toUpperCase() === betaInviteCode().toUpperCase();
 }
 
 export function hashToken(value) {

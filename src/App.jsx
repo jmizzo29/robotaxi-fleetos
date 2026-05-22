@@ -27,6 +27,7 @@ import LandingPage from './panels/LandingPage';
 import LegalPage from './panels/LegalPage';
 import MemoryEventsPanel from './panels/MemoryEventsPanel';
 import MobileCommandDashboard from './panels/MobileCommandDashboard';
+import OnboardingPanel from './panels/OnboardingPanel';
 import OperationsReportPanel from './panels/OperationsReportPanel';
 import QuickActionGrid from './panels/QuickActionGrid';
 import SettingsPanel from './panels/SettingsPanel';
@@ -308,6 +309,21 @@ export default function App() {
           />
           <ForecastPanel forecast={forecast} />
         </div>
+      </>
+    ),
+    onboarding: (
+      <>
+        <PageHeader
+          eyebrow="Beta Onboarding"
+          title="Connect Your First Tesla"
+          description="A guided mobile-friendly setup for account creation, data consent, Tesla OAuth, first sync, and dashboard handoff."
+        />
+        <OnboardingPanel
+          realVehicleCount={realVehicles.length}
+          isLoading={isLoadingReal}
+          onSync={refreshRealTesla}
+          onNavigate={navigate}
+        />
       </>
     ),
     map: (

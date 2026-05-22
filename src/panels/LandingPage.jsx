@@ -210,10 +210,10 @@ export default function LandingPage({ onNavigate }) {
         <nav className="flex items-center gap-3">
           <button
             type="button"
-            onClick={() => onNavigate('account')}
+            onClick={() => onNavigate('onboarding')}
             className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-slate-200 transition hover:bg-white/10"
           >
-            Create Account
+            Get Started
           </button>
           <button
             type="button"
@@ -248,10 +248,10 @@ export default function LandingPage({ onNavigate }) {
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <button
                 type="button"
-                onClick={() => onNavigate('account')}
+                onClick={() => onNavigate('onboarding')}
                 className="rounded-md bg-sky-300 px-5 py-4 text-sm font-black text-slate-950 transition hover:bg-sky-200"
               >
-                Create Free Account
+                Start Free Setup
               </button>
               <button
                 type="button"
