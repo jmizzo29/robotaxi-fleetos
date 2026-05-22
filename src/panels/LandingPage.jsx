@@ -249,10 +249,10 @@ export default function LandingPage({ onNavigate }) {
               <span className="block text-sky-300">for Tesla fleet owners</span>
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
-              A premium command layer for Tesla owners who rent, share, or operate their vehicles and want live telemetry, finance tracking, location history, and AI-assisted decisions.
+              A secure fleet workspace for Tesla owners who rent, share, or manage vehicles and need consent-based telemetry, owner economics, maintenance planning, and AI-assisted operations.
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
-              {['First Tesla free', 'Built for owner-renters', 'Connect with Tesla OAuth'].map((label) => (
+              {['First Tesla free', 'Owner-controlled access', 'Tesla OAuth only'].map((label) => (
                 <span key={label} className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-emerald-200">
                   {label}
                 </span>
