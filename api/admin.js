@@ -1,4 +1,5 @@
 import { ensureFleetSchema, hasPostgres, query } from './_lib/db.js';
+import { redactFeedback, redactLead, requireAdmin } from './_lib/security.js';
 
 function memoryStore() {
   return {
@@ -9,6 +10,16 @@ function memoryStore() {
 }
 
 export default async function handler(req, res) {
+  try {
+    await requireAdmin(req, res);
+  } catch (error) {
+    res.status(error.status || 500).json({
+      error: error.status === 403 ? 'ADMIN_FORBIDDEN' : 'ADMIN_LOGIN_REQUIRED',
+      message: error.message,
+    });
+    return;
+  }
+
   if (!hasPostgres()) {
     const store = memoryStore();
     res.status(200).json({
@@ -51,25 +62,8 @@ export default async function handler(req, res) {
     vehicleCount: vehicles.rows[0]?.count || 0,
     telemetrySnapshotCount: telemetry.rows[0]?.count || 0,
     assetRecordCount: assets.rows[0]?.count || 0,
-    latestFeedback: feedback.rows.map((row) => ({
-      id: row.id,
-      type: row.type,
-      rating: row.rating,
-      title: row.title,
-      detail: row.detail,
-      route: row.route,
-      email: row.email,
-      createdAt: row.created_at,
-    })),
-    latestLeads: leads.rows.map((row) => ({
-      id: row.id,
-      name: row.name,
-      email: row.email,
-      teslaCount: row.tesla_count,
-      useCase: row.use_case,
-      plan: row.plan,
-      createdAt: row.created_at,
-    })),
+    latestFeedback: feedback.rows.map(redactFeedback),
+    latestLeads: leads.rows.map(redactLead),
     generatedAt: new Date().toISOString(),
   });
 }

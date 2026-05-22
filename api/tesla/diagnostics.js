@@ -1,4 +1,5 @@
 import { getTeslaConnectionForSession, teslaRequestForSession } from '../_lib/auth.js';
+import { auditEvent } from '../_lib/security.js';
 
 const DEFAULT_FLEET_API_BASE = process.env.TESLA_API_BASE || 'https://fleet-api.prd.na.vn.cloud.tesla.com';
 
@@ -10,17 +11,22 @@ export default async function handler(req, res) {
   }
 
   const connectionResult = await getTeslaConnectionForSession(req, res);
+  await auditEvent({
+    userId: connectionResult?.session?.userId || null,
+    action: 'tesla_diagnostics_viewed',
+    resource: 'tesla',
+  }).catch(() => {});
   const checks = {
     backend: { ok: true, runtime: 'vercel' },
     credentials: {
       ok: Boolean(connectionResult?.connection),
       perUserToken: Boolean(connectionResult?.connection),
-      clientId: Boolean(process.env.TESLA_CLIENT_ID),
-      clientSecret: Boolean(process.env.TESLA_CLIENT_SECRET),
+      clientIdConfigured: Boolean(process.env.TESLA_CLIENT_ID),
+      clientSecretConfigured: Boolean(process.env.TESLA_CLIENT_SECRET),
       connectedAt: connectionResult?.connection?.connected_at || null,
     },
-    fleetApiBase: DEFAULT_FLEET_API_BASE,
-    partnerDomain: process.env.TESLA_PARTNER_DOMAIN || null,
+    fleetApiBaseConfigured: Boolean(DEFAULT_FLEET_API_BASE),
+    partnerDomainConfigured: Boolean(process.env.TESLA_PARTNER_DOMAIN),
     token: null,
     vehicles: null,
     location: null,

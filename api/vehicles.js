@@ -1,5 +1,6 @@
 import { getBillingStatusForSession, getDefaultFleetForSession, teslaRequestForSession } from './_lib/auth.js';
 import { ensureFleetSchema, hasPostgres, query } from './_lib/db.js';
+import { applyVehiclePrivacy, auditEvent, privacyMode } from './_lib/security.js';
 
 const DEFAULT_FLEET_API_BASE = process.env.TESLA_API_BASE || 'https://fleet-api.prd.na.vn.cloud.tesla.com';
 const TESLA_REDIRECT_URI = process.env.TESLA_REDIRECT_URI || 'http://localhost:3001/callback';
@@ -193,7 +194,18 @@ export default async function handler(req, res) {
 
     const context = await getDefaultFleetForSession(req, res);
     await saveVehicleTelemetry(context.fleet.id, response);
-    res.status(200).json({ response, postgres: hasPostgres() });
+    const mode = privacyMode(req);
+    await auditEvent({
+      userId: context.session.userId,
+      action: 'tesla_telemetry_synced',
+      resource: 'vehicles',
+      metadata: { vehicleCount: response.length, locationPrivacy: mode },
+    }).catch(() => {});
+    res.status(200).json({
+      response: response.map((vehicle) => applyVehiclePrivacy(vehicle, mode)),
+      postgres: hasPostgres(),
+      privacy: { location: mode },
+    });
   } catch (error) {
     res.status(502).json({
       error: 'TESLA_API_UNAVAILABLE',

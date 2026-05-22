@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { getBetaAdminSummary, hasAdminAccess, verifyAdminCode } from '../services/betaAdminService';
+import { getBetaAdminSummary } from '../services/betaAdminService';
 
 function Metric({ label, value, helper }) {
   return (
@@ -21,19 +21,9 @@ function formatCurrency(value) {
 }
 
 export default function BetaAdminPanel() {
-  const [unlocked, setUnlocked] = useState(() => hasAdminAccess());
-  const [code, setCode] = useState('');
+  const [unlocked, setUnlocked] = useState(true);
   const [summary, setSummary] = useState(null);
-  const [message, setMessage] = useState(unlocked ? 'Loading beta admin...' : 'Admin code required.');
-
-  const unlock = () => {
-    if (verifyAdminCode(code)) {
-      setUnlocked(true);
-      setMessage('Admin unlocked.');
-      return;
-    }
-    setMessage('Admin code did not match.');
-  };
+  const [message, setMessage] = useState('Loading secure admin...');
 
   const refresh = useCallback(async () => {
     if (!unlocked) return;
@@ -41,7 +31,9 @@ export default function BetaAdminPanel() {
     try {
       setSummary(await getBetaAdminSummary());
       setMessage('');
+      setUnlocked(true);
     } catch (error) {
+      setUnlocked(false);
       setMessage(error.message || 'Admin summary unavailable.');
     }
   }, [unlocked]);
@@ -57,19 +49,10 @@ export default function BetaAdminPanel() {
       {!unlocked && (
         <article className="rounded-lg border border-amber-300/20 bg-amber-400/10 p-5">
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-amber-200">Restricted</p>
-          <h2 className="mt-2 text-2xl font-black text-white">Admin Access</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-300">Enter the beta admin invite code to view tester feedback and storage status.</p>
-          <div className="mt-4 grid grid-cols-1 gap-3 sm:grid-cols-[1fr_auto]">
-            <input
-              value={code}
-              onChange={(event) => setCode(event.target.value)}
-              placeholder="Admin code"
-              className="rounded-md border border-white/10 bg-slate-950 px-3 py-3 text-sm font-bold text-white outline-none"
-            />
-            <button type="button" onClick={unlock} className="rounded-md border border-sky-400/30 bg-sky-400/10 px-4 py-3 text-sm font-bold text-sky-100">
-              Unlock
-            </button>
-          </div>
+          <h2 className="mt-2 text-2xl font-black text-white">Secure Admin Access</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-300">
+            Admin now requires a Clerk-authenticated account listed in the server-side admin allowlist.
+          </p>
           {message && <p className="mt-3 text-sm font-semibold text-amber-100">{message}</p>}
         </article>
       )}
@@ -82,7 +65,7 @@ export default function BetaAdminPanel() {
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-emerald-300">Beta Admin</p>
             <h2 className="mt-2 text-3xl font-black text-white">Tester Operations</h2>
             <p className="mt-2 text-sm leading-6 text-slate-400">
-              Track feedback and confirm whether FleetOS is using Postgres for durable beta storage.
+              Track redacted feedback and confirm whether FleetOS is using Postgres for durable beta storage.
             </p>
           </div>
           <button type="button" onClick={refresh} className="rounded-md border border-sky-400/30 bg-sky-400/10 px-4 py-3 text-sm font-bold text-sky-100">
@@ -122,7 +105,7 @@ export default function BetaAdminPanel() {
                         {item.type} / {item.rating || 'n/a'}
                       </span>
                     </div>
-                    <p className="mt-2 text-xs text-slate-600">{item.route || 'unknown route'} - {item.email || 'anonymous'}</p>
+                    <p className="mt-2 text-xs text-slate-600">{item.route || 'unknown route'} - {item.email || 'redacted'}</p>
                   </div>
                 ))}
                 {(!summary.latestFeedback || summary.latestFeedback.length === 0) && (

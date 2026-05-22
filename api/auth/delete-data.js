@@ -1,5 +1,6 @@
-import { deleteCurrentUserData } from '../_lib/auth.js';
+import { deleteCurrentUserData, getSession } from '../_lib/auth.js';
 import { hasPostgres } from '../_lib/db.js';
+import { auditEvent } from '../_lib/security.js';
 
 export default async function handler(req, res) {
   if (req.method !== 'DELETE' && req.method !== 'POST') {
@@ -16,6 +17,13 @@ export default async function handler(req, res) {
     return;
   }
 
+  const session = await getSession(req, res);
   const result = await deleteCurrentUserData(req, res);
+  await auditEvent({
+    userId: session?.userId || null,
+    action: 'user_data_deleted',
+    resource: 'account',
+    metadata: { deleted: result.deleted, fleetCount: result.fleetCount || 0 },
+  }).catch(() => {});
   res.status(200).json({ ok: true, ...result });
 }
