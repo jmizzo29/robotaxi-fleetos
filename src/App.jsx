@@ -26,6 +26,7 @@ import OperationsReportPanel from './panels/OperationsReportPanel';
 import QuickActionGrid from './panels/QuickActionGrid';
 import SettingsPanel from './panels/SettingsPanel';
 import TeslaCapabilitiesPanel from './panels/TeslaCapabilitiesPanel';
+import TeslaSyncHealthPanel from './panels/TeslaSyncHealthPanel';
 import TeslaTelemetryPanel from './panels/TeslaTelemetryPanel';
 import VehicleDetailPanel from './panels/VehicleDetailPanel';
 import VehicleShowcasePanel from './panels/VehicleShowcasePanel';
@@ -267,6 +268,12 @@ export default function App() {
             isLoading={isLoadingReal}
             onSync={refreshRealTesla}
           />
+          <TeslaSyncHealthPanel
+            vehicle={primaryTesla}
+            realSyncStatus={realSyncStatus}
+            isLoading={isLoadingReal}
+            onSync={refreshRealTesla}
+          />
           <VehicleShowcasePanel
             vehicle={primaryTesla}
             fleet={fleet}
@@ -487,6 +494,9 @@ export default function App() {
         <IntegrationsPanel
           aiAnalysis={aiAnalysis}
           realSyncStatus={realSyncStatus}
+          vehicle={primaryTesla}
+          isLoading={isLoadingReal}
+          onSync={refreshRealTesla}
         />
       </>
     ),
@@ -517,6 +527,7 @@ export default function App() {
         />
         <SettingsPanel
           realSyncStatus={realSyncStatus}
+          vehicle={primaryTesla}
           isLoadingReal={isLoadingReal}
           onSync={refreshRealTesla}
           aiAnalysis={aiAnalysis}

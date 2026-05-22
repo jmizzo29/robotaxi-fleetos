@@ -36,9 +36,22 @@ const tones = {
   amber: 'border-amber-400/20 bg-amber-400/10 text-amber-200',
 };
 
-export default function IntegrationsPanel({ aiAnalysis, realSyncStatus }) {
+export default function IntegrationsPanel({
+  aiAnalysis,
+  realSyncStatus,
+  vehicle,
+  isLoading,
+  onSync,
+}) {
   return (
     <section className="space-y-4">
+      <TeslaSyncHealthPanel
+        vehicle={vehicle}
+        realSyncStatus={realSyncStatus}
+        isLoading={isLoading}
+        onSync={onSync}
+      />
+
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         {integrations.map((integration) => (
           <article key={integration.name} className="rounded-lg border border-white/10 bg-slate-900/80 p-5 shadow-lg shadow-black/10">
@@ -85,3 +98,4 @@ export default function IntegrationsPanel({ aiAnalysis, realSyncStatus }) {
     </section>
   );
 }
+import TeslaSyncHealthPanel from './TeslaSyncHealthPanel';

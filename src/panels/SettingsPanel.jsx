@@ -1,5 +1,8 @@
+import TeslaSyncHealthPanel from './TeslaSyncHealthPanel';
+
 export default function SettingsPanel({
   realSyncStatus,
+  vehicle,
   isLoadingReal,
   onSync,
   aiAnalysis,
@@ -7,7 +10,15 @@ export default function SettingsPanel({
   setReplayMode,
 }) {
   return (
-    <section className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+    <section className="space-y-4">
+      <TeslaSyncHealthPanel
+        vehicle={vehicle}
+        realSyncStatus={realSyncStatus}
+        isLoading={isLoadingReal}
+        onSync={onSync}
+      />
+
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
       <article className="rounded-lg border border-white/10 bg-slate-900/80 p-5 shadow-lg shadow-black/10">
         <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-emerald-300">
           Tesla Integration
@@ -59,6 +70,7 @@ export default function SettingsPanel({
           </div>
         </div>
       </article>
+      </div>
     </section>
   );
 }
