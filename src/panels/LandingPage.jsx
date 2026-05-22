@@ -1,5 +1,7 @@
+import { SignInButton } from '@clerk/react';
 import TeslaIndependenceNotice from '../components/TeslaIndependenceNotice';
 import { useFleetAuthStatus } from '../auth/FleetAuthContext';
+import { isClerkConfigured } from '../auth/clerkConfig';
 
 const capabilities = [
   ['Live Fleet Telemetry', 'Connect Tesla Fleet API data for battery, GPS, odometer, charging, and vehicle state.'],
@@ -115,6 +117,19 @@ export default function LandingPage({ onNavigate }) {
   const enterApp = (route = 'overview') => {
     onNavigate(isSignedIn ? route : 'onboarding');
   };
+  const clerkReady = isClerkConfigured();
+
+  const signInControl = (
+    <button
+      type="button"
+      onClick={() => {
+        if (!clerkReady) onNavigate('account');
+      }}
+      className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-slate-200 transition hover:bg-white/10"
+    >
+      Sign In
+    </button>
+  );
 
   return (
     <div className="min-h-screen bg-[#0b1120] text-slate-100">
@@ -124,6 +139,13 @@ export default function LandingPage({ onNavigate }) {
           <span className="text-sm font-black uppercase tracking-[0.28em] text-sky-200">FleetOS</span>
         </button>
         <nav className="flex items-center gap-3">
+          {!isSignedIn && (
+            clerkReady ? (
+              <SignInButton mode="modal">
+                {signInControl}
+              </SignInButton>
+            ) : signInControl
+          )}
           <button
             type="button"
             onClick={() => onNavigate('onboarding')}
@@ -169,13 +191,32 @@ export default function LandingPage({ onNavigate }) {
               >
                 Start Free Setup
               </button>
-              <button
-                type="button"
-                onClick={() => enterApp('overview')}
-                className="rounded-md border border-white/10 bg-white/5 px-5 py-4 text-sm font-black text-slate-100 transition hover:bg-white/10"
-              >
-                {isSignedIn ? 'Open Console' : 'Sign In to Open Console'}
-              </button>
+              {isSignedIn ? (
+                <button
+                  type="button"
+                  onClick={() => enterApp('overview')}
+                  className="rounded-md border border-white/10 bg-white/5 px-5 py-4 text-sm font-black text-slate-100 transition hover:bg-white/10"
+                >
+                  Open Console
+                </button>
+              ) : clerkReady ? (
+                <SignInButton mode="modal">
+                  <button
+                    type="button"
+                    className="rounded-md border border-white/10 bg-white/5 px-5 py-4 text-sm font-black text-slate-100 transition hover:bg-white/10"
+                  >
+                    Sign In
+                  </button>
+                </SignInButton>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => onNavigate('account')}
+                  className="rounded-md border border-white/10 bg-white/5 px-5 py-4 text-sm font-black text-slate-100 transition hover:bg-white/10"
+                >
+                  Sign In
+                </button>
+              )}
             </div>
             <p className="mt-5 text-sm leading-6 text-slate-500">
               FleetOS plans and optimizes operations. Tesla controls actual autonomous driving availability and execution.
