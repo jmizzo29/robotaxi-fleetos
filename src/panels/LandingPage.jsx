@@ -29,10 +29,19 @@ const setupSteps = [
 ];
 
 const trustPoints = [
-  ['Secure account login', 'FleetOS uses managed identity via Clerk when configured, with verified sessions before Tesla connection.'],
-  ['Tesla password never shared', 'Owners authenticate directly with Tesla OAuth. FleetOS never asks for or stores Tesla account passwords.'],
-  ['Encrypted Tesla tokens', 'Tesla refresh tokens are encrypted in Postgres and tied to the signed-in FleetOS user.'],
-  ['Privacy-first location', 'Precise vehicle location is protected by consent and rounded by default in API responses.'],
+  ['Secure account login', 'FleetOS uses managed identity with verified sessions before any Tesla connection can be attached.'],
+  ['Tesla password never shared', 'Owners authenticate directly with Tesla. FleetOS never asks for or stores Tesla account passwords.'],
+  ['Encrypted access tokens', 'Tesla connection tokens are encrypted server-side and tied to the signed-in FleetOS user.'],
+  ['Owner-controlled data', 'Users can disconnect Tesla, revoke consent, or request deletion of FleetOS data.'],
+];
+
+const securityFeatures = [
+  ['Verified identity first', 'Users create or sign into a FleetOS account before connecting a vehicle. Tesla access is scoped to that user.'],
+  ['Consent before telemetry', 'FleetOS asks for explicit consent before processing VIN, battery, odometer, charging, vehicle state, or location.'],
+  ['Protected vehicle location', 'Precise location is treated as sensitive data and API responses use privacy-safe rounding by default.'],
+  ['Encrypted token storage', 'Tesla refresh tokens are stored encrypted in Postgres, not in the browser and not in Clerk.'],
+  ['Admin data minimization', 'Admin views are server-protected and redact sensitive lead, feedback, and vehicle/user details.'],
+  ['Revocation and deletion', 'Users can disconnect Tesla and delete their FleetOS account data from the product flow.'],
 ];
 
 const pricing = [
@@ -252,7 +261,7 @@ export default function LandingPage({ onNavigate }) {
               A secure fleet workspace for Tesla owners who rent, share, or manage vehicles and need consent-based telemetry, owner economics, maintenance planning, and AI-assisted operations.
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
-              {['First Tesla free', 'Owner-controlled access', 'Tesla OAuth only'].map((label) => (
+              {['First Tesla free', 'Owner-controlled access', 'Tesla password never shared'].map((label) => (
                 <span key={label} className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-emerald-200">
                   {label}
                 </span>
@@ -288,6 +297,29 @@ export default function LandingPage({ onNavigate }) {
               <article key={title} className="rounded-lg border border-emerald-300/15 bg-emerald-400/[0.06] p-4">
                 <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-300">{title}</p>
                 <p className="mt-3 text-sm leading-6 text-slate-300">{detail}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
+        <section className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-5 py-14 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-300">
+              Security & Privacy
+            </p>
+            <h2 className="mt-3 text-4xl font-black tracking-tight text-white">
+              Built for trust before telemetry.
+            </h2>
+            <p className="mt-4 text-sm leading-7 text-slate-400">
+              FleetOS is designed around user-controlled access: sign in first, consent before syncing, connect through Tesla, encrypt sensitive tokens, and keep admin visibility limited.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            {securityFeatures.map(([title, detail]) => (
+              <article key={title} className="rounded-lg border border-white/10 bg-slate-900/80 p-5">
+                <h3 className="text-lg font-black text-white">{title}</h3>
+                <p className="mt-3 text-sm leading-6 text-slate-400">{detail}</p>
               </article>
             ))}
           </div>
