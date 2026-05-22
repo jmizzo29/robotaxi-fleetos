@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import TeslaIndependenceNotice from '../components/TeslaIndependenceNotice';
-import useFleetAuthStatus from '../auth/useFleetAuthStatus';
+import { useFleetAuthStatus } from '../auth/FleetAuthContext';
 import { submitEarlyAccessLead } from '../services/leadService';
 
 const capabilities = [

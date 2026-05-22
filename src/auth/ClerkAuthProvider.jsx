@@ -2,9 +2,10 @@ import { ClerkProvider, useAuth } from '@clerk/react';
 import { useEffect } from 'react';
 import { setAuthTokenProvider } from '../services/authTokenStore';
 import { clerkPublishableKey, isClerkConfigured } from './clerkConfig';
+import { FleetAuthContext } from './FleetAuthContext';
 
-function ClerkSessionBridge() {
-  const { getToken, isSignedIn } = useAuth();
+function ClerkSessionBridge({ children }) {
+  const { getToken, isLoaded, isSignedIn } = useAuth();
 
   useEffect(() => {
     if (!isSignedIn) {
@@ -16,12 +17,25 @@ function ClerkSessionBridge() {
     return () => setAuthTokenProvider(null);
   }, [getToken, isSignedIn]);
 
-  return null;
+  return (
+    <FleetAuthContext.Provider value={{
+      isAuthReady: Boolean(isLoaded),
+      isSignedIn: Boolean(isSignedIn),
+      authMode: 'clerk',
+    }}
+    >
+      {children}
+    </FleetAuthContext.Provider>
+  );
 }
 
 export default function ClerkAuthProvider({ children }) {
   if (!isClerkConfigured()) {
-    return children;
+    return (
+      <FleetAuthContext.Provider value={{ isAuthReady: true, isSignedIn: false, authMode: 'native' }}>
+        {children}
+      </FleetAuthContext.Provider>
+    );
   }
 
   return (
@@ -31,8 +45,7 @@ export default function ClerkAuthProvider({ children }) {
       signUpFallbackRedirectUrl="/#/onboarding"
       afterSignOutUrl="/"
     >
-      <ClerkSessionBridge />
-      {children}
+      <ClerkSessionBridge>{children}</ClerkSessionBridge>
     </ClerkProvider>
   );
 }
