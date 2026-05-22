@@ -41,6 +41,7 @@ const menuItems = [
   ['integrations', 'Integrations', 'Connected services'],
   ['tesla', 'Tesla API', 'Capabilities and controls'],
   ['settings', 'Settings', 'Admin controls'],
+  ['admin', 'Beta Admin', 'Feedback and tester status'],
   ['privacy', 'Privacy', 'Data collection and deletion'],
   ['terms', 'Terms', 'Beta terms and boundaries'],
 ];

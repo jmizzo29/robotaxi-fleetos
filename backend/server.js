@@ -5,6 +5,7 @@ const dotenv = require('dotenv');
 const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
+const { Pool } = require('pg');
 
 const ENV_PATH = path.join(__dirname, '.env');
 dotenv.config({ path: ENV_PATH });
@@ -24,6 +25,12 @@ const DEFAULT_ALLOWED_ORIGINS = [
   'http://127.0.0.1:5173',
   'https://robotaxi-fleetos.vercel.app',
 ];
+const pgPool = process.env.DATABASE_URL
+  ? new Pool({
+    connectionString: process.env.DATABASE_URL,
+    ssl: process.env.DATABASE_URL.includes('localhost') ? false : { rejectUnauthorized: false },
+  })
+  : null;
 
 let tokenCache = {
   accessToken: process.env.TESLA_ACCESS_TOKEN || '',
@@ -768,7 +775,76 @@ const memoryEvents = [];
 const assetRecords = {};
 const earlyAccessLeads = [];
 const revenueRecords = [];
+const feedbackRecords = [];
 const MAX_MEMORY_EVENTS = 120;
+
+async function ensureFeedbackTable() {
+  if (!pgPool) return;
+  await pgPool.query(`
+    create table if not exists beta_feedback (
+      id text primary key,
+      type text not null default 'feedback',
+      rating integer,
+      title text not null,
+      detail text not null,
+      route text,
+      email text,
+      created_at timestamptz not null default now()
+    )
+  `);
+}
+
+function normalizeFeedback(body = {}) {
+  return {
+    id: body.id || `fb-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    type: String(body.type || 'feedback').trim(),
+    rating: body.rating === '' || body.rating === undefined ? null : Number(body.rating),
+    title: String(body.title || '').trim(),
+    detail: String(body.detail || '').trim(),
+    route: String(body.route || '').trim(),
+    email: String(body.email || '').trim().toLowerCase(),
+    createdAt: body.createdAt || new Date().toISOString(),
+  };
+}
+
+async function listFeedback() {
+  if (!pgPool) return feedbackRecords;
+  await ensureFeedbackTable();
+  const { rows } = await pgPool.query('select id, type, rating, title, detail, route, email, created_at from beta_feedback order by created_at desc limit 100');
+  return rows.map((row) => ({
+    id: row.id,
+    type: row.type,
+    rating: row.rating,
+    title: row.title,
+    detail: row.detail,
+    route: row.route,
+    email: row.email,
+    createdAt: row.created_at,
+  }));
+}
+
+async function saveFeedback(record) {
+  if (!pgPool) {
+    feedbackRecords.unshift(record);
+    feedbackRecords.splice(100);
+    return record;
+  }
+
+  await ensureFeedbackTable();
+  await pgPool.query(
+    `insert into beta_feedback (id, type, rating, title, detail, route, email, created_at)
+     values ($1, $2, $3, $4, $5, $6, $7, $8)
+     on conflict (id) do update set
+       type = excluded.type,
+       rating = excluded.rating,
+       title = excluded.title,
+       detail = excluded.detail,
+       route = excluded.route,
+       email = excluded.email`,
+    [record.id, record.type, record.rating, record.title, record.detail, record.route, record.email, record.createdAt],
+  );
+  return record;
+}
 
 function normalizeMemoryEvent(event = {}) {
   return {
@@ -899,6 +975,40 @@ app.post('/api/revenue', (req, res) => {
 app.delete('/api/revenue', (req, res) => {
   revenueRecords.splice(0);
   res.json({ records: [] });
+});
+
+app.get('/api/feedback', async (req, res) => {
+  try {
+    res.json({ feedback: await listFeedback(), postgres: Boolean(pgPool) });
+  } catch (error) {
+    res.status(500).json({ error: 'FEEDBACK_UNAVAILABLE', message: error.message });
+  }
+});
+
+app.post('/api/feedback', async (req, res) => {
+  try {
+    const record = normalizeFeedback(req.body);
+    if (!record.title || !record.detail) {
+      res.status(400).json({ error: 'FEEDBACK_REQUIRED', message: 'Title and detail are required.' });
+      return;
+    }
+    res.status(201).json({ ok: true, feedback: await saveFeedback(record), postgres: Boolean(pgPool) });
+  } catch (error) {
+    res.status(500).json({ error: 'FEEDBACK_SAVE_FAILED', message: error.message });
+  }
+});
+
+app.get('/api/admin', async (req, res) => {
+  const feedback = await listFeedback().catch(() => []);
+  res.json({
+    postgres: Boolean(pgPool),
+    feedbackCount: feedback.length,
+    leadCount: earlyAccessLeads.length,
+    revenueRecordCount: revenueRecords.length,
+    memoryEventCount: memoryEvents.length,
+    latestFeedback: feedback.slice(0, 10),
+    generatedAt: new Date().toISOString(),
+  });
 });
 
 app.listen(PORT, () => {

@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import CommandSafetyModal from './components/CommandSafetyModal';
+import FeedbackButton from './components/FeedbackButton';
 import FleetMap from './components/FleetMap';
 import KPIGrid from './components/KPIGrid';
 import MobileBottomNav from './components/MobileBottomNav';
@@ -9,6 +10,7 @@ import Timeline from './components/Timeline';
 import AIRecommendationPanel from './panels/AIRecommendationPanel';
 import AgentOrchestrationPanel from './panels/AgentOrchestrationPanel';
 import AssetManagementPanel from './panels/AssetManagementPanel';
+import BetaAdminPanel from './panels/BetaAdminPanel';
 import ChargingReadinessPanel from './panels/ChargingReadinessPanel';
 import CommandCenter from './panels/CommandCenter';
 import CommandInboxPanel from './panels/CommandInboxPanel';
@@ -551,6 +553,16 @@ export default function App() {
         />
       </>
     ),
+    admin: (
+      <>
+        <PageHeader
+          eyebrow="Beta"
+          title="Beta Admin"
+          description="Review tester feedback and confirm whether beta storage is running on Postgres."
+        />
+        <BetaAdminPanel />
+      </>
+    ),
     privacy: (
       <>
         <PageHeader
@@ -600,6 +612,7 @@ export default function App() {
         onCancel={() => setPendingCommand(null)}
         onConfirm={confirmCommand}
       />
+      <FeedbackButton route={route} />
     </div>
   );
 }
