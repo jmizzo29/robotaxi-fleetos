@@ -9,13 +9,17 @@ export default function DataPrivacyPanel() {
     const confirmed = window.confirm('Delete FleetOS backend memory/assets/revenue records and local consent state? This cannot be undone.');
     if (!confirmed) return;
 
-    await deleteUserData();
-    setMessage('FleetOS beta data was deleted from backend stores and local consent state was cleared.');
+    try {
+      await deleteUserData();
+      setMessage('FleetOS beta data, Tesla connection, fleet records, and local consent state were deleted.');
+    } catch (error) {
+      setMessage(error.message || 'FleetOS data deletion failed.');
+    }
   };
 
-  const revoke = () => {
-    revokeTeslaConsent();
-    setMessage('FleetOS Tesla telemetry consent was revoked. Also revoke FleetOS from Tesla third-party app access controls.');
+  const revoke = async () => {
+    await revokeTeslaConsent();
+    setMessage('FleetOS Tesla telemetry consent was revoked and the stored Tesla connection was disconnected. Also revoke FleetOS from Tesla third-party app access controls.');
   };
 
   return (

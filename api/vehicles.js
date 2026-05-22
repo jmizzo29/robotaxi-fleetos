@@ -1,4 +1,4 @@
-import { teslaRequestForSession } from './_lib/auth.js';
+import { getDefaultFleetForSession, teslaRequestForSession } from './_lib/auth.js';
 import { ensureFleetSchema, hasPostgres, query } from './_lib/db.js';
 
 const DEFAULT_FLEET_API_BASE = process.env.TESLA_API_BASE || 'https://fleet-api.prd.na.vn.cloud.tesla.com';
@@ -33,7 +33,7 @@ function normalizeVehicle(vehicle, telemetry = {}) {
   };
 }
 
-async function saveVehicleTelemetry(vehicles) {
+async function saveVehicleTelemetry(fleetId, vehicles) {
   if (!hasPostgres()) return;
   await ensureFleetSchema();
 
@@ -42,13 +42,15 @@ async function saveVehicleTelemetry(vehicles) {
     await query(
       `insert into fleetos_vehicles (
         id, vin, tesla_vehicle_id, display_name, state, status, battery_level,
+        fleet_id,
         latitude, longitude, heading, speed, odometer, charging_state,
         software_version, locked, service_mode, raw, last_synced_at, updated_at
-      ) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, now())
+      ) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, $18, $19, now())
       on conflict (id) do update set
         vin = excluded.vin,
         tesla_vehicle_id = excluded.tesla_vehicle_id,
         display_name = excluded.display_name,
+        fleet_id = excluded.fleet_id,
         state = excluded.state,
         status = excluded.status,
         battery_level = excluded.battery_level,
@@ -72,6 +74,7 @@ async function saveVehicleTelemetry(vehicles) {
         vehicle.state || null,
         vehicle.status || null,
         vehicle.battery ?? null,
+        fleetId,
         vehicle.latitude ?? null,
         vehicle.longitude ?? null,
         vehicle.heading ?? null,
@@ -178,7 +181,8 @@ export default async function handler(req, res) {
       }),
     );
 
-    await saveVehicleTelemetry(response);
+    const context = await getDefaultFleetForSession(req, res);
+    await saveVehicleTelemetry(context.fleet.id, response);
     res.status(200).json({ response, postgres: hasPostgres() });
   } catch (error) {
     res.status(502).json({

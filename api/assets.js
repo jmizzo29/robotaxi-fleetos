@@ -1,3 +1,4 @@
+import { getDefaultFleetForSession } from './_lib/auth.js';
 import { ensureFleetSchema, hasPostgres, query } from './_lib/db.js';
 
 const numericFields = new Set([
@@ -35,26 +36,38 @@ function rowToRecord(row) {
   });
 }
 
-async function listAssetRecords() {
+function scopedKey(fleetId, key) {
+  return `${fleetId}:${key}`;
+}
+
+function unscopedKey(fleetId, key) {
+  const prefix = `${fleetId}:`;
+  return String(key || '').startsWith(prefix) ? String(key).slice(prefix.length) : key;
+}
+
+async function listAssetRecords(fleetId) {
   await ensureFleetSchema();
   const { rows } = await query(`
     select vehicle_key, model, model_year, trim, color, tag, purchase_date, purchase_year,
       price_paid, current_balance, lender, monthly_payment, insurance_renewal, registration_state, record
     from fleetos_vehicle_assets
+    where fleet_id = $1
     order by updated_at desc
-  `);
-  return Object.fromEntries(rows.map((row) => [row.vehicle_key, rowToRecord(row)]));
+  `, [fleetId]);
+  return Object.fromEntries(rows.map((row) => [unscopedKey(fleetId, row.vehicle_key), rowToRecord(row)]));
 }
 
-async function saveAssetRecord(key, record) {
+async function saveAssetRecord(fleetId, key, record) {
   const normalized = normalizeRecord(record);
+  const storageKey = scopedKey(fleetId, key);
   await ensureFleetSchema();
   await query(
     `insert into fleetos_vehicle_assets (
-      vehicle_key, vin, model, model_year, trim, color, tag, purchase_date, purchase_year,
+      vehicle_key, fleet_id, vin, model, model_year, trim, color, tag, purchase_date, purchase_year,
       price_paid, current_balance, lender, monthly_payment, insurance_renewal, registration_state, record, updated_at
-    ) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, now())
+    ) values ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, now())
     on conflict (vehicle_key) do update set
+      fleet_id = excluded.fleet_id,
       vin = excluded.vin,
       model = excluded.model,
       model_year = excluded.model_year,
@@ -72,7 +85,8 @@ async function saveAssetRecord(key, record) {
       record = excluded.record,
       updated_at = now()`,
     [
-      key,
+      storageKey,
+      fleetId,
       normalized.vin || null,
       normalized.model || null,
       normalized.modelYear || null,
@@ -90,17 +104,17 @@ async function saveAssetRecord(key, record) {
       JSON.stringify(normalized),
     ],
   );
-  return listAssetRecords();
+  return listAssetRecords(fleetId);
 }
 
-async function deleteAssetRecords(key) {
+async function deleteAssetRecords(fleetId, key) {
   await ensureFleetSchema();
   if (key) {
-    await query('delete from fleetos_vehicle_assets where vehicle_key = $1', [key]);
+    await query('delete from fleetos_vehicle_assets where fleet_id = $1 and vehicle_key = $2', [fleetId, scopedKey(fleetId, key)]);
   } else {
-    await query('delete from fleetos_vehicle_assets');
+    await query('delete from fleetos_vehicle_assets where fleet_id = $1', [fleetId]);
   }
-  return listAssetRecords();
+  return listAssetRecords(fleetId);
 }
 
 export default async function handler(req, res) {
@@ -113,11 +127,13 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'GET') {
-    res.status(200).json({ records: await listAssetRecords(), postgres: hasPostgres() });
+    const context = await getDefaultFleetForSession(req, res);
+    res.status(200).json({ records: await listAssetRecords(context.fleet.id), postgres: hasPostgres() });
     return;
   }
 
   if (req.method === 'POST') {
+    const context = await getDefaultFleetForSession(req, res);
     const key = req.body?.key;
     const record = req.body?.record;
 
@@ -126,13 +142,14 @@ export default async function handler(req, res) {
       return;
     }
 
-    res.status(200).json({ records: await saveAssetRecord(key, record), postgres: hasPostgres() });
+    res.status(200).json({ records: await saveAssetRecord(context.fleet.id, key, record), postgres: hasPostgres() });
     return;
   }
 
   if (req.method === 'DELETE') {
+    const context = await getDefaultFleetForSession(req, res);
     const key = req.query?.key;
-    res.status(200).json({ records: await deleteAssetRecords(key), postgres: hasPostgres() });
+    res.status(200).json({ records: await deleteAssetRecords(context.fleet.id, key), postgres: hasPostgres() });
     return;
   }
 

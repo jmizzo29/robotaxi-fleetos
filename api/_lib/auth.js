@@ -98,6 +98,69 @@ export async function getSession(req, res, { create = false } = {}) {
   };
 }
 
+export async function getDefaultFleetForSession(req, res, { create = true } = {}) {
+  const session = await getSession(req, res, { create });
+  if (!session) return null;
+
+  const existing = await query(
+    `select id, name from fleetos_fleets
+     where owner_user_id = $1
+     order by created_at asc
+     limit 1`,
+    [session.userId],
+  );
+
+  if (existing.rows[0]) {
+    return { session, fleet: existing.rows[0] };
+  }
+
+  if (!create) return { session, fleet: null };
+
+  const fleetId = `fleet-${Date.now()}-${crypto.randomBytes(10).toString('hex')}`;
+  const created = await query(
+    `insert into fleetos_fleets (id, owner_user_id, name, plan)
+     values ($1, $2, $3, 'first_tesla_free')
+     returning id, name`,
+    [fleetId, session.userId, 'My Tesla Fleet'],
+  );
+  return { session, fleet: created.rows[0] };
+}
+
+export async function deleteCurrentUserData(req, res) {
+  const session = await getSession(req, res);
+  if (!session) return { deleted: false };
+
+  await ensureFleetSchema();
+  const fleets = await query('select id from fleetos_fleets where owner_user_id = $1', [session.userId]);
+  const fleetIds = fleets.rows.map((row) => row.id);
+
+  if (fleetIds.length > 0) {
+    await query(
+      `delete from fleetos_telemetry_snapshots
+       where vehicle_id in (select id from fleetos_vehicles where fleet_id = any($1::text[]))`,
+      [fleetIds],
+    );
+    await query('delete from fleetos_memory_events where fleet_id = any($1::text[])', [fleetIds]);
+    await query('delete from fleetos_revenue_records where fleet_id = any($1::text[])', [fleetIds]);
+    await query('delete from fleetos_vehicle_assets where fleet_id = any($1::text[])', [fleetIds]);
+    await query('delete from fleetos_earnings_estimates where fleet_id = any($1::text[])', [fleetIds]);
+    await query('delete from fleetos_maintenance_logs where vehicle_id in (select id from fleetos_vehicles where fleet_id = any($1::text[]))', [fleetIds]);
+    await query('delete from fleetos_vehicles where fleet_id = any($1::text[])', [fleetIds]);
+    await query('delete from fleetos_fleet_members where fleet_id = any($1::text[])', [fleetIds]);
+    await query('delete from fleetos_fleets where id = any($1::text[])', [fleetIds]);
+  }
+
+  await query('delete from fleetos_oauth_states where session_id in (select id from fleetos_sessions where user_id = $1)', [session.userId]);
+  await query('delete from fleetos_tesla_connections where user_id = $1', [session.userId]);
+  await query('delete from fleetos_sessions where user_id = $1', [session.userId]);
+  await query('delete from fleetos_users where id = $1', [session.userId]);
+  clearSessionCookie(res);
+  return {
+    deleted: true,
+    fleetCount: fleetIds.length,
+  };
+}
+
 function encryptionKey() {
   const secret = process.env.TOKEN_ENCRYPTION_KEY || process.env.FLEETOS_TOKEN_SECRET || process.env.SESSION_SECRET;
   if (!secret || secret.length < 16) {

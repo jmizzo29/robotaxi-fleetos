@@ -1,3 +1,4 @@
+import { getDefaultFleetForSession } from './_lib/auth.js';
 import { ensureFleetSchema, hasPostgres, query } from './_lib/db.js';
 
 function normalizeRecord(record = {}) {
@@ -13,9 +14,9 @@ function normalizeRecord(record = {}) {
   };
 }
 
-async function listRevenue() {
+async function listRevenue(fleetId) {
   await ensureFleetSchema();
-  const { rows } = await query('select id, vehicle_key, vehicle_label, record_date, source, amount, notes, created_at from fleetos_revenue_records order by created_at desc limit 1000');
+  const { rows } = await query('select id, vehicle_key, vehicle_label, record_date, source, amount, notes, created_at from fleetos_revenue_records where fleet_id = $1 order by created_at desc limit 1000', [fleetId]);
   return rows.map((row) => ({
     id: row.id,
     vehicleKey: row.vehicle_key,
@@ -28,12 +29,13 @@ async function listRevenue() {
   }));
 }
 
-async function saveRevenue(records) {
+async function saveRevenue(fleetId, records) {
   await ensureFleetSchema();
   await Promise.all(records.map((record) => query(
-    `insert into fleetos_revenue_records (id, vehicle_key, vehicle_label, record_date, source, amount, notes, created_at, updated_at)
-     values ($1, $2, $3, $4, $5, $6, $7, $8, now())
+    `insert into fleetos_revenue_records (id, fleet_id, vehicle_key, vehicle_label, record_date, source, amount, notes, created_at, updated_at)
+     values ($1, $2, $3, $4, $5, $6, $7, $8, $9, now())
      on conflict (id) do update set
+       fleet_id = excluded.fleet_id,
        vehicle_key = excluded.vehicle_key,
        vehicle_label = excluded.vehicle_label,
        record_date = excluded.record_date,
@@ -41,9 +43,9 @@ async function saveRevenue(records) {
        amount = excluded.amount,
        notes = excluded.notes,
        updated_at = now()`,
-    [record.id, record.vehicleKey, record.vehicleLabel, record.date, record.source, record.amount, record.notes, record.createdAt],
+    [record.id, fleetId, record.vehicleKey, record.vehicleLabel, record.date, record.source, record.amount, record.notes, record.createdAt],
   )));
-  return listRevenue();
+  return listRevenue(fleetId);
 }
 
 export default async function handler(req, res) {
@@ -56,13 +58,15 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'GET') {
-    res.status(200).json({ records: await listRevenue(), postgres: hasPostgres() });
+    const context = await getDefaultFleetForSession(req, res);
+    res.status(200).json({ records: await listRevenue(context.fleet.id), postgres: hasPostgres() });
     return;
   }
 
   if (req.method === 'DELETE') {
+    const context = await getDefaultFleetForSession(req, res);
     await ensureFleetSchema();
-    await query('delete from fleetos_revenue_records');
+    await query('delete from fleetos_revenue_records where fleet_id = $1', [context.fleet.id]);
     res.status(200).json({ records: [], postgres: hasPostgres() });
     return;
   }
@@ -79,5 +83,6 @@ export default async function handler(req, res) {
       ? [req.body.record]
       : [];
 
-  res.status(201).json({ records: await saveRevenue(incoming.map(normalizeRecord)), postgres: hasPostgres() });
+  const context = await getDefaultFleetForSession(req, res);
+  res.status(201).json({ records: await saveRevenue(context.fleet.id, incoming.map(normalizeRecord)), postgres: hasPostgres() });
 }
