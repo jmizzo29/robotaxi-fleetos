@@ -1,7 +1,5 @@
-import { useState } from 'react';
 import TeslaIndependenceNotice from '../components/TeslaIndependenceNotice';
 import { useFleetAuthStatus } from '../auth/FleetAuthContext';
-import { submitEarlyAccessLead } from '../services/leadService';
 
 const capabilities = [
   ['Live Fleet Telemetry', 'Connect Tesla Fleet API data for battery, GPS, odometer, charging, and vehicle state.'],
@@ -109,110 +107,6 @@ function ProductPreview() {
         </div>
       </div>
     </div>
-  );
-}
-
-function EarlyAccessForm() {
-  const [form, setForm] = useState({
-    name: '',
-    email: '',
-    teslaCount: '1',
-    useCase: 'Renting my Tesla',
-    plan: 'First Tesla free',
-  });
-  const [status, setStatus] = useState({ state: 'idle', message: '' });
-
-  const update = (field, value) => {
-    setForm((current) => ({ ...current, [field]: value }));
-  };
-
-  const submit = async (event) => {
-    event.preventDefault();
-    setStatus({ state: 'loading', message: 'Joining early access...' });
-
-    try {
-      await submitEarlyAccessLead(form);
-      setStatus({
-        state: 'success',
-        message: 'You are on the early access list. FleetOS will prioritize owner-renters first.',
-      });
-      setForm((current) => ({ ...current, name: '', email: '' }));
-    } catch (error) {
-      setStatus({
-        state: 'error',
-        message: error.message || 'Could not submit yet. Try again in a moment.',
-      });
-    }
-  };
-
-  return (
-    <form onSubmit={submit} className="rounded-lg border border-white/10 bg-slate-900/80 p-5">
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <label className="block">
-          <span className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">Name</span>
-          <input
-            value={form.name}
-            onChange={(event) => update('name', event.target.value)}
-            className="mt-2 w-full rounded-md border border-white/10 bg-slate-950 px-3 py-3 text-sm font-bold text-white outline-none transition focus:border-sky-300"
-            placeholder="Your name"
-          />
-        </label>
-        <label className="block">
-          <span className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">Email</span>
-          <input
-            required
-            type="email"
-            value={form.email}
-            onChange={(event) => update('email', event.target.value)}
-            className="mt-2 w-full rounded-md border border-white/10 bg-slate-950 px-3 py-3 text-sm font-bold text-white outline-none transition focus:border-sky-300"
-            placeholder="you@example.com"
-          />
-        </label>
-        <label className="block">
-          <span className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">Teslas</span>
-          <select
-            value={form.teslaCount}
-            onChange={(event) => update('teslaCount', event.target.value)}
-            className="mt-2 w-full rounded-md border border-white/10 bg-slate-950 px-3 py-3 text-sm font-bold text-white outline-none transition focus:border-sky-300"
-          >
-            <option>1</option>
-            <option>2-3</option>
-            <option>4-10</option>
-            <option>10+</option>
-          </select>
-        </label>
-        <label className="block">
-          <span className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">Use Case</span>
-          <select
-            value={form.useCase}
-            onChange={(event) => update('useCase', event.target.value)}
-            className="mt-2 w-full rounded-md border border-white/10 bg-slate-950 px-3 py-3 text-sm font-bold text-white outline-none transition focus:border-sky-300"
-          >
-            <option>Renting my Tesla</option>
-            <option>Tracking my personal Tesla</option>
-            <option>Managing a small fleet</option>
-            <option>Exploring robotaxi readiness</option>
-          </select>
-        </label>
-      </div>
-
-      <button
-        type="submit"
-        disabled={status.state === 'loading'}
-        className="mt-4 w-full rounded-md bg-sky-300 px-5 py-4 text-sm font-black text-slate-950 transition hover:bg-sky-200 disabled:cursor-wait disabled:opacity-70"
-      >
-        {status.state === 'loading' ? 'Joining...' : 'Join Early Access'}
-      </button>
-
-      {status.message && (
-        <p className={`mt-3 text-sm font-semibold ${
-          status.state === 'error' ? 'text-rose-300' : 'text-emerald-300'
-        }`}
-        >
-          {status.message}
-        </p>
-      )}
-    </form>
   );
 }
 
@@ -403,13 +297,13 @@ export default function LandingPage({ onNavigate }) {
         <section className="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-5 py-14 lg:grid-cols-[0.9fr_1.1fr]">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-300">
-              Early Access
+              Beta Onboarding
             </p>
             <h2 className="mt-3 max-w-xl text-4xl font-black tracking-tight text-white">
-              Start free, then pay only when FleetOS helps manage more Teslas.
+              Start with one Tesla free. Add more when FleetOS is managing real work.
             </h2>
             <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-400">
-              The first version should be generous for regular owners. The business model becomes simple when someone adds a second, third, or tenth Tesla and FleetOS starts saving real operator time.
+              Invited beta users can create an account, approve telemetry consent, connect Tesla, and sync their first vehicle from one guided setup flow.
             </p>
 
             <div className="mt-6 grid grid-cols-1 gap-3">
@@ -430,7 +324,23 @@ export default function LandingPage({ onNavigate }) {
             </div>
           </div>
 
-          <EarlyAccessForm />
+          <div className="rounded-lg border border-white/10 bg-slate-900/80 p-6">
+            <p className="text-xs font-black uppercase tracking-[0.22em] text-sky-300">Ready when invited</p>
+            <h3 className="mt-3 text-3xl font-black text-white">Guided setup replaces lead capture.</h3>
+            <p className="mt-4 text-sm leading-7 text-slate-400">
+              FleetOS no longer asks beta users to join a waitlist from the homepage. The primary action is now direct onboarding with secure account creation and Tesla owner consent.
+            </p>
+            <button
+              type="button"
+              onClick={() => onNavigate('onboarding')}
+              className="mt-6 w-full rounded-md bg-sky-300 px-5 py-4 text-sm font-black text-slate-950 transition hover:bg-sky-200"
+            >
+              Start Free Setup
+            </button>
+            <p className="mt-4 text-xs leading-5 text-slate-500">
+              First Tesla free during beta. Additional vehicles require a paid entitlement before production use.
+            </p>
+          </div>
         </section>
 
         <section className="mx-auto max-w-7xl px-5 py-14">
