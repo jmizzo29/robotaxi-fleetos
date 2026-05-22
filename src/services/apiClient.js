@@ -18,6 +18,7 @@ export function getLocalApiBase() {
 export async function fetchApiJson(path, options = {}) {
   const response = await fetch(`${getApiBase()}${path}`, {
     cache: 'no-store',
+    credentials: 'include',
     ...options,
     headers: {
       'Content-Type': 'application/json',

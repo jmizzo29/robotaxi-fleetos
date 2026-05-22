@@ -3,11 +3,52 @@ import { ensureFleetSchema, query } from './db.js';
 
 const SESSION_COOKIE = 'fleetos_session';
 const SESSION_DAYS = 30;
+const MAGIC_LINK_MINUTES = 15;
 const TESLA_AUTH_URL = 'https://fleet-auth.prd.vn.cloud.tesla.com/oauth2/v3/token';
 const DEFAULT_FLEET_API_BASE = process.env.TESLA_API_BASE || 'https://fleet-api.prd.na.vn.cloud.tesla.com';
 
 function randomId(prefix) {
   return `${prefix}-${Date.now()}-${crypto.randomBytes(16).toString('hex')}`;
+}
+
+export function normalizeEmail(email) {
+  return String(email || '').trim().toLowerCase();
+}
+
+export function betaInviteCode() {
+  return process.env.BETA_INVITE_CODE || process.env.FLEETOS_BETA_INVITE_CODE || 'FLEETOS-BETA';
+}
+
+export function validateInviteCode(inviteCode) {
+  return String(inviteCode || '').trim() === betaInviteCode();
+}
+
+export function hashToken(value) {
+  return crypto.createHash('sha256').update(String(value)).digest('base64url');
+}
+
+export async function hashPassword(password) {
+  const salt = crypto.randomBytes(16).toString('base64url');
+  const derived = await new Promise((resolve, reject) => {
+    crypto.scrypt(String(password), salt, 64, (error, key) => {
+      if (error) reject(error);
+      else resolve(key.toString('base64url'));
+    });
+  });
+  return `scrypt$${salt}$${derived}`;
+}
+
+export async function verifyPassword(password, storedHash) {
+  const [scheme, salt, expected] = String(storedHash || '').split('$');
+  if (scheme !== 'scrypt' || !salt || !expected) return false;
+  const actual = await new Promise((resolve, reject) => {
+    crypto.scrypt(String(password), salt, 64, (error, key) => {
+      if (error) reject(error);
+      else resolve(key.toString('base64url'));
+    });
+  });
+  if (actual.length !== expected.length) return false;
+  return crypto.timingSafeEqual(Buffer.from(actual), Buffer.from(expected));
 }
 
 function parseCookies(req) {
@@ -46,6 +87,18 @@ export function getSessionId(req) {
   return parseCookies(req)[SESSION_COOKIE] || null;
 }
 
+export async function createSessionForUser(userId, res) {
+  await ensureFleetSchema();
+  const sessionId = randomId('sess');
+  await query(
+    `insert into fleetos_sessions (id, user_id, expires_at)
+     values ($1, $2, now() + interval '${SESSION_DAYS} days')`,
+    [sessionId, userId],
+  );
+  setSessionCookie(res, sessionId);
+  return { id: sessionId, userId };
+}
+
 export async function createAnonymousSession(res) {
   await ensureFleetSchema();
   const userId = randomId('user');
@@ -61,6 +114,7 @@ export async function createAnonymousSession(res) {
     [sessionId, userId],
   );
   setSessionCookie(res, sessionId);
+  await ensureBillingEntitlement(userId);
   return { id: sessionId, userId };
 }
 
@@ -126,6 +180,195 @@ export async function getDefaultFleetForSession(req, res, { create = true } = {}
   return { session, fleet: created.rows[0] };
 }
 
+export async function ensureBillingEntitlement(userId, email = null) {
+  await ensureFleetSchema();
+  await query(
+    `insert into fleetos_billing_entitlements (
+      user_id, plan, status, included_vehicles, paid_vehicle_limit, billing_email, updated_at
+    ) values ($1, 'first_tesla_free', 'free', 1, 0, $2, now())
+    on conflict (user_id) do update set
+      billing_email = coalesce(fleetos_billing_entitlements.billing_email, excluded.billing_email),
+      updated_at = now()`,
+    [userId, email],
+  );
+}
+
+export async function createAccount({ email, password, name, res, existingSession = null }) {
+  await ensureFleetSchema();
+  const normalizedEmail = normalizeEmail(email);
+  if (!normalizedEmail.includes('@')) {
+    const error = new Error('Enter a valid email address.');
+    error.status = 400;
+    throw error;
+  }
+  if (!password || String(password).length < 8) {
+    const error = new Error('Use a password with at least 8 characters.');
+    error.status = 400;
+    throw error;
+  }
+
+  const existingEmail = await query('select id from fleetos_users where email = $1 limit 1', [normalizedEmail]);
+  if (existingEmail.rows[0] && existingEmail.rows[0].id !== existingSession?.userId) {
+    const error = new Error('An account already exists for that email.');
+    error.status = 409;
+    throw error;
+  }
+
+  const userId = existingSession?.userId || randomId('user');
+  const passwordHash = await hashPassword(password);
+  await query(
+    `insert into fleetos_users (id, email, name, password_hash, email_verified_at, auth_provider, role, updated_at)
+     values ($1, $2, $3, $4, now(), 'fleetos', 'owner', now())
+     on conflict (id) do update set
+       email = excluded.email,
+       name = excluded.name,
+       password_hash = excluded.password_hash,
+       email_verified_at = coalesce(fleetos_users.email_verified_at, excluded.email_verified_at),
+       auth_provider = 'fleetos',
+       updated_at = now()`,
+    [userId, normalizedEmail, String(name || '').trim() || null, passwordHash],
+  );
+
+  await ensureBillingEntitlement(userId, normalizedEmail);
+  const session = await createSessionForUser(userId, res);
+  return {
+    session,
+    user: {
+      id: userId,
+      email: normalizedEmail,
+      name: String(name || '').trim() || null,
+      role: 'owner',
+    },
+  };
+}
+
+export async function findUserByEmail(email) {
+  await ensureFleetSchema();
+  const normalizedEmail = normalizeEmail(email);
+  const { rows } = await query(
+    `select id, email, name, role, password_hash, email_verified_at
+     from fleetos_users
+     where email = $1
+     limit 1`,
+    [normalizedEmail],
+  );
+  return rows[0] || null;
+}
+
+export async function createMagicLink({ email, origin }) {
+  await ensureFleetSchema();
+  const normalizedEmail = normalizeEmail(email);
+  if (!normalizedEmail.includes('@')) {
+    const error = new Error('Enter a valid email address.');
+    error.status = 400;
+    throw error;
+  }
+  let user = await findUserByEmail(normalizedEmail);
+  if (!user) {
+    const userId = randomId('user');
+    await query(
+      `insert into fleetos_users (id, email, email_verified_at, auth_provider, role)
+       values ($1, $2, null, 'fleetos', 'owner')`,
+      [userId, normalizedEmail],
+    );
+    await ensureBillingEntitlement(userId, normalizedEmail);
+    user = { id: userId, email: normalizedEmail };
+  }
+
+  const token = crypto.randomBytes(32).toString('base64url');
+  await query(
+    `insert into fleetos_magic_links (token_hash, email, user_id, expires_at)
+     values ($1, $2, $3, now() + interval '${MAGIC_LINK_MINUTES} minutes')`,
+    [hashToken(token), normalizedEmail, user.id],
+  );
+
+  const base = String(origin || process.env.PUBLIC_APP_URL || 'http://localhost:5173').replace(/\/$/, '');
+  return {
+    token,
+    magicLink: `${base}/api/auth/magic/verify?token=${encodeURIComponent(token)}`,
+    expiresInMinutes: MAGIC_LINK_MINUTES,
+  };
+}
+
+export async function consumeMagicLink({ token, res }) {
+  await ensureFleetSchema();
+  const tokenHash = hashToken(token);
+  const { rows } = await query(
+    `update fleetos_magic_links
+     set consumed_at = now()
+     where token_hash = $1
+       and consumed_at is null
+       and expires_at > now()
+     returning user_id, email`,
+    [tokenHash],
+  );
+  if (!rows[0]) {
+    const error = new Error('This magic link is invalid or expired.');
+    error.status = 400;
+    throw error;
+  }
+
+  await query(
+    `update fleetos_users
+     set email_verified_at = coalesce(email_verified_at, now()), updated_at = now()
+     where id = $1`,
+    [rows[0].user_id],
+  );
+  await ensureBillingEntitlement(rows[0].user_id, rows[0].email);
+  return createSessionForUser(rows[0].user_id, res);
+}
+
+export async function updateCurrentUserProfile(req, res, profile = {}) {
+  const session = await getSession(req, res);
+  if (!session) return null;
+  const name = String(profile.name || '').trim() || null;
+  const { rows } = await query(
+    `update fleetos_users
+     set name = $1, updated_at = now()
+     where id = $2
+     returning id, email, name, role, email_verified_at`,
+    [name, session.userId],
+  );
+  return rows[0] || null;
+}
+
+export async function getBillingStatusForSession(req, res, { create = true } = {}) {
+  const context = await getDefaultFleetForSession(req, res, { create });
+  if (!context?.session) return null;
+  await ensureBillingEntitlement(context.session.userId, context.session.user?.email);
+  const entitlement = await query(
+    `select plan, status, included_vehicles, paid_vehicle_limit, billing_email
+     from fleetos_billing_entitlements
+     where user_id = $1`,
+    [context.session.userId],
+  );
+  const vehicleCount = context.fleet
+    ? await query('select count(*)::int as count from fleetos_vehicles where fleet_id = $1', [context.fleet.id])
+    : { rows: [{ count: 0 }] };
+  const row = entitlement.rows[0] || {
+    plan: 'first_tesla_free',
+    status: 'free',
+    included_vehicles: 1,
+    paid_vehicle_limit: 0,
+    billing_email: context.session.user?.email || null,
+  };
+  const includedVehicles = Number(row.included_vehicles || 1);
+  const paidVehicleLimit = Number(row.paid_vehicle_limit || 0);
+  const count = Number(vehicleCount.rows[0]?.count || 0);
+  const coveredVehicles = includedVehicles + paidVehicleLimit;
+  return {
+    plan: row.plan,
+    status: row.status,
+    billingEmail: row.billing_email,
+    includedVehicles,
+    paidVehicleLimit,
+    coveredVehicles,
+    vehicleCount: count,
+    billableVehicles: Math.max(0, count - includedVehicles),
+    billingRequired: count > coveredVehicles,
+  };
+}
+
 export async function deleteCurrentUserData(req, res) {
   const session = await getSession(req, res);
   if (!session) return { deleted: false };
@@ -151,6 +394,8 @@ export async function deleteCurrentUserData(req, res) {
   }
 
   await query('delete from fleetos_oauth_states where session_id in (select id from fleetos_sessions where user_id = $1)', [session.userId]);
+  await query('delete from fleetos_magic_links where user_id = $1', [session.userId]);
+  await query('delete from fleetos_billing_entitlements where user_id = $1', [session.userId]);
   await query('delete from fleetos_tesla_connections where user_id = $1', [session.userId]);
   await query('delete from fleetos_sessions where user_id = $1', [session.userId]);
   await query('delete from fleetos_users where id = $1', [session.userId]);

@@ -8,6 +8,7 @@ import PageHeader from './components/PageHeader';
 import Sidebar from './components/Sidebar';
 import Timeline from './components/Timeline';
 import AIRecommendationPanel from './panels/AIRecommendationPanel';
+import AccountPanel from './panels/AccountPanel';
 import AgentOrchestrationPanel from './panels/AgentOrchestrationPanel';
 import AssetManagementPanel from './panels/AssetManagementPanel';
 import BetaAdminPanel from './panels/BetaAdminPanel';
@@ -548,6 +549,16 @@ export default function App() {
           onShowMap={() => navigate('map')}
           onQueueCommand={requestCommand}
         />
+      </>
+    ),
+    account: (
+      <>
+        <PageHeader
+          eyebrow="Account"
+          title="Account & Access"
+          description="Create a beta account, sign in, manage profile details, use passwordless magic links, and confirm first-Tesla-free billing status."
+        />
+        <AccountPanel />
       </>
     ),
     settings: (

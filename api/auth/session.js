@@ -1,4 +1,4 @@
-import { getSession, getTeslaConnectionForSession } from '../_lib/auth.js';
+import { getBillingStatusForSession, getSession, getTeslaConnectionForSession } from '../_lib/auth.js';
 import { hasPostgres } from '../_lib/db.js';
 
 export default async function handler(req, res) {
@@ -15,10 +15,12 @@ export default async function handler(req, res) {
 
   const session = await getSession(req, res, { create: true });
   const tesla = await getTeslaConnectionForSession(req, res);
+  const billing = await getBillingStatusForSession(req, res, { create: true });
   res.status(200).json({
     authenticated: true,
     user: session.user,
     sessionId: session.id,
+    billing,
     teslaConnected: Boolean(tesla?.connection),
     teslaConnectedAt: tesla?.connection?.connected_at || null,
   });

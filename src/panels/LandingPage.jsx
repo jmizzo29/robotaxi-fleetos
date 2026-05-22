@@ -210,10 +210,10 @@ export default function LandingPage({ onNavigate }) {
         <nav className="flex items-center gap-3">
           <button
             type="button"
-            onClick={() => onNavigate('overview')}
+            onClick={() => onNavigate('account')}
             className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-slate-200 transition hover:bg-white/10"
           >
-            Open App
+            Create Account
           </button>
           <button
             type="button"
@@ -248,17 +248,17 @@ export default function LandingPage({ onNavigate }) {
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <button
                 type="button"
-                onClick={() => onNavigate('overview')}
+                onClick={() => onNavigate('account')}
                 className="rounded-md bg-sky-300 px-5 py-4 text-sm font-black text-slate-950 transition hover:bg-sky-200"
               >
-                Open FleetOS Console
+                Create Free Account
               </button>
               <button
                 type="button"
-                onClick={() => onNavigate('finance')}
+                onClick={() => onNavigate('overview')}
                 className="rounded-md border border-white/10 bg-white/5 px-5 py-4 text-sm font-black text-slate-100 transition hover:bg-white/10"
               >
-                See Owner Finance
+                Open Console
               </button>
             </div>
             <p className="mt-5 text-sm leading-6 text-slate-500">

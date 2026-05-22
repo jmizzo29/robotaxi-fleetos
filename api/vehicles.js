@@ -1,4 +1,4 @@
-import { getDefaultFleetForSession, teslaRequestForSession } from './_lib/auth.js';
+import { getBillingStatusForSession, getDefaultFleetForSession, teslaRequestForSession } from './_lib/auth.js';
 import { ensureFleetSchema, hasPostgres, query } from './_lib/db.js';
 
 const DEFAULT_FLEET_API_BASE = process.env.TESLA_API_BASE || 'https://fleet-api.prd.na.vn.cloud.tesla.com';
@@ -159,6 +159,16 @@ export default async function handler(req, res) {
       baseURL: DEFAULT_FLEET_API_BASE,
     });
     const vehicles = vehiclesPayload.response || [];
+    const billing = await getBillingStatusForSession(req, res);
+
+    if (vehicles.length > billing.coveredVehicles) {
+      res.status(402).json({
+        error: 'BILLING_REQUIRED',
+        message: 'This FleetOS beta account includes the first Tesla free. Add a paid vehicle plan before syncing additional Teslas.',
+        billing,
+      });
+      return;
+    }
 
     const response = await Promise.all(
       vehicles.map(async (vehicle) => {

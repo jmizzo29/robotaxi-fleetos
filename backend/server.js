@@ -58,8 +58,26 @@ app.use(cors({
 
     callback(new Error(`CORS origin not allowed: ${origin}`));
   },
+  credentials: true,
 }));
 app.use(express.json());
+
+async function handleServerlessRoute(modulePath, req, res) {
+  const routeUrl = new URL(req.originalUrl, `${req.protocol}://${req.get('host')}`);
+  req.query = Object.fromEntries(routeUrl.searchParams.entries());
+  const handlerModule = await import(`../${modulePath}`);
+  return handlerModule.default(req, res);
+}
+
+app.post('/api/auth/register', (req, res) => handleServerlessRoute('api/auth/register.js', req, res));
+app.post('/api/auth/login', (req, res) => handleServerlessRoute('api/auth/login.js', req, res));
+app.get('/api/auth/session', (req, res) => handleServerlessRoute('api/auth/session.js', req, res));
+app.post('/api/auth/logout', (req, res) => handleServerlessRoute('api/auth/logout.js', req, res));
+app.get('/api/auth/profile', (req, res) => handleServerlessRoute('api/auth/profile.js', req, res));
+app.patch('/api/auth/profile', (req, res) => handleServerlessRoute('api/auth/profile.js', req, res));
+app.post('/api/auth/magic/request', (req, res) => handleServerlessRoute('api/auth/magic/request.js', req, res));
+app.get('/api/auth/magic/verify', (req, res) => handleServerlessRoute('api/auth/magic/verify.js', req, res));
+app.get('/api/billing/status', (req, res) => handleServerlessRoute('api/billing/status.js', req, res));
 
 function updateLocalEnv(updates) {
   const current = fs.existsSync(ENV_PATH) ? fs.readFileSync(ENV_PATH, 'utf8') : '';

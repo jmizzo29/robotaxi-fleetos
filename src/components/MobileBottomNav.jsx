@@ -41,6 +41,7 @@ const menuItems = [
   ['reports', 'Reports', 'Operations intelligence'],
   ['integrations', 'Integrations', 'Connected services'],
   ['tesla', 'Tesla API', 'Capabilities and controls'],
+  ['account', 'Account', 'Signup, login, and plan status'],
   ['settings', 'Settings', 'Admin controls'],
   ['admin', 'Beta Admin', 'Feedback and tester status'],
   ['privacy', 'Privacy', 'Data collection and deletion'],

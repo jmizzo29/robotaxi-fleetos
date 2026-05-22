@@ -26,10 +26,17 @@ export async function ensureFleetSchema() {
       id text primary key,
       email text unique,
       name text,
+      password_hash text,
+      email_verified_at timestamptz,
+      auth_provider text not null default 'fleetos',
       role text not null default 'owner',
       created_at timestamptz not null default now(),
       updated_at timestamptz not null default now()
     );
+
+    alter table fleetos_users add column if not exists password_hash text;
+    alter table fleetos_users add column if not exists email_verified_at timestamptz;
+    alter table fleetos_users add column if not exists auth_provider text not null default 'fleetos';
 
     create table if not exists fleetos_sessions (
       id text primary key,
@@ -37,6 +44,25 @@ export async function ensureFleetSchema() {
       created_at timestamptz not null default now(),
       expires_at timestamptz not null,
       last_seen_at timestamptz not null default now()
+    );
+
+    create table if not exists fleetos_magic_links (
+      token_hash text primary key,
+      email text not null,
+      user_id text references fleetos_users(id) on delete cascade,
+      created_at timestamptz not null default now(),
+      expires_at timestamptz not null,
+      consumed_at timestamptz
+    );
+
+    create table if not exists fleetos_billing_entitlements (
+      user_id text primary key references fleetos_users(id) on delete cascade,
+      plan text not null default 'first_tesla_free',
+      status text not null default 'free',
+      included_vehicles integer not null default 1,
+      paid_vehicle_limit integer not null default 0,
+      billing_email text,
+      updated_at timestamptz not null default now()
     );
 
     create table if not exists fleetos_oauth_states (
@@ -238,6 +264,7 @@ export async function ensureFleetSchema() {
     create index if not exists idx_fleetos_vehicles_fleet on fleetos_vehicles(fleet_id);
     create index if not exists idx_fleetos_vehicles_vin on fleetos_vehicles(vin);
     create index if not exists idx_fleetos_sessions_user on fleetos_sessions(user_id);
+    create index if not exists idx_fleetos_magic_links_email on fleetos_magic_links(email);
     create index if not exists idx_fleetos_tesla_connections_user on fleetos_tesla_connections(user_id);
     create index if not exists idx_fleetos_telemetry_vehicle_time on fleetos_telemetry_snapshots(vehicle_id, captured_at desc);
     create index if not exists idx_fleetos_memory_time on fleetos_memory_events(event_timestamp desc);
