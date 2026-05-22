@@ -1,20 +1,8 @@
 // src/services/teslaService.js
 import { getVehicleOwnership } from '../data/vehicleOwnership';
-function resolveApiBase() {
-  const configuredBase = import.meta.env.VITE_TESLA_API_BASE;
-  const isLocalBrowser = (
-    typeof window !== 'undefined' &&
-    ['localhost', '127.0.0.1'].includes(window.location.hostname)
-  );
+import { getApiBase } from './apiClient';
 
-  if (configuredBase && !configuredBase.includes('localhost') && !configuredBase.includes('127.0.0.1')) {
-    return configuredBase;
-  }
-
-  return isLocalBrowser ? 'http://localhost:3001/api' : '/api';
-}
-
-const API_BASE = resolveApiBase();
+const API_BASE = getApiBase();
 const PARKED_TESLA_ANCHOR = {
   latitude: 28.62,
   longitude: -81.22,

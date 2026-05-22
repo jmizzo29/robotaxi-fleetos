@@ -1,18 +1,6 @@
-function resolveApiBase() {
-  const configuredBase = import.meta.env.VITE_TESLA_API_BASE;
-  const isLocalBrowser = (
-    typeof window !== 'undefined' &&
-    ['localhost', '127.0.0.1'].includes(window.location.hostname)
-  );
+import { getApiBase } from './apiClient';
 
-  if (configuredBase && !configuredBase.includes('localhost') && !configuredBase.includes('127.0.0.1')) {
-    return configuredBase;
-  }
-
-  return isLocalBrowser ? 'http://localhost:3001/api' : '/api';
-}
-
-const API_BASE = resolveApiBase();
+const API_BASE = getApiBase();
 
 export async function getAiFleetAnalysis({ fleet, context = {} }) {
   const response = await fetch(`${API_BASE}/ai/analyze`, {

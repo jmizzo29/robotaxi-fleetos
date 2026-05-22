@@ -1,3 +1,5 @@
+import { getApiBase } from './apiClient';
+
 const ACCESS_KEY = 'fleetos.betaAccess.v1';
 const CONSENT_KEY = 'fleetos.teslaConsent.v1';
 
@@ -54,17 +56,13 @@ export function canUseTeslaTelemetry() {
   return hasBetaAccess() && hasTeslaConsent();
 }
 
-function apiBase() {
-  const isLocalBrowser = ['localhost', '127.0.0.1'].includes(window.location.hostname);
-  return isLocalBrowser ? 'http://localhost:3001/api' : '/api';
-}
-
 export async function deleteUserData() {
   DATA_KEYS.forEach((key) => localStorage.removeItem(key));
+  const apiBase = getApiBase();
   await Promise.allSettled([
-    fetch(`${apiBase()}/memory`, { method: 'DELETE' }),
-    fetch(`${apiBase()}/assets`, { method: 'DELETE' }),
-    fetch(`${apiBase()}/revenue`, { method: 'DELETE' }),
+    fetch(`${apiBase}/memory`, { method: 'DELETE' }),
+    fetch(`${apiBase}/assets`, { method: 'DELETE' }),
+    fetch(`${apiBase}/revenue`, { method: 'DELETE' }),
   ]);
   window.dispatchEvent(new CustomEvent('fleetos-memory-updated', { detail: [] }));
   window.dispatchEvent(new CustomEvent('fleetos-ownership-updated', { detail: {} }));

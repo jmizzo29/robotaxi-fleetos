@@ -1,25 +1,7 @@
-function apiBase() {
-  const isLocalBrowser = (
-    typeof window !== 'undefined' &&
-    ['localhost', '127.0.0.1'].includes(window.location.hostname)
-  );
-  return isLocalBrowser ? 'http://localhost:3001/api' : '/api';
-}
+import { fetchApiJson } from './apiClient';
 
 async function fetchJson(path, options) {
-  const response = await fetch(`${apiBase()}${path}`, {
-    cache: 'no-store',
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(options?.headers || {}),
-    },
-  });
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    throw new Error(data.message || data.error || `Request failed with ${response.status}`);
-  }
-  return data;
+  return fetchApiJson(path, options);
 }
 
 export async function submitBetaFeedback(feedback) {

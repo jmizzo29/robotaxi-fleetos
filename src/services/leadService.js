@@ -1,14 +1,7 @@
-function resolveApiBase() {
-  const isLocalBrowser = (
-    typeof window !== 'undefined' &&
-    ['localhost', '127.0.0.1'].includes(window.location.hostname)
-  );
-
-  return isLocalBrowser ? 'http://localhost:3001/api' : '/api';
-}
+import { getApiBase } from './apiClient';
 
 export async function submitEarlyAccessLead(lead) {
-  const response = await fetch(`${resolveApiBase()}/leads`, {
+  const response = await fetch(`${getApiBase()}/leads`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(lead),
