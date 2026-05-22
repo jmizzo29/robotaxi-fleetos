@@ -17,6 +17,7 @@ import CommandInboxPanel from './panels/CommandInboxPanel';
 import DispatchPlannerPanel from './panels/DispatchPlannerPanel';
 import DriverlessReadinessPanel from './panels/DriverlessReadinessPanel';
 import FleetFinancePanel from './panels/FleetFinancePanel';
+import FleetHealthDashboard from './panels/FleetHealthDashboard';
 import ForecastPanel from './panels/ForecastPanel';
 import FleetListPanel from './panels/FleetListPanel';
 import IntelligentAlertCenter from './panels/IntelligentAlertCenter';
@@ -391,6 +392,20 @@ export default function App() {
           action={operationsStatus}
         />
         <FleetFinancePanel
+          fleet={fleet}
+          onQueueCommand={requestCommand}
+        />
+      </>
+    ),
+    health: (
+      <>
+        <PageHeader
+          eyebrow="Fleet Health"
+          title="Robotaxi Health"
+          description="Estimate utilization and earnings, schedule cleaning and maintenance, and turn fleet health signals into AI-prioritized actions."
+          action={operationsStatus}
+        />
+        <FleetHealthDashboard
           fleet={fleet}
           onQueueCommand={requestCommand}
         />

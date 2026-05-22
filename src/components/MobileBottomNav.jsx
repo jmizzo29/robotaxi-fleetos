@@ -31,6 +31,7 @@ const menuItems = [
   ['vehicle', 'Vehicle Detail', 'Selected vehicle view'],
   ['assets', 'Assets', 'Ownership and asset records'],
   ['finance', 'Finance', 'ROI and owner economics'],
+  ['health', 'Fleet Health', 'Earnings, cleaning, and maintenance'],
   ['charging', 'Charging', 'Battery and dispatch readiness'],
   ['dispatch', 'Dispatch', 'Nightly staging planner'],
   ['readiness', 'Readiness', 'Driverless readiness scoring'],

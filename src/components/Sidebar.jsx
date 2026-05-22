@@ -13,6 +13,7 @@ export default function Sidebar({
     ['vehicle', 'Vehicle Detail'],
     ['assets', 'Assets'],
     ['finance', 'Finance'],
+    ['health', 'Fleet Health'],
     ['charging', 'Charging'],
     ['dispatch', 'Dispatch'],
     ['readiness', 'Readiness'],
