@@ -896,6 +896,11 @@ app.post('/api/revenue', (req, res) => {
   res.status(201).json({ records: revenueRecords });
 });
 
+app.delete('/api/revenue', (req, res) => {
+  revenueRecords.splice(0);
+  res.json({ records: [] });
+});
+
 app.listen(PORT, () => {
   console.log(`Backend running on http://localhost:${PORT}`);
   console.log(

@@ -23,6 +23,8 @@ export default function Sidebar({
     ['integrations', 'Integrations'],
     ['tesla', 'Tesla API'],
     ['settings', 'Settings'],
+    ['privacy', 'Privacy'],
+    ['terms', 'Terms'],
   ];
 
   return (

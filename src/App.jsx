@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import CommandSafetyModal from './components/CommandSafetyModal';
 import FleetMap from './components/FleetMap';
 import KPIGrid from './components/KPIGrid';
@@ -20,6 +20,7 @@ import FleetListPanel from './panels/FleetListPanel';
 import IntelligentAlertCenter from './panels/IntelligentAlertCenter';
 import IntegrationsPanel from './panels/IntegrationsPanel';
 import LandingPage from './panels/LandingPage';
+import LegalPage from './panels/LegalPage';
 import MemoryEventsPanel from './panels/MemoryEventsPanel';
 import MobileCommandDashboard from './panels/MobileCommandDashboard';
 import OperationsReportPanel from './panels/OperationsReportPanel';
@@ -36,6 +37,7 @@ import weatherZones from './data/weatherZones';
 import useAiFleetAnalysis from './hooks/useAiFleetAnalysis';
 import useHashRoute from './hooks/useHashRoute';
 import { useFleetSimulation } from './hooks/useFleetSimulation';
+import { canUseTeslaTelemetry } from './services/betaCompliance';
 
 const initialFleet = [
   {
@@ -123,8 +125,16 @@ const initialFleet = [
 export default function App() {
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [pendingCommand, setPendingCommand] = useState(null);
+  const [, setComplianceRevision] = useState(0);
   const [route, navigate] = useHashRoute();
   const isPublicRoute = route === 'landing';
+  const teslaConsentReady = canUseTeslaTelemetry();
+
+  useEffect(() => {
+    const refreshCompliance = () => setComplianceRevision((current) => current + 1);
+    window.addEventListener('fleetos-compliance-updated', refreshCompliance);
+    return () => window.removeEventListener('fleetos-compliance-updated', refreshCompliance);
+  }, []);
 
   const {
     fleet,
@@ -143,6 +153,7 @@ export default function App() {
     chargingStations,
     replayModeInitial: false,
     autoSyncReal: !isPublicRoute,
+    canSyncReal: teslaConsentReady,
   });
 
   const totalRevenue = useMemo(
@@ -538,6 +549,26 @@ export default function App() {
           replayMode={replayMode}
           setReplayMode={setReplayMode}
         />
+      </>
+    ),
+    privacy: (
+      <>
+        <PageHeader
+          eyebrow="Privacy"
+          title="Privacy Notice"
+          description="Draft beta privacy language and data handling summary for FleetOS testers."
+        />
+        <LegalPage type="privacy" />
+      </>
+    ),
+    terms: (
+      <>
+        <PageHeader
+          eyebrow="Terms"
+          title="Beta Terms"
+          description="Draft beta terms, safety boundaries, and Tesla relationship language."
+        />
+        <LegalPage type="terms" />
       </>
     ),
   };

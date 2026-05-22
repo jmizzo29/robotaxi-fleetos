@@ -20,8 +20,14 @@ export default function handler(req, res) {
     return;
   }
 
+  if (req.method === 'DELETE') {
+    globalStore.records = [];
+    res.status(200).json({ records: [] });
+    return;
+  }
+
   if (req.method !== 'POST') {
-    res.setHeader('Allow', 'GET, POST');
+    res.setHeader('Allow', 'GET, POST, DELETE');
     res.status(405).json({ error: 'METHOD_NOT_ALLOWED' });
     return;
   }

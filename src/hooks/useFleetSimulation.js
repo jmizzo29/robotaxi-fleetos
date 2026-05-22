@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { updateFleet } from '../engine/simulationEngine';
 import chargingStationsFallback from '../data/chargingStations';
 import demandZones from '../data/demandZones';
@@ -63,6 +63,7 @@ export function useFleetSimulation({
   chargingStations = chargingStationsFallback,
   replayModeInitial = false,
   autoSyncReal = true,
+  canSyncReal = true,
 } = {}) {
   const [fleet, setFleet] = useState(initialFleet);
   const [replayMode, setReplayMode] = useState(replayModeInitial);
@@ -131,7 +132,16 @@ export function useFleetSimulation({
     return () => clearInterval(interval);
   }, [chargingStations, replayMode]);
 
-  const refreshRealTesla = async () => {
+  const refreshRealTesla = useCallback(async () => {
+    if (!canSyncReal) {
+      setRealSyncStatus({
+        state: 'error',
+        lastSyncedAt: null,
+        message: 'Beta invite and Tesla telemetry consent are required before sync.',
+      });
+      return;
+    }
+
     setIsLoadingReal(true);
     setRealSyncStatus((current) => ({
       ...current,
@@ -187,17 +197,17 @@ export function useFleetSimulation({
     } finally {
       setIsLoadingReal(false);
     }
-  };
+  }, [canSyncReal]);
 
   useEffect(() => {
-    if (!autoSyncReal) return undefined;
+    if (!autoSyncReal || !canSyncReal) return undefined;
 
     const timer = window.setTimeout(() => {
       refreshRealTesla();
     }, 0);
 
     return () => window.clearTimeout(timer);
-  }, [autoSyncReal]);
+  }, [autoSyncReal, canSyncReal, refreshRealTesla]);
 
   const enqueueCommand = (command, priority = 'NORMAL') => {
     appendFleetMemory({

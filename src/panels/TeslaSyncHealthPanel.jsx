@@ -1,4 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
+import BetaConsentPanel from '../components/BetaConsentPanel';
+import { canUseTeslaTelemetry } from '../services/betaCompliance';
 import { getTeslaLoginUrl, getTeslaSyncHealth } from '../services/teslaHealthService';
 
 function healthTone(status) {
@@ -54,7 +56,9 @@ export default function TeslaSyncHealthPanel({
   const [health, setHealth] = useState(null);
   const [isLoadingHealth, setIsLoadingHealth] = useState(false);
   const [healthError, setHealthError] = useState(null);
+  const [complianceRevision, setComplianceRevision] = useState(0);
   const teslaLoginUrl = getTeslaLoginUrl();
+  const consentReady = canUseTeslaTelemetry();
 
   const refreshHealth = async () => {
     setIsLoadingHealth(true);
@@ -81,6 +85,12 @@ export default function TeslaSyncHealthPanel({
     }, 0);
 
     return () => window.clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    const refresh = () => setComplianceRevision((current) => current + 1);
+    window.addEventListener('fleetos-compliance-updated', refresh);
+    return () => window.removeEventListener('fleetos-compliance-updated', refresh);
   }, []);
 
   const checks = useMemo(() => {
@@ -167,15 +177,17 @@ export default function TeslaSyncHealthPanel({
           >
             {isLoadingHealth ? 'Checking...' : 'Recheck Health'}
           </button>
-          <button
-            type="button"
-            onClick={syncAndRecheck}
-            disabled={isLoading}
-            className="rounded-md border border-sky-400/30 bg-sky-400/10 px-4 py-2.5 text-sm font-bold text-sky-100 transition hover:bg-sky-400/20 disabled:cursor-wait disabled:opacity-60"
-          >
-            {isLoading ? 'Syncing...' : 'Sync Telemetry'}
-          </button>
-          {teslaLoginUrl && (
+          {consentReady && (
+            <button
+              type="button"
+              onClick={syncAndRecheck}
+              disabled={isLoading}
+              className="rounded-md border border-sky-400/30 bg-sky-400/10 px-4 py-2.5 text-sm font-bold text-sky-100 transition hover:bg-sky-400/20 disabled:cursor-wait disabled:opacity-60"
+            >
+              {isLoading ? 'Syncing...' : 'Sync Telemetry'}
+            </button>
+          )}
+          {consentReady && teslaLoginUrl && (
             <a
               href={teslaLoginUrl}
               target="_blank"
@@ -188,11 +200,18 @@ export default function TeslaSyncHealthPanel({
         </div>
       </div>
 
+      {!consentReady && (
+        <div className="mt-5">
+          <BetaConsentPanel compact />
+        </div>
+      )}
+
       <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
         {checks.map((check) => (
           <CheckCard key={check.label} {...check} />
         ))}
       </div>
+      <span className="hidden">{complianceRevision}</span>
     </section>
   );
 }

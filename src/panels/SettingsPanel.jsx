@@ -1,4 +1,5 @@
 import TeslaSyncHealthPanel from './TeslaSyncHealthPanel';
+import DataPrivacyPanel from './DataPrivacyPanel';
 
 export default function SettingsPanel({
   realSyncStatus,
@@ -17,6 +18,8 @@ export default function SettingsPanel({
         isLoading={isLoadingReal}
         onSync={onSync}
       />
+
+      <DataPrivacyPanel />
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
       <article className="rounded-lg border border-white/10 bg-slate-900/80 p-5 shadow-lg shadow-black/10">

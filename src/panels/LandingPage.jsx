@@ -388,6 +388,13 @@ export default function LandingPage({ onNavigate }) {
           </div>
         </section>
       </main>
+      <footer className="mx-auto flex max-w-7xl flex-col gap-3 border-t border-white/10 px-5 py-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+        <p>FleetOS beta. Not affiliated with or endorsed by Tesla.</p>
+        <div className="flex gap-4">
+          <button type="button" onClick={() => onNavigate('privacy')} className="hover:text-sky-300">Privacy</button>
+          <button type="button" onClick={() => onNavigate('terms')} className="hover:text-sky-300">Terms</button>
+        </div>
+      </footer>
     </div>
   );
 }

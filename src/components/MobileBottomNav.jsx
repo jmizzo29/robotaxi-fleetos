@@ -41,6 +41,8 @@ const menuItems = [
   ['integrations', 'Integrations', 'Connected services'],
   ['tesla', 'Tesla API', 'Capabilities and controls'],
   ['settings', 'Settings', 'Admin controls'],
+  ['privacy', 'Privacy', 'Data collection and deletion'],
+  ['terms', 'Terms', 'Beta terms and boundaries'],
 ];
 
 export default function MobileBottomNav({ route, onNavigate }) {
