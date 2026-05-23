@@ -134,6 +134,7 @@ async function testExpectedLandingCopy() {
     'Fleet Telemetry First',
     'VIN-Scoped Limits',
     'Try Interactive Demo',
+    'Simple, Fair Pricing',
     'Try the AI Agent',
     'Tesla password never shared',
   ];

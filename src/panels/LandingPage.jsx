@@ -47,9 +47,26 @@ const securityFeatures = [
 ];
 
 const pricing = [
-  ['Free', '$0', '1 Tesla', 'Live telemetry, GPS/location intelligence, parking history, owner finance, and AI brief.'],
-  ['Owner Fleet', '$12', 'per extra Tesla / mo', 'Multi-vehicle monitoring for rental hosts, Turo-style operators, and small fleets.'],
-  ['Operator Pro', 'Custom', 'for larger fleets', 'Dispatch workflows, advanced reporting, RAG memory, and higher-touch onboarding.'],
+  {
+    plan: 'Starter',
+    price: 'Free',
+    bestFor: 'Testing with 1 Tesla',
+    features: ['Live telemetry', 'AI brief', 'Basic earnings estimates', 'Health alerts'],
+    note: 'Limited to one Tesla during beta. Multi-vehicle history, cleaning scheduler, and advanced workflows require Owner Fleet.',
+  },
+  {
+    plan: 'Owner Fleet',
+    price: '$12 / Tesla / mo',
+    bestFor: 'Turo hosts & small fleets (2-10 vehicles)',
+    features: ['Multi-vehicle dashboard', 'Predictive maintenance', 'Cleaning scheduler', 'Full history'],
+    popular: true,
+  },
+  {
+    plan: 'Operator Pro',
+    price: 'Custom',
+    bestFor: 'Serious operators & growing fleets',
+    features: ['Advanced AI workflows', 'Dispatch planning', 'Team access', 'Priority support', 'API access'],
+  },
 ];
 
 const maintenanceFeatures = [
@@ -643,51 +660,56 @@ export default function LandingPage({ onNavigate }) {
           </div>
         </section>
 
-        <section className="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-5 py-14 lg:grid-cols-[0.9fr_1.1fr]">
+        <section className="mx-auto max-w-7xl px-5 py-14">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-300">
-              Beta Onboarding
+              Simple, Fair Pricing
             </p>
-            <h2 className="mt-3 max-w-xl text-4xl font-black tracking-tight text-white">
-              Start with one Tesla free. Add more when FleetOS is managing real work.
+            <h2 className="mt-3 max-w-3xl text-4xl font-black tracking-tight text-white">
+              Start free. Scale as you grow.
             </h2>
-            <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-400">
-              Invited beta users can create an account, approve telemetry consent, connect Tesla, and sync their first vehicle from one guided setup flow.
+            <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-400">
+              First Tesla is always free during beta. Billed monthly, cancel anytime. Annual billing with two months free is planned for owners who want to lock in savings.
             </p>
 
-            <div className="mt-6 grid grid-cols-1 gap-3">
-              {pricing.map(([name, price, unit, detail]) => (
-                <article key={name} className="rounded-lg border border-white/10 bg-white/[0.04] p-4">
-                  <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-                    <div>
-                      <p className="text-sm font-black text-white">{name}</p>
-                      <p className="mt-2 text-sm leading-6 text-slate-400">{detail}</p>
-                    </div>
-                    <div className="shrink-0 text-left sm:text-right">
-                      <p className="text-2xl font-black text-sky-300">{price}</p>
-                      <p className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">{unit}</p>
-                    </div>
+            <div className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-3">
+              {pricing.map((plan) => (
+                <article
+                  key={plan.plan}
+                  className={`relative rounded-lg border p-5 ${
+                    plan.popular
+                      ? 'border-sky-300/35 bg-sky-300/[0.08] shadow-xl shadow-sky-950/30'
+                      : 'border-white/10 bg-white/[0.04]'
+                  }`}
+                >
+                  {plan.popular && (
+                    <span className="absolute right-4 top-4 rounded-full border border-sky-300/30 bg-sky-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-sky-200">
+                      Popular
+                    </span>
+                  )}
+                  <p className="text-sm font-black text-white">{plan.plan}</p>
+                  <p className="mt-3 text-3xl font-black text-sky-300">{plan.price}</p>
+                  <p className="mt-3 text-xs font-black uppercase tracking-[0.16em] text-slate-500">Best For</p>
+                  <p className="mt-1 text-sm font-bold leading-6 text-slate-200">{plan.bestFor}</p>
+                  <div className="mt-5 space-y-2">
+                    {plan.features.map((feature) => (
+                      <div key={feature} className="flex gap-3 text-sm leading-6 text-slate-300">
+                        <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-emerald-300" />
+                        <span>{feature}</span>
+                      </div>
+                    ))}
                   </div>
+                  {plan.note && (
+                    <p className="mt-5 rounded-lg border border-amber-300/20 bg-amber-300/10 p-3 text-xs font-semibold leading-5 text-amber-100">
+                      {plan.note}
+                    </p>
+                  )}
                 </article>
               ))}
             </div>
-          </div>
 
-          <div className="rounded-lg border border-white/10 bg-slate-900/80 p-6">
-            <p className="text-xs font-black uppercase tracking-[0.22em] text-sky-300">Ready when invited</p>
-            <h3 className="mt-3 text-3xl font-black text-white">Guided setup replaces lead capture.</h3>
-            <p className="mt-4 text-sm leading-7 text-slate-400">
-              FleetOS no longer asks beta users to join a waitlist from the homepage. The primary action is now direct onboarding with secure account creation and Tesla owner consent.
-            </p>
-            <button
-              type="button"
-              onClick={() => onNavigate('onboarding')}
-              className="mt-6 w-full rounded-md bg-sky-300 px-5 py-4 text-sm font-black text-slate-950 transition hover:bg-sky-200"
-            >
-              Start Free Setup
-            </button>
-            <p className="mt-4 text-xs leading-5 text-slate-500">
-              First Tesla free during beta. Additional vehicles require a paid entitlement before production use.
+            <p className="mt-6 rounded-lg border border-emerald-300/20 bg-emerald-400/[0.06] p-4 text-sm font-bold leading-6 text-emerald-100">
+              Popular choice: most owners start with 3-5 vehicles on the Owner Fleet plan.
             </p>
           </div>
         </section>
