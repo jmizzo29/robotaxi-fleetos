@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { SignInButton } from '@clerk/react';
 import TeslaIndependenceNotice from '../components/TeslaIndependenceNotice';
+import TeslaDataAccessDisclosure from '../components/TeslaDataAccessDisclosure';
 import { useFleetAuthStatus } from '../auth/FleetAuthContext';
 import { isClerkConfigured } from '../auth/clerkConfig';
 
@@ -626,6 +627,10 @@ export default function LandingPage({ onNavigate }) {
         <InteractiveAgentDemo onNavigate={onNavigate} />
 
         <PricingSection onStart={() => onNavigate('onboarding')} />
+
+        <section className="mx-auto max-w-7xl px-5 py-10">
+          <TeslaDataAccessDisclosure />
+        </section>
 
         <section className="border-y border-white/10 bg-slate-950/80">
           <div className="mx-auto grid max-w-7xl grid-cols-1 gap-4 px-5 py-8 md:grid-cols-4">

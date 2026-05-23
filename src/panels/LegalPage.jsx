@@ -1,9 +1,11 @@
+import TeslaDataAccessDisclosure from '../components/TeslaDataAccessDisclosure';
+
 const legalCopy = {
   privacy: {
     eyebrow: 'Privacy',
     title: 'FleetOS Privacy Notice',
     sections: [
-      ['What FleetOS collects', 'When you connect Tesla, FleetOS may process VIN, precise vehicle location, battery, odometer, charging state, vehicle state, software version, asset records, revenue records, and app usage events.'],
+      ['What FleetOS collects', 'When you connect Tesla, FleetOS may process VIN, precise vehicle location, battery, odometer, charging state, vehicle state, tire/health signals when available, software version, asset records, revenue records, and app usage events.'],
       ['Why it is used', 'FleetOS uses this data to show telemetry, owner finance, parking history, location intelligence, AI recommendations, and beta diagnostics.'],
       ['Storage', 'FleetOS stores important beta records in Postgres-backed backend endpoints. Browser storage is limited to local consent and session preferences.'],
       ['Sharing', 'FleetOS does not sell Tesla telemetry. Free third-party APIs may receive location or VIN only when features such as weather, air quality, reverse geocoding, or VIN decode are used.'],
@@ -35,6 +37,7 @@ export default function LegalPage({ type = 'privacy' }) {
       </p>
 
       <div className="mt-8 space-y-4">
+        {type === 'privacy' && <TeslaDataAccessDisclosure compact />}
         {content.sections.map(([title, detail]) => (
           <article key={title} className="rounded-lg border border-white/10 bg-slate-950/50 p-5">
             <h2 className="text-lg font-black text-slate-100">{title}</h2>

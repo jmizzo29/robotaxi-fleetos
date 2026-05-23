@@ -79,6 +79,7 @@ async function testLanding(browser, profile) {
   await page.getByText('Run your Tesla fleet with an AI agent.').waitFor({ timeout: 15000 });
   await page.getByText('Start free.').waitFor({ timeout: 15000 });
   await page.getByText('FleetOS turns data into action').waitFor({ timeout: 15000 });
+  await page.getByText('What Data Does FleetOS Access?').first().waitFor({ timeout: 15000 });
   await page.getByText('Dynamic Charging Advisor').waitFor({ timeout: 15000 });
   await page.getByText('Built for robotaxis that need to stay earning').waitFor({ timeout: 15000 });
   await page.getByText('What FleetOS predicts first').waitFor({ timeout: 15000 });
@@ -125,6 +126,7 @@ async function testLegalStandalone(browser, profile) {
   const { page, context } = telemetry;
   await page.goto(routeUrl('#/privacy'), { waitUntil: 'networkidle' });
   await page.getByText('FleetOS Privacy Notice').waitFor({ timeout: 15000 });
+  await page.getByText('What Data Does FleetOS Access?').waitFor({ timeout: 15000 });
   await page.getByRole('button', { name: 'Back to Home' }).waitFor({ timeout: 15000 });
   const appMenuVisible = await page.getByRole('button', { name: 'Settings' }).count();
   if (appMenuVisible > 0) throw new Error('App navigation is visible on legal page.');

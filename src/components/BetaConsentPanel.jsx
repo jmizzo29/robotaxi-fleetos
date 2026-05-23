@@ -6,6 +6,7 @@ import {
   verifyBetaInvite,
 } from '../services/betaCompliance';
 import TeslaIndependenceNotice from './TeslaIndependenceNotice';
+import TeslaDataAccessDisclosure from './TeslaDataAccessDisclosure';
 
 export default function BetaConsentPanel({ compact = false, onAccepted }) {
   const [invite, setInvite] = useState('');
@@ -78,6 +79,7 @@ export default function BetaConsentPanel({ compact = false, onAccepted }) {
       {betaReady && !consentReady && (
         <div className="mt-4 space-y-3">
           <TeslaIndependenceNotice compact />
+          <TeslaDataAccessDisclosure compact />
           {[
             ['telemetry', 'I authorize FleetOS to access my Tesla telemetry for dashboard, finance, location, and owner intelligence features.'],
             ['location', 'I understand FleetOS may process precise vehicle location and parking history.'],

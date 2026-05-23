@@ -129,6 +129,7 @@ async function testExpectedLandingCopy() {
     'Run your Tesla fleet with an AI agent.',
     'Start free.',
     'Security & Privacy',
+    'What Data Does FleetOS Access?',
     'FleetOS turns data into action',
     'Dynamic Charging Advisor',
     'Built for robotaxis that need to stay earning',
