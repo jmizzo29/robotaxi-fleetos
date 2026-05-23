@@ -418,18 +418,18 @@ function HeroAgentDemo({ onNavigate }) {
   };
 
   return (
-    <aside className="rounded-2xl border border-sky-300/20 bg-slate-950/90 p-5 shadow-2xl shadow-black/40">
+    <aside className="rounded-2xl border border-sky-300/25 bg-slate-950/90 p-5 shadow-2xl shadow-black/40 lg:p-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-300">Live AI Demo</p>
-          <h2 className="mt-2 text-3xl font-black tracking-tight text-white">Try the agent now.</h2>
+          <h2 className="mt-2 text-3xl font-black tracking-tight text-white lg:text-4xl">Try the agent now.</h2>
         </div>
         <span className="w-fit rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-xs font-black text-emerald-200">
           No signup needed
         </span>
       </div>
 
-      <div className="mt-5 rounded-xl border border-white/10 bg-slate-900/80 p-4">
+      <div className="mt-5 rounded-xl border border-white/10 bg-slate-900/80 p-4 lg:p-5">
         <label htmlFor="hero-agent-input" className="text-xs font-black uppercase tracking-[0.18em] text-sky-300">
           Give FleetOS a goal
         </label>
@@ -437,7 +437,7 @@ function HeroAgentDemo({ onNavigate }) {
           id="hero-agent-input"
           value={goal}
           onChange={(event) => setGoal(event.target.value)}
-          rows={4}
+          rows={5}
           className="mt-3 w-full resize-none rounded-lg border border-white/10 bg-slate-950 px-3 py-3 text-sm font-semibold leading-6 text-white outline-none transition focus:border-sky-300/50"
           placeholder="Tell FleetOS what you want your fleet to do..."
         />
@@ -451,7 +451,7 @@ function HeroAgentDemo({ onNavigate }) {
         </button>
       </div>
 
-      <div className="mt-4 rounded-xl border border-emerald-300/20 bg-emerald-400/[0.06] p-4">
+      <div className="mt-4 rounded-xl border border-emerald-300/20 bg-emerald-400/[0.06] p-4 lg:p-5">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-300">
@@ -473,7 +473,7 @@ function HeroAgentDemo({ onNavigate }) {
             ))}
           </div>
         )}
-        <div className="mt-4 space-y-2">
+        <div className="mt-4 space-y-3">
           {response.steps.slice(0, 3).map((step, index) => (
             <div key={step} className="flex gap-3 rounded-lg border border-white/10 bg-slate-950/70 px-3 py-3">
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-sky-300 text-xs font-black text-slate-950">
@@ -576,12 +576,12 @@ export default function LandingPage({ onNavigate }) {
       </header>
 
       <main>
-        <section className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-5 pb-12 pt-8 lg:grid-cols-[1fr_0.72fr] lg:items-center lg:pb-16 lg:pt-12">
-          <div>
+        <section className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-5 pb-12 pt-8 lg:grid-cols-2 lg:items-center lg:gap-12 lg:pb-16 lg:pt-12">
+          <div className="max-w-2xl">
             <p className="mb-4 text-xs font-black uppercase tracking-[0.28em] text-emerald-300">
               FleetOS AI Agent
             </p>
-            <h1 className="max-w-4xl text-5xl font-black leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-7xl">
+            <h1 className="text-5xl font-black leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-[4.65rem]">
               FleetOS - Your AI Agent for Tesla Rentals & Robotaxis
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
