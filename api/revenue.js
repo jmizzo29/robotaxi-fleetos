@@ -49,40 +49,60 @@ async function saveRevenue(fleetId, records) {
 }
 
 export default async function handler(req, res) {
-  if (!hasPostgres()) {
-    res.status(503).json({
-      error: 'DATABASE_REQUIRED',
-      message: 'Postgres DATABASE_URL is required for revenue records.',
+  try {
+    if (!hasPostgres()) {
+      res.status(503).json({
+        error: 'DATABASE_REQUIRED',
+        message: 'Postgres DATABASE_URL is required for revenue records.',
+      });
+      return;
+    }
+
+    if (req.method === 'GET') {
+      const context = await getDefaultFleetForSession(req, res);
+      if (!context?.fleet?.id) {
+        res.status(401).json({ error: 'LOGIN_REQUIRED', message: 'Sign in to load revenue records.' });
+        return;
+      }
+      res.status(200).json({ records: await listRevenue(context.fleet.id), postgres: hasPostgres() });
+      return;
+    }
+
+    if (req.method === 'DELETE') {
+      const context = await getDefaultFleetForSession(req, res);
+      if (!context?.fleet?.id) {
+        res.status(401).json({ error: 'LOGIN_REQUIRED', message: 'Sign in to delete revenue records.' });
+        return;
+      }
+      await ensureFleetSchema();
+      await query('delete from fleetos_revenue_records where fleet_id = $1', [context.fleet.id]);
+      res.status(200).json({ records: [], postgres: hasPostgres() });
+      return;
+    }
+
+    if (req.method !== 'POST') {
+      res.setHeader('Allow', 'GET, POST, DELETE');
+      res.status(405).json({ error: 'METHOD_NOT_ALLOWED' });
+      return;
+    }
+
+    const incoming = Array.isArray(req.body?.records)
+      ? req.body.records
+      : req.body?.record
+        ? [req.body.record]
+        : [];
+
+    const context = await getDefaultFleetForSession(req, res);
+    if (!context?.fleet?.id) {
+      res.status(401).json({ error: 'LOGIN_REQUIRED', message: 'Sign in to save revenue records.' });
+      return;
+    }
+    res.status(201).json({ records: await saveRevenue(context.fleet.id, incoming.map(normalizeRecord)), postgres: hasPostgres() });
+  } catch (error) {
+    const status = error.statusCode || error.status || 500;
+    res.status(status === 401 ? 401 : 500).json({
+      error: status === 401 ? 'LOGIN_REQUIRED' : 'REVENUE_RECORDS_FAILED',
+      message: status === 401 ? 'Sign in to manage revenue records.' : 'Revenue records failed.',
     });
-    return;
   }
-
-  if (req.method === 'GET') {
-    const context = await getDefaultFleetForSession(req, res);
-    res.status(200).json({ records: await listRevenue(context.fleet.id), postgres: hasPostgres() });
-    return;
-  }
-
-  if (req.method === 'DELETE') {
-    const context = await getDefaultFleetForSession(req, res);
-    await ensureFleetSchema();
-    await query('delete from fleetos_revenue_records where fleet_id = $1', [context.fleet.id]);
-    res.status(200).json({ records: [], postgres: hasPostgres() });
-    return;
-  }
-
-  if (req.method !== 'POST') {
-    res.setHeader('Allow', 'GET, POST, DELETE');
-    res.status(405).json({ error: 'METHOD_NOT_ALLOWED' });
-    return;
-  }
-
-  const incoming = Array.isArray(req.body?.records)
-    ? req.body.records
-    : req.body?.record
-      ? [req.body.record]
-      : [];
-
-  const context = await getDefaultFleetForSession(req, res);
-  res.status(201).json({ records: await saveRevenue(context.fleet.id, incoming.map(normalizeRecord)), postgres: hasPostgres() });
 }

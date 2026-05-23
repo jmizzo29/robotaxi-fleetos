@@ -4,6 +4,7 @@ import {
   addRevenueRecord,
   importRevenueRecords,
   parseRevenueCsv,
+  parseTuroCsv,
   readRevenueRecords,
   revenueForVehicle,
   syncRevenueFromBackend,
@@ -161,6 +162,7 @@ function RevenueTracker({ fleet, records, onRecordsChanged }) {
     notes: '',
   });
   const [message, setMessage] = useState('');
+  const [turoSummary, setTuroSummary] = useState(null);
 
   const update = (field, value) => setDraft((current) => ({ ...current, [field]: value }));
 
@@ -195,6 +197,23 @@ function RevenueTracker({ fleet, records, onRecordsChanged }) {
     }
   };
 
+  const importTuroCsv = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+    const text = await file.text();
+    const parsed = parseTuroCsv(text);
+    setTuroSummary(parsed.summary);
+    setMessage(`Importing ${parsed.records.length} Turo trip earning records...`);
+    try {
+      await importRevenueRecords(parsed.records);
+      setMessage(`${parsed.records.length} Turo records saved. FleetOS parsed reservations, earnings, trips, and utilization signals.`);
+      onRecordsChanged?.();
+      event.target.value = '';
+    } catch (error) {
+      setMessage(error.message || 'Turo CSV import failed.');
+    }
+  };
+
   return (
     <article className="rounded-lg border border-white/10 bg-slate-900/80 p-5 shadow-lg shadow-black/10">
       <div className="grid grid-cols-1 gap-5 xl:grid-cols-[0.9fr_1.1fr]">
@@ -204,11 +223,24 @@ function RevenueTracker({ fleet, records, onRecordsChanged }) {
           </p>
           <h2 className="text-2xl font-black tracking-tight">Manual + CSV Ledger</h2>
           <p className="mt-2 text-sm leading-6 text-slate-400">
-            Tesla does not report rental income. FleetOS starts with honest owner-entered revenue and CSV imports from rental platforms, then uses that ledger for ROI.
+            Tesla does not report rental income. FleetOS starts with honest owner-entered revenue and Turo Host CSV imports, then uses that ledger for ROI, utilization, and trip economics.
           </p>
           <div className="mt-4 rounded-lg border border-white/10 bg-slate-950/50 p-3 text-sm text-slate-400">
             {records.length} revenue records saved. CSV headers supported: <span className="font-bold text-slate-200">vin, vehicle, amount, date, source, notes</span>.
           </div>
+          <div className="mt-3 rounded-lg border border-sky-400/20 bg-sky-400/10 p-3 text-sm leading-6 text-sky-100">
+            Export your Turo <span className="font-black">Earnings Report</span> or <span className="font-black">Trip History</span> CSV from the Turo Host dashboard, then upload it here. FleetOS will parse reservations, earnings, trips, booked days, and utilization.
+          </div>
+          {turoSummary && (
+            <div className="mt-3 grid grid-cols-2 gap-2 text-sm lg:grid-cols-3">
+              <Metric label="Turo Earnings" value={formatCurrency(turoSummary.earnings)} tone="text-emerald-300" />
+              <Metric label="Trips" value={turoSummary.trips} tone="text-sky-300" />
+              <Metric label="Reservations" value={turoSummary.reservations} tone="text-violet-300" />
+              <Metric label="Booked Days" value={turoSummary.bookedDays} tone="text-amber-300" />
+              <Metric label="Vehicles" value={turoSummary.vehicles} tone="text-slate-100" />
+              <Metric label="Utilization" value={turoSummary.utilization === null ? 'n/a' : `${turoSummary.utilization}%`} tone="text-emerald-300" />
+            </div>
+          )}
         </div>
 
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -255,8 +287,12 @@ function RevenueTracker({ fleet, records, onRecordsChanged }) {
           >
             Add Revenue
           </button>
+          <label className="cursor-pointer rounded-md border border-emerald-400/30 bg-emerald-400/10 px-4 py-3 text-center text-sm font-bold text-emerald-100 transition hover:bg-emerald-400/20">
+            Upload Turo CSV
+            <input type="file" accept=".csv,text/csv" onChange={importTuroCsv} className="hidden" />
+          </label>
           <label className="cursor-pointer rounded-md border border-sky-400/30 bg-sky-400/10 px-4 py-3 text-center text-sm font-bold text-sky-100 transition hover:bg-sky-400/20">
-            Import CSV
+            Import Generic CSV
             <input type="file" accept=".csv,text/csv" onChange={importCsv} className="hidden" />
           </label>
           {message && <p className="sm:col-span-2 text-sm font-semibold text-emerald-300">{message}</p>}
