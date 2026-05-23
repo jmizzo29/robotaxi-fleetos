@@ -1,5 +1,5 @@
 import { getSession } from '../_lib/auth.js';
-import { buildFleetContextSignals, getExternalContextForVehicle } from '../_lib/externalContext.js';
+import { buildFleetContextSignals, buildPricingSignalSummary, getExternalContextForVehicle } from '../_lib/externalContext.js';
 
 const AI_PROVIDER = (process.env.AI_PROVIDER || '').toLowerCase();
 const AI_MODEL = process.env.AI_MODEL || (AI_PROVIDER === 'xai' ? 'grok-4' : 'claude-sonnet-4-5');
@@ -11,6 +11,7 @@ function buildHeuristicFleetAnalysis(fleet = [], context = {}) {
   const weather = external.weather || null;
   const electricRate = external.electricRate || null;
   const contextSignals = context.contextSignals || buildFleetContextSignals({ fleet: vehicles, weather, electricRate });
+  const pricingSignals = context.pricingSignals || buildPricingSignalSummary({ fleet: vehicles, weather });
   const rate = Number(electricRate?.energyRate);
   const rateText = Number.isFinite(rate) ? `$${rate.toFixed(3)}/kWh` : 'owner-entered utility rules';
   const trafficRisk = contextSignals.trafficRisk || 'low';
@@ -93,9 +94,9 @@ function buildHeuristicFleetAnalysis(fleet = [], context = {}) {
       {
         id: 'turo-demand-pricing',
         title: 'Turo Demand Pricing',
-        confidence: pricingPressure === 'elevated' ? 84 : 76,
-        impact: 'Can lift weekend revenue when local demand is stronger than normal.',
-        rationale: `Imported Turo earnings, utilization, weekend timing, holidays, and local events can support price changes. Current pricing pressure is ${pricingPressure}.`,
+        confidence: pricingSignals.confidence || (pricingPressure === 'elevated' ? 84 : 76),
+        impact: `${pricingSignals.suggestedLift > 0 ? 'Raise' : pricingSignals.suggestedLift < 0 ? 'Lower' : 'Hold'} prices by ${Math.abs(pricingSignals.suggestedLift || 0)}% where vehicle readiness supports it.`,
+        rationale: `Pricing agent considered utilization (${pricingSignals.avgUtilization}%), health (${pricingSignals.avgHealth}/100), ${pricingSignals.eventSignal}, and ${pricingSignals.weatherSignal}. Current pricing pressure is ${pricingPressure}.`,
         actionLabel: 'Review Price Lift',
         command: 'Review Turo demand-based pricing suggestions for the next 7 days',
       },
@@ -234,6 +235,7 @@ async function enrichFleetContext(fleet = [], context = {}) {
     return {
       ...context,
       contextSignals: buildFleetContextSignals({ fleet: vehicles }),
+      pricingSignals: buildPricingSignalSummary({ fleet: vehicles }),
     };
   }
 
@@ -247,12 +249,17 @@ async function enrichFleetContext(fleet = [], context = {}) {
         weather: externalContext.weather,
         electricRate: externalContext.electricRate,
       }),
+      pricingSignals: buildPricingSignalSummary({
+        fleet: vehicles,
+        weather: externalContext.weather,
+      }),
     };
   } catch (error) {
     return {
       ...context,
       externalContext: { errors: [`External context: ${error.message}`] },
       contextSignals: buildFleetContextSignals({ fleet: vehicles }),
+      pricingSignals: buildPricingSignalSummary({ fleet: vehicles }),
     };
   }
 }

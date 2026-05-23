@@ -9,6 +9,7 @@ import {
   revenueForVehicle,
   syncRevenueFromBackend,
 } from '../services/revenueService';
+import { buildFleetPricingSummary, buildPricingRecommendations } from '../services/pricingAgentService';
 
 function formatCurrency(value) {
   if (!Number.isFinite(value)) return '$0';
@@ -381,6 +382,75 @@ function FinanceInsightBoard({ finance, totalNet, avgRoi, onQueueCommand }) {
   );
 }
 
+function PricingAgentPanel({ recommendations = [], summary, onQueueCommand }) {
+  const strongest = summary?.strongest;
+
+  return (
+    <article className="rounded-lg border border-sky-300/20 bg-slate-900/85 p-5 shadow-xl shadow-black/15">
+      <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+        <div>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-sky-300">
+            Turo Pricing Agent
+          </p>
+          <h2 className="text-2xl font-black tracking-tight">Dynamic Pricing Suggestions</h2>
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-300">
+            FleetOS looks at weather, weekend/holiday demand, Tesla utilization, vehicle health, and imported Turo earnings to suggest price changes with confidence.
+          </p>
+        </div>
+        <div className="grid grid-cols-2 gap-3 text-center sm:min-w-[320px]">
+          <Metric
+            label="Avg Suggestion"
+            value={`${summary.averageChange > 0 ? '+' : ''}${summary.averageChange}%`}
+            tone={summary.averageChange >= 0 ? 'text-emerald-300' : 'text-amber-300'}
+          />
+          <Metric
+            label="Top Action"
+            value={strongest ? `${strongest.recommendedChange > 0 ? '+' : ''}${strongest.recommendedChange}%` : 'n/a'}
+            tone="text-sky-300"
+            helper={strongest?.vehicle?.name || strongest?.vehicle?.display_name || strongest?.vehicle?.id}
+          />
+        </div>
+      </div>
+
+      <div className="mt-5 grid grid-cols-1 gap-4 xl:grid-cols-3">
+        {recommendations.slice(0, 3).map((item) => (
+          <article key={item.id} className="rounded-lg border border-white/10 bg-slate-950/55 p-4">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-sm font-black text-white">{item.vehicle.name || item.vehicle.display_name || item.vehicle.id}</p>
+                <p className="mt-1 text-xs font-semibold text-slate-500">Confidence {item.confidence}%</p>
+              </div>
+              <span className={`rounded-md px-3 py-2 text-lg font-black ${item.recommendedChange >= 0 ? 'bg-emerald-400/10 text-emerald-300' : 'bg-amber-400/10 text-amber-300'}`}>
+                {item.recommendedChange > 0 ? '+' : ''}{item.recommendedChange}%
+              </span>
+            </div>
+            <div className="mt-4 space-y-2">
+              {item.signals.slice(0, 4).map((signal) => (
+                <div key={`${item.id}-${signal.label}`} className="rounded-md border border-white/10 bg-white/[0.03] px-3 py-2">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-xs font-black text-slate-200">{signal.label}</p>
+                    <span className={`text-xs font-black ${signal.impact >= 0 ? 'text-emerald-300' : 'text-amber-300'}`}>
+                      {signal.impact > 0 ? '+' : ''}{signal.impact}%
+                    </span>
+                  </div>
+                  <p className="mt-1 text-xs leading-5 text-slate-500">{signal.detail}</p>
+                </div>
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={() => onQueueCommand?.(`Review Turo pricing for ${item.vehicle.name || item.vehicle.display_name || item.vehicle.id}: ${item.title} with ${item.confidence}% confidence`, 'HIGH')}
+              className="mt-4 w-full rounded-md border border-sky-400/30 bg-sky-400/10 px-4 py-3 text-sm font-bold text-sky-100 transition hover:bg-sky-400/20"
+            >
+              Queue Pricing Review
+            </button>
+          </article>
+        ))}
+      </div>
+    </article>
+  );
+}
+
 export default function FleetFinancePanel({ fleet = [], onQueueCommand }) {
   const [revenueRecords, setRevenueRecords] = useState(() => readRevenueRecords());
 
@@ -403,6 +473,8 @@ export default function FleetFinancePanel({ fleet = [], onQueueCommand }) {
   const avgRoi = finance.length
     ? finance.reduce((sum, item) => sum + item.roi, 0) / finance.length
     : 0;
+  const pricingRecommendations = buildPricingRecommendations({ fleet, revenueRecords });
+  const pricingSummary = buildFleetPricingSummary(pricingRecommendations);
 
   return (
     <section className="space-y-5">
@@ -428,6 +500,12 @@ export default function FleetFinancePanel({ fleet = [], onQueueCommand }) {
         fleet={fleet}
         records={revenueRecords}
         onRecordsChanged={() => setRevenueRecords(readRevenueRecords())}
+      />
+
+      <PricingAgentPanel
+        recommendations={pricingRecommendations}
+        summary={pricingSummary}
+        onQueueCommand={onQueueCommand}
       />
 
       <FinanceInsightBoard

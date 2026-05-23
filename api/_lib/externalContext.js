@@ -211,6 +211,47 @@ export function buildFleetContextSignals({ fleet = [], weather = null, electricR
   };
 }
 
+export function buildPricingSignalSummary({ fleet = [], weather = null } = {}) {
+  const vehicles = Array.isArray(fleet) ? fleet : [];
+  const avgUtilization = vehicles.length
+    ? vehicles.reduce((sum, vehicle) => sum + (Number(vehicle.utilization) || 0), 0) / vehicles.length
+    : 0;
+  const avgHealth = vehicles.length
+    ? vehicles.reduce((sum, vehicle) => {
+      const maintenance = Number(vehicle.maintenanceScore ?? 85);
+      const anomaly = Number(vehicle.anomalyRisk ?? 8);
+      const battery = Number(vehicle.battery ?? 70);
+      return sum + ((maintenance * 0.48) + ((100 - anomaly) * 0.32) + (battery * 0.2));
+    }, 0) / vehicles.length
+    : 0;
+  const weekend = [5, 6, 0].includes(new Date().getDay());
+  const rain = Number(weather?.precipitationProbabilityMax8h || weather?.precipitationProbability || 0);
+  const wind = Number(weather?.windSpeedMax12h || weather?.windSpeed || 0);
+  let suggestedLift = 0;
+
+  if (weekend) suggestedLift += 8;
+  if (avgUtilization >= 82) suggestedLift += 10;
+  else if (avgUtilization >= 72) suggestedLift += 5;
+  else if (avgUtilization <= 45) suggestedLift -= 10;
+
+  if (avgHealth >= 92) suggestedLift += 8;
+  else if (avgHealth < 72) suggestedLift -= 8;
+
+  if (rain >= 60 || wind >= 30) suggestedLift -= 6;
+  else if (rain < 25 && wind < 18) suggestedLift += 5;
+
+  const boundedLift = Math.max(-20, Math.min(25, Math.round(suggestedLift)));
+
+  return {
+    suggestedLift: boundedLift,
+    confidence: Math.max(48, Math.min(92, Math.round(58 + Math.abs(boundedLift) + (avgHealth / 10)))),
+    avgUtilization: Math.round(avgUtilization),
+    avgHealth: Math.round(avgHealth),
+    eventSignal: weekend ? 'weekend demand window' : 'normal weekday demand',
+    weatherSignal: rain >= 60 || wind >= 30 ? 'weather friction' : rain < 25 && wind < 18 ? 'favorable weather' : 'neutral weather',
+  };
+}
+
 export async function getExternalContextForVehicle(vehicle) {
   const results = await Promise.allSettled([
     fetchWeatherContext(vehicle),
