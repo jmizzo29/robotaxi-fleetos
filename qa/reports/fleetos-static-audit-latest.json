@@ -1,0 +1,47 @@
+{
+  "generatedAt": "2026-05-23T13:27:18.637Z",
+  "summary": {
+    "total": 6,
+    "pass": 6,
+    "warn": 0,
+    "fail": 0
+  },
+  "results": [
+    {
+      "status": "pass",
+      "name": "API auth gate scan",
+      "detail": "All non-public API routes reference a session/admin/Tesla gate.",
+      "evidence": {}
+    },
+    {
+      "status": "pass",
+      "name": "no client-side admin gate",
+      "detail": "No client-side admin-code gate detected.",
+      "evidence": {}
+    },
+    {
+      "status": "pass",
+      "name": "secret leak scan",
+      "detail": "No obvious secret key/token patterns found in repo files.",
+      "evidence": {}
+    },
+    {
+      "status": "pass",
+      "name": "Tesla diagnostics redaction",
+      "detail": "Diagnostics exposes booleans/status, not raw Tesla secrets.",
+      "evidence": {}
+    },
+    {
+      "status": "pass",
+      "name": "location privacy default",
+      "detail": "Vehicle API applies rounded location privacy by default.",
+      "evidence": {}
+    },
+    {
+      "status": "pass",
+      "name": "delete-data user scope",
+      "detail": "Delete-data logic is scoped through the current user fleets.",
+      "evidence": {}
+    }
+  ]
+}

@@ -13,6 +13,14 @@ export default async function handler(req, res) {
     return;
   }
 
-  await disconnectTesla(req, res);
-  res.status(200).json({ ok: true, teslaConnected: false });
+  try {
+    await disconnectTesla(req, res);
+    res.status(200).json({ ok: true, teslaConnected: false });
+  } catch (error) {
+    const status = error.statusCode || error.status || 401;
+    res.status(status === 401 ? 401 : 500).json({
+      error: status === 401 ? 'LOGIN_REQUIRED' : 'TESLA_DISCONNECT_FAILED',
+      message: status === 401 ? 'Sign in before disconnecting Tesla.' : 'Tesla disconnect failed.',
+    });
+  }
 }

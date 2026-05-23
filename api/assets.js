@@ -118,41 +118,61 @@ async function deleteAssetRecords(fleetId, key) {
 }
 
 export default async function handler(req, res) {
-  if (!hasPostgres()) {
-    res.status(503).json({
-      error: 'DATABASE_REQUIRED',
-      message: 'Postgres DATABASE_URL is required for asset records.',
-    });
-    return;
-  }
-
-  if (req.method === 'GET') {
-    const context = await getDefaultFleetForSession(req, res);
-    res.status(200).json({ records: await listAssetRecords(context.fleet.id), postgres: hasPostgres() });
-    return;
-  }
-
-  if (req.method === 'POST') {
-    const context = await getDefaultFleetForSession(req, res);
-    const key = req.body?.key;
-    const record = req.body?.record;
-
-    if (!key || !record) {
-      res.status(400).json({ error: 'ASSET_RECORD_MISSING' });
+  try {
+    if (!hasPostgres()) {
+      res.status(503).json({
+        error: 'DATABASE_REQUIRED',
+        message: 'Postgres DATABASE_URL is required for asset records.',
+      });
       return;
     }
 
-    res.status(200).json({ records: await saveAssetRecord(context.fleet.id, key, record), postgres: hasPostgres() });
-    return;
-  }
+    if (req.method === 'GET') {
+      const context = await getDefaultFleetForSession(req, res);
+      if (!context?.fleet?.id) {
+        res.status(401).json({ error: 'LOGIN_REQUIRED', message: 'Sign in to load vehicle asset records.' });
+        return;
+      }
+      res.status(200).json({ records: await listAssetRecords(context.fleet.id), postgres: hasPostgres() });
+      return;
+    }
 
-  if (req.method === 'DELETE') {
-    const context = await getDefaultFleetForSession(req, res);
-    const key = req.query?.key;
-    res.status(200).json({ records: await deleteAssetRecords(context.fleet.id, key), postgres: hasPostgres() });
-    return;
-  }
+    if (req.method === 'POST') {
+      const context = await getDefaultFleetForSession(req, res);
+      if (!context?.fleet?.id) {
+        res.status(401).json({ error: 'LOGIN_REQUIRED', message: 'Sign in to save vehicle asset records.' });
+        return;
+      }
+      const key = req.body?.key;
+      const record = req.body?.record;
 
-  res.setHeader('Allow', 'GET, POST, DELETE');
-  res.status(405).json({ error: 'METHOD_NOT_ALLOWED' });
+      if (!key || !record) {
+        res.status(400).json({ error: 'ASSET_RECORD_MISSING' });
+        return;
+      }
+
+      res.status(200).json({ records: await saveAssetRecord(context.fleet.id, key, record), postgres: hasPostgres() });
+      return;
+    }
+
+    if (req.method === 'DELETE') {
+      const context = await getDefaultFleetForSession(req, res);
+      if (!context?.fleet?.id) {
+        res.status(401).json({ error: 'LOGIN_REQUIRED', message: 'Sign in to delete vehicle asset records.' });
+        return;
+      }
+      const key = req.query?.key;
+      res.status(200).json({ records: await deleteAssetRecords(context.fleet.id, key), postgres: hasPostgres() });
+      return;
+    }
+
+    res.setHeader('Allow', 'GET, POST, DELETE');
+    res.status(405).json({ error: 'METHOD_NOT_ALLOWED' });
+  } catch (error) {
+    const status = error.statusCode || error.status || 500;
+    res.status(status === 401 ? 401 : 500).json({
+      error: status === 401 ? 'LOGIN_REQUIRED' : 'ASSET_RECORDS_FAILED',
+      message: status === 401 ? 'Sign in to manage vehicle asset records.' : 'Vehicle asset records failed.',
+    });
+  }
 }

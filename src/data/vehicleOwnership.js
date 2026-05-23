@@ -1,4 +1,4 @@
-import { getApiBase } from '../services/apiClient';
+import { fetchApiJson } from '../services/apiClient';
 
 const vehicleOwnership = {
   OCE: {
@@ -87,8 +87,6 @@ const numericFields = new Set([
   'monthlyPayment',
 ]);
 
-const API_BASE = getApiBase();
-
 export function getVehicleOwnershipKey(vehicle) {
   return vehicle?.name || vehicle?.display_name || vehicle?.id || vehicle?.vin;
 }
@@ -118,15 +116,10 @@ export async function saveVehicleOwnership(key, record) {
   if (!key) return null;
 
   const normalized = normalizeOwnershipRecord(record);
-  const response = await fetch(`${API_BASE}/assets`, {
+  const data = await fetchApiJson('/assets', {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ key, record: normalized }),
   });
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    throw new Error(data.message || data.error || `Asset save failed with ${response.status}`);
-  }
 
   publishOwnership(data.records || { ...savedOwnershipRecords, [key]: normalized });
   return savedOwnershipRecords[key];
@@ -135,20 +128,12 @@ export async function saveVehicleOwnership(key, record) {
 export async function resetVehicleOwnership(key) {
   if (!key) return;
 
-  const response = await fetch(`${API_BASE}/assets?key=${encodeURIComponent(key)}`, { method: 'DELETE' });
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    throw new Error(data.message || data.error || `Asset delete failed with ${response.status}`);
-  }
+  const data = await fetchApiJson(`/assets?key=${encodeURIComponent(key)}`, { method: 'DELETE' });
   publishOwnership(data.records || {});
 }
 
 export async function syncSavedOwnershipFromBackend() {
-  const response = await fetch(`${API_BASE}/assets`, { cache: 'no-store' });
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    throw new Error(data.message || data.error || `Asset load failed with ${response.status}`);
-  }
+  const data = await fetchApiJson('/assets');
   const records = data.records && typeof data.records === 'object' ? data.records : {};
   return publishOwnership(records);
 }

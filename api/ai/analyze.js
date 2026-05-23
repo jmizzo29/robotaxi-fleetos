@@ -1,3 +1,5 @@
+import { getSession } from '../_lib/auth.js';
+
 const AI_PROVIDER = (process.env.AI_PROVIDER || '').toLowerCase();
 const AI_MODEL = process.env.AI_MODEL || (AI_PROVIDER === 'xai' ? 'grok-4' : 'claude-sonnet-4-5');
 
@@ -198,6 +200,15 @@ export default async function handler(req, res) {
   }
 
   try {
+    const session = await getSession(req, res, { create: false });
+    if (!session) {
+      res.status(401).json({
+        error: 'LOGIN_REQUIRED',
+        message: 'Sign in to FleetOS before requesting AI analysis.',
+      });
+      return;
+    }
+
     const analysis = await runAiFleetAnalysis(req.body?.fleet || [], req.body?.context || {});
     res.status(200).json(analysis);
   } catch (error) {
