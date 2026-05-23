@@ -12,12 +12,6 @@ const capabilities = [
   ['Live Fleet Telemetry', 'Connects Tesla Fleet API data for battery, location, odometer, charging, vehicle state, and sync history.'],
 ];
 
-const plans = [
-  ['First Tesla', 'Free', 'Live sync, location intelligence, owner finance, and AI vehicle brief for one Tesla.'],
-  ['Additional Teslas', 'Paid add-on', 'Scale into a rental fleet with multi-vehicle telemetry, history, alerts, and portfolio reporting.'],
-  ['Operator Tools', 'Pro tier', 'Advanced dispatch planning, fleet memory, readiness scoring, and AI workflow automation.'],
-];
-
 const setupSteps = [
   ['Create FleetOS account', 'Start with one Tesla and keep the first vehicle free while you learn the product.'],
   ['Authenticate with Tesla', 'Use Tesla OAuth to approve telemetry access. FleetOS never needs your Tesla password.'],
@@ -384,28 +378,11 @@ export default function LandingPage({ onNavigate }) {
             </p>
             <h1 className="max-w-4xl text-5xl font-black leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-7xl">
               FleetOS
-              <span className="block text-sky-300">Your AI Agent for Tesla Rental & Robotaxi Fleets</span>
+              <span className="block text-sky-300">The AI Agent for Your Tesla Fleet</span>
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
-              Give your AI agent goals. It monitors vehicles, optimizes earnings, plans maintenance, and helps run your fleet while you stay in full control.
+              Give FleetOS a goal like maximizing weekend earnings, preparing vehicles for tomorrow, or checking fleet health. It monitors telemetry, plans maintenance, imports rental earnings, and recommends actions while you stay in control.
             </p>
-            <div className="mt-6 rounded-xl border border-sky-300/20 bg-sky-300/[0.06] p-4">
-              <p className="text-xs font-black uppercase tracking-[0.2em] text-sky-300">Give natural commands like</p>
-              <div className="mt-4 grid gap-2 text-sm font-semibold text-slate-200">
-                {[
-                  '"Maximize earnings this weekend"',
-                  '"Prepare all vehicles for tomorrow morning"',
-                  '"Check health on Cybercab #2"',
-                ].map((command) => (
-                  <p key={command} className="rounded-lg border border-white/10 bg-slate-950/70 px-3 py-2">
-                    {command}
-                  </p>
-                ))}
-              </div>
-              <p className="mt-4 text-sm leading-6 text-slate-400">
-                The agent thinks, plans, and recommends action. You approve the workflow before FleetOS touches sensitive data or queues operational changes.
-              </p>
-            </div>
             <div className="mt-6 flex flex-wrap gap-2">
               {['First Tesla free', 'Owner-controlled access', 'Tesla password never shared'].map((label) => (
                 <span key={label} className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-emerald-200">
@@ -589,30 +566,6 @@ export default function LandingPage({ onNavigate }) {
                 </article>
               ))}
             </div>
-          </div>
-        </section>
-
-        <section className="mx-auto grid max-w-7xl grid-cols-1 gap-4 px-5 py-14 lg:grid-cols-[0.9fr_1.1fr]">
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-300">
-              Owner Rental Model
-            </p>
-            <h2 className="mt-3 max-w-xl text-4xl font-black tracking-tight text-white">
-              Free for your first Tesla. Built to grow into a rental fleet.
-            </h2>
-            <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-400">
-              FleetOS should feel useful before it asks for money: connect one car, understand its location, battery, utilization, and economics, then pay only when you add more vehicles or need operator-grade automation.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-            {plans.map(([title, price, detail]) => (
-              <article key={title} className="rounded-lg border border-white/10 bg-slate-900/80 p-5">
-                <p className="text-xs font-black uppercase tracking-[0.2em] text-sky-300">{title}</p>
-                <h3 className="mt-3 text-2xl font-black text-white">{price}</h3>
-                <p className="mt-4 text-sm leading-6 text-slate-400">{detail}</p>
-              </article>
-            ))}
           </div>
         </section>
 
