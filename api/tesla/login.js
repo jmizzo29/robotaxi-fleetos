@@ -12,7 +12,16 @@ function originFromRequest(req) {
 }
 
 export function redirectUriFromRequest(req) {
-  return process.env.TESLA_REDIRECT_URI || `${originFromRequest(req)}/api/tesla/callback`;
+  const configured = process.env.TESLA_REDIRECT_URI || '';
+  const origin = originFromRequest(req);
+  const isProductionHost = origin.includes('robotaxi-fleetos.vercel.app') || process.env.VERCEL === '1';
+  const configuredIsLocal = configured.includes('localhost') || configured.includes('127.0.0.1');
+
+  if (configured && !(isProductionHost && configuredIsLocal)) {
+    return configured;
+  }
+
+  return `${origin}/api/tesla/callback`;
 }
 
 export default async function handler(req, res) {

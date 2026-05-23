@@ -18,7 +18,16 @@ export default async function handler(req, res) {
   const code = String(req.query.code || '');
   const state = String(req.query.state || '');
   if (!code || !state) {
-    res.status(400).send('Tesla authorization callback was missing code/state.');
+    res.status(400).send(`
+      <html>
+        <body style="font-family: system-ui; background: #0b1120; color: white; padding: 32px; line-height: 1.5;">
+          <h1>Tesla connection was not started correctly</h1>
+          <p>This callback URL must be opened by Tesla after you click Connect Tesla inside FleetOS.</p>
+          <p>Go back to FleetOS onboarding, sign in, then click Connect Tesla again.</p>
+          <p><a style="color: #7dd3fc;" href="/#/onboarding">Return to FleetOS onboarding</a></p>
+        </body>
+      </html>
+    `);
     return;
   }
 
@@ -32,7 +41,16 @@ export default async function handler(req, res) {
 
   const oauthState = rows[0];
   if (!oauthState) {
-    res.status(400).send('Tesla authorization state was invalid or expired.');
+    res.status(400).send(`
+      <html>
+        <body style="font-family: system-ui; background: #0b1120; color: white; padding: 32px; line-height: 1.5;">
+          <h1>Tesla connection expired</h1>
+          <p>The Tesla authorization state was invalid or expired. This can happen if the callback URL was opened directly, the browser session changed, or the redirect URI pointed at an old localhost callback.</p>
+          <p>Please return to FleetOS and start Connect Tesla again.</p>
+          <p><a style="color: #7dd3fc;" href="/#/onboarding">Return to FleetOS onboarding</a></p>
+        </body>
+      </html>
+    `);
     return;
   }
 
