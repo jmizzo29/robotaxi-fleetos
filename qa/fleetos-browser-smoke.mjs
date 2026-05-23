@@ -76,7 +76,7 @@ async function testLanding(browser, profile) {
   await page.goto(routeUrl('?qa=browser'), { waitUntil: 'networkidle' });
   await page.getByText('FleetOS', { exact: true }).first().waitFor({ timeout: 15000 });
   await page.getByText('Security & Privacy').waitFor({ timeout: 15000 });
-  await page.getByText('Your AI Agent for Tesla Robotaxi Fleets').waitFor({ timeout: 15000 });
+  await page.getByText('Your AI Agent for Tesla Rental & Robotaxi Fleets').waitFor({ timeout: 15000 });
   await page.getByText('FleetOS turns data into action').waitFor({ timeout: 15000 });
   await page.getByText('Built for robotaxis that need to stay earning').waitFor({ timeout: 15000 });
   await page.getByText('What FleetOS predicts first').waitFor({ timeout: 15000 });

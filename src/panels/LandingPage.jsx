@@ -206,7 +206,7 @@ export default function LandingPage({ onNavigate }) {
             </p>
             <h1 className="max-w-4xl text-5xl font-black leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-7xl">
               FleetOS
-              <span className="block text-sky-300">Your AI Agent for Tesla Robotaxi Fleets</span>
+              <span className="block text-sky-300">Your AI Agent for Tesla Rental & Robotaxi Fleets</span>
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
               Give your AI agent goals. It monitors vehicles, optimizes earnings, plans maintenance, and helps run your fleet while you stay in full control.
