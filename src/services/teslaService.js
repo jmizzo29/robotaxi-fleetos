@@ -29,7 +29,15 @@ export async function getTeslaVehicles() {
     }
 
     const data = await response.json();
-    return data.response || data;
+    const vehicles = data.response || data;
+    if (Array.isArray(vehicles)) {
+      vehicles.syncMeta = {
+        cached: Boolean(data.cached),
+        warnings: data.warnings || [],
+        cacheTtlSeconds: data.cacheTtlSeconds,
+      };
+    }
+    return vehicles;
   } catch (error) {
     console.warn('Could not connect to backend, using simulation only:', error.message);
     return null;
@@ -54,7 +62,8 @@ export async function wakeTeslaVehicle(vehicle) {
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    throw new Error(data.message || data.error || `Tesla wake request failed with ${response.status}`);
+    const message = data.warning?.message || data.message || data.error || `Tesla wake request failed with ${response.status}`;
+    throw new Error(message);
   }
 
   return data.response || data;

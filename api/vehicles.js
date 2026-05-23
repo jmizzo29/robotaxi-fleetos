@@ -1,5 +1,6 @@
 import { getBillingStatusForSession, getDefaultFleetForSession, teslaRequestForSession } from './_lib/auth.js';
 import { ensureFleetSchema, hasPostgres, query } from './_lib/db.js';
+import { RATE_LIMITS } from './_lib/rateLimits.js';
 import { applyVehiclePrivacy, auditEvent, privacyMode } from './_lib/security.js';
 
 const DEFAULT_FLEET_API_BASE = process.env.TESLA_API_BASE || 'https://fleet-api.prd.na.vn.cloud.tesla.com';
@@ -117,6 +118,20 @@ async function saveVehicleTelemetry(fleetId, vehicles) {
   }));
 }
 
+async function getCachedVehicles(fleetId, maxAgeSeconds = RATE_LIMITS.telemetry_cache_seconds) {
+  const { rows } = await query(
+    `select raw
+     from fleetos_vehicles
+     where fleet_id = $1
+       and last_synced_at is not null
+       and last_synced_at > now() - ($2::text || ' seconds')::interval
+     order by last_synced_at desc`,
+    [fleetId, maxAgeSeconds],
+  );
+
+  return rows.map((row) => row.raw).filter(Boolean);
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'GET') {
     res.setHeader('Allow', 'GET');
@@ -156,6 +171,34 @@ export default async function handler(req, res) {
   }
 
   try {
+    const context = await getDefaultFleetForSession(req, res);
+    if (!context?.fleet?.id) {
+      res.status(401).json({ error: 'LOGIN_REQUIRED', message: 'Sign in before syncing Tesla telemetry.' });
+      return;
+    }
+
+    const forceRefresh = req.query?.force === '1';
+    const mode = privacyMode(req);
+    if (!forceRefresh) {
+      const cached = await getCachedVehicles(context.fleet.id);
+      if (cached.length > 0) {
+        res.status(200).json({
+          response: cached.map((vehicle) => applyVehiclePrivacy(vehicle, mode)),
+          postgres: hasPostgres(),
+          cached: true,
+          cacheTtlSeconds: RATE_LIMITS.telemetry_cache_seconds,
+          warnings: [
+            {
+              type: 'telemetry_cache',
+              message: `Using last known Tesla state cached for ${RATE_LIMITS.telemetry_cache_seconds} seconds to reduce API calls and wakes.`,
+            },
+          ],
+          privacy: { location: mode },
+        });
+        return;
+      }
+    }
+
     const vehiclesPayload = await teslaRequestForSession(req, res, '/api/1/vehicles', {
       baseURL: DEFAULT_FLEET_API_BASE,
     });
@@ -192,18 +235,22 @@ export default async function handler(req, res) {
       }),
     );
 
-    const context = await getDefaultFleetForSession(req, res);
     await saveVehicleTelemetry(context.fleet.id, response);
-    const mode = privacyMode(req);
     await auditEvent({
       userId: context.session.userId,
       action: 'tesla_telemetry_synced',
       resource: 'vehicles',
-      metadata: { vehicleCount: response.length, locationPrivacy: mode },
+      metadata: {
+        vehicleCount: response.length,
+        locationPrivacy: mode,
+        cacheTtlSeconds: RATE_LIMITS.telemetry_cache_seconds,
+      },
     }).catch(() => {});
     res.status(200).json({
       response: response.map((vehicle) => applyVehiclePrivacy(vehicle, mode)),
       postgres: hasPostgres(),
+      cached: false,
+      cacheTtlSeconds: RATE_LIMITS.telemetry_cache_seconds,
       privacy: { location: mode },
     });
   } catch (error) {

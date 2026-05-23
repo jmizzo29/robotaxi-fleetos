@@ -173,6 +173,24 @@ async function auditDeleteDataScope() {
   return pass('delete-data user scope', 'Delete-data logic is scoped through the current user fleets.');
 }
 
+async function auditTeslaRateLimitGuards() {
+  const rateLimitFile = await read(path.join(API_DIR, '_lib', 'rateLimits.js'));
+  const wakeFile = await read(path.join(API_DIR, 'vehicles', '[vin]', 'wake_up.js'));
+  const vehicleFile = await read(path.join(API_DIR, 'vehicles.js'));
+  const hasVinScope = rateLimitFile.includes('vin = $2') && rateLimitFile.includes('user_id = $1');
+  const wakeUsesGuard = wakeFile.includes('checkVinRateLimit') && wakeFile.includes('TESLA_WAKE_RATE_LIMITED');
+  const hasTelemetryCache = vehicleFile.includes('getCachedVehicles') && vehicleFile.includes('telemetry_cache_seconds');
+
+  if (!hasVinScope || !wakeUsesGuard || !hasTelemetryCache) {
+    return fail('Tesla rate-limit guards', 'Tesla sync/wake paths are missing VIN-scoped limit or cache protections.', {
+      hasVinScope,
+      wakeUsesGuard,
+      hasTelemetryCache,
+    });
+  }
+  return pass('Tesla rate-limit guards', 'Tesla wake limits are VIN-scoped and telemetry sync uses short-lived cached state.');
+}
+
 function summarize(results) {
   return results.reduce((acc, item) => {
     acc[item.status] = (acc[item.status] || 0) + 1;
@@ -207,6 +225,7 @@ const results = [
   await auditTeslaDiagnostics(),
   await auditPrivacyDefault(),
   await auditDeleteDataScope(),
+  await auditTeslaRateLimitGuards(),
 ];
 
 results.forEach((item) => console.log(`${item.status.toUpperCase()} ${item.name}: ${item.detail}`));

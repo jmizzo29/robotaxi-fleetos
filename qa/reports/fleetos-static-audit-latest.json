@@ -1,8 +1,8 @@
 {
-  "generatedAt": "2026-05-23T13:49:34.682Z",
+  "generatedAt": "2026-05-23T13:55:30.850Z",
   "summary": {
-    "total": 6,
-    "pass": 6,
+    "total": 7,
+    "pass": 7,
     "warn": 0,
     "fail": 0
   },
@@ -41,6 +41,12 @@
       "status": "pass",
       "name": "delete-data user scope",
       "detail": "Delete-data logic is scoped through the current user fleets.",
+      "evidence": {}
+    },
+    {
+      "status": "pass",
+      "name": "Tesla rate-limit guards",
+      "detail": "Tesla wake limits are VIN-scoped and telemetry sync uses short-lived cached state.",
       "evidence": {}
     }
   ]

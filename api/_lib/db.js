@@ -78,6 +78,19 @@ export async function ensureFleetSchema() {
       created_at timestamptz not null default now()
     );
 
+    create table if not exists fleetos_rate_limit_events (
+      id bigserial primary key,
+      user_id text references fleetos_users(id) on delete set null,
+      vin text not null,
+      action text not null,
+      status text not null default 'recorded',
+      limit_count integer,
+      window_seconds integer,
+      retry_after_seconds integer,
+      metadata jsonb not null default '{}'::jsonb,
+      created_at timestamptz not null default now()
+    );
+
     create table if not exists fleetos_oauth_states (
       state text primary key,
       session_id text not null references fleetos_sessions(id) on delete cascade,
@@ -279,6 +292,7 @@ export async function ensureFleetSchema() {
     create index if not exists idx_fleetos_sessions_user on fleetos_sessions(user_id);
     create unique index if not exists idx_fleetos_users_external_auth on fleetos_users(external_auth_provider, external_auth_id) where external_auth_id is not null;
     create index if not exists idx_fleetos_audit_events_user_time on fleetos_audit_events(user_id, created_at desc);
+    create index if not exists idx_fleetos_rate_limit_user_vin_action_time on fleetos_rate_limit_events(user_id, vin, action, created_at desc);
     create index if not exists idx_fleetos_magic_links_email on fleetos_magic_links(email);
     create index if not exists idx_fleetos_tesla_connections_user on fleetos_tesla_connections(user_id);
     create index if not exists idx_fleetos_telemetry_vehicle_time on fleetos_telemetry_snapshots(vehicle_id, captured_at desc);

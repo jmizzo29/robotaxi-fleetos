@@ -189,7 +189,12 @@ export function useFleetSimulation({
       setRealSyncStatus({
         state: 'success',
         lastSyncedAt: syncedAt,
-        message: `${realVehicles.length} Tesla vehicle${realVehicles.length === 1 ? '' : 's'} synced.`,
+        message: realVehicles.syncMeta?.cached
+          ? `${realVehicles.length} Tesla vehicle${realVehicles.length === 1 ? '' : 's'} loaded from cached state to protect API limits.`
+          : `${realVehicles.length} Tesla vehicle${realVehicles.length === 1 ? '' : 's'} synced.`,
+        warnings: realVehicles.syncMeta?.warnings || [],
+        cached: Boolean(realVehicles.syncMeta?.cached),
+        cacheTtlSeconds: realVehicles.syncMeta?.cacheTtlSeconds,
       });
     } catch (error) {
       setRealSyncStatus({

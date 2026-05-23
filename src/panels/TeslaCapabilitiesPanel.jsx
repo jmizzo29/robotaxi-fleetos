@@ -126,6 +126,9 @@ export default function TeslaCapabilitiesPanel({
             <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-400">
               FleetOS is using Tesla telemetry today and can now expose a controlled command surface. Riskier commands should stay gated behind virtual-key readiness, confirmation dialogs, and audit logging.
             </p>
+            <div className="mt-4 rounded-lg border border-sky-300/20 bg-sky-300/[0.06] p-4 text-sm leading-6 text-sky-100">
+              Rate-limit protection is VIN-scoped: FleetOS caches recent state, avoids unnecessary wakes, and warns when wake or command limits are close.
+            </div>
 
             <div className="mt-6 grid grid-cols-2 gap-3 xl:grid-cols-4">
               <Metric label="Vehicle" value={vehicle?.name || vehicle?.display_name || 'No Tesla'} tone="text-emerald-300" />
@@ -179,6 +182,14 @@ export default function TeslaCapabilitiesPanel({
                 }`}
               >
                 {wakeStatus.message}
+              </div>
+            )}
+
+            {syncStatus?.warnings?.length > 0 && (
+              <div className="mt-4 rounded-lg border border-amber-400/20 bg-amber-400/10 p-4 text-sm leading-6 text-amber-100">
+                {syncStatus.warnings.map((warning) => (
+                  <p key={warning.message || warning.type}>{warning.message}</p>
+                ))}
               </div>
             )}
           </div>

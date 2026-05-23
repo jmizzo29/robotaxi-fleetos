@@ -132,6 +132,7 @@ async function testExpectedLandingCopy() {
     'Built for robotaxis that need to stay earning',
     'What FleetOS predicts first',
     'Fleet Telemetry First',
+    'VIN-Scoped Limits',
     'Try the AI Agent',
     'Tesla password never shared',
   ];

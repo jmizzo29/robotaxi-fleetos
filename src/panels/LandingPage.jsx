@@ -80,8 +80,9 @@ const predictiveMaintenancePriorities = [
 
 const teslaBestPractices = [
   ['Fleet Telemetry First', 'FleetOS is designed to prefer Tesla Fleet Telemetry streaming, where vehicles push changed fields to the backend instead of forcing constant polling.'],
-  ['Wake-Safe Agent Design', 'The AI agent should avoid unnecessary wakes, batch requests, and wait for naturally-awake vehicles whenever possible.'],
-  ['Command Cooldowns', 'Operational commands need cooldowns, audit logs, and clear user approval before anything important or repeated is queued.'],
+  ['VIN-Scoped Limits', 'Rate limits are keyed by user, VIN, and action so one vehicle cannot accidentally throttle the whole fleet.'],
+  ['Wake-Safe Agent Design', 'The AI agent should avoid unnecessary wakes, batch requests, wait for naturally-awake vehicles, and warn users as limits get close.'],
+  ['Command Cooldowns', 'Operational commands need cooldowns, audit logs, last-known-state caching, and clear user approval before anything important or repeated is queued.'],
 ];
 
 function ProductPreview() {
