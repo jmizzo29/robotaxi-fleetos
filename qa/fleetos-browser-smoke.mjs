@@ -84,7 +84,7 @@ async function testLanding(browser, profile) {
   await page.getByText('What FleetOS predicts first').waitFor({ timeout: 15000 });
   await page.getByText('Fleet Telemetry First').waitFor({ timeout: 15000 });
   await page.getByText('VIN-Scoped Limits').waitFor({ timeout: 15000 });
-  await page.getByRole('button', { name: 'Try Interactive Demo' }).waitFor({ timeout: 15000 });
+  await page.getByRole('button', { name: 'Try Interactive Demo' }).first().waitFor({ timeout: 15000 });
   await page.getByText('Simple, fair pricing.').waitFor({ timeout: 15000 });
   await page.getByText('Tesla password never shared').first().waitFor({ timeout: 15000 });
   await page.getByText('Join Early Access').count().then((count) => {
@@ -135,9 +135,9 @@ async function testLandingCtas(browser, profile) {
   const telemetry = await makePage(browser, profile);
   const { page, context } = telemetry;
   await page.goto(routeUrl('/'), { waitUntil: 'networkidle' });
-  await page.getByRole('button', { name: 'Try the AI Agent' }).first().click();
+  await page.getByRole('button', { name: 'Try Interactive Demo' }).first().click();
   await page.getByText('Type a goal and see how FleetOS responds.').waitFor({ timeout: 15000 });
-  await page.getByRole('button', { name: 'Try Interactive Demo' }).click();
+  await page.locator('#interactive-demo').getByRole('button', { name: 'Try Interactive Demo' }).click();
   await page.getByText(/FleetOS Response #2/).waitFor({ timeout: 15000 });
   await page.getByRole('button', { name: 'Get Started' }).click();
   await page.waitForURL('**/#/onboarding', { timeout: 10000 });
