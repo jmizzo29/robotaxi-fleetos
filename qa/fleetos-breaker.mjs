@@ -130,6 +130,7 @@ async function testExpectedLandingCopy() {
     'Security & Privacy',
     'FleetOS turns data into action',
     'Built for robotaxis that need to stay earning',
+    'What FleetOS predicts first',
     'Try the AI Agent',
     'Tesla password never shared',
   ];

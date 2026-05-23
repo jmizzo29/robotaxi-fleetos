@@ -70,6 +70,14 @@ const maintenanceOutcomes = [
   'Service cost & ROI tracking',
 ];
 
+const predictiveMaintenancePriorities = [
+  ['1', 'Battery Health', 'Most expensive and critical', '30-90 days', 'SoC, voltage, temperature, charge cycles, energy usage'],
+  ['2', 'Tire Wear', 'High utilization creates fast wear', '15-45 days', 'Odometer, TPMS pressure, temperature, driving style'],
+  ['3', 'Brake Wear', 'Regen helps, but pads still matter', '30-60 days', 'Brake usage, odometer, regen patterns'],
+  ['4', 'Suspension / Motors', 'High-mileage failures can create long downtime', '20-60 days', 'Power usage, alerts, service history, vibration proxies'],
+  ['5', 'Cabin / Cleaning', 'Passenger experience affects ratings and bookings', '1-7 days', 'Manual input now, future cabin camera or vision score'],
+];
+
 function ProductPreview() {
   return (
     <div className="relative min-h-[500px] overflow-hidden rounded-2xl border border-white/10 bg-slate-950 shadow-2xl shadow-black/40">
@@ -347,9 +355,9 @@ export default function LandingPage({ onNavigate }) {
               <p className="text-xs font-black uppercase tracking-[0.2em] text-emerald-300">Example Agent Alerts</p>
               <div className="mt-4 space-y-3 text-sm font-semibold text-slate-200">
                 {[
-                  'Tire pressure low on vehicle OCE — recommend inflate within 48h.',
-                  'Service recommended in 1,200 miles — schedule during low-demand window.',
-                  'Cabin cleanliness score degraded — suggest cleaning before next rental.',
+                  'Tire pressure low on vehicle OCE - recommend inflate within 48h.',
+                  'Service recommended in 1,200 miles - schedule during low-demand window.',
+                  'Cabin cleanliness score degraded - suggest cleaning before next rental.',
                 ].map((alert) => (
                   <p key={alert} className="rounded-lg border border-white/10 bg-slate-950/70 px-3 py-3">
                     {alert}
@@ -359,13 +367,41 @@ export default function LandingPage({ onNavigate }) {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            {maintenanceFeatures.map(([title, detail]) => (
-              <article key={title} className="rounded-lg border border-white/10 bg-slate-900/80 p-5">
-                <h3 className="text-lg font-black text-white">{title}</h3>
-                <p className="mt-3 text-sm leading-6 text-slate-400">{detail}</p>
-              </article>
-            ))}
+          <div>
+            <div className="mb-4 rounded-lg border border-sky-300/20 bg-sky-300/[0.06] p-5">
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-sky-300">What FleetOS predicts first</p>
+              <div className="mt-4 space-y-3">
+                {predictiveMaintenancePriorities.map(([priority, component, why, leadTime, dataNeeded]) => (
+                  <article key={component} className="grid gap-3 rounded-lg border border-white/10 bg-slate-950/70 p-4 lg:grid-cols-[44px_0.9fr_1fr_0.65fr_1.2fr] lg:items-start">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-md bg-sky-300 text-sm font-black text-slate-950">
+                      {priority}
+                    </span>
+                    <div>
+                      <p className="text-sm font-black text-white">{component}</p>
+                      <p className="mt-1 text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">Priority</p>
+                    </div>
+                    <p className="text-sm leading-6 text-slate-300">{why}</p>
+                    <div>
+                      <p className="text-xs font-black uppercase tracking-[0.14em] text-emerald-300">Lead Time</p>
+                      <p className="mt-1 text-sm font-bold text-slate-200">{leadTime}</p>
+                    </div>
+                    <div>
+                      <p className="text-xs font-black uppercase tracking-[0.14em] text-sky-300">Tesla Data Needed</p>
+                      <p className="mt-1 text-sm leading-6 text-slate-400">{dataNeeded}</p>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+              {maintenanceFeatures.map(([title, detail]) => (
+                <article key={title} className="rounded-lg border border-white/10 bg-slate-900/80 p-5">
+                  <h3 className="text-lg font-black text-white">{title}</h3>
+                  <p className="mt-3 text-sm leading-6 text-slate-400">{detail}</p>
+                </article>
+              ))}
+            </div>
           </div>
         </section>
 
