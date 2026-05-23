@@ -13,7 +13,17 @@ export default async function handler(req, res) {
     return;
   }
 
-  const session = await getSession(req, res, { create: true });
+  let session;
+  try {
+    session = await getSession(req, res, { create: true });
+  } catch (error) {
+    res.status(error.status || 500).json({
+      authenticated: false,
+      error: error.status === 401 ? 'LOGIN_REQUIRED' : 'AUTH_UNAVAILABLE',
+      message: error.status === 401 ? 'Sign in to FleetOS to continue.' : 'FleetOS authentication is not available.',
+    });
+    return;
+  }
   if (!session) {
     res.status(401).json({
       authenticated: false,
