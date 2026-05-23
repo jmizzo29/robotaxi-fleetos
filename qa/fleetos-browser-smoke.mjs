@@ -146,7 +146,7 @@ async function testLandingCtas(browser, profile) {
   await page.getByRole('button', { name: 'Try the AI Agent Live' }).click();
   await page.locator('#hero-agent-input').fill('Should I raise price this weekend in Tampa?');
   await page.getByRole('button', { name: 'Run Agent' }).click();
-  await page.getByText('Turo pricing plan').first().waitFor({ timeout: 15000 });
+  await page.getByText('Turo revenue plan').first().waitFor({ timeout: 15000 });
   await page.getByRole('button', { name: 'Start Free (First Tesla Free)' }).click();
   await page.waitForURL('**/#/onboarding', { timeout: 10000 });
   await page.getByText('Connect Your First Tesla').waitFor({ timeout: 15000 });
