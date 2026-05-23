@@ -170,14 +170,21 @@ function buildDemoResponse(goal) {
 function InteractiveAgentDemo() {
   const [goal, setGoal] = useState(demoPrompts[0]);
   const [response, setResponse] = useState(() => buildDemoResponse(demoPrompts[0]));
+  const [runCount, setRunCount] = useState(1);
+  const [isThinking, setIsThinking] = useState(false);
 
   const runDemo = (nextGoal = goal) => {
     setGoal(nextGoal);
-    setResponse(buildDemoResponse(nextGoal));
+    setIsThinking(true);
+    window.setTimeout(() => {
+      setResponse(buildDemoResponse(nextGoal));
+      setRunCount((count) => count + 1);
+      setIsThinking(false);
+    }, 350);
   };
 
   return (
-    <section className="border-y border-white/10 bg-slate-950/70">
+    <section id="interactive-demo" className="scroll-mt-8 border-y border-white/10 bg-slate-950/70">
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-5 py-14 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
         <div>
           <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-300">Try the AI Agent</p>
@@ -218,16 +225,19 @@ function InteractiveAgentDemo() {
             <button
               type="button"
               onClick={() => runDemo()}
-              className="mt-3 w-full rounded-md bg-sky-300 px-5 py-4 text-sm font-black text-slate-950 transition hover:bg-sky-200"
+              disabled={isThinking}
+              className="mt-3 w-full rounded-md bg-sky-300 px-5 py-4 text-sm font-black text-slate-950 transition hover:bg-sky-200 disabled:cursor-wait disabled:opacity-70"
             >
-              Try Interactive Demo
+              {isThinking ? 'Agent Thinking...' : 'Try Interactive Demo'}
             </button>
           </div>
 
           <div className="mt-4 rounded-xl border border-emerald-300/20 bg-emerald-400/[0.06] p-4">
             <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
               <div>
-                <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-300">FleetOS Response</p>
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-300">
+                  FleetOS Response {runCount > 1 ? `#${runCount}` : ''}
+                </p>
                 <h3 className="mt-2 text-2xl font-black text-white">{response.title}</h3>
               </div>
               <span className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-xs font-black text-emerald-200">
@@ -255,7 +265,7 @@ function InteractiveAgentDemo() {
   );
 }
 
-function ProductPreview() {
+function ProductPreview({ onTryDemo }) {
   return (
     <div className="relative min-h-[560px] overflow-hidden rounded-2xl border border-white/10 bg-slate-950 shadow-2xl shadow-black/40">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_18%,rgba(14,165,233,0.28),transparent_30%),radial-gradient(circle_at_82%_72%,rgba(16,185,129,0.2),transparent_34%),linear-gradient(145deg,rgba(15,23,42,0.45),transparent)]" />
@@ -327,10 +337,18 @@ function ProductPreview() {
                 </p>
               </div>
               <div className="grid grid-cols-2 gap-2">
-                <button type="button" className="rounded-md border border-sky-300/20 bg-sky-300/10 px-3 py-2 text-xs font-black text-sky-100">
+                <button
+                  type="button"
+                  onClick={onTryDemo}
+                  className="rounded-md border border-sky-300/20 bg-sky-300/10 px-3 py-2 text-xs font-black text-sky-100 transition hover:bg-sky-300/20"
+                >
                   Approve Plan
                 </button>
-                <button type="button" className="rounded-md border border-white/10 bg-white/5 px-3 py-2 text-xs font-black text-slate-200">
+                <button
+                  type="button"
+                  onClick={onTryDemo}
+                  className="rounded-md border border-white/10 bg-white/5 px-3 py-2 text-xs font-black text-slate-200 transition hover:bg-white/10"
+                >
                   Edit Goal
                 </button>
               </div>
@@ -346,6 +364,9 @@ export default function LandingPage({ onNavigate }) {
   const { isSignedIn } = useFleetAuthStatus();
   const enterApp = (route = 'overview') => {
     onNavigate(isSignedIn ? route : 'onboarding');
+  };
+  const scrollToDemo = () => {
+    document.getElementById('interactive-demo')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
   const clerkReady = isClerkConfigured();
 
@@ -385,7 +406,7 @@ export default function LandingPage({ onNavigate }) {
           </button>
           <button
             type="button"
-            onClick={() => enterApp('dispatch')}
+            onClick={scrollToDemo}
             className="hidden rounded-full border border-sky-400/30 bg-sky-400/10 px-4 py-2 text-sm font-bold text-sky-100 transition hover:bg-sky-400/20 sm:block"
           >
             View Demo
@@ -416,7 +437,7 @@ export default function LandingPage({ onNavigate }) {
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <button
                 type="button"
-                onClick={() => onNavigate('onboarding')}
+                onClick={scrollToDemo}
                 className="rounded-md bg-sky-300 px-5 py-4 text-sm font-black text-slate-950 transition hover:bg-sky-200"
               >
                 Try the AI Agent
@@ -453,7 +474,7 @@ export default function LandingPage({ onNavigate }) {
             </p>
           </div>
 
-          <ProductPreview />
+          <ProductPreview onTryDemo={scrollToDemo} />
         </section>
 
         <InteractiveAgentDemo />

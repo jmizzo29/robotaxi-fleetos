@@ -135,6 +135,10 @@ async function testLandingCtas(browser, profile) {
   const { page, context } = telemetry;
   await page.goto(routeUrl('/'), { waitUntil: 'networkidle' });
   await page.getByRole('button', { name: 'Try the AI Agent' }).first().click();
+  await page.getByText('Type a goal and see how FleetOS responds.').waitFor({ timeout: 15000 });
+  await page.getByRole('button', { name: 'Try Interactive Demo' }).click();
+  await page.getByText(/FleetOS Response #2/).waitFor({ timeout: 15000 });
+  await page.getByRole('button', { name: 'Get Started' }).click();
   await page.waitForURL('**/#/onboarding', { timeout: 10000 });
   await page.getByText('Connect Your First Tesla').waitFor({ timeout: 15000 });
   await context.close();
