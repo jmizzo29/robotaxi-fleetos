@@ -129,6 +129,7 @@ async function testExpectedLandingCopy() {
     'FleetOS AI Agent - Live Operations',
     'Security & Privacy',
     'FleetOS turns data into action',
+    'Dynamic Charging Advisor',
     'Built for robotaxis that need to stay earning',
     'What FleetOS predicts first',
     'Fleet Telemetry First',

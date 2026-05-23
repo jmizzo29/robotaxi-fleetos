@@ -78,6 +78,7 @@ async function testLanding(browser, profile) {
   await page.getByText('Security & Privacy').waitFor({ timeout: 15000 });
   await page.getByText('The AI Agent for Your Tesla Fleet').waitFor({ timeout: 15000 });
   await page.getByText('FleetOS turns data into action').waitFor({ timeout: 15000 });
+  await page.getByText('Dynamic Charging Advisor').waitFor({ timeout: 15000 });
   await page.getByText('Built for robotaxis that need to stay earning').waitFor({ timeout: 15000 });
   await page.getByText('What FleetOS predicts first').waitFor({ timeout: 15000 });
   await page.getByText('Fleet Telemetry First').waitFor({ timeout: 15000 });

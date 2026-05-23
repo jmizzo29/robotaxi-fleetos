@@ -25,9 +25,27 @@ const agents = [
   },
   {
     name: 'Charging Agent',
-    role: 'Optimizes energy windows, charge staging, and battery availability.',
+    role: 'Optimizes energy windows using battery state, weather, electricity-rate windows, and availability.',
     signal: 'Energy',
     tone: 'amber',
+  },
+  {
+    name: 'Pricing Agent',
+    role: 'Reviews Turo earnings, utilization, local events, holidays, and demand signals to suggest price changes.',
+    signal: 'Pricing',
+    tone: 'cyan',
+  },
+  {
+    name: 'Traffic Agent',
+    role: 'Watches traffic and incident context that can affect pickups, cleaning windows, and utilization.',
+    signal: 'Roads',
+    tone: 'orange',
+  },
+  {
+    name: 'Opportunity Agent',
+    role: 'Finds event-driven staging and pricing opportunities around concerts, sports games, holidays, and airport demand.',
+    signal: 'Events',
+    tone: 'lime',
   },
 ];
 
@@ -37,6 +55,9 @@ const tones = {
   rose: 'border-rose-400/20 bg-rose-400/10 text-rose-200',
   violet: 'border-violet-400/20 bg-violet-400/10 text-violet-200',
   amber: 'border-amber-400/20 bg-amber-400/10 text-amber-200',
+  cyan: 'border-cyan-400/20 bg-cyan-400/10 text-cyan-200',
+  orange: 'border-orange-400/20 bg-orange-400/10 text-orange-200',
+  lime: 'border-lime-400/20 bg-lime-400/10 text-lime-200',
 };
 
 function formatTime(value) {
@@ -82,7 +103,7 @@ export default function AgentOrchestrationPanel({
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-3 lg:grid-cols-5">
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
         {agents.map((agent, index) => (
           <article key={agent.name} className="rounded-lg border border-white/10 bg-slate-950/50 p-4">
             <div className="mb-4 flex items-center justify-between gap-3">

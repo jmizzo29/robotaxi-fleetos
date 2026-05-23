@@ -12,6 +12,29 @@ const capabilities = [
   ['Live Fleet Telemetry', 'Connects Tesla Fleet API data for battery, location, odometer, charging, vehicle state, and sync history.'],
 ];
 
+const agentCapabilityRoadmap = [
+  {
+    title: 'Dynamic Charging Advisor',
+    detail: 'Combines Tesla battery state, weather, electricity-rate windows, and expected demand so the agent can recommend when each vehicle should charge.',
+    signal: 'Battery + Weather + Rates',
+  },
+  {
+    title: 'Demand-Based Pricing Suggestions',
+    detail: 'Uses imported Turo earnings, utilization, local demand signals, holidays, and events to suggest price changes like a 15-20% weekend lift.',
+    signal: 'Turo + Demand',
+  },
+  {
+    title: 'Traffic & Accident Awareness',
+    detail: 'Flags traffic or incident risk that could hurt pickup timing, cleaning windows, charging plans, or vehicle utilization.',
+    signal: 'Traffic + Incidents',
+  },
+  {
+    title: 'Event-Driven Opportunities',
+    detail: 'Looks for concerts, sports games, holidays, airport surges, and local gatherings that could justify staging or pricing changes.',
+    signal: 'Events + Holidays',
+  },
+];
+
 const setupSteps = [
   ['Create FleetOS account', 'Start with one Tesla and keep the first vehicle free while you learn the product.'],
   ['Authenticate with Tesla', 'Use Tesla OAuth to approve telemetry access. FleetOS never needs your Tesla password.'],
@@ -490,6 +513,30 @@ export default function LandingPage({ onNavigate }) {
                 </article>
               ))}
             </div>
+          </div>
+        </section>
+
+        <section className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-5 py-14 lg:grid-cols-[0.75fr_1.25fr] lg:items-start">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-300">
+              Agent Capabilities Roadmap
+            </p>
+            <h2 className="mt-3 text-4xl font-black tracking-tight text-white">
+              The agent should find revenue and risk before you do.
+            </h2>
+            <p className="mt-4 text-sm leading-7 text-slate-400">
+              FleetOS is being built to combine Tesla telemetry with owner revenue, weather, traffic, electricity, and event signals so the AI agent can recommend practical actions instead of only showing dashboards.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            {agentCapabilityRoadmap.map((item) => (
+              <article key={item.title} className="rounded-lg border border-white/10 bg-slate-900/80 p-5">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-sky-300">{item.signal}</p>
+                <h3 className="mt-3 text-lg font-black text-white">{item.title}</h3>
+                <p className="mt-3 text-sm leading-6 text-slate-400">{item.detail}</p>
+              </article>
+            ))}
           </div>
         </section>
 
