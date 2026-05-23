@@ -133,6 +133,7 @@ async function testExpectedLandingCopy() {
     'What FleetOS predicts first',
     'Fleet Telemetry First',
     'VIN-Scoped Limits',
+    'Try Interactive Demo',
     'Try the AI Agent',
     'Tesla password never shared',
   ];

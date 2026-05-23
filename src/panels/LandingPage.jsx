@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { SignInButton } from '@clerk/react';
 import TeslaIndependenceNotice from '../components/TeslaIndependenceNotice';
 import { useFleetAuthStatus } from '../auth/FleetAuthContext';
@@ -84,6 +85,147 @@ const teslaBestPractices = [
   ['Wake-Safe Agent Design', 'The AI agent should avoid unnecessary wakes, batch requests, wait for naturally-awake vehicles, and warn users as limits get close.'],
   ['Command Cooldowns', 'Operational commands need cooldowns, audit logs, last-known-state caching, and clear user approval before anything important or repeated is queued.'],
 ];
+
+const demoPrompts = [
+  'Maximize earnings this weekend with my 3 Teslas',
+  'Check health and prepare all vehicles for tomorrow',
+  'Give me a full fleet summary',
+];
+
+function buildDemoResponse(goal) {
+  const lower = goal.toLowerCase();
+
+  if (lower.includes('health') || lower.includes('prepare')) {
+    return {
+      title: 'Tomorrow readiness plan',
+      summary: 'FleetOS would inspect health, battery, cleanliness, and service risk before morning demand.',
+      steps: [
+        'Run vehicle health scores for all Teslas and flag any score below 82.',
+        'Schedule charging for vehicles under 65% before peak pickup windows.',
+        'Queue cleaning inspection for vehicles with recent completed trips.',
+        'Hold wake/command actions for owner approval and respect VIN-scoped cooldowns.',
+      ],
+      confidence: 91,
+      impact: 'Higher morning uptime and fewer last-minute cancellations.',
+    };
+  }
+
+  if (lower.includes('summary') || lower.includes('fleet')) {
+    return {
+      title: 'Fleet summary brief',
+      summary: 'FleetOS would combine telemetry, rental earnings, maintenance risk, and utilization into one owner report.',
+      steps: [
+        'Summarize live battery, location, odometer, charging state, and last sync age.',
+        'Compare Turo earnings CSV records against modeled operating costs.',
+        'Identify vehicles with low utilization, high maintenance reserve, or weak ROI.',
+        'Generate an owner-ready action list for finance, cleaning, charging, and service.',
+      ],
+      confidence: 88,
+      impact: 'Clear owner visibility without manually checking Tesla, Turo, and spreadsheets.',
+    };
+  }
+
+  return {
+    title: 'Weekend earnings optimization',
+    summary: 'FleetOS would prioritize the highest-revenue windows while protecting battery, maintenance, and cleaning readiness.',
+    steps: [
+      'Forecast demand windows and rank vehicles by readiness, charge level, and revenue potential.',
+      'Stage high-battery vehicles near likely pickup zones and reserve one vehicle for quick-turn trips.',
+      'Schedule charging and cleaning around low-demand gaps instead of peak earning hours.',
+      'Prepare an approval queue before any wake, command, or dispatch-related workflow runs.',
+    ],
+    confidence: 93,
+    impact: 'More booked hours, fewer avoidable gaps, and better profit per vehicle.',
+  };
+}
+
+function InteractiveAgentDemo() {
+  const [goal, setGoal] = useState(demoPrompts[0]);
+  const [response, setResponse] = useState(() => buildDemoResponse(demoPrompts[0]));
+
+  const runDemo = (nextGoal = goal) => {
+    setGoal(nextGoal);
+    setResponse(buildDemoResponse(nextGoal));
+  };
+
+  return (
+    <section className="border-y border-white/10 bg-slate-950/70">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-5 py-14 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
+        <div>
+          <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-300">Try the AI Agent</p>
+          <h2 className="mt-3 text-4xl font-black tracking-tight text-white">
+            Type a goal and see how FleetOS responds.
+          </h2>
+          <p className="mt-4 text-sm leading-7 text-slate-400">
+            This simulated demo shows the kind of planning FleetOS can do once a user connects Tesla telemetry, Turo earnings, and vehicle health history.
+          </p>
+
+          <div className="mt-6 space-y-2">
+            {demoPrompts.map((prompt) => (
+              <button
+                key={prompt}
+                type="button"
+                onClick={() => runDemo(prompt)}
+                className="block w-full rounded-lg border border-white/10 bg-white/[0.04] px-4 py-3 text-left text-sm font-bold text-slate-200 transition hover:border-sky-300/40 hover:bg-sky-300/10"
+              >
+                "{prompt}"
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <article className="rounded-2xl border border-sky-300/20 bg-slate-900/90 p-5 shadow-2xl shadow-black/30">
+          <div className="rounded-xl border border-white/10 bg-slate-950/80 p-4">
+            <label htmlFor="agent-demo-goal" className="text-xs font-black uppercase tracking-[0.18em] text-sky-300">
+              Goal
+            </label>
+            <textarea
+              id="agent-demo-goal"
+              value={goal}
+              onChange={(event) => setGoal(event.target.value)}
+              rows={3}
+              className="mt-3 w-full resize-none rounded-lg border border-white/10 bg-slate-950 px-3 py-3 text-sm font-semibold text-white outline-none transition focus:border-sky-300/50"
+              placeholder="Tell FleetOS what you want the fleet to do..."
+            />
+            <button
+              type="button"
+              onClick={() => runDemo()}
+              className="mt-3 w-full rounded-md bg-sky-300 px-5 py-4 text-sm font-black text-slate-950 transition hover:bg-sky-200"
+            >
+              Try Interactive Demo
+            </button>
+          </div>
+
+          <div className="mt-4 rounded-xl border border-emerald-300/20 bg-emerald-400/[0.06] p-4">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-300">FleetOS Response</p>
+                <h3 className="mt-2 text-2xl font-black text-white">{response.title}</h3>
+              </div>
+              <span className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-xs font-black text-emerald-200">
+                {response.confidence}% confidence
+              </span>
+            </div>
+            <p className="mt-3 text-sm leading-6 text-slate-300">{response.summary}</p>
+            <div className="mt-4 space-y-2">
+              {response.steps.map((step, index) => (
+                <div key={step} className="flex gap-3 rounded-lg border border-white/10 bg-slate-950/70 px-3 py-3">
+                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-sky-300 text-xs font-black text-slate-950">
+                    {index + 1}
+                  </span>
+                  <p className="text-sm leading-6 text-slate-300">{step}</p>
+                </div>
+              ))}
+            </div>
+            <p className="mt-4 rounded-lg border border-white/10 bg-slate-950/70 px-3 py-3 text-sm font-bold text-emerald-200">
+              Expected impact: {response.impact}
+            </p>
+          </div>
+        </article>
+      </div>
+    </section>
+  );
+}
 
 function ProductPreview() {
   return (
@@ -277,6 +419,8 @@ export default function LandingPage({ onNavigate }) {
 
           <ProductPreview />
         </section>
+
+        <InteractiveAgentDemo />
 
         <section className="border-y border-white/10 bg-slate-950/80">
           <div className="mx-auto grid max-w-7xl grid-cols-1 gap-4 px-5 py-8 md:grid-cols-4">
