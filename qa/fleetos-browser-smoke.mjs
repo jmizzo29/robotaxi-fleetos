@@ -76,7 +76,8 @@ async function testLanding(browser, profile) {
   await page.goto(routeUrl('?qa=browser'), { waitUntil: 'networkidle' });
   await page.getByText('FleetOS', { exact: true }).first().waitFor({ timeout: 15000 });
   await page.getByText('Security & Privacy').waitFor({ timeout: 15000 });
-  await page.getByText('The AI Agent for Your Tesla Fleet').waitFor({ timeout: 15000 });
+  await page.getByText('Run your Tesla fleet with an AI agent.').waitFor({ timeout: 15000 });
+  await page.getByText('AI Operations Console').waitFor({ timeout: 15000 });
   await page.getByText('FleetOS turns data into action').waitFor({ timeout: 15000 });
   await page.getByText('Dynamic Charging Advisor').waitFor({ timeout: 15000 });
   await page.getByText('Built for robotaxis that need to stay earning').waitFor({ timeout: 15000 });
@@ -84,7 +85,7 @@ async function testLanding(browser, profile) {
   await page.getByText('Fleet Telemetry First').waitFor({ timeout: 15000 });
   await page.getByText('VIN-Scoped Limits').waitFor({ timeout: 15000 });
   await page.getByRole('button', { name: 'Try Interactive Demo' }).waitFor({ timeout: 15000 });
-  await page.getByText('Simple, Fair Pricing').waitFor({ timeout: 15000 });
+  await page.getByText('Simple, fair pricing.').waitFor({ timeout: 15000 });
   await page.getByText('Tesla password never shared').first().waitFor({ timeout: 15000 });
   await page.getByText('Join Early Access').count().then((count) => {
     if (count > 0) throw new Error('Old Join Early Access form is visible.');

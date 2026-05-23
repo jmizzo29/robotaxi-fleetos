@@ -120,6 +120,75 @@ const demoPrompts = [
   'Give me a full fleet summary',
 ];
 
+function PricingSection({ onStart }) {
+  return (
+    <section id="pricing" className="scroll-mt-8 border-y border-white/10 bg-white/[0.03]">
+      <div className="mx-auto max-w-7xl px-5 py-14">
+        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-300">
+              Pricing
+            </p>
+            <h2 className="mt-3 max-w-3xl text-4xl font-black tracking-tight text-white">
+              Simple, fair pricing.
+            </h2>
+            <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-400">
+              Start free with one Tesla during beta. Add vehicles only when FleetOS starts saving real operator time.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onStart}
+            className="rounded-md bg-sky-300 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-sky-200"
+          >
+            Start Free
+          </button>
+        </div>
+
+        <div className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-3">
+          {pricing.map((plan) => (
+            <article
+              key={plan.plan}
+              className={`relative rounded-lg border p-5 ${
+                plan.popular
+                  ? 'border-sky-300/35 bg-sky-300/[0.08] shadow-xl shadow-sky-950/30'
+                  : 'border-white/10 bg-slate-950/55'
+              }`}
+            >
+              {plan.popular && (
+                <span className="absolute right-4 top-4 rounded-full border border-sky-300/30 bg-sky-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-sky-200">
+                  Popular
+                </span>
+              )}
+              <p className="text-sm font-black text-white">{plan.plan}</p>
+              <p className="mt-3 text-3xl font-black text-sky-300">{plan.price}</p>
+              <p className="mt-3 text-xs font-black uppercase tracking-[0.16em] text-slate-500">Best For</p>
+              <p className="mt-1 text-sm font-bold leading-6 text-slate-200">{plan.bestFor}</p>
+              <div className="mt-5 space-y-2">
+                {plan.features.map((feature) => (
+                  <div key={feature} className="flex gap-3 text-sm leading-6 text-slate-300">
+                    <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-emerald-300" />
+                    <span>{feature}</span>
+                  </div>
+                ))}
+              </div>
+              {plan.note && (
+                <p className="mt-5 rounded-lg border border-amber-300/20 bg-amber-300/10 p-3 text-xs font-semibold leading-5 text-amber-100">
+                  {plan.note}
+                </p>
+              )}
+            </article>
+          ))}
+        </div>
+
+        <p className="mt-6 rounded-lg border border-emerald-300/20 bg-emerald-400/[0.06] p-4 text-sm font-bold leading-6 text-emerald-100">
+          First Tesla is always free during beta. Billed monthly, cancel anytime. Popular choice: 3-5 vehicles on Owner Fleet.
+        </p>
+      </div>
+    </section>
+  );
+}
+
 function buildDemoResponse(goal) {
   const lower = goal.toLowerCase();
 
@@ -272,8 +341,8 @@ function ProductPreview({ onTryDemo }) {
       <div className="relative p-5">
         <div className="mb-5 flex items-center justify-between">
           <div>
-            <p className="text-[11px] font-black uppercase tracking-[0.24em] text-sky-300">FleetOS</p>
-            <h2 className="mt-1 text-2xl font-black text-white">FleetOS AI Agent - Live Operations</h2>
+            <p className="text-[11px] font-black uppercase tracking-[0.24em] text-sky-300">Live Preview</p>
+            <h2 className="mt-1 text-2xl font-black text-white">AI Operations Console</h2>
           </div>
           <span className="flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-xs font-black text-emerald-200">
             <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-300" />
@@ -368,6 +437,9 @@ export default function LandingPage({ onNavigate }) {
   const scrollToDemo = () => {
     document.getElementById('interactive-demo')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   };
+  const scrollToPricing = () => {
+    document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
   const clerkReady = isClerkConfigured();
 
   const signInControl = (
@@ -406,6 +478,13 @@ export default function LandingPage({ onNavigate }) {
           </button>
           <button
             type="button"
+            onClick={scrollToPricing}
+            className="hidden rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-slate-200 transition hover:bg-white/10 sm:block"
+          >
+            Pricing
+          </button>
+          <button
+            type="button"
             onClick={scrollToDemo}
             className="hidden rounded-full border border-sky-400/30 bg-sky-400/10 px-4 py-2 text-sm font-bold text-sky-100 transition hover:bg-sky-400/20 sm:block"
           >
@@ -418,17 +497,16 @@ export default function LandingPage({ onNavigate }) {
         <section className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-5 pb-16 pt-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:pb-24 lg:pt-16">
           <div>
             <p className="mb-4 text-xs font-black uppercase tracking-[0.28em] text-emerald-300">
-              AI Fleet Agent
+              FleetOS AI Agent
             </p>
             <h1 className="max-w-4xl text-5xl font-black leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-7xl">
-              FleetOS
-              <span className="block text-sky-300">The AI Agent for Your Tesla Fleet</span>
+              Run your Tesla fleet with an AI agent.
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
-              Give FleetOS a goal like maximizing weekend earnings, preparing vehicles for tomorrow, or checking fleet health. It monitors telemetry, plans maintenance, imports rental earnings, and recommends actions while you stay in control.
+              Give FleetOS a goal. It monitors telemetry, plans charging and maintenance, imports rental earnings, and recommends actions while you stay in control.
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
-              {['First Tesla free', 'Owner-controlled access', 'Tesla password never shared'].map((label) => (
+              {['First Tesla free', '$12 per extra Tesla', 'Tesla password never shared'].map((label) => (
                 <span key={label} className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-emerald-200">
                   {label}
                 </span>
@@ -440,7 +518,14 @@ export default function LandingPage({ onNavigate }) {
                 onClick={scrollToDemo}
                 className="rounded-md bg-sky-300 px-5 py-4 text-sm font-black text-slate-950 transition hover:bg-sky-200"
               >
-                Try the AI Agent
+                Try Interactive Demo
+              </button>
+              <button
+                type="button"
+                onClick={() => onNavigate('onboarding')}
+                className="rounded-md border border-sky-300/30 bg-sky-300/10 px-5 py-4 text-sm font-black text-sky-100 transition hover:bg-sky-300/20"
+              >
+                Start Free
               </button>
               {isSignedIn ? (
                 <button
@@ -479,6 +564,8 @@ export default function LandingPage({ onNavigate }) {
 
         <InteractiveAgentDemo />
 
+        <PricingSection onStart={() => onNavigate('onboarding')} />
+
         <section className="border-y border-white/10 bg-slate-950/80">
           <div className="mx-auto grid max-w-7xl grid-cols-1 gap-4 px-5 py-8 md:grid-cols-4">
             {trustPoints.map(([title, detail]) => (
@@ -490,7 +577,7 @@ export default function LandingPage({ onNavigate }) {
           </div>
         </section>
 
-        <section className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-5 py-14 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+        <section className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-5 py-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-300">
               Security & Privacy
@@ -504,7 +591,7 @@ export default function LandingPage({ onNavigate }) {
           </div>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            {securityFeatures.map(([title, detail]) => (
+            {securityFeatures.slice(0, 4).map(([title, detail]) => (
               <article key={title} className="rounded-lg border border-white/10 bg-slate-900/80 p-5">
                 <h3 className="text-lg font-black text-white">{title}</h3>
                 <p className="mt-3 text-sm leading-6 text-slate-400">{detail}</p>
@@ -514,7 +601,7 @@ export default function LandingPage({ onNavigate }) {
         </section>
 
         <section className="border-y border-white/10 bg-white/[0.03]">
-          <div className="mx-auto max-w-7xl px-5 py-14">
+          <div className="mx-auto max-w-7xl px-5 py-10">
             <div className="mb-8 max-w-3xl">
               <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-300">Why FleetOS?</p>
               <h2 className="mt-3 text-4xl font-black tracking-tight text-white">
@@ -537,7 +624,7 @@ export default function LandingPage({ onNavigate }) {
           </div>
         </section>
 
-        <section className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-5 py-14 lg:grid-cols-[0.75fr_1.25fr] lg:items-start">
+        <section className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-5 py-10 lg:grid-cols-[0.75fr_1.25fr] lg:items-start">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-300">
               Agent Capabilities Roadmap
@@ -561,7 +648,7 @@ export default function LandingPage({ onNavigate }) {
           </div>
         </section>
 
-        <section className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-5 py-14 lg:grid-cols-[0.82fr_1.18fr]">
+        <section className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-5 py-10 lg:grid-cols-[0.82fr_1.18fr]">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-300">
               Fleet Health & Maintenance
@@ -627,7 +714,7 @@ export default function LandingPage({ onNavigate }) {
             </div>
 
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-              {maintenanceFeatures.map(([title, detail]) => (
+              {maintenanceFeatures.slice(0, 4).map(([title, detail]) => (
                 <article key={title} className="rounded-lg border border-white/10 bg-slate-900/80 p-5">
                   <h3 className="text-lg font-black text-white">{title}</h3>
                   <p className="mt-3 text-sm leading-6 text-slate-400">{detail}</p>
@@ -700,61 +787,7 @@ export default function LandingPage({ onNavigate }) {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-5 py-14">
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-300">
-              Simple, Fair Pricing
-            </p>
-            <h2 className="mt-3 max-w-3xl text-4xl font-black tracking-tight text-white">
-              Start free. Scale as you grow.
-            </h2>
-            <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-400">
-              First Tesla is always free during beta. Billed monthly, cancel anytime. Annual billing with two months free is planned for owners who want to lock in savings.
-            </p>
-
-            <div className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-3">
-              {pricing.map((plan) => (
-                <article
-                  key={plan.plan}
-                  className={`relative rounded-lg border p-5 ${
-                    plan.popular
-                      ? 'border-sky-300/35 bg-sky-300/[0.08] shadow-xl shadow-sky-950/30'
-                      : 'border-white/10 bg-white/[0.04]'
-                  }`}
-                >
-                  {plan.popular && (
-                    <span className="absolute right-4 top-4 rounded-full border border-sky-300/30 bg-sky-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-sky-200">
-                      Popular
-                    </span>
-                  )}
-                  <p className="text-sm font-black text-white">{plan.plan}</p>
-                  <p className="mt-3 text-3xl font-black text-sky-300">{plan.price}</p>
-                  <p className="mt-3 text-xs font-black uppercase tracking-[0.16em] text-slate-500">Best For</p>
-                  <p className="mt-1 text-sm font-bold leading-6 text-slate-200">{plan.bestFor}</p>
-                  <div className="mt-5 space-y-2">
-                    {plan.features.map((feature) => (
-                      <div key={feature} className="flex gap-3 text-sm leading-6 text-slate-300">
-                        <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-emerald-300" />
-                        <span>{feature}</span>
-                      </div>
-                    ))}
-                  </div>
-                  {plan.note && (
-                    <p className="mt-5 rounded-lg border border-amber-300/20 bg-amber-300/10 p-3 text-xs font-semibold leading-5 text-amber-100">
-                      {plan.note}
-                    </p>
-                  )}
-                </article>
-              ))}
-            </div>
-
-            <p className="mt-6 rounded-lg border border-emerald-300/20 bg-emerald-400/[0.06] p-4 text-sm font-bold leading-6 text-emerald-100">
-              Popular choice: most owners start with 3-5 vehicles on the Owner Fleet plan.
-            </p>
-          </div>
-        </section>
-
-        <section className="mx-auto max-w-7xl px-5 py-14">
+        <section className="mx-auto max-w-7xl px-5 py-10">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             {[
               ['For Owners', 'Understand whether each vehicle is making money, ready to dispatch, and properly documented.'],
