@@ -1,0 +1,72 @@
+{
+  "baseUrl": "https://robotaxi-fleetos.vercel.app",
+  "generatedAt": "2026-05-23T13:31:20.219Z",
+  "summary": {
+    "total": 10,
+    "pass": 10,
+    "warn": 0,
+    "fail": 0
+  },
+  "results": [
+    {
+      "status": "pass",
+      "name": "landing browser smoke (desktop)",
+      "detail": "No serious browser runtime errors detected.",
+      "evidence": {}
+    },
+    {
+      "status": "pass",
+      "name": "onboarding standalone (desktop)",
+      "detail": "No serious browser runtime errors detected.",
+      "evidence": {}
+    },
+    {
+      "status": "pass",
+      "name": "account standalone (desktop)",
+      "detail": "No serious browser runtime errors detected.",
+      "evidence": {}
+    },
+    {
+      "status": "pass",
+      "name": "legal standalone (desktop)",
+      "detail": "No serious browser runtime errors detected.",
+      "evidence": {}
+    },
+    {
+      "status": "pass",
+      "name": "landing CTA to onboarding (desktop)",
+      "detail": "No serious browser runtime errors detected.",
+      "evidence": {}
+    },
+    {
+      "status": "pass",
+      "name": "landing browser smoke (mobile)",
+      "detail": "No serious browser runtime errors detected.",
+      "evidence": {}
+    },
+    {
+      "status": "pass",
+      "name": "onboarding standalone (mobile)",
+      "detail": "No serious browser runtime errors detected.",
+      "evidence": {}
+    },
+    {
+      "status": "pass",
+      "name": "account standalone (mobile)",
+      "detail": "No serious browser runtime errors detected.",
+      "evidence": {}
+    },
+    {
+      "status": "pass",
+      "name": "legal standalone (mobile)",
+      "detail": "No serious browser runtime errors detected.",
+      "evidence": {}
+    },
+    {
+      "status": "pass",
+      "name": "landing CTA to onboarding (mobile)",
+      "detail": "No serious browser runtime errors detected.",
+      "evidence": {}
+    }
+  ]
+}
