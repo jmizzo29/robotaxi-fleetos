@@ -77,14 +77,15 @@ async function testLanding(browser, profile) {
   await page.getByText('FleetOS', { exact: true }).first().waitFor({ timeout: 15000 });
   await page.getByText('Security & Privacy').waitFor({ timeout: 15000 });
   await page.getByText('Run your Tesla fleet with an AI agent.').waitFor({ timeout: 15000 });
-  await page.getByText('AI Operations Console').waitFor({ timeout: 15000 });
+  await page.getByText('Start free.').waitFor({ timeout: 15000 });
   await page.getByText('FleetOS turns data into action').waitFor({ timeout: 15000 });
   await page.getByText('Dynamic Charging Advisor').waitFor({ timeout: 15000 });
   await page.getByText('Built for robotaxis that need to stay earning').waitFor({ timeout: 15000 });
   await page.getByText('What FleetOS predicts first').waitFor({ timeout: 15000 });
   await page.getByText('Fleet Telemetry First').waitFor({ timeout: 15000 });
   await page.getByText('VIN-Scoped Limits').waitFor({ timeout: 15000 });
-  await page.getByRole('button', { name: 'Try Interactive Demo' }).first().waitFor({ timeout: 15000 });
+  await page.getByRole('button', { name: 'Try Free AI Demo' }).waitFor({ timeout: 15000 });
+  await page.getByRole('button', { name: 'Start Free' }).first().waitFor({ timeout: 15000 });
   await page.getByText('Simple, fair pricing.').waitFor({ timeout: 15000 });
   await page.getByText('Tesla password never shared').first().waitFor({ timeout: 15000 });
   await page.getByText('Join Early Access').count().then((count) => {
@@ -135,7 +136,7 @@ async function testLandingCtas(browser, profile) {
   const telemetry = await makePage(browser, profile);
   const { page, context } = telemetry;
   await page.goto(routeUrl('/'), { waitUntil: 'networkidle' });
-  await page.getByRole('button', { name: 'Try Interactive Demo' }).first().click();
+  await page.getByRole('button', { name: 'Try Free AI Demo' }).click();
   await page.getByText('Type a goal and see how FleetOS responds.').waitFor({ timeout: 15000 });
   await page.locator('#interactive-demo').getByRole('button', { name: 'Try Interactive Demo' }).click();
   await page.getByText(/FleetOS Response #2/).waitFor({ timeout: 15000 });
