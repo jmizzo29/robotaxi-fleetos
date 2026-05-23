@@ -1,21 +1,21 @@
 {
   "baseUrl": "https://robotaxi-fleetos.vercel.app",
-  "generatedAt": "2026-05-23T13:14:37.964Z",
-  "durationMs": 2810,
+  "generatedAt": "2026-05-23T13:15:58.588Z",
+  "durationMs": 3107,
   "summary": {
     "total": 12,
-    "pass": 11,
+    "pass": 12,
     "warn": 0,
-    "fail": 1
+    "fail": 0
   },
   "results": [
     {
       "name": "public shell loads",
       "status": "pass",
-      "detail": "Homepage and bundle loaded in 448ms.",
+      "detail": "Homepage and bundle loaded in 549ms.",
       "evidence": {
-        "asset": "index-BCoFHYK5.js",
-        "bundleBytes": 608564
+        "asset": "index-6z4tWVX7.js",
+        "bundleBytes": 608532
       }
     },
     {
@@ -73,12 +73,9 @@
     },
     {
       "name": "Tesla login gate",
-      "status": "fail",
-      "detail": "Expected 401 when signed out, got 500.",
-      "evidence": {
-        "location": null,
-        "body": "A server error has occurred\n\nFUNCTION_INVOCATION_FAILED\n\niad1::sdqzl-1779542077086-145332b6da22\n"
-      }
+      "status": "pass",
+      "detail": "Signed-out user cannot start Tesla OAuth.",
+      "evidence": {}
     },
     {
       "name": "Tesla callback misuse",
@@ -101,10 +98,10 @@
     {
       "name": "health burst",
       "status": "pass",
-      "detail": "20 concurrent health requests passed in 771ms.",
+      "detail": "20 concurrent health requests passed in 797ms.",
       "evidence": {
-        "maxMs": 764,
-        "minMs": 75
+        "maxMs": 791,
+        "minMs": 65
       }
     }
   ]

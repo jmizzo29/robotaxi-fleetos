@@ -25,22 +25,22 @@
   <body>
     <main>
       <h1>FleetOS Breaker Report</h1>
-      <p class="meta">Target: https://robotaxi-fleetos.vercel.app · Generated: 2026-05-23T13:14:37.964Z</p>
+      <p class="meta">Target: https://robotaxi-fleetos.vercel.app · Generated: 2026-05-23T13:15:58.588Z</p>
       <section class="summary">
         <div class="card">Total<strong>12</strong></div>
-        <div class="card">Pass<strong>11</strong></div>
+        <div class="card">Pass<strong>12</strong></div>
         <div class="card">Warn<strong>0</strong></div>
-        <div class="card">Fail<strong>1</strong></div>
+        <div class="card">Fail<strong>0</strong></div>
       </section>
       <section class="tests">
         
           <article class="test pass">
             <div class="status">pass</div>
             <h2>public shell loads</h2>
-            <p>Homepage and bundle loaded in 448ms.</p>
+            <p>Homepage and bundle loaded in 549ms.</p>
             <pre>{
-  &quot;asset&quot;: &quot;index-BCoFHYK5.js&quot;,
-  &quot;bundleBytes&quot;: 608564
+  &quot;asset&quot;: &quot;index-6z4tWVX7.js&quot;,
+  &quot;bundleBytes&quot;: 608532
 }</pre>
           </article>
         
@@ -103,14 +103,11 @@
             
           </article>
         
-          <article class="test fail">
-            <div class="status">fail</div>
+          <article class="test pass">
+            <div class="status">pass</div>
             <h2>Tesla login gate</h2>
-            <p>Expected 401 when signed out, got 500.</p>
-            <pre>{
-  &quot;location&quot;: null,
-  &quot;body&quot;: &quot;A server error has occurred\n\nFUNCTION_INVOCATION_FAILED\n\niad1::sdqzl-1779542077086-145332b6da22\n&quot;
-}</pre>
+            <p>Signed-out user cannot start Tesla OAuth.</p>
+            
           </article>
         
           <article class="test pass">
@@ -137,10 +134,10 @@
           <article class="test pass">
             <div class="status">pass</div>
             <h2>health burst</h2>
-            <p>20 concurrent health requests passed in 771ms.</p>
+            <p>20 concurrent health requests passed in 797ms.</p>
             <pre>{
-  &quot;maxMs&quot;: 764,
-  &quot;minMs&quot;: 75
+  &quot;maxMs&quot;: 791,
+  &quot;minMs&quot;: 65
 }</pre>
           </article>
         
