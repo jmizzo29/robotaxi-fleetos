@@ -1,7 +1,7 @@
 {
   "baseUrl": "https://robotaxi-fleetos.vercel.app",
-  "generatedAt": "2026-05-23T15:52:55.067Z",
-  "durationMs": 1538,
+  "generatedAt": "2026-05-23T15:58:24.732Z",
+  "durationMs": 4926,
   "summary": {
     "total": 12,
     "pass": 12,
@@ -12,10 +12,10 @@
     {
       "name": "public shell loads",
       "status": "pass",
-      "detail": "Homepage and bundle loaded in 316ms.",
+      "detail": "Homepage and bundle loaded in 638ms.",
       "evidence": {
-        "asset": "index-CWXNpK9T.js",
-        "bundleBytes": 630273
+        "asset": "index-DQonEfBs.js",
+        "bundleBytes": 637651
       }
     },
     {
@@ -98,10 +98,10 @@
     {
       "name": "health burst",
       "status": "pass",
-      "detail": "20 concurrent health requests passed in 272ms.",
+      "detail": "20 concurrent health requests passed in 819ms.",
       "evidence": {
-        "maxMs": 256,
-        "minMs": 67
+        "maxMs": 785,
+        "minMs": 66
       }
     }
   ]
