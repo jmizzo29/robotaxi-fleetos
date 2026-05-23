@@ -140,7 +140,8 @@ async function testExpectedLandingCopy() {
     'Try the AI Agent Live',
     'Start Free (First Tesla Free)',
     'Simple, fair pricing.',
-    'Try the AI Agent',
+    'Real Example Workflows',
+    'What owners can ask FleetOS to handle.',
     'Tesla password never shared',
   ];
   const missing = expected.filter((phrase) => !bundle?.text.includes(phrase));

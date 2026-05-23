@@ -317,129 +317,83 @@ function saveDemoPlan(goal, response) {
   }));
 }
 
-function InteractiveAgentDemo({ onNavigate }) {
-  const [goal, setGoal] = useState(demoPrompts[0]);
-  const [response, setResponse] = useState(() => buildDemoResponse(demoPrompts[0]));
-  const [runCount, setRunCount] = useState(1);
-  const [isThinking, setIsThinking] = useState(false);
+const exampleWorkflows = [
+  'Maximize my earnings this weekend with 3 Teslas',
+  'Check health and prepare all vehicles for tomorrow',
+  'Should I raise price this weekend and when should I charge?',
+];
 
-  const runDemo = (nextGoal = goal) => {
-    setGoal(nextGoal);
-    setIsThinking(true);
-    window.setTimeout(() => {
-      setResponse(buildDemoResponse(nextGoal));
-      setRunCount((count) => count + 1);
-      setIsThinking(false);
-    }, 350);
-  };
-
-  const savePlan = () => {
-    saveDemoPlan(goal, response);
-    onNavigate?.('onboarding');
-  };
+function RealExampleWorkflows() {
+  const workflows = exampleWorkflows.map((goal) => ({
+    goal,
+    response: buildDemoResponse(goal),
+  }));
 
   return (
-    <section id="interactive-demo" className="scroll-mt-8 border-y border-white/10 bg-slate-950/70">
-      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-5 py-14 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
+    <section id="example-workflows" className="scroll-mt-8 border-y border-white/10 bg-slate-950/70">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-5 py-14 lg:grid-cols-[0.75fr_1.25fr] lg:items-start">
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-300">Try the AI Agent</p>
+          <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-300">Real Example Workflows</p>
           <h2 className="mt-3 text-4xl font-black tracking-tight text-white">
-            Type a goal and see how FleetOS responds.
+            What owners can ask FleetOS to handle.
           </h2>
           <p className="mt-4 text-sm leading-7 text-slate-400">
-            No signup needed. Ask about pricing, charging, weather, maintenance, onboarding, or fleet readiness. Save the plan only when it feels useful.
+            The hero demo lets visitors try the agent live. This section shows the kinds of operational plans FleetOS can turn into owner-ready actions.
           </p>
 
-          <div className="mt-6 space-y-2">
-            {demoPrompts.map((prompt) => (
-              <button
-                key={prompt}
-                type="button"
-                onClick={() => runDemo(prompt)}
-                className="block w-full rounded-lg border border-white/10 bg-white/[0.04] px-4 py-3 text-left text-sm font-bold text-slate-200 transition hover:border-sky-300/40 hover:bg-sky-300/10"
-              >
-                "{prompt}"
-              </button>
-            ))}
+          <div className="mt-6 rounded-xl border border-emerald-300/20 bg-emerald-400/[0.06] p-4">
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-300">Agent pattern</p>
+            <p className="mt-2 text-sm leading-6 text-slate-300">
+              Goal in, plan out: FleetOS explains why, estimates impact, and queues approval-safe actions.
+            </p>
           </div>
         </div>
 
-        <article className="rounded-2xl border border-sky-300/20 bg-slate-900/90 p-5 shadow-2xl shadow-black/30">
-          <div className="rounded-xl border border-white/10 bg-slate-950/80 p-4">
-            <label htmlFor="agent-demo-goal" className="text-xs font-black uppercase tracking-[0.18em] text-sky-300">
-              Goal
-            </label>
-            <textarea
-              id="agent-demo-goal"
-              value={goal}
-              onChange={(event) => setGoal(event.target.value)}
-              rows={3}
-              className="mt-3 w-full resize-none rounded-lg border border-white/10 bg-slate-950 px-3 py-3 text-sm font-semibold text-white outline-none transition focus:border-sky-300/50"
-              placeholder="Tell FleetOS what you want the fleet to do..."
-            />
-            <button
-              type="button"
-              onClick={() => runDemo()}
-              disabled={isThinking}
-              className="mt-3 w-full rounded-md bg-sky-300 px-5 py-4 text-sm font-black text-slate-950 transition hover:bg-sky-200 disabled:cursor-wait disabled:opacity-70"
-            >
-              {isThinking ? 'Agent Thinking...' : 'Try Interactive Demo'}
-            </button>
-          </div>
-
-          <div className="mt-4 rounded-xl border border-emerald-300/20 bg-emerald-400/[0.06] p-4">
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-              <div>
-                <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-300">
-                  FleetOS Response {runCount > 1 ? `#${runCount}` : ''}
-                </p>
-                <h3 className="mt-2 text-2xl font-black text-white">{response.title}</h3>
+        <div className="grid grid-cols-1 gap-4">
+          {workflows.map(({ goal, response }) => (
+            <article key={goal} className="rounded-2xl border border-white/10 bg-slate-900/90 p-5 shadow-xl shadow-black/20">
+              <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.18em] text-sky-300">Owner asks</p>
+                  <h3 className="mt-2 text-xl font-black text-white">"{goal}"</h3>
+                </div>
+                <span className="w-fit rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-xs font-black text-emerald-200">
+                  {response.confidence}% confidence
+                </span>
               </div>
-              <span className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-xs font-black text-emerald-200">
-                {response.confidence}% confidence
-              </span>
-            </div>
-            <p className="mt-3 text-sm leading-6 text-slate-300">{response.summary}</p>
-            {response.metrics?.length > 0 && (
-              <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
-                {response.metrics.map((metric) => (
-                  <div key={metric} className="rounded-lg border border-sky-300/15 bg-sky-300/[0.07] px-3 py-2 text-xs font-black text-sky-100">
-                    {metric}
+
+              <div className="mt-4 rounded-xl border border-emerald-300/20 bg-emerald-400/[0.06] p-4">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-300">FleetOS responds</p>
+                <h4 className="mt-2 text-2xl font-black text-white">{response.title}</h4>
+                <p className="mt-2 text-sm leading-6 text-slate-300">{response.summary}</p>
+                {response.metrics?.length > 0 && (
+                  <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
+                    {response.metrics.map((metric) => (
+                      <div key={metric} className="rounded-lg border border-sky-300/15 bg-sky-300/[0.07] px-3 py-2 text-xs font-black text-sky-100">
+                        {metric}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="mt-4 grid grid-cols-1 gap-2 lg:grid-cols-3">
+                {response.steps.slice(0, 3).map((step, index) => (
+                  <div key={step} className="rounded-lg border border-white/10 bg-slate-950/70 p-3">
+                    <span className="flex h-6 w-6 items-center justify-center rounded-md bg-sky-300 text-xs font-black text-slate-950">
+                      {index + 1}
+                    </span>
+                    <p className="mt-3 text-sm leading-6 text-slate-300">{step}</p>
                   </div>
                 ))}
               </div>
-            )}
-            <div className="mt-4 space-y-2">
-              {response.steps.map((step, index) => (
-                <div key={step} className="flex gap-3 rounded-lg border border-white/10 bg-slate-950/70 px-3 py-3">
-                  <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-sky-300 text-xs font-black text-slate-950">
-                    {index + 1}
-                  </span>
-                  <p className="text-sm leading-6 text-slate-300">{step}</p>
-                </div>
-              ))}
-            </div>
-            <p className="mt-4 rounded-lg border border-white/10 bg-slate-950/70 px-3 py-3 text-sm font-bold text-emerald-200">
-              Expected impact: {response.impact}
-            </p>
-            <div className="mt-4 grid gap-3 sm:grid-cols-2">
-              <button
-                type="button"
-                onClick={savePlan}
-                className="rounded-md bg-emerald-300 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-emerald-200"
-              >
-                Save My Fleet Plan
-              </button>
-              <button
-                type="button"
-                onClick={() => runDemo('Should I raise price this weekend and when should I charge?')}
-                className="rounded-md border border-white/10 bg-white/5 px-5 py-3 text-sm font-black text-slate-100 transition hover:bg-white/10"
-              >
-                Try Another Goal
-              </button>
-            </div>
-          </div>
-        </article>
+
+              <p className="mt-4 rounded-lg border border-white/10 bg-slate-950/70 px-3 py-3 text-sm font-bold text-emerald-200">
+                Expected impact: {response.impact}
+              </p>
+            </article>
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -557,7 +511,6 @@ function HeroAgentDemo({ onNavigate }) {
     </aside>
   );
 }
-
 export default function LandingPage({ onNavigate }) {
   const { isSignedIn } = useFleetAuthStatus();
   const enterApp = (route = 'overview') => {
@@ -693,7 +646,7 @@ export default function LandingPage({ onNavigate }) {
 
         <PricingSection onStart={() => onNavigate('onboarding')} />
 
-        <InteractiveAgentDemo onNavigate={onNavigate} />
+        <RealExampleWorkflows />
 
         <section className="mx-auto max-w-7xl px-5 py-10">
           <TeslaDataAccessDisclosure />
