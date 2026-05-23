@@ -126,8 +126,9 @@ async function testStaleCopy() {
 async function testExpectedLandingCopy() {
   const { bundle } = await getIndexAndBundle();
   const expected = [
-    'Run your Tesla fleet with an AI agent.',
-    'Start free.',
+    'FleetOS - Your AI Agent for Tesla Rentals & Robotaxis',
+    'No signup needed',
+    'Maximize my earnings this weekend with 3 Teslas',
     'Security & Privacy',
     'What Data Does FleetOS Access?',
     'FleetOS turns data into action',
@@ -136,7 +137,8 @@ async function testExpectedLandingCopy() {
     'What FleetOS predicts first',
     'Fleet Telemetry First',
     'VIN-Scoped Limits',
-    'Try Free AI Demo',
+    'Try the AI Agent Live',
+    'Start Free (First Tesla Free)',
     'Simple, fair pricing.',
     'Try the AI Agent',
     'Tesla password never shared',

@@ -76,8 +76,13 @@ async function testLanding(browser, profile) {
   await page.goto(routeUrl('?qa=browser'), { waitUntil: 'networkidle' });
   await page.getByText('FleetOS', { exact: true }).first().waitFor({ timeout: 15000 });
   await page.getByText('Security & Privacy').waitFor({ timeout: 15000 });
-  await page.getByText('Run your Tesla fleet with an AI agent.').waitFor({ timeout: 15000 });
-  await page.getByText('Start free.').waitFor({ timeout: 15000 });
+  await page.getByText('FleetOS - Your AI Agent for Tesla Rentals & Robotaxis').waitFor({ timeout: 15000 });
+  await page.getByText('No signup needed', { exact: true }).waitFor({ timeout: 15000 });
+  await page.locator('#hero-agent-input').waitFor({ timeout: 15000 });
+  const heroGoal = await page.locator('#hero-agent-input').inputValue();
+  if (heroGoal !== 'Maximize my earnings this weekend with 3 Teslas') {
+    throw new Error(`Unexpected hero agent prompt: ${heroGoal}`);
+  }
   await page.getByText('FleetOS turns data into action').waitFor({ timeout: 15000 });
   await page.getByText('What Data Does FleetOS Access?').first().waitFor({ timeout: 15000 });
   await page.getByText('Dynamic Charging Advisor').waitFor({ timeout: 15000 });
@@ -85,8 +90,8 @@ async function testLanding(browser, profile) {
   await page.getByText('What FleetOS predicts first').waitFor({ timeout: 15000 });
   await page.getByText('Fleet Telemetry First').waitFor({ timeout: 15000 });
   await page.getByText('VIN-Scoped Limits').waitFor({ timeout: 15000 });
-  await page.getByRole('button', { name: 'Try Free AI Demo' }).waitFor({ timeout: 15000 });
-  await page.getByRole('button', { name: 'Start Free' }).first().waitFor({ timeout: 15000 });
+  await page.getByRole('button', { name: 'Try the AI Agent Live' }).waitFor({ timeout: 15000 });
+  await page.getByRole('button', { name: 'Start Free (First Tesla Free)' }).waitFor({ timeout: 15000 });
   await page.getByText('Simple, fair pricing.').waitFor({ timeout: 15000 });
   await page.getByText('Tesla password never shared').first().waitFor({ timeout: 15000 });
   await page.getByText('Join Early Access').count().then((count) => {
@@ -138,11 +143,11 @@ async function testLandingCtas(browser, profile) {
   const telemetry = await makePage(browser, profile);
   const { page, context } = telemetry;
   await page.goto(routeUrl('/'), { waitUntil: 'networkidle' });
-  await page.getByRole('button', { name: 'Try Free AI Demo' }).click();
-  await page.getByText('Type a goal and see how FleetOS responds.').waitFor({ timeout: 15000 });
-  await page.locator('#interactive-demo').getByRole('button', { name: 'Try Interactive Demo' }).click();
-  await page.getByText(/FleetOS Response #2/).waitFor({ timeout: 15000 });
-  await page.getByRole('button', { name: 'Get Started' }).click();
+  await page.getByRole('button', { name: 'Try the AI Agent Live' }).click();
+  await page.locator('#hero-agent-input').fill('Should I raise price this weekend in Tampa?');
+  await page.getByRole('button', { name: 'Run Agent' }).click();
+  await page.getByText('Turo pricing plan').first().waitFor({ timeout: 15000 });
+  await page.getByRole('button', { name: 'Start Free (First Tesla Free)' }).click();
   await page.waitForURL('**/#/onboarding', { timeout: 10000 });
   await page.getByText('Connect Your First Tesla').waitFor({ timeout: 15000 });
   await context.close();

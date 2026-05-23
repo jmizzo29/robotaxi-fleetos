@@ -116,7 +116,7 @@ const teslaBestPractices = [
 ];
 
 const demoPrompts = [
-  'Maximize earnings this weekend with my 3 Teslas',
+  'Maximize my earnings this weekend with 3 Teslas',
   'Check health and prepare all vehicles for tomorrow',
   'Give me a full fleet summary',
 ];
@@ -429,60 +429,105 @@ function InteractiveAgentDemo({ onNavigate }) {
   );
 }
 
-function HeroPricingPanel({ onStart, onPricing }) {
+function HeroAgentDemo({ onNavigate }) {
+  const [goal, setGoal] = useState(demoPrompts[0]);
+  const [response, setResponse] = useState(() => buildDemoResponse(demoPrompts[0]));
+  const [isThinking, setIsThinking] = useState(false);
+
+  const runDemo = () => {
+    setIsThinking(true);
+    window.setTimeout(() => {
+      setResponse(buildDemoResponse(goal));
+      setIsThinking(false);
+    }, 280);
+  };
+
+  const savePlan = () => {
+    saveDemoPlan(goal, response);
+    onNavigate?.('onboarding');
+  };
+
   return (
-    <aside className="rounded-2xl border border-white/10 bg-slate-950/80 p-5 shadow-2xl shadow-black/35">
-      <div className="flex items-start justify-between gap-4">
+    <aside className="rounded-2xl border border-sky-300/20 bg-slate-950/90 p-5 shadow-2xl shadow-black/40">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-300">Pricing</p>
-          <h2 className="mt-2 text-3xl font-black tracking-tight text-white">Start free.</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-400">
-            First Tesla is free during beta. Add vehicles only when FleetOS starts saving real operating time.
-          </p>
+          <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-300">Live AI Demo</p>
+          <h2 className="mt-2 text-3xl font-black tracking-tight text-white">Try the agent now.</h2>
         </div>
-        <span className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-xs font-black text-emerald-200">
-          Beta
+        <span className="w-fit rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-xs font-black text-emerald-200">
+          No signup needed
         </span>
       </div>
 
-      <div className="mt-5 space-y-3">
-        {[
-          ['Starter', '$0', '1 Tesla'],
-          ['Owner Fleet', '$12', 'per extra Tesla / mo'],
-          ['Operator Pro', 'Custom', 'larger fleets'],
-        ].map(([plan, price, detail]) => (
-          <div key={plan} className="flex items-center justify-between gap-4 rounded-lg border border-white/10 bg-white/[0.04] p-4">
-            <div>
-              <p className="text-sm font-black text-white">{plan}</p>
-              <p className="mt-1 text-xs font-semibold text-slate-500">{detail}</p>
-            </div>
-            <p className="text-2xl font-black text-sky-300">{price}</p>
-          </div>
-        ))}
-      </div>
-
-      <div className="mt-5 grid gap-3 sm:grid-cols-2">
+      <div className="mt-5 rounded-xl border border-white/10 bg-slate-900/80 p-4">
+        <label htmlFor="hero-agent-input" className="text-xs font-black uppercase tracking-[0.18em] text-sky-300">
+          Give FleetOS a goal
+        </label>
+        <textarea
+          id="hero-agent-input"
+          value={goal}
+          onChange={(event) => setGoal(event.target.value)}
+          rows={4}
+          className="mt-3 w-full resize-none rounded-lg border border-white/10 bg-slate-950 px-3 py-3 text-sm font-semibold leading-6 text-white outline-none transition focus:border-sky-300/50"
+          placeholder="Tell FleetOS what you want your fleet to do..."
+        />
         <button
           type="button"
-          onClick={onStart}
-          className="rounded-md bg-sky-300 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-sky-200"
+          onClick={runDemo}
+          disabled={isThinking}
+          className="mt-3 w-full rounded-md bg-sky-300 px-5 py-4 text-sm font-black text-slate-950 transition hover:bg-sky-200 disabled:cursor-wait disabled:opacity-70"
         >
-          Start Free
+          {isThinking ? 'Agent Planning...' : 'Run Agent'}
+        </button>
+      </div>
+
+      <div className="mt-4 rounded-xl border border-emerald-300/20 bg-emerald-400/[0.06] p-4">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-300">
+              Instant response
+            </p>
+            <h3 className="mt-2 text-2xl font-black text-white">{response.title}</h3>
+          </div>
+          <span className="w-fit rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-xs font-black text-emerald-200">
+            {response.confidence}% confidence
+          </span>
+        </div>
+        <p className="mt-3 text-sm leading-6 text-slate-300">{response.summary}</p>
+        <div className="mt-4 space-y-2">
+          {response.steps.slice(0, 3).map((step, index) => (
+            <div key={step} className="flex gap-3 rounded-lg border border-white/10 bg-slate-950/70 px-3 py-3">
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-sky-300 text-xs font-black text-slate-950">
+                {index + 1}
+              </span>
+              <p className="text-sm leading-6 text-slate-300">{step}</p>
+            </div>
+          ))}
+        </div>
+        <p className="mt-4 rounded-lg border border-white/10 bg-slate-950/70 px-3 py-3 text-sm font-bold text-emerald-200">
+          Expected impact: {response.impact}
+        </p>
+      </div>
+
+      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+        <button
+          type="button"
+          onClick={savePlan}
+          className="rounded-md bg-emerald-300 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-emerald-200"
+        >
+          Save My Fleet Plan
         </button>
         <button
           type="button"
-          onClick={onPricing}
+          onClick={() => {
+            const nextGoal = 'Should I raise price this weekend and when should I charge?';
+            setGoal(nextGoal);
+            setResponse(buildDemoResponse(nextGoal));
+          }}
           className="rounded-md border border-white/10 bg-white/5 px-5 py-3 text-sm font-black text-slate-100 transition hover:bg-white/10"
         >
-          View Pricing
+          Try Another Goal
         </button>
-      </div>
-
-      <div className="mt-5 rounded-lg border border-sky-300/20 bg-sky-300/[0.06] p-4">
-        <p className="text-xs font-black uppercase tracking-[0.18em] text-sky-300">What they can try first</p>
-        <p className="mt-2 text-sm leading-6 text-slate-300">
-          Ask the AI agent about Turo pricing, charging, weather, maintenance, or onboarding before creating an account.
-        </p>
       </div>
     </aside>
   );
@@ -494,7 +539,7 @@ export default function LandingPage({ onNavigate }) {
     onNavigate(isSignedIn ? route : 'onboarding');
   };
   const scrollToDemo = () => {
-    document.getElementById('interactive-demo')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.getElementById('hero-agent-input')?.focus();
   };
   const scrollToPricing = () => {
     document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -559,10 +604,10 @@ export default function LandingPage({ onNavigate }) {
               FleetOS AI Agent
             </p>
             <h1 className="max-w-4xl text-5xl font-black leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-7xl">
-              Run your Tesla fleet with an AI agent.
+              FleetOS - Your AI Agent for Tesla Rentals & Robotaxis
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
-              Give FleetOS a goal. It monitors telemetry, plans charging and maintenance, imports rental earnings, and recommends actions while you stay in control.
+              Give it a goal. Watch it plan charging, maintenance, cleaning, and earnings strategies while you stay in full control.
             </p>
             <div className="mt-6 flex flex-wrap gap-2">
               {['First Tesla free', '$12 per extra Tesla', 'Tesla password never shared'].map((label) => (
@@ -577,14 +622,14 @@ export default function LandingPage({ onNavigate }) {
                 onClick={scrollToDemo}
                 className="rounded-md bg-sky-300 px-5 py-4 text-sm font-black text-slate-950 transition hover:bg-sky-200"
               >
-                Try Free AI Demo
+                Try the AI Agent Live
               </button>
               <button
                 type="button"
                 onClick={() => onNavigate('onboarding')}
                 className="rounded-md border border-sky-300/30 bg-sky-300/10 px-5 py-4 text-sm font-black text-sky-100 transition hover:bg-sky-300/20"
               >
-                Start Free
+                Start Free (First Tesla Free)
               </button>
               {isSignedIn ? (
                 <button
@@ -618,15 +663,12 @@ export default function LandingPage({ onNavigate }) {
             </p>
           </div>
 
-          <HeroPricingPanel
-            onStart={() => onNavigate('onboarding')}
-            onPricing={scrollToPricing}
-          />
+          <HeroAgentDemo onNavigate={onNavigate} />
         </section>
 
-        <InteractiveAgentDemo onNavigate={onNavigate} />
-
         <PricingSection onStart={() => onNavigate('onboarding')} />
+
+        <InteractiveAgentDemo onNavigate={onNavigate} />
 
         <section className="mx-auto max-w-7xl px-5 py-10">
           <TeslaDataAccessDisclosure />
