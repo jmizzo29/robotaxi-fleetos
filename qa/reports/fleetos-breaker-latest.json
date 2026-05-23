@@ -1,0 +1,111 @@
+{
+  "baseUrl": "https://robotaxi-fleetos.vercel.app",
+  "generatedAt": "2026-05-23T13:14:37.964Z",
+  "durationMs": 2810,
+  "summary": {
+    "total": 12,
+    "pass": 11,
+    "warn": 0,
+    "fail": 1
+  },
+  "results": [
+    {
+      "name": "public shell loads",
+      "status": "pass",
+      "detail": "Homepage and bundle loaded in 448ms.",
+      "evidence": {
+        "asset": "index-BCoFHYK5.js",
+        "bundleBytes": 608564
+      }
+    },
+    {
+      "name": "stale homepage copy removed",
+      "status": "pass",
+      "detail": "No stale waitlist or old CTA copy found in deployed bundle.",
+      "evidence": {}
+    },
+    {
+      "name": "current landing copy present",
+      "status": "pass",
+      "detail": "Current homepage trust and product-preview copy is present.",
+      "evidence": {}
+    },
+    {
+      "name": "public route smoke",
+      "status": "pass",
+      "detail": "Public routes return the SPA shell.",
+      "evidence": {
+        "routes": [
+          "/",
+          "/#/onboarding",
+          "/#/account",
+          "/#/privacy",
+          "/#/terms"
+        ]
+      }
+    },
+    {
+      "name": "health endpoint",
+      "status": "pass",
+      "detail": "Health endpoint confirms Clerk auth and production Tesla callback are active.",
+      "evidence": {
+        "auth": {
+          "provider": "clerk",
+          "clerkConfigured": true,
+          "clerkRequired": true,
+          "hasClerkPublishableKey": true,
+          "hasClerkSecretKey": true
+        },
+        "redirectUri": "https://robotaxi-fleetos.vercel.app/api/tesla/callback"
+      }
+    },
+    {
+      "name": "signed-out session gate",
+      "status": "pass",
+      "detail": "Signed-out user cannot get an authenticated FleetOS session.",
+      "evidence": {}
+    },
+    {
+      "name": "admin gate",
+      "status": "pass",
+      "detail": "Signed-out user cannot read admin summary.",
+      "evidence": {}
+    },
+    {
+      "name": "Tesla login gate",
+      "status": "fail",
+      "detail": "Expected 401 when signed out, got 500.",
+      "evidence": {
+        "location": null,
+        "body": "A server error has occurred\n\nFUNCTION_INVOCATION_FAILED\n\niad1::sdqzl-1779542077086-145332b6da22\n"
+      }
+    },
+    {
+      "name": "Tesla callback misuse",
+      "status": "pass",
+      "detail": "Direct callback open fails safely with recovery link.",
+      "evidence": {}
+    },
+    {
+      "name": "vehicles API gate",
+      "status": "pass",
+      "detail": "Signed-out user cannot read vehicle telemetry.",
+      "evidence": {}
+    },
+    {
+      "name": "method hardening",
+      "status": "pass",
+      "detail": "Unsupported API method returns 405.",
+      "evidence": {}
+    },
+    {
+      "name": "health burst",
+      "status": "pass",
+      "detail": "20 concurrent health requests passed in 771ms.",
+      "evidence": {
+        "maxMs": 764,
+        "minMs": 75
+      }
+    }
+  ]
+}

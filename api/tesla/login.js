@@ -42,7 +42,13 @@ export default async function handler(req, res) {
   }
 
   await ensureFleetSchema();
-  const session = await getSession(req, res, { create: true });
+  let session;
+  try {
+    session = await getSession(req, res, { create: true });
+  } catch {
+    session = null;
+  }
+
   if (!session) {
     res.status(401).send('Sign in to FleetOS before connecting Tesla.');
     return;

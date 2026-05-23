@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>FleetOS Breaker Report</title>
+    <style>
+      body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #07111f; color: #e5eefb; }
+      main { max-width: 1080px; margin: 0 auto; padding: 32px 20px; }
+      h1 { margin: 0; font-size: 34px; }
+      .meta { color: #94a3b8; margin-top: 8px; }
+      .summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; margin: 24px 0; }
+      .card, .test { border: 1px solid rgba(148,163,184,.2); background: rgba(15,23,42,.86); border-radius: 10px; padding: 16px; }
+      .card strong { display: block; font-size: 28px; margin-top: 4px; }
+      .tests { display: grid; gap: 12px; }
+      .test { border-left: 6px solid #38bdf8; }
+      .pass { border-left-color: #34d399; }
+      .warn { border-left-color: #fbbf24; }
+      .fail { border-left-color: #fb7185; }
+      .status { text-transform: uppercase; font-size: 12px; letter-spacing: .14em; font-weight: 800; }
+      pre { white-space: pre-wrap; word-break: break-word; color: #cbd5e1; background: #020617; border-radius: 8px; padding: 12px; overflow: auto; }
+      @media (max-width: 720px) { .summary { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>FleetOS Breaker Report</h1>
+      <p class="meta">Target: https://robotaxi-fleetos.vercel.app · Generated: 2026-05-23T13:14:37.964Z</p>
+      <section class="summary">
+        <div class="card">Total<strong>12</strong></div>
+        <div class="card">Pass<strong>11</strong></div>
+        <div class="card">Warn<strong>0</strong></div>
+        <div class="card">Fail<strong>1</strong></div>
+      </section>
+      <section class="tests">
+        
+          <article class="test pass">
+            <div class="status">pass</div>
+            <h2>public shell loads</h2>
+            <p>Homepage and bundle loaded in 448ms.</p>
+            <pre>{
+  &quot;asset&quot;: &quot;index-BCoFHYK5.js&quot;,
+  &quot;bundleBytes&quot;: 608564
+}</pre>
+          </article>
+        
+          <article class="test pass">
+            <div class="status">pass</div>
+            <h2>stale homepage copy removed</h2>
+            <p>No stale waitlist or old CTA copy found in deployed bundle.</p>
+            
+          </article>
+        
+          <article class="test pass">
+            <div class="status">pass</div>
+            <h2>current landing copy present</h2>
+            <p>Current homepage trust and product-preview copy is present.</p>
+            
+          </article>
+        
+          <article class="test pass">
+            <div class="status">pass</div>
+            <h2>public route smoke</h2>
+            <p>Public routes return the SPA shell.</p>
+            <pre>{
+  &quot;routes&quot;: [
+    &quot;/&quot;,
+    &quot;/#/onboarding&quot;,
+    &quot;/#/account&quot;,
+    &quot;/#/privacy&quot;,
+    &quot;/#/terms&quot;
+  ]
+}</pre>
+          </article>
+        
+          <article class="test pass">
+            <div class="status">pass</div>
+            <h2>health endpoint</h2>
+            <p>Health endpoint confirms Clerk auth and production Tesla callback are active.</p>
+            <pre>{
+  &quot;auth&quot;: {
+    &quot;provider&quot;: &quot;clerk&quot;,
+    &quot;clerkConfigured&quot;: true,
+    &quot;clerkRequired&quot;: true,
+    &quot;hasClerkPublishableKey&quot;: true,
+    &quot;hasClerkSecretKey&quot;: true
+  },
+  &quot;redirectUri&quot;: &quot;https://robotaxi-fleetos.vercel.app/api/tesla/callback&quot;
+}</pre>
+          </article>
+        
+          <article class="test pass">
+            <div class="status">pass</div>
+            <h2>signed-out session gate</h2>
+            <p>Signed-out user cannot get an authenticated FleetOS session.</p>
+            
+          </article>
+        
+          <article class="test pass">
+            <div class="status">pass</div>
+            <h2>admin gate</h2>
+            <p>Signed-out user cannot read admin summary.</p>
+            
+          </article>
+        
+          <article class="test fail">
+            <div class="status">fail</div>
+            <h2>Tesla login gate</h2>
+            <p>Expected 401 when signed out, got 500.</p>
+            <pre>{
+  &quot;location&quot;: null,
+  &quot;body&quot;: &quot;A server error has occurred\n\nFUNCTION_INVOCATION_FAILED\n\niad1::sdqzl-1779542077086-145332b6da22\n&quot;
+}</pre>
+          </article>
+        
+          <article class="test pass">
+            <div class="status">pass</div>
+            <h2>Tesla callback misuse</h2>
+            <p>Direct callback open fails safely with recovery link.</p>
+            
+          </article>
+        
+          <article class="test pass">
+            <div class="status">pass</div>
+            <h2>vehicles API gate</h2>
+            <p>Signed-out user cannot read vehicle telemetry.</p>
+            
+          </article>
+        
+          <article class="test pass">
+            <div class="status">pass</div>
+            <h2>method hardening</h2>
+            <p>Unsupported API method returns 405.</p>
+            
+          </article>
+        
+          <article class="test pass">
+            <div class="status">pass</div>
+            <h2>health burst</h2>
+            <p>20 concurrent health requests passed in 771ms.</p>
+            <pre>{
+  &quot;maxMs&quot;: 764,
+  &quot;minMs&quot;: 75
+}</pre>
+          </article>
+        
+      </section>
+    </main>
+  </body>
+</html>
