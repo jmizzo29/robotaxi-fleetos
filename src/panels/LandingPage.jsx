@@ -62,6 +62,14 @@ const maintenanceFeatures = [
   ['Predictive Maintenance', 'Use odometer, battery cycles, driving patterns, and fleet history to predict likely failures earlier.'],
 ];
 
+const maintenanceOutcomes = [
+  'Daily health summaries',
+  'Predictive maintenance alerts',
+  'Smart scheduling around ride demand',
+  'Cleaning workflow automation',
+  'Service cost & ROI tracking',
+];
+
 function ProductPreview() {
   return (
     <div className="relative min-h-[500px] overflow-hidden rounded-2xl border border-white/10 bg-slate-950 shadow-2xl shadow-black/40">
@@ -316,13 +324,24 @@ export default function LandingPage({ onNavigate }) {
         <section className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-5 py-14 lg:grid-cols-[0.82fr_1.18fr]">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-300">
-              Vehicle Health & Maintenance
+              Fleet Health & Maintenance
             </p>
             <h2 className="mt-3 text-4xl font-black tracking-tight text-white">
-              Robotaxi owners need downtime prevention, not just dashboard alerts.
+              Built for robotaxis that need to stay earning.
             </h2>
             <p className="mt-4 text-sm leading-7 text-slate-400">
-              FleetOS turns Tesla telemetry, owner records, cleaning status, and service history into a practical maintenance plan. The agent should know which vehicle needs attention, when to schedule it, and what the likely cost or downtime impact will be.
+              Your AI agent watches vehicle health 24/7 and helps you stay ahead of issues that kill earnings. FleetOS turns Tesla telemetry, owner records, cleaning status, and service history into a practical maintenance plan.
+            </p>
+            <div className="mt-6 grid gap-2">
+              {maintenanceOutcomes.map((item) => (
+                <div key={item} className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2">
+                  <span className="h-2 w-2 rounded-full bg-emerald-300 shadow-lg shadow-emerald-300/40" />
+                  <span className="text-sm font-bold text-slate-200">{item}</span>
+                </div>
+              ))}
+            </div>
+            <p className="mt-5 text-sm font-black leading-6 text-emerald-200">
+              Result: higher uptime, lower long-term costs, and more profit per vehicle.
             </p>
             <div className="mt-6 rounded-xl border border-emerald-300/20 bg-emerald-400/[0.06] p-5">
               <p className="text-xs font-black uppercase tracking-[0.2em] text-emerald-300">Example Agent Alerts</p>

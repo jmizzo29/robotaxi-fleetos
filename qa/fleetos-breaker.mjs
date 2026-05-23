@@ -129,7 +129,7 @@ async function testExpectedLandingCopy() {
     'AI Agent Console',
     'Security & Privacy',
     'FleetOS turns data into action',
-    'Robotaxi owners need downtime prevention',
+    'Built for robotaxis that need to stay earning',
     'Try the AI Agent',
     'Tesla password never shared',
   ];
