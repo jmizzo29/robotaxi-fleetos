@@ -25,6 +25,36 @@ function formatPercent(value) {
   return `${Math.round(value)}%`;
 }
 
+const MARKET_RATE_KEY = 'fleetos_pricing_market_inputs';
+
+function readMarketInputs() {
+  if (typeof window === 'undefined') {
+    return {
+      currentDailyRate: '',
+      competitorAverage: '',
+      minimumDailyRate: '',
+      targetDailyRate: '',
+    };
+  }
+
+  try {
+    return {
+      currentDailyRate: '',
+      competitorAverage: '',
+      minimumDailyRate: '',
+      targetDailyRate: '',
+      ...JSON.parse(window.localStorage.getItem(MARKET_RATE_KEY) || '{}'),
+    };
+  } catch {
+    return {
+      currentDailyRate: '',
+      competitorAverage: '',
+      minimumDailyRate: '',
+      targetDailyRate: '',
+    };
+  }
+}
+
 function vehicleFinance(vehicle, revenueRecords = []) {
   const ownership = vehicle.ownership || getVehicleOwnership(vehicle) || {};
   const importedRevenue = revenueForVehicle(vehicle, revenueRecords);
@@ -382,8 +412,18 @@ function FinanceInsightBoard({ finance, totalNet, avgRoi, onQueueCommand }) {
   );
 }
 
-function PricingAgentPanel({ recommendations = [], summary, onQueueCommand }) {
+function PricingAgentPanel({ recommendations = [], summary, marketInputs, onMarketInputsChange, onQueueCommand }) {
   const strongest = summary?.strongest;
+  const [draft, setDraft] = useState(() => marketInputs);
+
+  const updateDraft = (field, value) => {
+    setDraft((current) => ({ ...current, [field]: value }));
+  };
+
+  const saveMarketInputs = () => {
+    window.localStorage.setItem(MARKET_RATE_KEY, JSON.stringify(draft));
+    onMarketInputsChange?.(draft);
+  };
 
   return (
     <article className="rounded-lg border border-sky-300/20 bg-slate-900/85 p-5 shadow-xl shadow-black/15">
@@ -412,6 +452,41 @@ function PricingAgentPanel({ recommendations = [], summary, onQueueCommand }) {
         </div>
       </div>
 
+      <div className="mt-5 rounded-lg border border-white/10 bg-slate-950/50 p-4">
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+          <div>
+            <p className="text-[11px] font-black uppercase tracking-[0.18em] text-slate-500">Manual Market Inputs</p>
+            <p className="mt-2 text-sm leading-6 text-slate-400">
+              Add local Turo market context without scraping: current daily rate, nearby competitor average, minimum price floor, and target rate.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={saveMarketInputs}
+            className="rounded-md border border-emerald-400/30 bg-emerald-400/10 px-4 py-3 text-sm font-bold text-emerald-100 transition hover:bg-emerald-400/20"
+          >
+            Save Market Inputs
+          </button>
+        </div>
+        <div className="mt-4 grid grid-cols-2 gap-3 xl:grid-cols-4">
+          {[
+            ['currentDailyRate', 'Current $/day'],
+            ['competitorAverage', 'Market avg $/day'],
+            ['minimumDailyRate', 'Minimum $/day'],
+            ['targetDailyRate', 'Target $/day'],
+          ].map(([field, label]) => (
+            <input
+              key={field}
+              type="number"
+              value={draft[field] || ''}
+              onChange={(event) => updateDraft(field, event.target.value)}
+              placeholder={label}
+              className="rounded-md border border-white/10 bg-slate-950 px-3 py-3 text-sm font-bold text-white outline-none focus:border-sky-300/40"
+            />
+          ))}
+        </div>
+      </div>
+
       <div className="mt-5 grid grid-cols-1 gap-4 xl:grid-cols-3">
         {recommendations.slice(0, 3).map((item) => (
           <article key={item.id} className="rounded-lg border border-white/10 bg-slate-950/55 p-4">
@@ -424,6 +499,11 @@ function PricingAgentPanel({ recommendations = [], summary, onQueueCommand }) {
                 {item.recommendedChange > 0 ? '+' : ''}{item.recommendedChange}%
               </span>
             </div>
+            {item.recommendedDailyRate && (
+              <p className="mt-3 rounded-md border border-emerald-300/20 bg-emerald-400/10 px-3 py-2 text-sm font-black text-emerald-200">
+                Suggested rate: {formatCurrency(item.recommendedDailyRate)}/day
+              </p>
+            )}
             <div className="mt-4 space-y-2">
               {item.signals.slice(0, 4).map((signal) => (
                 <div key={`${item.id}-${signal.label}`} className="rounded-md border border-white/10 bg-white/[0.03] px-3 py-2">
@@ -453,6 +533,7 @@ function PricingAgentPanel({ recommendations = [], summary, onQueueCommand }) {
 
 export default function FleetFinancePanel({ fleet = [], onQueueCommand }) {
   const [revenueRecords, setRevenueRecords] = useState(() => readRevenueRecords());
+  const [marketInputs, setMarketInputs] = useState(() => readMarketInputs());
 
   useEffect(() => {
     const refresh = () => setRevenueRecords(readRevenueRecords());
@@ -473,7 +554,7 @@ export default function FleetFinancePanel({ fleet = [], onQueueCommand }) {
   const avgRoi = finance.length
     ? finance.reduce((sum, item) => sum + item.roi, 0) / finance.length
     : 0;
-  const pricingRecommendations = buildPricingRecommendations({ fleet, revenueRecords });
+  const pricingRecommendations = buildPricingRecommendations({ fleet, revenueRecords, market: marketInputs });
   const pricingSummary = buildFleetPricingSummary(pricingRecommendations);
 
   return (
@@ -505,6 +586,8 @@ export default function FleetFinancePanel({ fleet = [], onQueueCommand }) {
       <PricingAgentPanel
         recommendations={pricingRecommendations}
         summary={pricingSummary}
+        marketInputs={marketInputs}
+        onMarketInputsChange={setMarketInputs}
         onQueueCommand={onQueueCommand}
       />
 

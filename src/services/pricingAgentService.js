@@ -24,6 +24,22 @@ function nearbyEventSignal(date = new Date()) {
   const day = date.getDate();
   const weekend = isWeekend(date);
 
+  if (
+    (month === 0 && day <= 3) ||
+    (month === 4 && day >= 24 && day <= 31) ||
+    (month === 6 && day >= 1 && day <= 7) ||
+    (month === 8 && day <= 7) ||
+    (month === 10 && day >= 20) ||
+    (month === 11 && day >= 18)
+  ) {
+    return {
+      label: 'Holiday travel window',
+      detail: 'Built-in holiday logic sees a travel window that often lifts rental demand.',
+      lift: 12,
+      confidence: 74,
+    };
+  }
+
   if (weekend && [0, 1, 2, 5, 6, 10, 11].includes(month)) {
     return {
       label: 'Weekend leisure demand',
@@ -33,12 +49,12 @@ function nearbyEventSignal(date = new Date()) {
     };
   }
 
-  if ((month === 10 && day >= 20) || (month === 11 && day <= 31) || (month === 6 && day <= 7)) {
+  if (weekend) {
     return {
-      label: 'Holiday travel window',
-      detail: 'Holiday travel windows often justify higher pricing when utilization is healthy.',
-      lift: 12,
-      confidence: 74,
+      label: 'Weekend demand window',
+      detail: 'Weekend timing can justify a small pricing test when utilization and health are strong.',
+      lift: 5,
+      confidence: 62,
     };
   }
 
@@ -140,10 +156,55 @@ function revenueSignal(vehicle, revenueRecords = []) {
   };
 }
 
+function marketRateSignal(vehicle, market = {}) {
+  const currentDailyRate = Number(market.currentDailyRate || vehicle?.dailyRate || vehicle?.marketRate || 0);
+  const competitorAverage = Number(market.competitorAverage || 0);
+  const minimumDailyRate = Number(market.minimumDailyRate || 0);
+  const targetDailyRate = Number(market.targetDailyRate || 0);
+
+  if (!currentDailyRate && !competitorAverage && !minimumDailyRate && !targetDailyRate) {
+    return {
+      lift: 0,
+      detail: 'No manual market-rate inputs yet. Add local Turo average and minimum acceptable price to improve pricing confidence.',
+      confidencePenalty: 8,
+      recommendedDailyRate: null,
+    };
+  }
+
+  const comparisonRate = competitorAverage || targetDailyRate || currentDailyRate;
+  let lift = 0;
+
+  if (currentDailyRate && competitorAverage) {
+    const gap = ((competitorAverage - currentDailyRate) / Math.max(1, currentDailyRate)) * 100;
+    if (gap >= 12) lift += 8;
+    else if (gap <= -15) lift -= 8;
+    else if (gap >= 5) lift += 4;
+  }
+
+  if (currentDailyRate && minimumDailyRate && currentDailyRate < minimumDailyRate) {
+    lift += 10;
+  }
+
+  const baseline = currentDailyRate || comparisonRate || minimumDailyRate;
+  const recommendedDailyRate = baseline
+    ? Math.max(minimumDailyRate || 0, Math.round(baseline * (1 + lift / 100)))
+    : null;
+
+  return {
+    lift: clamp(Math.round(lift), -12, 12),
+    detail: currentDailyRate && competitorAverage
+      ? `Current rate is $${currentDailyRate}/day vs. local market input of $${competitorAverage}/day.`
+      : `Manual market inputs available${minimumDailyRate ? ` with a $${minimumDailyRate}/day floor` : ''}.`,
+    confidencePenalty: 0,
+    recommendedDailyRate,
+  };
+}
+
 export function buildPricingRecommendations({
   fleet = [],
   revenueRecords = [],
   weather = null,
+  market = {},
   date = new Date(),
 } = {}) {
   const event = nearbyEventSignal(date);
@@ -153,13 +214,18 @@ export function buildPricingRecommendations({
     const health = healthPremium(vehicle);
     const utilization = utilizationSignal(vehicle);
     const revenue = revenueSignal(vehicle, revenueRecords);
-    const rawLift = event.lift + weatherSignal.lift + health.lift + utilization.lift + revenue.lift;
+    const marketSignal = marketRateSignal(vehicle, market);
+    const rawLift = event.lift + weatherSignal.lift + health.lift + utilization.lift + revenue.lift + marketSignal.lift;
     const recommendedChange = clamp(Math.round(rawLift), -20, 25);
     const confidence = clamp(
-      Math.round(55 + event.confidence * 0.12 + weatherSignal.confidence * 0.12 + health.score * 0.18 + Math.min(20, Math.abs(recommendedChange)) - revenue.confidencePenalty),
+      Math.round(55 + event.confidence * 0.12 + weatherSignal.confidence * 0.12 + health.score * 0.18 + Math.min(20, Math.abs(recommendedChange)) - revenue.confidencePenalty - marketSignal.confidencePenalty),
       45,
       94,
     );
+    const baselineRate = Number(market.currentDailyRate || vehicle?.dailyRate || vehicle?.marketRate || 0);
+    const recommendedDailyRate = baselineRate
+      ? Math.max(Number(market.minimumDailyRate || 0), Math.round(baselineRate * (1 + recommendedChange / 100)))
+      : marketSignal.recommendedDailyRate;
 
     const action = recommendedChange >= 12
       ? 'Increase price'
@@ -178,9 +244,11 @@ export function buildPricingRecommendations({
       healthScore: health.score,
       utilization: utilization.utilization,
       revenue: revenue.revenue,
+      recommendedDailyRate,
       signals: [
         { label: event.label, detail: event.detail, impact: event.lift },
         { label: weatherSignal.label, detail: weatherSignal.detail, impact: weatherSignal.lift },
+        { label: marketSignal.recommendedDailyRate ? 'Manual market rate' : 'Market rate missing', detail: marketSignal.detail, impact: marketSignal.lift },
         { label: `Health score ${health.score}`, detail: health.detail, impact: health.lift },
         { label: `Utilization ${Math.round(utilization.utilization)}%`, detail: utilization.detail, impact: utilization.lift },
         { label: revenue.revenue ? 'Historical earnings' : 'Historical earnings missing', detail: revenue.detail, impact: revenue.lift },
