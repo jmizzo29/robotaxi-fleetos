@@ -78,6 +78,12 @@ const predictiveMaintenancePriorities = [
   ['5', 'Cabin / Cleaning', 'Passenger experience affects ratings and bookings', '1-7 days', 'Manual input now, future cabin camera or vision score'],
 ];
 
+const teslaBestPractices = [
+  ['Fleet Telemetry First', 'FleetOS is designed to prefer Tesla Fleet Telemetry streaming, where vehicles push changed fields to the backend instead of forcing constant polling.'],
+  ['Wake-Safe Agent Design', 'The AI agent should avoid unnecessary wakes, batch requests, and wait for naturally-awake vehicles whenever possible.'],
+  ['Command Cooldowns', 'Operational commands need cooldowns, audit logs, and clear user approval before anything important or repeated is queued.'],
+];
+
 function ProductPreview() {
   return (
     <div className="relative min-h-[500px] overflow-hidden rounded-2xl border border-white/10 bg-slate-950 shadow-2xl shadow-black/40">
@@ -466,6 +472,29 @@ export default function LandingPage({ onNavigate }) {
             <div className="mt-5 max-w-3xl">
               <TeslaIndependenceNotice compact />
             </div>
+          </div>
+        </section>
+
+        <section className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-5 py-14 lg:grid-cols-[0.85fr_1.15fr]">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-300">
+              Tesla API Strategy
+            </p>
+            <h2 className="mt-3 text-4xl font-black tracking-tight text-white">
+              Built to respect rate limits, wakes, and owner control.
+            </h2>
+            <p className="mt-4 text-sm leading-7 text-slate-400">
+              A serious robotaxi fleet tool cannot have an overactive agent hammering vehicle APIs. FleetOS is being designed around telemetry streaming, wake minimization, command cooldowns, and explicit approval for sensitive actions.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            {teslaBestPractices.map(([title, detail]) => (
+              <article key={title} className="rounded-lg border border-white/10 bg-slate-900/80 p-5">
+                <h3 className="text-lg font-black text-white">{title}</h3>
+                <p className="mt-3 text-sm leading-6 text-slate-400">{detail}</p>
+              </article>
+            ))}
           </div>
         </section>
 
