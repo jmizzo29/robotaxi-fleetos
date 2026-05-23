@@ -5,14 +5,14 @@ import { isClerkConfigured } from '../auth/clerkConfig';
 
 const capabilities = [
   ['Live Fleet Telemetry', 'Connect Tesla Fleet API data for battery, GPS, odometer, charging, and vehicle state.'],
-  ['AI Operations', 'Prioritize alerts, recommend next actions, and turn fleet events into operator workflows.'],
+  ['AI Agent Operations', 'Give the agent goals, review its plan, and approve the next action before anything sensitive happens.'],
   ['Owner Finance', 'Track acquisition cost, loan balance, equity, monthly payment, ROI, and margin by vehicle.'],
   ['Robotaxi Readiness', 'Score vehicles for future driverless operations while keeping Tesla execution boundaries clear.'],
 ];
 
 const previewRows = [
-  ['Tesla View', 'Battery, parking, odometer', 'Live sync', 'Owner'],
-  ['Operations Plan', 'Charging and staging', 'AI assist', 'Plan'],
+  ['Goal', 'Maximize earnings this weekend', 'Planned', 'Agent'],
+  ['Action', 'Stage, charge, inspect', 'Review', 'Control'],
   ['Owner Economics', 'Cost, balance, revenue', 'Private', 'Finance'],
 ];
 
@@ -58,7 +58,7 @@ function ProductPreview() {
         <div className="mb-5 flex items-center justify-between">
           <div>
             <p className="text-[11px] font-black uppercase tracking-[0.24em] text-sky-300">FleetOS</p>
-            <h2 className="mt-1 text-2xl font-black text-white">FleetOS Product Preview</h2>
+            <h2 className="mt-1 text-2xl font-black text-white">AI Agent Console</h2>
           </div>
           <span className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-xs font-black text-emerald-200">
             Preview
@@ -67,9 +67,9 @@ function ProductPreview() {
 
         <div className="mb-4 grid grid-cols-3 gap-3">
           {[
-            ['Fleet View', 'Telemetry'],
-            ['Economics', 'Owner'],
-            ['Risk Signals', 'AI'],
+            ['Agent Goal', 'Earnings'],
+            ['Fleet State', 'Ready'],
+            ['Control', 'Owner'],
           ].map(([label, value]) => (
             <div key={label} className="rounded-xl border border-white/10 bg-white/[0.06] p-3">
               <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500">{label}</p>
@@ -167,15 +167,32 @@ export default function LandingPage({ onNavigate }) {
         <section className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-5 pb-16 pt-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:pb-24 lg:pt-16">
           <div>
             <p className="mb-4 text-xs font-black uppercase tracking-[0.28em] text-emerald-300">
-              AI Fleet Operations
+              AI Fleet Agent
             </p>
             <h1 className="max-w-4xl text-5xl font-black leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-7xl">
               FleetOS
-              <span className="block text-sky-300">for Tesla fleet owners</span>
+              <span className="block text-sky-300">Your AI Agent for Tesla Robotaxi Fleets</span>
             </h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
-              A secure fleet workspace for Tesla owners who rent, share, or manage vehicles and need consent-based telemetry, owner economics, maintenance planning, and AI-assisted operations.
+              Give your AI agent goals. It monitors vehicles, optimizes earnings, plans maintenance, and helps run your fleet while you stay in full control.
             </p>
+            <div className="mt-6 rounded-xl border border-sky-300/20 bg-sky-300/[0.06] p-4">
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-sky-300">Give natural commands like</p>
+              <div className="mt-4 grid gap-2 text-sm font-semibold text-slate-200">
+                {[
+                  '"Maximize earnings this weekend"',
+                  '"Prepare all vehicles for tomorrow morning"',
+                  '"Check health on Cybercab #2"',
+                ].map((command) => (
+                  <p key={command} className="rounded-lg border border-white/10 bg-slate-950/70 px-3 py-2">
+                    {command}
+                  </p>
+                ))}
+              </div>
+              <p className="mt-4 text-sm leading-6 text-slate-400">
+                The agent thinks, plans, and recommends action. You approve the workflow before FleetOS touches sensitive data or queues operational changes.
+              </p>
+            </div>
             <div className="mt-6 flex flex-wrap gap-2">
               {['First Tesla free', 'Owner-controlled access', 'Tesla password never shared'].map((label) => (
                 <span key={label} className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-emerald-200">
@@ -189,7 +206,7 @@ export default function LandingPage({ onNavigate }) {
                 onClick={() => onNavigate('onboarding')}
                 className="rounded-md bg-sky-300 px-5 py-4 text-sm font-black text-slate-950 transition hover:bg-sky-200"
               >
-                Start Free Setup
+                Try the AI Agent
               </button>
               {isSignedIn ? (
                 <button

@@ -76,6 +76,7 @@ async function testLanding(browser, profile) {
   await page.goto(routeUrl('?qa=browser'), { waitUntil: 'networkidle' });
   await page.getByText('FleetOS', { exact: true }).first().waitFor({ timeout: 15000 });
   await page.getByText('Security & Privacy').waitFor({ timeout: 15000 });
+  await page.getByText('Your AI Agent for Tesla Robotaxi Fleets').waitFor({ timeout: 15000 });
   await page.getByText('Tesla password never shared').first().waitFor({ timeout: 15000 });
   await page.getByText('Join Early Access').count().then((count) => {
     if (count > 0) throw new Error('Old Join Early Access form is visible.');
@@ -125,7 +126,7 @@ async function testLandingCtas(browser, profile) {
   const telemetry = await makePage(browser, profile);
   const { page, context } = telemetry;
   await page.goto(routeUrl('/'), { waitUntil: 'networkidle' });
-  await page.getByRole('button', { name: 'Start Free Setup' }).first().click();
+  await page.getByRole('button', { name: 'Try the AI Agent' }).first().click();
   await page.waitForURL('**/#/onboarding', { timeout: 10000 });
   await page.getByText('Connect Your First Tesla').waitFor({ timeout: 15000 });
   await context.close();

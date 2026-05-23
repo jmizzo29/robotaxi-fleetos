@@ -126,9 +126,9 @@ async function testStaleCopy() {
 async function testExpectedLandingCopy() {
   const { bundle } = await getIndexAndBundle();
   const expected = [
-    'FleetOS Product Preview',
+    'AI Agent Console',
     'Security & Privacy',
-    'Start Free Setup',
+    'Try the AI Agent',
     'Tesla password never shared',
   ];
   const missing = expected.filter((phrase) => !bundle?.text.includes(phrase));
