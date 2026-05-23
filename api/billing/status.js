@@ -13,13 +13,26 @@ export default async function handler(req, res) {
     return;
   }
 
-  const billing = await getBillingStatusForSession(req, res, { create: true });
-  res.status(200).json({
-    ok: true,
-    billing,
-    policy: {
-      label: 'First Tesla free',
-      detail: 'FleetOS beta includes one Tesla at no cost. Additional vehicles are marked billable until a paid plan is attached.',
-    },
-  });
+  try {
+    const billing = await getBillingStatusForSession(req, res, { create: true });
+    if (!billing) {
+      res.status(401).json({ error: 'LOGIN_REQUIRED', message: 'Sign in to review billing status.' });
+      return;
+    }
+
+    res.status(200).json({
+      ok: true,
+      billing,
+      policy: {
+        label: 'First Tesla free',
+        detail: 'FleetOS beta includes one Tesla at no cost. Additional vehicles are marked billable until a paid plan is attached.',
+      },
+    });
+  } catch (error) {
+    const status = error.statusCode || error.status || 500;
+    res.status(status === 401 ? 401 : 500).json({
+      error: status === 401 ? 'LOGIN_REQUIRED' : 'BILLING_STATUS_FAILED',
+      message: status === 401 ? 'Sign in to review billing status.' : 'Billing status failed.',
+    });
+  }
 }
