@@ -199,42 +199,45 @@ function buildDemoResponse(goal) {
 
   if (lower.includes('health') || lower.includes('prepare')) {
     return {
-      title: 'Tomorrow readiness plan',
-      summary: 'FleetOS would inspect health, battery, cleanliness, and service risk before morning demand.',
+      title: 'Tomorrow readiness command',
+      summary: 'FleetOS found two vehicles that need action before morning demand and built a low-wake prep plan.',
+      metrics: ['94% fleet health', '2 prep tasks', '7:30 AM ready target'],
       steps: [
-        'Run vehicle health scores for all Teslas and flag any score below 82.',
-        'Schedule charging for vehicles under 65% before peak pickup windows.',
-        'Queue cleaning inspection for vehicles with recent completed trips.',
+        'Charge Vehicle 2 from 48% to 82% overnight during the lowest-cost window.',
+        'Schedule a 20-minute interior check for the vehicle returning after 9 PM.',
+        'Flag tire pressure review on Vehicle 3 before its next rental block.',
         'Hold wake/command actions for owner approval and respect VIN-scoped cooldowns.',
       ],
       confidence: 91,
-      impact: 'Higher morning uptime and fewer last-minute cancellations.',
+      impact: 'All three Teslas ready before peak pickup, with lower risk of a morning cancellation.',
     };
   }
 
   if (wantsPricing) {
     return {
-      title: 'Turo pricing plan',
-      summary: 'FleetOS would compare demand pressure, weather, utilization, health score, and imported Turo earnings before recommending a price move.',
+      title: 'Turo revenue plan',
+      summary: 'FleetOS sees stronger weekend demand and recommends price moves only where readiness and health support it.',
+      metrics: ['+$284 projected', '+18% Model Y', '82% utilization target'],
       steps: [
-        'Check the next 7 days for weekend, holiday, weather, and local event pressure.',
-        'Rank each Tesla by utilization, health score, battery readiness, and historical earnings.',
-        'Suggest a percent change per vehicle, such as +18% for high-demand windows or -10% for soft weekdays.',
-        'Queue owner approval before any pricing change is applied outside FleetOS.',
+        'Raise the Model Y weekend rate 18% because health score, battery readiness, and utilization are strong.',
+        'Keep the Model 3 flat until Friday because weekday demand is soft.',
+        'Lower Tuesday-Thursday by 8% only if the car is still unbooked after 24 hours.',
+        'Queue changes for owner approval and attach the reason to each recommendation.',
       ],
       confidence: 89,
-      impact: 'Better revenue per available day without blindly lowering price to chase bookings.',
+      impact: 'Higher revenue per available day without blindly discounting healthy, high-demand vehicles.',
     };
   }
 
   if (wantsCharging) {
     return {
       title: 'Dynamic charging plan',
-      summary: 'FleetOS would combine battery level, local electricity-rate context, weather, and upcoming rental demand to decide when charging should happen.',
+      summary: 'FleetOS found one avoidable charge window conflict and moved charging away from likely earning hours.',
+      metrics: ['11:30 PM charge start', '$9 estimated savings', '76 mi buffer'],
       steps: [
-        'Identify vehicles below the target state of charge for tomorrow rentals.',
-        'Prefer off-peak charging windows where utility-rate context supports waiting.',
-        'Add range buffer when weather or traffic could reduce efficiency.',
+        'Start charging after 11:30 PM so Vehicle 1 reaches 85% before its morning rental.',
+        'Delay Vehicle 2 charging because it already has enough range for tomorrow.',
+        'Add a 76-mile buffer because weather and traffic may reduce efficiency.',
         'Avoid unnecessary wakes and batch any Tesla actions for owner approval.',
       ],
       confidence: 87,
@@ -244,12 +247,13 @@ function buildDemoResponse(goal) {
 
   if (wantsWeather) {
     return {
-      title: 'Weather and traffic risk plan',
-      summary: 'FleetOS would use forecast and road-risk context to protect pickup timing, cleaning windows, and renter experience.',
+      title: 'Weather and traffic protection plan',
+      summary: 'FleetOS identified pickup risk and moved prep tasks earlier so delays do not eat into utilization.',
+      metrics: ['35 min buffer', '1 weather risk', '2 pickup zones'],
       steps: [
-        'Flag rain, wind, heat, or traffic risk near vehicle pickup zones.',
-        'Move cleaning and inspection tasks earlier if bad weather may affect handoffs.',
-        'Add buffer time to rentals or staging plans where delays could reduce utilization.',
+        'Move cleaning for Vehicle 1 earlier because rain risk overlaps the handoff window.',
+        'Add a 35-minute staging buffer near the busiest pickup zone.',
+        'Warn the owner if traffic risk gets worse before the next rental starts.',
         'Surface any vehicle whose battery or health score makes weather risk more expensive.',
       ],
       confidence: 84,
@@ -260,7 +264,8 @@ function buildDemoResponse(goal) {
   if (wantsOnboarding) {
     return {
       title: 'Owner onboarding plan',
-      summary: 'FleetOS would guide a new Tesla owner from account creation to first synced vehicle with the least manual entry possible.',
+      summary: 'FleetOS turns signup into a guided checklist so the owner sees value before and after Tesla OAuth.',
+      metrics: ['5 steps', 'Tesla OAuth', 'No password sharing'],
       steps: [
         'Create a secure FleetOS account and save this plan to the owner profile.',
         'Approve telemetry consent so the owner understands what data is used and why.',
@@ -275,7 +280,8 @@ function buildDemoResponse(goal) {
   if (lower.includes('summary') || lower.includes('fleet')) {
     return {
       title: 'Fleet summary brief',
-      summary: 'FleetOS would combine telemetry, rental earnings, maintenance risk, and utilization into one owner report.',
+      summary: 'FleetOS combines telemetry, imported earnings, health, and utilization into a single owner action brief.',
+      metrics: ['3 vehicles', '$1,284 weekend estimate', '1 maintenance watch'],
       steps: [
         'Summarize live battery, location, odometer, charging state, and last sync age.',
         'Compare Turo earnings CSV records against modeled operating costs.',
@@ -288,16 +294,17 @@ function buildDemoResponse(goal) {
   }
 
   return {
-    title: 'Weekend earnings optimization',
-    summary: 'FleetOS would prioritize the highest-revenue windows while protecting battery, maintenance, and cleaning readiness.',
+    title: 'Weekend earnings command',
+    summary: 'FleetOS built a weekend plan that balances price, charging, cleaning, and approval-safe Tesla actions.',
+    metrics: ['$1,284 projected', '3 Teslas planned', '92% ready score'],
     steps: [
-      'Forecast demand windows and rank vehicles by readiness, charge level, and revenue potential.',
-      'Stage high-battery vehicles near likely pickup zones and reserve one vehicle for quick-turn trips.',
-      'Schedule charging and cleaning around low-demand gaps instead of peak earning hours.',
+      'Raise weekend pricing 15-20% on the highest-readiness vehicle and keep one car priced for fast booking.',
+      'Charge two vehicles overnight and avoid waking the parked car until it is needed.',
+      'Schedule cleaning after the last Friday return, before Saturday pickup demand starts.',
       'Prepare an approval queue before any wake, command, or dispatch-related workflow runs.',
     ],
     confidence: 93,
-    impact: 'More booked hours, fewer avoidable gaps, and better profit per vehicle.',
+    impact: 'More booked hours, fewer idle gaps, and a clearer approval list for the owner.',
   };
 }
 
@@ -393,6 +400,15 @@ function InteractiveAgentDemo({ onNavigate }) {
               </span>
             </div>
             <p className="mt-3 text-sm leading-6 text-slate-300">{response.summary}</p>
+            {response.metrics?.length > 0 && (
+              <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
+                {response.metrics.map((metric) => (
+                  <div key={metric} className="rounded-lg border border-sky-300/15 bg-sky-300/[0.07] px-3 py-2 text-xs font-black text-sky-100">
+                    {metric}
+                  </div>
+                ))}
+              </div>
+            )}
             <div className="mt-4 space-y-2">
               {response.steps.map((step, index) => (
                 <div key={step} className="flex gap-3 rounded-lg border border-white/10 bg-slate-950/70 px-3 py-3">
@@ -494,6 +510,15 @@ function HeroAgentDemo({ onNavigate }) {
           </span>
         </div>
         <p className="mt-3 text-sm leading-6 text-slate-300">{response.summary}</p>
+        {response.metrics?.length > 0 && (
+          <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
+            {response.metrics.map((metric) => (
+              <div key={metric} className="rounded-lg border border-sky-300/15 bg-sky-300/[0.07] px-3 py-2 text-xs font-black text-sky-100">
+                {metric}
+              </div>
+            ))}
+          </div>
+        )}
         <div className="mt-4 space-y-2">
           {response.steps.slice(0, 3).map((step, index) => (
             <div key={step} className="flex gap-3 rounded-lg border border-white/10 bg-slate-950/70 px-3 py-3">
