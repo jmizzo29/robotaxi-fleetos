@@ -51,6 +51,17 @@ const pricing = [
   ['Operator Pro', 'Custom', 'for larger fleets', 'Dispatch workflows, advanced reporting, RAG memory, and higher-touch onboarding.'],
 ];
 
+const maintenanceFeatures = [
+  ['Vehicle Health Score', 'A 0-100 readiness score that blends battery, mileage, alerts, charge state, software status, and maintenance signals.'],
+  ['Battery & Degradation Tracking', 'Watch battery behavior, charging patterns, state of charge, and long-term degradation indicators.'],
+  ['Tires, Brakes & Ride Quality', 'Track tire pressure and wear, brake pad estimates, suspension/alignment signals, and service risk.'],
+  ['Proactive Maintenance Alerts', 'Flag issues like low tire pressure, service due soon, update required, or unusual operating risk before downtime.'],
+  ['Agent-Driven Scheduling', 'Recommend service, cleaning, charging, and inspection windows using demand, battery state, weather, and availability.'],
+  ['Cleaning Management', 'Manual interior cleanliness tracking now, with future support for cabin camera or vision-based scoring.'],
+  ['Service History & Costs', 'Keep a digital service log with repair notes, costs, warranty status, and documents by vehicle.'],
+  ['Predictive Maintenance', 'Use odometer, battery cycles, driving patterns, and fleet history to predict likely failures earlier.'],
+];
+
 function ProductPreview() {
   return (
     <div className="relative min-h-[500px] overflow-hidden rounded-2xl border border-white/10 bg-slate-950 shadow-2xl shadow-black/40">
@@ -299,6 +310,43 @@ export default function LandingPage({ onNavigate }) {
                 </article>
               ))}
             </div>
+          </div>
+        </section>
+
+        <section className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-5 py-14 lg:grid-cols-[0.82fr_1.18fr]">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-300">
+              Vehicle Health & Maintenance
+            </p>
+            <h2 className="mt-3 text-4xl font-black tracking-tight text-white">
+              Robotaxi owners need downtime prevention, not just dashboard alerts.
+            </h2>
+            <p className="mt-4 text-sm leading-7 text-slate-400">
+              FleetOS turns Tesla telemetry, owner records, cleaning status, and service history into a practical maintenance plan. The agent should know which vehicle needs attention, when to schedule it, and what the likely cost or downtime impact will be.
+            </p>
+            <div className="mt-6 rounded-xl border border-emerald-300/20 bg-emerald-400/[0.06] p-5">
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-emerald-300">Example Agent Alerts</p>
+              <div className="mt-4 space-y-3 text-sm font-semibold text-slate-200">
+                {[
+                  'Tire pressure low on vehicle OCE — recommend inflate within 48h.',
+                  'Service recommended in 1,200 miles — schedule during low-demand window.',
+                  'Cabin cleanliness score degraded — suggest cleaning before next rental.',
+                ].map((alert) => (
+                  <p key={alert} className="rounded-lg border border-white/10 bg-slate-950/70 px-3 py-3">
+                    {alert}
+                  </p>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            {maintenanceFeatures.map(([title, detail]) => (
+              <article key={title} className="rounded-lg border border-white/10 bg-slate-900/80 p-5">
+                <h3 className="text-lg font-black text-white">{title}</h3>
+                <p className="mt-3 text-sm leading-6 text-slate-400">{detail}</p>
+              </article>
+            ))}
           </div>
         </section>
 
