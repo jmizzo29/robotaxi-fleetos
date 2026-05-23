@@ -58,6 +58,7 @@ export default function OwnerIntelligencePanel({ vehicle }) {
     vehicle,
     weather: intelligence?.weather,
     airQuality: intelligence?.airQuality,
+    electricRate: intelligence?.electricRate,
     vin: intelligence?.vin,
   }), [intelligence, vehicle]);
 
@@ -74,7 +75,7 @@ export default function OwnerIntelligencePanel({ vehicle }) {
           </p>
           <h3 className="mt-2 text-2xl font-black text-white">Free Data Layer</h3>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
-            Combines free weather, air quality, and NHTSA VIN data with Tesla telemetry to explain what matters for owners and renters.
+            Combines free weather, air quality, OpenEI electricity rates, and NHTSA VIN data with Tesla telemetry to explain what matters for owners and renters.
           </p>
         </div>
         <button
@@ -87,21 +88,26 @@ export default function OwnerIntelligencePanel({ vehicle }) {
         </button>
       </div>
 
-      <div className="mt-5 grid grid-cols-2 gap-3 xl:grid-cols-4">
+      <div className="mt-5 grid grid-cols-2 gap-3 xl:grid-cols-5">
         <DataCard
           label="Weather"
-          value={formatNumber(intelligence?.weather?.temperature, '°F')}
+          value={formatNumber(intelligence?.weather?.temperature, ' deg F')}
           detail={`${formatNumber(intelligence?.weather?.windSpeed, ' mph')} wind`}
         />
         <DataCard
           label="Rain Risk"
-          value={formatNumber(intelligence?.weather?.precipitationProbability, '%')}
+          value={formatNumber(intelligence?.weather?.precipitationProbabilityMax8h || intelligence?.weather?.precipitationProbability, '%')}
           detail="Highest near-term probability"
         />
         <DataCard
           label="Air Quality"
           value={formatNumber(intelligence?.airQuality?.usAqi)}
           detail={`${formatNumber(intelligence?.airQuality?.pm25)} PM2.5`}
+        />
+        <DataCard
+          label="Electric Rate"
+          value={Number.isFinite(Number(intelligence?.electricRate?.energyRate)) ? `$${Number(intelligence.electricRate.energyRate).toFixed(3)}` : 'Unavailable'}
+          detail={intelligence?.electricRate?.utility || 'OpenEI utility rates'}
         />
         <DataCard
           label="VIN Decode"
@@ -117,7 +123,7 @@ export default function OwnerIntelligencePanel({ vehicle }) {
       </div>
 
       <div className="mt-4 rounded-lg border border-white/10 bg-slate-950/50 p-3 text-xs leading-5 text-slate-500">
-        Sources: Open-Meteo weather, Open-Meteo air quality, and NHTSA vPIC VIN decoder. These are free/no-key integrations in this build.
+        Sources: Open-Meteo weather, Open-Meteo air quality, OpenEI utility rates, and NHTSA vPIC VIN decoder. Utility rates are planning estimates and should be confirmed against the owner utility bill.
         {intelligence?.errors?.length > 0 && (
           <span className="block pt-2 text-amber-300">
             Partial data: {intelligence.errors.join(' | ')}

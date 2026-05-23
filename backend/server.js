@@ -78,6 +78,8 @@ app.patch('/api/auth/profile', (req, res) => handleServerlessRoute('api/auth/pro
 app.post('/api/auth/magic/request', (req, res) => handleServerlessRoute('api/auth/magic/request.js', req, res));
 app.get('/api/auth/magic/verify', (req, res) => handleServerlessRoute('api/auth/magic/verify.js', req, res));
 app.get('/api/billing/status', (req, res) => handleServerlessRoute('api/billing/status.js', req, res));
+app.post('/api/owner-context', (req, res) => handleServerlessRoute('api/owner-context.js', req, res));
+app.post('/api/ai/analyze', (req, res) => handleServerlessRoute('api/ai/analyze.js', req, res));
 
 function updateLocalEnv(updates) {
   const current = fs.existsSync(ENV_PATH) ? fs.readFileSync(ENV_PATH, 'utf8') : '';

@@ -1,4 +1,5 @@
 import { getSession } from '../_lib/auth.js';
+import { buildFleetContextSignals, getExternalContextForVehicle } from '../_lib/externalContext.js';
 
 const AI_PROVIDER = (process.env.AI_PROVIDER || '').toLowerCase();
 const AI_MODEL = process.env.AI_MODEL || (AI_PROVIDER === 'xai' ? 'grok-4' : 'claude-sonnet-4-5');
@@ -6,6 +7,14 @@ const AI_MODEL = process.env.AI_MODEL || (AI_PROVIDER === 'xai' ? 'grok-4' : 'cl
 function buildHeuristicFleetAnalysis(fleet = [], context = {}) {
   const vehicles = Array.isArray(fleet) ? fleet : [];
   const realVehicles = vehicles.filter((vehicle) => vehicle.isReal);
+  const external = context.externalContext || {};
+  const weather = external.weather || null;
+  const electricRate = external.electricRate || null;
+  const contextSignals = context.contextSignals || buildFleetContextSignals({ fleet: vehicles, weather, electricRate });
+  const rate = Number(electricRate?.energyRate);
+  const rateText = Number.isFinite(rate) ? `$${rate.toFixed(3)}/kWh` : 'owner-entered utility rules';
+  const trafficRisk = contextSignals.trafficRisk || 'low';
+  const pricingPressure = contextSignals.pricingPressure || 'normal';
   const alerts = vehicles
     .flatMap((vehicle) => {
       const vehicleAlerts = [];
@@ -75,27 +84,27 @@ function buildHeuristicFleetAnalysis(fleet = [], context = {}) {
       {
         id: 'dynamic-charging-advisor',
         title: 'Dynamic Charging Advisor',
-        confidence: 84,
+        confidence: Number.isFinite(rate) ? 88 : 80,
         impact: 'Reduces charging cost while protecting high-demand availability.',
-        rationale: 'Battery state, charging status, weather, and off-peak electricity windows should be planned together instead of vehicle by vehicle.',
+        rationale: `Battery state, charging status, weather, and electricity context should be planned together. Current rate context: ${rateText}. Charging pressure is ${contextSignals.chargingPressure || 'normal'}.`,
         actionLabel: 'Build Charge Plan',
         command: 'Build a dynamic charging plan using battery, weather, electricity rates, and demand windows',
       },
       {
         id: 'turo-demand-pricing',
         title: 'Turo Demand Pricing',
-        confidence: 79,
+        confidence: pricingPressure === 'elevated' ? 84 : 76,
         impact: 'Can lift weekend revenue when local demand is stronger than normal.',
-        rationale: 'Imported Turo earnings, utilization, holidays, and local events can support a suggested 15-20% price increase during peak periods.',
+        rationale: `Imported Turo earnings, utilization, weekend timing, holidays, and local events can support price changes. Current pricing pressure is ${pricingPressure}.`,
         actionLabel: 'Review Price Lift',
         command: 'Review Turo demand-based pricing suggestions for the next 7 days',
       },
       {
         id: 'traffic-accident-awareness',
         title: 'Traffic & Accident Awareness',
-        confidence: 81,
+        confidence: trafficRisk === 'high' ? 86 : 79,
         impact: 'Protects utilization by catching road delays before they affect pickups, cleaning, or charging.',
-        rationale: 'Traffic and incident context should adjust turnaround buffers and route-sensitive assignments.',
+        rationale: `Traffic and incident context should adjust turnaround buffers and route-sensitive assignments. Weather-derived road risk is currently ${trafficRisk}.`,
         actionLabel: 'Check Road Risk',
         command: 'Check traffic and accident risk for active fleet zones',
       },
@@ -210,6 +219,44 @@ async function runAiFleetAnalysis(fleet = [], context = {}) {
   return fallback;
 }
 
+async function enrichFleetContext(fleet = [], context = {}) {
+  const vehicles = Array.isArray(fleet) ? fleet : [];
+  const anchorVehicle = vehicles.find((vehicle) => (
+    vehicle.isReal &&
+    Number.isFinite(Number(vehicle.latitude)) &&
+    Number.isFinite(Number(vehicle.longitude))
+  )) || vehicles.find((vehicle) => (
+    Number.isFinite(Number(vehicle.latitude)) &&
+    Number.isFinite(Number(vehicle.longitude))
+  ));
+
+  if (!anchorVehicle) {
+    return {
+      ...context,
+      contextSignals: buildFleetContextSignals({ fleet: vehicles }),
+    };
+  }
+
+  try {
+    const externalContext = await getExternalContextForVehicle(anchorVehicle);
+    return {
+      ...context,
+      externalContext,
+      contextSignals: buildFleetContextSignals({
+        fleet: vehicles,
+        weather: externalContext.weather,
+        electricRate: externalContext.electricRate,
+      }),
+    };
+  } catch (error) {
+    return {
+      ...context,
+      externalContext: { errors: [`External context: ${error.message}`] },
+      contextSignals: buildFleetContextSignals({ fleet: vehicles }),
+    };
+  }
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
@@ -227,7 +274,9 @@ export default async function handler(req, res) {
       return;
     }
 
-    const analysis = await runAiFleetAnalysis(req.body?.fleet || [], req.body?.context || {});
+    const fleet = req.body?.fleet || [];
+    const context = await enrichFleetContext(fleet, req.body?.context || {});
+    const analysis = await runAiFleetAnalysis(fleet, context);
     res.status(200).json(analysis);
   } catch (error) {
     res.status(200).json({

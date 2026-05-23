@@ -1,4 +1,5 @@
 import { hasCoordinates } from './locationIntelligence';
+import { fetchApiJson } from './apiClient';
 
 function normalizeVin(vin) {
   return String(vin || '').trim().toUpperCase();
@@ -17,7 +18,7 @@ export async function getWeatherContext(vehicle) {
 
   const latitude = Number(vehicle.latitude).toFixed(5);
   const longitude = Number(vehicle.longitude).toFixed(5);
-  const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,precipitation,wind_speed_10m,relative_humidity_2m&hourly=precipitation_probability&forecast_days=1&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch`;
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,precipitation,wind_speed_10m,relative_humidity_2m&hourly=temperature_2m,precipitation_probability,wind_speed_10m&forecast_days=1&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch`;
   const data = await fetchJson(url);
 
   return {
@@ -26,6 +27,10 @@ export async function getWeatherContext(vehicle) {
     windSpeed: data.current?.wind_speed_10m,
     humidity: data.current?.relative_humidity_2m,
     precipitationProbability: Math.max(...(data.hourly?.precipitation_probability || [0]).slice(0, 8)),
+    precipitationProbabilityMax24h: Math.max(...(data.hourly?.precipitation_probability || [0]).slice(0, 24)),
+    windSpeedMax12h: Math.max(...(data.hourly?.wind_speed_10m || [0]).slice(0, 12)),
+    temperatureMin24h: Math.min(...(data.hourly?.temperature_2m || [data.current?.temperature_2m]).slice(0, 24)),
+    temperatureMax24h: Math.max(...(data.hourly?.temperature_2m || [data.current?.temperature_2m]).slice(0, 24)),
     observedAt: data.current?.time,
   };
 }
@@ -71,49 +76,60 @@ export async function decodeVehicleVin(vin) {
 }
 
 export async function getOwnerIntelligence(vehicle) {
-  const [weatherResult, airResult, vinResult] = await Promise.allSettled([
-    getWeatherContext(vehicle),
-    getAirQualityContext(vehicle),
+  const [externalResult, vinResult] = await Promise.allSettled([
+    fetchApiJson('/owner-context', {
+      method: 'POST',
+      body: JSON.stringify({ vehicle }),
+    }),
     decodeVehicleVin(vehicle?.vin),
   ]);
 
-  const weather = weatherResult.status === 'fulfilled' ? weatherResult.value : null;
-  const airQuality = airResult.status === 'fulfilled' ? airResult.value : null;
+  const external = externalResult.status === 'fulfilled' ? externalResult.value : null;
   const vin = vinResult.status === 'fulfilled' ? vinResult.value : null;
 
   return {
-    weather,
-    airQuality,
+    weather: external?.weather || null,
+    airQuality: external?.airQuality || null,
+    electricRate: external?.electricRate || null,
     vin,
     generatedAt: new Date().toISOString(),
     errors: [
-      weatherResult.status === 'rejected' ? `Weather: ${weatherResult.reason.message}` : null,
-      airResult.status === 'rejected' ? `Air quality: ${airResult.reason.message}` : null,
+      externalResult.status === 'rejected' ? `External context: ${externalResult.reason.message}` : null,
+      ...(external?.errors || []),
       vinResult.status === 'rejected' ? `VIN: ${vinResult.reason.message}` : null,
     ].filter(Boolean),
   };
 }
 
-export function buildOwnerRecommendations({ vehicle, weather, airQuality, vin }) {
+export function buildOwnerRecommendations({ vehicle, weather, airQuality, electricRate, vin }) {
   const recommendations = [];
   const battery = Number(vehicle?.battery);
-  const rainProbability = Number(weather?.precipitationProbability || 0);
-  const windSpeed = Number(weather?.windSpeed || 0);
+  const rainProbability = Number(weather?.precipitationProbabilityMax8h || weather?.precipitationProbability || 0);
+  const windSpeed = Number(weather?.windSpeedMax12h || weather?.windSpeed || 0);
   const aqi = Number(airQuality?.usAqi || 0);
+  const rate = Number(electricRate?.energyRate);
 
   if (Number.isFinite(battery) && battery < 40) {
     recommendations.push({
       tone: 'amber',
-      title: 'Charge before the next rental handoff',
-      detail: `${Math.round(battery)}% battery leaves less margin for renters, errands, or detours.`,
+      title: 'Dynamic Charging Advisor',
+      detail: `${Math.round(battery)}% battery leaves less margin. ${Number.isFinite(rate) ? `Estimated local energy is $${rate.toFixed(3)}/kWh, so schedule enough charge without overfilling before idle periods.` : 'Use local rate context plus demand windows before charging.'}`,
+    });
+  }
+
+  if (Number.isFinite(rate)) {
+    recommendations.push({
+      tone: 'emerald',
+      title: 'Electric rate context ready',
+      detail: `${electricRate.utility || 'Local utility'} rate context is available at about $${rate.toFixed(3)}/kWh. Use this to compare charging now vs. later.`,
     });
   }
 
   if (rainProbability >= 45 || Number(weather?.precipitation || 0) > 0) {
     recommendations.push({
       tone: 'sky',
-      title: 'Weather may affect pickup quality',
-      detail: `${Math.round(rainProbability)}% rain probability near the vehicle. Consider covered pickup instructions.`,
+      title: 'Weather may affect scheduling',
+      detail: `${Math.round(rainProbability)}% rain probability near the vehicle. Add traffic buffer and move cleaning earlier if a renter pickup is close.`,
     });
   }
 
