@@ -12,12 +12,6 @@ const capabilities = [
   ['Live Fleet Telemetry', 'Connects Tesla Fleet API data for battery, location, odometer, charging, vehicle state, and sync history.'],
 ];
 
-const previewRows = [
-  ['Goal', 'Maximize earnings this weekend', 'Planned', 'Agent'],
-  ['Action', 'Stage, charge, inspect', 'Review', 'Control'],
-  ['Owner Economics', 'Cost, balance, revenue', 'Private', 'Finance'],
-];
-
 const plans = [
   ['First Tesla', 'Free', 'Live sync, location intelligence, owner finance, and AI vehicle brief for one Tesla.'],
   ['Additional Teslas', 'Paid add-on', 'Scale into a rental fleet with multi-vehicle telemetry, history, alerts, and portfolio reporting.'],
@@ -246,60 +240,85 @@ function InteractiveAgentDemo() {
 
 function ProductPreview() {
   return (
-    <div className="relative min-h-[500px] overflow-hidden rounded-2xl border border-white/10 bg-slate-950 shadow-2xl shadow-black/40">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_25%_20%,rgba(14,165,233,0.25),transparent_32%),radial-gradient(circle_at_75%_68%,rgba(16,185,129,0.2),transparent_34%)]" />
+    <div className="relative min-h-[560px] overflow-hidden rounded-2xl border border-white/10 bg-slate-950 shadow-2xl shadow-black/40">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_18%,rgba(14,165,233,0.28),transparent_30%),radial-gradient(circle_at_82%_72%,rgba(16,185,129,0.2),transparent_34%),linear-gradient(145deg,rgba(15,23,42,0.45),transparent)]" />
       <div className="relative p-5">
         <div className="mb-5 flex items-center justify-between">
           <div>
             <p className="text-[11px] font-black uppercase tracking-[0.24em] text-sky-300">FleetOS</p>
-            <h2 className="mt-1 text-2xl font-black text-white">AI Agent Console</h2>
+            <h2 className="mt-1 text-2xl font-black text-white">FleetOS AI Agent - Live Operations</h2>
           </div>
-          <span className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-xs font-black text-emerald-200">
-            Preview
+          <span className="flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-xs font-black text-emerald-200">
+            <span className="h-2 w-2 animate-pulse rounded-full bg-emerald-300" />
+            Executing
           </span>
         </div>
 
-        <div className="mb-4 grid grid-cols-3 gap-3">
+        <div className="mb-4 grid grid-cols-2 gap-3 lg:grid-cols-4">
           {[
-            ['Agent Goal', 'Earnings'],
-            ['Fleet State', 'Ready'],
-            ['Control', 'Owner'],
+            ['Fleet Health', '94%'],
+            ['Weekend Earnings', '$1,284'],
+            ['Vehicles', '3 active'],
+            ['Agent Status', 'Planning'],
           ].map(([label, value]) => (
             <div key={label} className="rounded-xl border border-white/10 bg-white/[0.06] p-3">
               <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-slate-500">{label}</p>
-              <p className="mt-2 text-2xl font-black text-white">{value}</p>
+              <p className="mt-2 text-xl font-black text-white">{value}</p>
             </div>
           ))}
         </div>
 
-        <div className="relative mb-4 h-56 overflow-hidden rounded-xl border border-white/10 bg-[#202225]">
-          <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px)] bg-[size:48px_48px]" />
-          <div className="absolute left-[-16%] top-[28%] h-12 w-[140%] rotate-[26deg] rounded-full border-y border-white/10 bg-white/[0.03]" />
-          <div className="absolute left-[46%] top-[-20%] h-[140%] w-14 rotate-[8deg] rounded-full border-x border-white/10 bg-white/[0.03]" />
-          {[
-            ['left-[52%] top-[45%] bg-sky-400 shadow-sky-400/50', 'Tesla'],
-            ['left-[24%] top-[32%] bg-emerald-400 shadow-emerald-400/50', 'Fleet'],
-            ['left-[78%] top-[66%] bg-rose-400 shadow-rose-400/50', 'AI'],
-          ].map(([classes, label]) => (
-            <div key={label} className={`absolute flex h-11 min-w-11 items-center justify-center rounded-full border border-white/30 px-2 text-[11px] font-black text-slate-950 shadow-xl ${classes}`}>
-              {label}
-            </div>
-          ))}
+        <div className="mb-4 rounded-xl border border-sky-300/20 bg-sky-300/[0.06] p-4">
+          <p className="text-[10px] font-black uppercase tracking-[0.18em] text-sky-300">Current Goal</p>
+          <p className="mt-2 text-2xl font-black leading-tight text-white">
+            Maximize earnings this weekend while keeping all vehicles ready for Monday morning.
+          </p>
         </div>
 
-        <div className="space-y-3">
-          {previewRows.map(([name, state, value, tag]) => (
-            <div key={name} className="grid grid-cols-[1fr_auto_auto] items-center gap-3 rounded-xl border border-white/10 bg-white/[0.06] p-3">
-              <div className="min-w-0">
-                <p className="truncate text-sm font-black text-white">{name}</p>
-                <p className="text-xs font-semibold text-slate-500">{state}</p>
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.08fr_0.92fr]">
+          <div className="relative h-64 overflow-hidden rounded-xl border border-white/10 bg-[#202225]">
+            <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px)] bg-[size:44px_44px]" />
+            <div className="absolute left-[-20%] top-[32%] h-10 w-[145%] rotate-[24deg] rounded-full border-y border-white/10 bg-white/[0.03]" />
+            <div className="absolute left-[50%] top-[-22%] h-[145%] w-12 rotate-[8deg] rounded-full border-x border-white/10 bg-white/[0.03]" />
+            {[
+              ['left-[22%] top-[28%] bg-emerald-300 shadow-emerald-300/40', 'Y1', 'Ready'],
+              ['left-[58%] top-[42%] bg-sky-300 shadow-sky-300/40', '3', 'Charging'],
+              ['left-[76%] top-[68%] bg-amber-300 shadow-amber-300/40', 'X', 'Clean'],
+            ].map(([classes, label, status]) => (
+              <div key={label} className={`absolute flex flex-col items-center justify-center rounded-full border border-white/30 px-3 py-2 text-center text-[11px] font-black text-slate-950 shadow-xl ${classes}`}>
+                <span>{label}</span>
+                <span className="text-[9px] font-bold">{status}</span>
               </div>
-              <p className="text-lg font-black text-emerald-300">{value}</p>
-              <span className="rounded-full border border-white/10 bg-slate-950 px-2 py-1 text-[10px] font-black uppercase text-slate-300">
-                {tag}
-              </span>
+            ))}
+            <div className="absolute bottom-3 left-3 right-3 rounded-lg border border-white/10 bg-slate-950/80 p-3">
+              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-emerald-300">Agent is currently planning</p>
+              <p className="mt-1 text-sm font-bold text-white">Charge vehicles tonight + clean tomorrow morning</p>
             </div>
-          ))}
+          </div>
+
+          <div className="rounded-xl border border-white/10 bg-slate-900/80 p-4">
+            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-violet-300">Agent Chat</p>
+            <div className="mt-3 space-y-3">
+              <div className="rounded-lg border border-white/10 bg-slate-950/80 p-3">
+                <p className="text-xs font-bold text-slate-500">Owner</p>
+                <p className="mt-1 text-sm font-semibold text-slate-200">Can we earn more this weekend?</p>
+              </div>
+              <div className="rounded-lg border border-emerald-300/20 bg-emerald-400/[0.08] p-3">
+                <p className="text-xs font-bold text-emerald-300">FleetOS Agent</p>
+                <p className="mt-1 text-sm leading-6 text-slate-200">
+                  Yes. Keep Model Y online Friday night, charge Model 3 after 10 PM, and schedule Model X cleaning before Saturday noon.
+                </p>
+              </div>
+              <div className="grid grid-cols-2 gap-2">
+                <button type="button" className="rounded-md border border-sky-300/20 bg-sky-300/10 px-3 py-2 text-xs font-black text-sky-100">
+                  Approve Plan
+                </button>
+                <button type="button" className="rounded-md border border-white/10 bg-white/5 px-3 py-2 text-xs font-black text-slate-200">
+                  Edit Goal
+                </button>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

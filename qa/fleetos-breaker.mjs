@@ -126,7 +126,7 @@ async function testStaleCopy() {
 async function testExpectedLandingCopy() {
   const { bundle } = await getIndexAndBundle();
   const expected = [
-    'AI Agent Console',
+    'FleetOS AI Agent - Live Operations',
     'Security & Privacy',
     'FleetOS turns data into action',
     'Built for robotaxis that need to stay earning',
