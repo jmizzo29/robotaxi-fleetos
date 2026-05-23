@@ -191,6 +191,10 @@ function PricingSection({ onStart }) {
 
 function buildDemoResponse(goal) {
   const lower = goal.toLowerCase();
+  const wantsPricing = ['price', 'pricing', 'turo', 'rate', 'raise', 'lower', 'demand'].some((term) => lower.includes(term));
+  const wantsCharging = ['charge', 'charging', 'battery', 'electric', 'rate', 'overnight'].some((term) => lower.includes(term));
+  const wantsWeather = ['weather', 'rain', 'storm', 'traffic', 'accident', 'delay'].some((term) => lower.includes(term));
+  const wantsOnboarding = ['sign', 'signup', 'onboard', 'sister', 'add', 'new vehicle', 'connect'].some((term) => lower.includes(term));
 
   if (lower.includes('health') || lower.includes('prepare')) {
     return {
@@ -204,6 +208,66 @@ function buildDemoResponse(goal) {
       ],
       confidence: 91,
       impact: 'Higher morning uptime and fewer last-minute cancellations.',
+    };
+  }
+
+  if (wantsPricing) {
+    return {
+      title: 'Turo pricing plan',
+      summary: 'FleetOS would compare demand pressure, weather, utilization, health score, and imported Turo earnings before recommending a price move.',
+      steps: [
+        'Check the next 7 days for weekend, holiday, weather, and local event pressure.',
+        'Rank each Tesla by utilization, health score, battery readiness, and historical earnings.',
+        'Suggest a percent change per vehicle, such as +18% for high-demand windows or -10% for soft weekdays.',
+        'Queue owner approval before any pricing change is applied outside FleetOS.',
+      ],
+      confidence: 89,
+      impact: 'Better revenue per available day without blindly lowering price to chase bookings.',
+    };
+  }
+
+  if (wantsCharging) {
+    return {
+      title: 'Dynamic charging plan',
+      summary: 'FleetOS would combine battery level, local electricity-rate context, weather, and upcoming rental demand to decide when charging should happen.',
+      steps: [
+        'Identify vehicles below the target state of charge for tomorrow rentals.',
+        'Prefer off-peak charging windows where utility-rate context supports waiting.',
+        'Add range buffer when weather or traffic could reduce efficiency.',
+        'Avoid unnecessary wakes and batch any Tesla actions for owner approval.',
+      ],
+      confidence: 87,
+      impact: 'Lower charging cost and fewer vehicles unavailable during peak earning windows.',
+    };
+  }
+
+  if (wantsWeather) {
+    return {
+      title: 'Weather and traffic risk plan',
+      summary: 'FleetOS would use forecast and road-risk context to protect pickup timing, cleaning windows, and renter experience.',
+      steps: [
+        'Flag rain, wind, heat, or traffic risk near vehicle pickup zones.',
+        'Move cleaning and inspection tasks earlier if bad weather may affect handoffs.',
+        'Add buffer time to rentals or staging plans where delays could reduce utilization.',
+        'Surface any vehicle whose battery or health score makes weather risk more expensive.',
+      ],
+      confidence: 84,
+      impact: 'Fewer late handoffs, cleaner cars at pickup, and better renter confidence.',
+    };
+  }
+
+  if (wantsOnboarding) {
+    return {
+      title: 'Owner onboarding plan',
+      summary: 'FleetOS would guide a new Tesla owner from account creation to first synced vehicle with the least manual entry possible.',
+      steps: [
+        'Create a secure FleetOS account and save this plan to the owner profile.',
+        'Approve telemetry consent so the owner understands what data is used and why.',
+        'Connect Tesla through OAuth, keeping the Tesla password with Tesla.',
+        'Run the first sync, then review pricing, finance, health, and map views.',
+      ],
+      confidence: 92,
+      impact: 'A smoother first session with value shown before the user commits to connecting Tesla.',
     };
   }
 
@@ -236,7 +300,16 @@ function buildDemoResponse(goal) {
   };
 }
 
-function InteractiveAgentDemo() {
+function saveDemoPlan(goal, response) {
+  if (typeof window === 'undefined') return;
+  window.localStorage.setItem('fleetos_pending_agent_plan', JSON.stringify({
+    goal,
+    response,
+    savedAt: new Date().toISOString(),
+  }));
+}
+
+function InteractiveAgentDemo({ onNavigate }) {
   const [goal, setGoal] = useState(demoPrompts[0]);
   const [response, setResponse] = useState(() => buildDemoResponse(demoPrompts[0]));
   const [runCount, setRunCount] = useState(1);
@@ -252,6 +325,11 @@ function InteractiveAgentDemo() {
     }, 350);
   };
 
+  const savePlan = () => {
+    saveDemoPlan(goal, response);
+    onNavigate?.('onboarding');
+  };
+
   return (
     <section id="interactive-demo" className="scroll-mt-8 border-y border-white/10 bg-slate-950/70">
       <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-5 py-14 lg:grid-cols-[0.85fr_1.15fr] lg:items-start">
@@ -261,7 +339,7 @@ function InteractiveAgentDemo() {
             Type a goal and see how FleetOS responds.
           </h2>
           <p className="mt-4 text-sm leading-7 text-slate-400">
-            This simulated demo shows the kind of planning FleetOS can do once a user connects Tesla telemetry, Turo earnings, and vehicle health history.
+            No signup needed. Ask about pricing, charging, weather, maintenance, onboarding, or fleet readiness. Save the plan only when it feels useful.
           </p>
 
           <div className="mt-6 space-y-2">
@@ -327,6 +405,22 @@ function InteractiveAgentDemo() {
             <p className="mt-4 rounded-lg border border-white/10 bg-slate-950/70 px-3 py-3 text-sm font-bold text-emerald-200">
               Expected impact: {response.impact}
             </p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-2">
+              <button
+                type="button"
+                onClick={savePlan}
+                className="rounded-md bg-emerald-300 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-emerald-200"
+              >
+                Save My Fleet Plan
+              </button>
+              <button
+                type="button"
+                onClick={() => runDemo('Should I raise price this weekend and when should I charge?')}
+                className="rounded-md border border-white/10 bg-white/5 px-5 py-3 text-sm font-black text-slate-100 transition hover:bg-white/10"
+              >
+                Try Another Goal
+              </button>
+            </div>
           </div>
         </article>
       </div>
@@ -562,7 +656,7 @@ export default function LandingPage({ onNavigate }) {
           <ProductPreview onTryDemo={scrollToDemo} />
         </section>
 
-        <InteractiveAgentDemo />
+        <InteractiveAgentDemo onNavigate={onNavigate} />
 
         <PricingSection onStart={() => onNavigate('onboarding')} />
 

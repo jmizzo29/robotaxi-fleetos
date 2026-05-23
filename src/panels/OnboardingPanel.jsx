@@ -76,6 +76,17 @@ export default function OnboardingPanel({
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [savedPlan] = useState(() => {
+    if (typeof window === 'undefined') return null;
+    const storedPlan = window.localStorage.getItem('fleetos_pending_agent_plan');
+    if (!storedPlan) return null;
+    try {
+      return JSON.parse(storedPlan);
+    } catch {
+      window.localStorage.removeItem('fleetos_pending_agent_plan');
+      return null;
+    }
+  });
   const [, setComplianceRevision] = useState(0);
 
   const refreshSession = useCallback(async () => {
@@ -157,6 +168,21 @@ export default function OnboardingPanel({
         >
           {error || message}
         </div>
+      )}
+
+      {savedPlan && (
+        <article className="rounded-lg border border-sky-300/25 bg-sky-300/10 p-5">
+          <p className="text-xs font-black uppercase tracking-[0.22em] text-sky-300">Saved AI Plan</p>
+          <h2 className="mt-2 text-2xl font-black text-white">{savedPlan.response?.title || 'Fleet plan saved'}</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-300">
+            Goal: <span className="font-bold text-white">{savedPlan.goal}</span>
+          </p>
+          {savedPlan.response?.impact && (
+            <p className="mt-3 rounded-lg border border-white/10 bg-slate-950/60 p-3 text-sm font-bold text-emerald-200">
+              Expected impact: {savedPlan.response.impact}
+            </p>
+          )}
+        </article>
       )}
 
       <div className="rounded-lg border border-white/10 bg-slate-900/80 p-5">
