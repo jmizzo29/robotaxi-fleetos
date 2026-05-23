@@ -4,10 +4,11 @@ import { useFleetAuthStatus } from '../auth/FleetAuthContext';
 import { isClerkConfigured } from '../auth/clerkConfig';
 
 const capabilities = [
-  ['Live Fleet Telemetry', 'Connect Tesla Fleet API data for battery, GPS, odometer, charging, and vehicle state.'],
-  ['AI Agent Operations', 'Give the agent goals, review its plan, and approve the next action before anything sensitive happens.'],
-  ['Owner Finance', 'Track acquisition cost, loan balance, equity, monthly payment, ROI, and margin by vehicle.'],
-  ['Robotaxi Readiness', 'Score vehicles for future driverless operations while keeping Tesla execution boundaries clear.'],
+  ['AI Operations Agent', 'Understands owner goals, breaks them into workflows, and recommends the next best action.'],
+  ['Vehicle Health & Maintenance', 'Watches battery, state, mileage, anomaly risk, and service needs so issues surface before downtime.'],
+  ['Smart Earnings Optimizer', 'Combines utilization, owner-entered revenue, and vehicle readiness to estimate where money is being made or lost.'],
+  ['Autonomous Scheduling', 'Plans charging, cleaning, service, staging, and dispatch workflows around fleet availability.'],
+  ['Live Fleet Telemetry', 'Connects Tesla Fleet API data for battery, location, odometer, charging, vehicle state, and sync history.'],
 ];
 
 const previewRows = [
@@ -278,13 +279,26 @@ export default function LandingPage({ onNavigate }) {
         </section>
 
         <section className="border-y border-white/10 bg-white/[0.03]">
-          <div className="mx-auto grid max-w-7xl grid-cols-1 gap-4 px-5 py-10 md:grid-cols-4">
-            {capabilities.map(([title, detail]) => (
-              <article key={title} className="rounded-lg border border-white/10 bg-slate-950/50 p-5">
-                <h2 className="text-lg font-black text-white">{title}</h2>
-                <p className="mt-3 text-sm leading-6 text-slate-400">{detail}</p>
-              </article>
-            ))}
+          <div className="mx-auto max-w-7xl px-5 py-14">
+            <div className="mb-8 max-w-3xl">
+              <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-300">Why FleetOS?</p>
+              <h2 className="mt-3 text-4xl font-black tracking-tight text-white">
+                Most tools just show you data.
+                <span className="block text-sky-300">FleetOS turns data into action.</span>
+              </h2>
+              <p className="mt-4 text-sm leading-7 text-slate-400">
+                The FleetOS AI agent watches telemetry, owner economics, maintenance signals, and schedule constraints, then turns them into practical workflows you can review and approve.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5">
+              {capabilities.map(([title, detail]) => (
+                <article key={title} className="rounded-lg border border-white/10 bg-slate-950/50 p-5">
+                  <h2 className="text-lg font-black text-white">{title}</h2>
+                  <p className="mt-3 text-sm leading-6 text-slate-400">{detail}</p>
+                </article>
+              ))}
+            </div>
           </div>
         </section>
 

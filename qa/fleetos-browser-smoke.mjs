@@ -77,6 +77,7 @@ async function testLanding(browser, profile) {
   await page.getByText('FleetOS', { exact: true }).first().waitFor({ timeout: 15000 });
   await page.getByText('Security & Privacy').waitFor({ timeout: 15000 });
   await page.getByText('Your AI Agent for Tesla Robotaxi Fleets').waitFor({ timeout: 15000 });
+  await page.getByText('FleetOS turns data into action').waitFor({ timeout: 15000 });
   await page.getByText('Tesla password never shared').first().waitFor({ timeout: 15000 });
   await page.getByText('Join Early Access').count().then((count) => {
     if (count > 0) throw new Error('Old Join Early Access form is visible.');

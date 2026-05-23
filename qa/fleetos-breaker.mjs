@@ -128,6 +128,7 @@ async function testExpectedLandingCopy() {
   const expected = [
     'AI Agent Console',
     'Security & Privacy',
+    'FleetOS turns data into action',
     'Try the AI Agent',
     'Tesla password never shared',
   ];
