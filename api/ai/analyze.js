@@ -144,6 +144,8 @@ function buildFleetAnalysisPrompt(fleet = [], context = {}) {
 
 Return only valid JSON with keys: summary, alerts, recommendations. Prioritize real Tesla telemetry above simulation.
 
+If context includes rental history, Turo CSV records, or a user question about the last rental/trip, answer with concrete trip facts first: vehicle, rental dates, miles driven, host earnings, average speed if available, rating if available, and whether the owner should view full trip details or compare against previous rentals. Do not invent personally identifying guest information.
+
 Context:
 ${JSON.stringify(context)}
 

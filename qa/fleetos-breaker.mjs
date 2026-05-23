@@ -129,6 +129,8 @@ async function testExpectedLandingCopy() {
     'FleetOS - Your AI Agent for Tesla Rentals & Robotaxis',
     'No signup needed',
     'Maximize my earnings this weekend with 3 Teslas',
+    'How many miles did my last rental drive?',
+    '287 miles driven',
     'Security & Privacy',
     'What Data Does FleetOS Access?',
     'FleetOS turns data into action',

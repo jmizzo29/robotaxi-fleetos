@@ -117,6 +117,7 @@ const teslaBestPractices = [
 
 const demoPrompts = [
   'Maximize my earnings this weekend with 3 Teslas',
+  'How many miles did my last rental drive?',
   'Check health and prepare all vehicles for tomorrow',
   'Give me a full fleet summary',
 ];
@@ -192,10 +193,27 @@ function PricingSection({ onStart }) {
 
 function buildDemoResponse(goal) {
   const lower = goal.toLowerCase();
+  const wantsLastRental = ['last rental', 'last trip', 'recent rental', 'recent trip', 'miles did', 'rental drive', 'trip details'].some((term) => lower.includes(term));
   const wantsPricing = ['price', 'pricing', 'turo', 'rate', 'raise', 'lower', 'demand'].some((term) => lower.includes(term));
   const wantsCharging = ['charge', 'charging', 'battery', 'electric', 'rate', 'overnight'].some((term) => lower.includes(term));
   const wantsWeather = ['weather', 'rain', 'storm', 'traffic', 'accident', 'delay'].some((term) => lower.includes(term));
   const wantsOnboarding = ['sign', 'signup', 'onboard', 'sister', 'add', 'new vehicle', 'connect'].some((term) => lower.includes(term));
+
+  if (wantsLastRental) {
+    return {
+      title: 'Last rental trip details',
+      summary: 'Your last rental on Cybercab ABC-1234 ran May 20-22 and drove 287 miles.',
+      metrics: ['287 miles driven', '$428 host earnings', '5-star guest rating'],
+      steps: [
+        'Average speed was 42 mph, which is normal for this route mix.',
+        'The trip used 61% battery and returned with enough range for a same-day cleaning and recharge.',
+        'No maintenance exception was triggered, but FleetOS added the 287 miles to tire and service forecasts.',
+        'FleetOS can show the full trip record or compare it against previous rentals.',
+      ],
+      confidence: 95,
+      impact: 'This rental performed well: strong earnings, normal driving profile, and no immediate maintenance flags.',
+    };
+  }
 
   if (lower.includes('health') || lower.includes('prepare')) {
     return {
@@ -319,8 +337,8 @@ function saveDemoPlan(goal, response) {
 
 const exampleWorkflows = [
   'Maximize my earnings this weekend with 3 Teslas',
+  'How many miles did my last rental drive?',
   'Check health and prepare all vehicles for tomorrow',
-  'Should I raise price this weekend and when should I charge?',
 ];
 
 function RealExampleWorkflows() {
