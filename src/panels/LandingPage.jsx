@@ -521,18 +521,20 @@ function HeroAgentDemo({ onNavigate }) {
   };
 
   return (
-    <aside className="rounded-2xl border border-sky-300/25 bg-slate-950/90 p-5 shadow-2xl shadow-black/40 lg:p-6">
+    <aside className="rounded-2xl border border-sky-300/25 bg-slate-950/90 p-4 shadow-2xl shadow-black/40 sm:p-5 lg:p-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-300">Live AI Demo</p>
-          <h2 className="mt-2 text-3xl font-black tracking-tight text-white lg:text-4xl">Try the agent now.</h2>
+          <h2 className="mt-2 text-2xl font-black tracking-tight text-white sm:text-3xl lg:text-4xl">Try the agent now.</h2>
         </div>
         <span className="w-fit rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-xs font-black text-emerald-200">
           No signup needed
         </span>
       </div>
 
-      <HeroMiniMap />
+      <div className="hidden sm:block">
+        <HeroMiniMap />
+      </div>
 
       <div className="mt-5 rounded-xl border border-white/10 bg-slate-900/80 p-4 lg:p-5">
         <label htmlFor="hero-agent-input" className="text-xs font-black uppercase tracking-[0.18em] text-sky-300">
@@ -542,7 +544,7 @@ function HeroAgentDemo({ onNavigate }) {
           id="hero-agent-input"
           value={goal}
           onChange={(event) => setGoal(event.target.value)}
-          rows={5}
+          rows={3}
           className="mt-3 w-full resize-none rounded-lg border border-white/10 bg-slate-950 px-3 py-3 text-sm font-semibold leading-6 text-white outline-none transition focus:border-sky-300/50"
           placeholder="Tell FleetOS what you want your fleet to do..."
         />
@@ -562,7 +564,7 @@ function HeroAgentDemo({ onNavigate }) {
             <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-300">
               Instant response
             </p>
-            <h3 className="mt-2 text-2xl font-black text-white">{response.title}</h3>
+            <h3 className="mt-2 text-xl font-black text-white sm:text-2xl">{response.title}</h3>
           </div>
           <span className="w-fit rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-xs font-black text-emerald-200">
             {response.confidence}% confidence
@@ -570,7 +572,7 @@ function HeroAgentDemo({ onNavigate }) {
         </div>
         <p className="mt-3 text-sm leading-6 text-slate-300">{response.summary}</p>
         {response.metrics?.length > 0 && (
-          <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
+          <div className="mt-4 hidden grid-cols-1 gap-2 sm:grid sm:grid-cols-3">
             {response.metrics.map((metric) => (
               <div key={metric} className="rounded-lg border border-sky-300/15 bg-sky-300/[0.07] px-3 py-2 text-xs font-black text-sky-100">
                 {metric}
@@ -578,7 +580,7 @@ function HeroAgentDemo({ onNavigate }) {
             ))}
           </div>
         )}
-        <div className="mt-4 space-y-3">
+        <div className="mt-4 hidden space-y-3 sm:block">
           {response.steps.slice(0, 3).map((step, index) => (
             <div key={step} className="flex gap-3 rounded-lg border border-white/10 bg-slate-950/70 px-3 py-3">
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-sky-300 text-xs font-black text-slate-950">
@@ -588,12 +590,12 @@ function HeroAgentDemo({ onNavigate }) {
             </div>
           ))}
         </div>
-        <p className="mt-4 rounded-lg border border-white/10 bg-slate-950/70 px-3 py-3 text-sm font-bold text-emerald-200">
+        <p className="mt-4 hidden rounded-lg border border-white/10 bg-slate-950/70 px-3 py-3 text-sm font-bold text-emerald-200 sm:block">
           Expected impact: {response.impact}
         </p>
       </div>
 
-      <div className="mt-4 grid gap-3 sm:grid-cols-2">
+      <div className="mt-4 hidden gap-3 sm:grid sm:grid-cols-2">
         <button
           type="button"
           onClick={savePlan}
@@ -614,6 +616,30 @@ function HeroAgentDemo({ onNavigate }) {
         </button>
       </div>
     </aside>
+  );
+}
+
+function MobileHeroCta({ onNavigate }) {
+  return (
+    <div className="mt-5 space-y-3 md:hidden">
+      <button
+        type="button"
+        onClick={() => onNavigate('account')}
+        className="w-full rounded-lg bg-white px-5 py-4 text-base font-black text-black transition hover:bg-slate-200"
+      >
+        Sign in with Tesla
+      </button>
+      <p className="text-center text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
+        First Tesla is free
+      </p>
+      <div className="grid grid-cols-3 gap-2 text-center">
+        {['Secure Tesla Login', 'Data Encrypted', 'Revoke Anytime'].map((item) => (
+          <div key={item} className="rounded-lg border border-emerald-300/15 bg-emerald-400/[0.06] px-2 py-3 text-[10px] font-black uppercase leading-4 tracking-[0.08em] text-emerald-200">
+            {item}
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
@@ -739,26 +765,28 @@ export default function LandingPage({ onNavigate }) {
       </header>
 
       <main>
-        <section className="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-5 pb-12 pt-8 lg:grid-cols-2 lg:items-center lg:gap-12 lg:pb-16 lg:pt-12">
+        <section className="mx-auto grid max-w-7xl grid-cols-1 gap-5 px-5 pb-10 pt-4 sm:gap-8 sm:pt-8 lg:grid-cols-2 lg:items-center lg:gap-12 lg:pb-16 lg:pt-12">
           <div className="max-w-2xl">
             <p className="mb-4 text-xs font-black uppercase tracking-[0.28em] text-emerald-300">
               FleetOS AI Agent
             </p>
-            <h1 className="text-5xl font-black leading-[0.95] tracking-tight text-white sm:text-6xl lg:text-[4.65rem]">
+            <h1 className="text-4xl font-black leading-[0.98] tracking-tight text-white sm:text-6xl lg:text-[4.65rem]">
               FleetOS - Your AI Agent for Tesla Rentals & Robotaxis
             </h1>
-            <p className="mt-6 max-w-2xl text-lg leading-8 text-slate-300">
-              Give it a goal. Watch it plan charging, maintenance, cleaning, and earnings strategies while you stay in full control.
+            <p className="mt-4 max-w-2xl text-base leading-7 text-slate-300 sm:mt-6 sm:text-lg sm:leading-8">
+              Give it a goal. Watch it plan charging, maintenance, cleaning & earnings.
             </p>
-            <div className="mt-6 flex flex-wrap gap-2">
+            <div className="mt-5 hidden flex-wrap gap-2 sm:flex">
               {['First Tesla free', '$12 per extra Tesla', 'Tesla password never shared'].map((label) => (
                 <span key={label} className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-xs font-black uppercase tracking-[0.12em] text-emerald-200">
                   {label}
                 </span>
               ))}
             </div>
-            <HeroFleetMetrics />
-            <div className="mt-8 flex flex-col gap-3 sm:flex-row">
+            <div className="hidden sm:block">
+              <HeroFleetMetrics />
+            </div>
+            <div className="mt-8 hidden flex-col gap-3 md:flex sm:flex-row">
               <button
                 type="button"
                 onClick={scrollToDemo}
@@ -805,7 +833,10 @@ export default function LandingPage({ onNavigate }) {
             </p>
           </div>
 
-          <HeroAgentDemo onNavigate={onNavigate} />
+          <div>
+            <HeroAgentDemo onNavigate={onNavigate} />
+            <MobileHeroCta onNavigate={onNavigate} />
+          </div>
         </section>
 
         <IntelligenceSignalSection />
