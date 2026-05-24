@@ -1,7 +1,7 @@
 {
   "baseUrl": "https://robotaxi-fleetos.vercel.app",
-  "generatedAt": "2026-05-24T19:40:17.519Z",
-  "durationMs": 2719,
+  "generatedAt": "2026-05-24T19:50:17.718Z",
+  "durationMs": 3172,
   "summary": {
     "total": 12,
     "pass": 12,
@@ -12,10 +12,10 @@
     {
       "name": "public shell loads",
       "status": "pass",
-      "detail": "Homepage and bundle loaded in 364ms.",
+      "detail": "Homepage and bundle loaded in 695ms.",
       "evidence": {
-        "asset": "index-DNgfxANR.js",
-        "bundleBytes": 684693
+        "asset": "index-Dnz16gkY.js",
+        "bundleBytes": 692689
       }
     },
     {
@@ -62,7 +62,7 @@
     {
       "name": "signed-out session gate",
       "status": "pass",
-      "detail": "Signed-out user cannot get an authenticated FleetOS session.",
+      "detail": "Signed-out user cannot get an authenticated RoboAgent session.",
       "evidence": {}
     },
     {
@@ -98,10 +98,10 @@
     {
       "name": "health burst",
       "status": "pass",
-      "detail": "20 concurrent health requests passed in 810ms.",
+      "detail": "20 concurrent health requests passed in 837ms.",
       "evidence": {
-        "maxMs": 794,
-        "minMs": 83
+        "maxMs": 830,
+        "minMs": 66
       }
     }
   ]
