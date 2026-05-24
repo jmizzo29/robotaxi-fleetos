@@ -166,6 +166,8 @@ async function testServiceAreasMap(browser, profile) {
   await page.getByText('Fleet Map Intelligence').waitFor({ timeout: 15000 });
   await page.getByText('Demand and pricing zones').waitFor({ timeout: 15000 });
   await page.getByText('Health on the map').waitFor({ timeout: 15000 });
+  await page.getByText('Local Rental Market').waitFor({ timeout: 15000 });
+  await page.getByText('Top rented Teslas near').waitFor({ timeout: 15000 });
   await page.getByText('Recommended pricing zone').first().waitFor({ timeout: 15000 });
   await context.close();
   return assertNoRuntimeErrors(`service areas map (${profile})`, telemetry);
@@ -181,6 +183,9 @@ async function testLandingCtas(browser, profile) {
   await page.locator('#hero-agent-input').fill('Should I raise price this weekend in Tampa?');
   await page.getByRole('button', { name: 'Run Agent' }).click();
   await page.getByText('Turo revenue plan').first().waitFor({ timeout: 15000 });
+  await page.locator('#hero-agent-input').fill('What are the top rented Teslas in Orlando?');
+  await page.getByRole('button', { name: 'Run Agent' }).click();
+  await page.getByText('Top rented Teslas in Orlando').first().waitFor({ timeout: 15000 });
   if (profile === 'desktop') {
     await page.getByRole('button', { name: 'Start Free (First Tesla Free)' }).click();
     await page.waitForURL('**/#/onboarding', { timeout: 10000 });

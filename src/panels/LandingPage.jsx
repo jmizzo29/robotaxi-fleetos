@@ -4,6 +4,7 @@ import TeslaIndependenceNotice from '../components/TeslaIndependenceNotice';
 import TeslaDataAccessDisclosure from '../components/TeslaDataAccessDisclosure';
 import { useFleetAuthStatus } from '../auth/FleetAuthContext';
 import { isClerkConfigured } from '../auth/clerkConfig';
+import { buildMarketRentalAnswer, isMarketQuestion } from '../services/marketIntelligenceService';
 
 const capabilities = [
   ['AI Operations Agent', 'Understands owner goals, breaks them into workflows, and recommends the next best action.'],
@@ -132,6 +133,7 @@ const teslaBestPractices = [
 
 const demoPrompts = [
   'Maximize my earnings this weekend with 3 Teslas',
+  'What are the top rented Teslas in Orlando?',
   'How many miles did my last rental drive?',
   'Check health and prepare all vehicles for tomorrow',
   'Give me a full fleet summary',
@@ -220,6 +222,10 @@ function PricingSection({ onStart }) {
 
 function buildDemoResponse(goal) {
   const lower = goal.toLowerCase();
+  if (isMarketQuestion(goal)) {
+    return buildMarketRentalAnswer(goal);
+  }
+
   const wantsLastRental = ['last rental', 'last trip', 'recent rental', 'recent trip', 'miles did', 'rental drive', 'trip details'].some((term) => lower.includes(term));
   const wantsPricing = ['price', 'pricing', 'turo', 'rate', 'raise', 'lower', 'demand'].some((term) => lower.includes(term));
   const wantsCharging = ['charge', 'charging', 'battery', 'electric', 'rate', 'overnight'].some((term) => lower.includes(term));
@@ -364,6 +370,7 @@ function saveDemoPlan(goal, response) {
 
 const exampleWorkflows = [
   'Maximize my earnings this weekend with 3 Teslas',
+  'What are the top rented Teslas in Tampa?',
   'How many miles did my last rental drive?',
   'Check health and prepare all vehicles for tomorrow',
 ];

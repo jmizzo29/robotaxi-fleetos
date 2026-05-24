@@ -36,6 +36,12 @@ const agents = [
     tone: 'cyan',
   },
   {
+    name: 'Market Agent',
+    role: 'Answers city-level rental questions using owner home market, vehicle GPS/city, demand patterns, and imported rental history.',
+    signal: 'Market',
+    tone: 'emerald',
+  },
+  {
     name: 'Traffic Agent',
     role: 'Watches traffic and incident context that can affect pickups, cleaning windows, and utilization.',
     signal: 'Roads',

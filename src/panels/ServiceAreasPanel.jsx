@@ -1,3 +1,5 @@
+import { buildMarketRentalAnswer, inferOwnerMarket } from '../services/marketIntelligenceService';
+
 function formatCurrency(value) {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -54,6 +56,9 @@ export default function ServiceAreasPanel({ fleet = [], demandZones = [], onQueu
   const avgUtilization = average(fleet.map((vehicle) => vehicle.utilization ?? 0));
   const bestZone = [...demandZones].sort((a, b) => (b.profitability || 0) - (a.profitability || 0))[0];
   const readyCount = fleet.filter((vehicle) => ['Ready', 'Repositioning'].includes(statusLabel(vehicle))).length;
+  const ownerMarket = inferOwnerMarket(fleet);
+  const marketAnswer = buildMarketRentalAnswer(`What are the top rented Teslas in ${ownerMarket.market?.city || 'Orlando'}?`, fleet);
+  const topModels = ownerMarket.market?.topTeslaModels || [];
 
   return (
     <section className="mb-6 space-y-4">
@@ -185,6 +190,48 @@ export default function ServiceAreasPanel({ fleet = [], demandZones = [], onQueu
           </div>
         </article>
       </div>
+
+      <article className="rounded-lg border border-emerald-300/15 bg-slate-900/80 p-5 shadow-lg shadow-black/10">
+        <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+          <div className="max-w-3xl">
+            <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-300">Local Rental Market</p>
+            <h2 className="mt-2 text-2xl font-black text-white">
+              Top rented Teslas near {ownerMarket.market?.city || 'your operating area'}
+            </h2>
+            <p className="mt-2 text-sm leading-6 text-slate-400">
+              RoboAgent infers the owner market from connected vehicle city/GPS when available, then answers market questions with transparent confidence. This is not live Turo inventory yet; it becomes stronger as owners import rental history.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => onQueueCommand?.(`Answer market question: ${marketAnswer.title}. ${marketAnswer.summary}`, 'HIGH')}
+            className="rounded-md border border-emerald-300/30 bg-emerald-300/10 px-4 py-3 text-sm font-black text-emerald-100 transition hover:bg-emerald-300/20"
+          >
+            Ask Market Agent
+          </button>
+        </div>
+
+        <div className="mt-5 grid grid-cols-1 gap-3 lg:grid-cols-3">
+          {topModels.map((item, index) => (
+            <div key={item.model} className="rounded-lg border border-white/10 bg-slate-950/55 p-4">
+              <div className="flex items-start justify-between gap-3">
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-500">Rank {index + 1}</p>
+                  <h3 className="mt-2 text-lg font-black text-white">{item.model}</h3>
+                </div>
+                <span className="rounded-md border border-sky-300/20 bg-sky-300/10 px-2.5 py-1 text-xs font-black text-sky-200">
+                  {ownerMarket.market?.confidence || 0}%
+                </span>
+              </div>
+              <p className="mt-3 text-sm leading-6 text-slate-400">{item.reason}</p>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-4 rounded-lg border border-white/10 bg-slate-950/55 p-4 text-sm leading-6 text-slate-300">
+          <span className="font-black text-emerald-300">Market logic:</span> {marketAnswer.impact}
+        </div>
+      </article>
     </section>
   );
 }
