@@ -22,12 +22,13 @@ function Metric({ label, value, helper, tone = 'text-white' }) {
   );
 }
 
-function ActionCard({ eyebrow, title, detail, value, tone = 'sky', onQueue }) {
+function ActionCard({ eyebrow, title, detail, value, tone = 'sky', onQueue, buttonLabel = 'Queue Action' }) {
   const tones = {
     sky: 'border-sky-300/20 bg-sky-300/[0.07] text-sky-100',
     emerald: 'border-emerald-300/20 bg-emerald-300/[0.07] text-emerald-100',
     amber: 'border-amber-300/20 bg-amber-300/[0.07] text-amber-100',
     rose: 'border-rose-300/20 bg-rose-300/[0.07] text-rose-100',
+    violet: 'border-violet-300/20 bg-violet-300/[0.07] text-violet-100',
   };
 
   return (
@@ -46,7 +47,7 @@ function ActionCard({ eyebrow, title, detail, value, tone = 'sky', onQueue }) {
           onClick={onQueue}
           className="mt-4 w-full rounded-md border border-white/10 bg-slate-950/35 px-4 py-2.5 text-sm font-black text-white transition hover:bg-slate-950/55"
         >
-          Queue Action
+          {buttonLabel}
         </button>
       ) : null}
     </article>
@@ -100,6 +101,31 @@ function buildImpact({ pricingRecommendations, healthSummary, maintenancePlan })
   };
 }
 
+function buildChargingPlan(fleet = []) {
+  const vehicles = fleet.map((vehicle) => ({
+    vehicle,
+    battery: Number(vehicle.battery ?? vehicle.batteryLevel ?? vehicle.chargeState?.battery_level ?? 0),
+    status: String(vehicle.status || vehicle.state || '').toLowerCase(),
+  }));
+  const needsCharge = vehicles
+    .filter((item) => item.battery > 0 && item.battery < 65)
+    .sort((a, b) => a.battery - b.battery);
+  const readyCount = vehicles.filter((item) => item.battery >= 75).length;
+  const asleepCount = vehicles.filter((item) => item.status.includes('asleep')).length;
+  const target = needsCharge[0] || vehicles.sort((a, b) => a.battery - b.battery)[0];
+
+  return {
+    target,
+    readyCount,
+    asleepCount,
+    window: '11 PM - 5 AM',
+    detail: target
+      ? `${vehicleLabel(target.vehicle)} is at ${Math.round(target.battery || 0)}%. Charge during the off-peak window and avoid extra wakes unless a rental is imminent.`
+      : 'No vehicle charge action is needed until the next telemetry sync.',
+    value: needsCharge.length ? `${needsCharge.length} to charge` : `${readyCount} ready`,
+  };
+}
+
 export default function OwnerValueDashboard({ fleet = [], onQueueCommand }) {
   const [revenueRecords, setRevenueRecords] = useState(() => readRevenueRecords());
 
@@ -125,28 +151,25 @@ export default function OwnerValueDashboard({ fleet = [], onQueueCommand }) {
     () => buildImpact({ pricingRecommendations, healthSummary, maintenancePlan }),
     [pricingRecommendations, healthSummary, maintenancePlan],
   );
+  const chargingPlan = useMemo(() => buildChargingPlan(fleet), [fleet]);
 
   const topPricing = pricingRecommendations[0];
   const topMaintenance = maintenancePlan[0];
   const avgHealth = Math.round(healthSummary.avgHealth || 0);
+  const criticalMaintenance = maintenancePlan.filter((item) => item.priority === 'HIGH').length;
+  const pricingUpsideCount = pricingRecommendations.filter((item) => item.recommendedChange > 0).length;
 
   return (
     <section className="space-y-4" data-testid="owner-value-dashboard">
       <article className="rounded-xl border border-emerald-300/20 bg-slate-900/90 p-5 shadow-xl shadow-black/20">
-        <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+        <div className="flex flex-col gap-5">
           <div className="max-w-4xl">
             <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-300">Owner Value Dashboard</p>
             <h2 className="mt-3 text-3xl font-black tracking-tight text-white">Today&apos;s AI fleet brief</h2>
             <p className="mt-3 text-sm leading-6 text-slate-300">{dailyBrief.greeting}</p>
-            <div className="mt-4 grid gap-2 md:grid-cols-2">
-              {dailyBrief.bullets.map((item) => (
-                <div key={item} className="rounded-lg border border-white/10 bg-slate-950/50 px-3 py-3 text-sm font-semibold leading-5 text-slate-300">
-                  {item}
-                </div>
-              ))}
-            </div>
           </div>
-          <div className="grid min-w-full grid-cols-2 gap-3 xl:min-w-[360px]">
+
+          <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
             <Metric label="Projected Today" value={formatCurrency(dailyBrief.projectedToday)} tone="text-emerald-300" />
             <Metric label="Fleet Health" value={`${avgHealth}/100`} tone={avgHealth >= 84 ? 'text-emerald-300' : avgHealth >= 72 ? 'text-amber-300' : 'text-rose-300'} />
             <Metric label="Weekend Upside" value={formatCurrency(impact.total)} tone="text-sky-300" helper="Modeled opportunity" />
@@ -155,37 +178,50 @@ export default function OwnerValueDashboard({ fleet = [], onQueueCommand }) {
         </div>
       </article>
 
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-5">
         <ActionCard
-          eyebrow="Realistic Goal"
-          title="Maximize weekend earnings"
-          detail="RoboAgent can balance local demand, weather, vehicle health, charge state, cleaning, and owner approval into one weekend plan."
-          value={formatCurrency(impact.total)}
+          eyebrow="Today's AI Brief"
+          title={`${fleet.length || 0} vehicles in plan`}
+          detail={dailyBrief.bullets.slice(0, 3).join(' ')}
+          value={formatCurrency(dailyBrief.projectedToday)}
           tone="emerald"
-          onQueue={() => onQueueCommand?.('Maximize earnings this weekend across my Tesla fleet', 'HIGH')}
+          buttonLabel="Open Brief"
+          onQueue={() => onQueueCommand?.('Give me today’s full RoboAgent fleet brief with exact next steps', 'HIGH')}
         />
         <ActionCard
-          eyebrow="Dynamic Pricing"
-          title={topPricing ? `${vehicleLabel(topPricing.vehicle)}: ${topPricing.recommendedChange > 0 ? '+' : ''}${topPricing.recommendedChange}%` : 'Add pricing inputs'}
-          detail={topPricing ? `Confidence ${topPricing.confidence}%. ${topPricing.signals?.[0]?.detail || 'Pricing signal ready.'}` : 'Upload Turo CSV or add market rates to improve pricing recommendations.'}
+          eyebrow="Pricing Opportunities"
+          title={topPricing ? `${pricingUpsideCount} price move${pricingUpsideCount === 1 ? '' : 's'} found` : 'Add pricing inputs'}
+          detail={topPricing ? `${vehicleLabel(topPricing.vehicle)}: ${topPricing.recommendedChange > 0 ? '+' : ''}${topPricing.recommendedChange}% with ${topPricing.confidence}% confidence. ${topPricing.signals?.[0]?.detail || ''}` : 'Upload Turo CSV or add market rates to unlock better pricing recommendations.'}
           value={topPricing?.recommendedDailyRate ? `${formatCurrency(topPricing.recommendedDailyRate)}/day` : null}
           tone="sky"
+          buttonLabel="Review Pricing"
           onQueue={() => onQueueCommand?.('Review dynamic Turo pricing recommendations for this weekend', 'HIGH')}
         />
         <ActionCard
-          eyebrow="Predictive Maintenance"
-          title={topMaintenance ? `${topMaintenance.name}: ${topMaintenance.task}` : 'No urgent watch'}
+          eyebrow="Maintenance Watch"
+          title={criticalMaintenance ? `${criticalMaintenance} high priority` : 'No urgent watch'}
           detail={topMaintenance ? `${topMaintenance.reason} Suggested window: ${topMaintenance.window}.` : 'RoboAgent did not detect a high-priority maintenance item yet.'}
           value={topMaintenance?.priority}
           tone={topMaintenance?.priority === 'HIGH' ? 'rose' : 'amber'}
+          buttonLabel="Plan Service"
           onQueue={() => onQueueCommand?.(`Schedule maintenance or cleaning: ${topMaintenance?.name || 'fleet review'}`, topMaintenance?.priority || 'NORMAL')}
         />
         <ActionCard
-          eyebrow="Impact Tracking"
+          eyebrow="Charging Plan"
+          title={chargingPlan.window}
+          detail={chargingPlan.detail}
+          value={chargingPlan.value}
+          tone="violet"
+          buttonLabel="Plan Charging"
+          onQueue={() => onQueueCommand?.(`Build tonight’s charging plan: ${chargingPlan.detail}`, 'NORMAL')}
+        />
+        <ActionCard
+          eyebrow="Estimated Earnings Impact"
           title={`${formatCurrency(impact.total)} modeled upside`}
           detail={`${formatCurrency(impact.pricing)} pricing, ${formatCurrency(impact.charging)} charging optimization, ${formatCurrency(impact.downtime)} downtime protection.`}
           value="Monthly proof"
           tone="emerald"
+          buttonLabel="Show Impact"
           onQueue={() => onQueueCommand?.('Generate monthly RoboAgent earnings impact report', 'NORMAL')}
         />
       </div>
