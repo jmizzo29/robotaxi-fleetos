@@ -127,8 +127,6 @@ export async function getSession(req, res, { create = false } = {}) {
     return clerkSession;
   }
 
-  if (isClerkAuthRequired()) return null;
-
   const sessionId = getSessionId(req);
   if (sessionId) {
     const { rows } = await query(
@@ -152,6 +150,8 @@ export async function getSession(req, res, { create = false } = {}) {
       };
     }
   }
+
+  if (isClerkAuthRequired() && !create) return null;
 
   if (!create) return null;
   const created = await createAnonymousSession(res);

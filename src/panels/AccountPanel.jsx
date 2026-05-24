@@ -11,6 +11,7 @@ import {
   requestFleetOsMagicLink,
   updateFleetOsProfile,
 } from '../services/sessionService';
+import { getTeslaLoginUrl } from '../services/teslaHealthService';
 
 const emptyRegister = {
   name: '',
@@ -68,6 +69,14 @@ function Divider() {
       <span className="text-xs font-bold uppercase tracking-[0.2em] text-slate-600">or</span>
       <span className="h-px flex-1 bg-white/10" />
     </div>
+  );
+}
+
+function TeslaMark() {
+  return (
+    <span className="text-xl font-black leading-none tracking-tight" aria-hidden="true">
+      T
+    </span>
   );
 }
 
@@ -144,6 +153,10 @@ export default function AccountPanel({ onNavigate }) {
   const billingRequired = Boolean(billing?.billingRequired);
   const activeForm = authMode === 'create' ? 'create' : 'signin';
 
+  const startTeslaSignIn = () => {
+    window.location.href = getTeslaLoginUrl('onboarding');
+  };
+
   if (!hasRealAccount) {
     return (
       <div className="grid min-h-[calc(100vh-6rem)] place-items-center px-4 py-10">
@@ -159,7 +172,7 @@ export default function AccountPanel({ onNavigate }) {
             </button>
             <h1 className="text-2xl font-black text-white">Sign in to FleetOS</h1>
             <p className="mt-3 text-sm leading-6 text-slate-400">
-              Secure access for Tesla rental and robotaxi fleet owners.
+              Start with your Tesla account. FleetOS never sees your Tesla password.
             </p>
           </div>
 
@@ -175,28 +188,36 @@ export default function AccountPanel({ onNavigate }) {
             </div>
           )}
 
+          <div className="mt-7 space-y-4">
+            <button
+              type="button"
+              onClick={startTeslaSignIn}
+              className="flex w-full items-center justify-center gap-3 rounded-lg bg-white px-5 py-4 text-base font-black text-black transition hover:bg-slate-200"
+            >
+              <TeslaMark />
+              Sign in with Tesla
+            </button>
+            <p className="text-center text-xs leading-5 text-slate-500">
+              You will approve access on Tesla&apos;s secure OAuth screen. We request vehicle status, location, charging, odometer, and alerts so the AI agent can monitor your fleet.
+            </p>
+          </div>
+
           {clerkReady ? (
             <div className="mt-7 space-y-4">
-              <SignUpButton mode="modal">
-                <button
-                  type="button"
-                  className="flex w-full items-center justify-center rounded-lg bg-white px-5 py-4 text-base font-black text-black transition hover:bg-slate-200"
-                >
-                  Create free account
-                </button>
-              </SignUpButton>
               <Divider />
               <SignInButton mode="modal">
                 <button
                   type="button"
-                  className="flex w-full items-center justify-center rounded-lg bg-white px-5 py-4 text-base font-black text-black transition hover:bg-slate-200"
+                  className="flex w-full items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] px-5 py-4 text-base font-black text-slate-100 transition hover:bg-white/10"
                 >
-                  Sign in
+                  Continue with Email
                 </button>
               </SignInButton>
-              <p className="pt-2 text-center text-xs leading-5 text-slate-500">
-                Use email code or passwordless sign-in if you do not know your password.
-              </p>
+              <SignUpButton mode="modal">
+                <button type="button" className="w-full text-sm font-semibold text-slate-500 transition hover:text-slate-300">
+                  Create email account instead
+                </button>
+              </SignUpButton>
             </div>
           ) : (
             <div className="mt-7 space-y-5">
@@ -321,7 +342,7 @@ export default function AccountPanel({ onNavigate }) {
                 <Step
                   number="2"
                   title="Connect Tesla OAuth"
-                  detail="You approve access with Tesla. FleetOS never gets your Tesla password."
+                  detail="You approve access with Tesla. FleetOS stores encrypted tokens and never gets your Tesla password."
                 />
                 <Step
                   number="3"

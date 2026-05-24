@@ -214,13 +214,13 @@ async function testAdminGate() {
 
 async function testTeslaLoginGate() {
   const login = await request('/api/tesla/login?returnTo=%2F%23%2Fonboarding', { redirect: 'manual' });
-  if (login.status !== 401) {
-    return fail('Tesla login gate', `Expected 401 when signed out, got ${login.status}.`, {
+  if (![302, 307, 308].includes(login.status) || !String(login.location || '').includes('tesla.com')) {
+    return fail('Tesla OAuth entry', `Expected Tesla OAuth redirect, got ${login.status}.`, {
       location: login.location,
       body: truncate(login.text),
     });
   }
-  return pass('Tesla login gate', 'Signed-out user cannot start Tesla OAuth.');
+  return pass('Tesla OAuth entry', 'Signed-out visitor can start the Tesla-first OAuth flow.');
 }
 
 async function testTeslaCallbackMisuse() {
@@ -379,7 +379,7 @@ const tests = [
   ['health endpoint', testHealth],
   ['signed-out session gate', testSignedOutSessionGate],
   ['admin gate', testAdminGate],
-  ['Tesla login gate', testTeslaLoginGate],
+  ['Tesla OAuth entry', testTeslaLoginGate],
   ['Tesla callback misuse', testTeslaCallbackMisuse],
   ['vehicles API gate', testVehiclesGate],
   ['method hardening', testMethodHardening],
