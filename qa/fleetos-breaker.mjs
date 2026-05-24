@@ -141,7 +141,6 @@ async function testExpectedLandingCopy() {
     'Start Free (First Tesla Free)',
     'Simple, fair pricing.',
     'Secure by Design',
-    'Connect Tesla in minutes',
     'Tesla password never shared',
   ];
   const missing = expected.filter((phrase) => !bundle?.text.includes(phrase));

@@ -194,26 +194,6 @@ export default function OnboardingPanel({
         </article>
       )}
 
-      <div className="rounded-lg border border-white/10 bg-slate-900/80 p-5">
-        <p className="text-xs font-bold uppercase tracking-[0.24em] text-sky-300">Tesla Owner Setup</p>
-        <h2 className="mt-2 text-3xl font-black tracking-tight text-white">Get from signup to first live Tesla sync</h2>
-        <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-400">
-          This is the clean beta path for a mobile Tesla owner: create a RoboAgent account, approve data use, connect Tesla, sync once, then land on the operating dashboard.
-        </p>
-        <div className="mt-5 grid gap-3 md:grid-cols-3">
-          {[
-            ['Tesla password stays with Tesla', 'RoboAgent uses OAuth and never asks for your Tesla password.'],
-            ['Owner-controlled access', 'You can disconnect Tesla, revoke consent, or delete RoboAgent data from the app.'],
-            ['Private by default', 'Tesla tokens are encrypted and location is handled only after explicit consent.'],
-          ].map(([title, detail]) => (
-            <div key={title} className="rounded-lg border border-emerald-300/15 bg-emerald-400/[0.06] p-4">
-              <p className="text-xs font-black uppercase tracking-[0.16em] text-emerald-300">{title}</p>
-              <p className="mt-2 text-sm leading-6 text-slate-300">{detail}</p>
-            </div>
-          ))}
-        </div>
-      </div>
-
       {!hasAccount && (
         <div className="rounded-lg border border-sky-300/30 bg-sky-300/10 p-5">
           <p className="text-xs font-black uppercase tracking-[0.22em] text-sky-300">Start Here</p>

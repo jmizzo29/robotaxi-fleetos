@@ -1,15 +1,8 @@
 import { useState } from 'react';
 import { SignInButton } from '@clerk/react';
-import TeslaIndependenceNotice from '../components/TeslaIndependenceNotice';
 import { useFleetAuthStatus } from '../auth/FleetAuthContext';
 import { isClerkConfigured } from '../auth/clerkConfig';
 import { buildMarketRentalAnswer, isMarketQuestion } from '../services/marketIntelligenceService';
-
-const setupSteps = [
-  ['Create RoboAgent account', 'Start with one Tesla and keep the first vehicle free while you learn the product.'],
-  ['Authenticate with Tesla', 'Use Tesla OAuth to approve telemetry access. RoboAgent never needs your Tesla password.'],
-  ['Sync and monitor', 'See battery, location, charging, odometer, parking history, and owner economics in one console.'],
-];
 
 const trustPoints = [
   ['Secure account login', 'RoboAgent uses managed identity with verified sessions before any Tesla connection can be attached.'],
@@ -136,34 +129,6 @@ function MobileTrustSection() {
             </article>
           ))}
         </div>
-      </div>
-    </section>
-  );
-}
-
-function MobileSetupSection({ onStart }) {
-  return (
-    <section className="md:hidden">
-      <div className="mx-auto max-w-7xl px-5 py-8">
-        <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-300">Setup</p>
-        <h2 className="mt-3 text-3xl font-black tracking-tight text-white">Create account. Connect Tesla. Sync.</h2>
-        <div className="mt-5 grid gap-3">
-          {setupSteps.map(([title], index) => (
-            <div key={title} className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/[0.04] px-4 py-3">
-              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-md bg-sky-300 text-sm font-black text-slate-950">
-                {index + 1}
-              </span>
-              <span className="text-sm font-black text-slate-100">{title}</span>
-            </div>
-          ))}
-        </div>
-        <button
-          type="button"
-          onClick={onStart}
-          className="mt-5 w-full rounded-lg bg-sky-300 px-5 py-4 text-base font-black text-slate-950 transition hover:bg-sky-200"
-        >
-          Start Free
-        </button>
       </div>
     </section>
   );
@@ -621,47 +586,6 @@ export default function LandingPage({ onNavigate }) {
           </div>
         </section>
 
-        <MobileSetupSection onStart={() => onNavigate('onboarding')} />
-
-        <section className="hidden border-y border-white/10 bg-slate-950/70 md:block">
-          <div className="mx-auto max-w-7xl px-5 py-14">
-            <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-              <div>
-                <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-300">
-                  Easy Setup
-                </p>
-                <h2 className="mt-3 text-4xl font-black tracking-tight text-white">
-                  Connect Tesla in minutes
-                </h2>
-              </div>
-              <button
-                type="button"
-                onClick={() => enterApp('tesla')}
-                className="rounded-md border border-sky-400/30 bg-sky-400/10 px-5 py-3 text-sm font-black text-sky-100 transition hover:bg-sky-400/20"
-              >
-                {isSignedIn ? 'View Tesla Integration' : 'Sign In to Connect Tesla'}
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-              {setupSteps.map(([title, detail], index) => (
-                <article key={title} className="rounded-lg border border-white/10 bg-white/[0.04] p-6">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-md bg-sky-300 text-sm font-black text-slate-950">
-                    {index + 1}
-                  </span>
-                  <h3 className="mt-5 text-xl font-black text-white">{title}</h3>
-                  <p className="mt-3 text-sm leading-6 text-slate-400">{detail}</p>
-                </article>
-              ))}
-            </div>
-            <p className="mt-6 text-xs leading-5 text-slate-600">
-              RoboAgent uses Tesla-approved authentication flows and is not affiliated with or endorsed by Tesla.
-            </p>
-            <div className="mt-5 max-w-3xl">
-              <TeslaIndependenceNotice compact />
-            </div>
-          </div>
-        </section>
       </main>
       <footer className="mx-auto flex max-w-7xl flex-col gap-3 border-t border-white/10 px-5 py-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
         <p>RoboAgent beta. Not affiliated with or endorsed by Tesla.</p>

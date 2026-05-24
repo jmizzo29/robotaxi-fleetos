@@ -84,7 +84,6 @@ async function testLanding(browser, profile) {
   }
   if (profile === 'desktop') {
     await page.getByText('Simple, fair pricing.').waitFor({ timeout: 15000 });
-    await page.getByText('Connect Tesla in minutes').waitFor({ timeout: 15000 });
     await page.getByText('Secure by Design').waitFor({ timeout: 15000 });
     await page.getByText('Owner-controlled data').waitFor({ timeout: 15000 });
   }
@@ -98,7 +97,6 @@ async function testLanding(browser, profile) {
     await page.getByText('Secure Tesla Login').waitFor({ timeout: 15000 });
     await page.getByText('Data Encrypted').waitFor({ timeout: 15000 });
     await page.getByText('Revoke Anytime').waitFor({ timeout: 15000 });
-    await page.getByText('Create account. Connect Tesla. Sync.').waitFor({ timeout: 15000 });
   }
   await page.getByText('Join Early Access').count().then((count) => {
     if (count > 0) throw new Error('Old Join Early Access form is visible.');
