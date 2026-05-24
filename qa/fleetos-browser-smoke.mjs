@@ -95,9 +95,17 @@ async function testLanding(browser, profile) {
     await page.getByText('Fleet Telemetry First').waitFor({ timeout: 15000 });
     await page.getByText('VIN-Scoped Limits').waitFor({ timeout: 15000 });
   }
-  await page.getByRole('button', { name: 'Try the AI Agent Live' }).waitFor({ timeout: 15000 });
-  await page.getByRole('button', { name: 'Start Free (First Tesla Free)' }).waitFor({ timeout: 15000 });
-  await page.getByText('Tesla password never shared').first().waitFor({ timeout: 15000 });
+  if (profile === 'desktop') {
+    await page.getByRole('button', { name: 'Try the AI Agent Live' }).waitFor({ timeout: 15000 });
+    await page.getByRole('button', { name: 'Start Free (First Tesla Free)' }).waitFor({ timeout: 15000 });
+    await page.getByText('Tesla password never shared').first().waitFor({ timeout: 15000 });
+  } else {
+    await page.getByRole('button', { name: 'Run Agent' }).waitFor({ timeout: 15000 });
+    await page.getByRole('button', { name: 'Sign in with Tesla' }).waitFor({ timeout: 15000 });
+    await page.getByText('Secure Tesla Login').waitFor({ timeout: 15000 });
+    await page.getByText('Data Encrypted').waitFor({ timeout: 15000 });
+    await page.getByText('Revoke Anytime').waitFor({ timeout: 15000 });
+  }
   await page.getByText('Join Early Access').count().then((count) => {
     if (count > 0) throw new Error('Old Join Early Access form is visible.');
   });
@@ -167,13 +175,21 @@ async function testLandingCtas(browser, profile) {
   const telemetry = await makePage(browser, profile);
   const { page, context } = telemetry;
   await page.goto(routeUrl('/'), { waitUntil: 'networkidle' });
-  await page.getByRole('button', { name: 'Try the AI Agent Live' }).click();
+  if (profile === 'desktop') {
+    await page.getByRole('button', { name: 'Try the AI Agent Live' }).click();
+  }
   await page.locator('#hero-agent-input').fill('Should I raise price this weekend in Tampa?');
   await page.getByRole('button', { name: 'Run Agent' }).click();
   await page.getByText('Turo revenue plan').first().waitFor({ timeout: 15000 });
-  await page.getByRole('button', { name: 'Start Free (First Tesla Free)' }).click();
-  await page.waitForURL('**/#/onboarding', { timeout: 10000 });
-  await page.getByText('Connect Your First Tesla').waitFor({ timeout: 15000 });
+  if (profile === 'desktop') {
+    await page.getByRole('button', { name: 'Start Free (First Tesla Free)' }).click();
+    await page.waitForURL('**/#/onboarding', { timeout: 10000 });
+    await page.getByText('Connect Your First Tesla').waitFor({ timeout: 15000 });
+  } else {
+    await page.getByRole('button', { name: 'Sign in with Tesla' }).click();
+    await page.waitForURL('**/#/account', { timeout: 10000 });
+    await page.getByRole('heading', { name: 'Sign in to FleetOS' }).waitFor({ timeout: 15000 });
+  }
   await context.close();
   return assertNoRuntimeErrors(`landing CTA to onboarding (${profile})`, telemetry);
 }

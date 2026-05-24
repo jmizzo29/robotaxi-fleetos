@@ -1,11 +1,11 @@
 {
   "baseUrl": "https://robotaxi-fleetos.vercel.app",
-  "generatedAt": "2026-05-24T19:16:24.885Z",
+  "generatedAt": "2026-05-24T19:20:46.905Z",
   "summary": {
     "total": 12,
-    "pass": 12,
+    "pass": 10,
     "warn": 0,
-    "fail": 0
+    "fail": 2
   },
   "results": [
     {
@@ -45,10 +45,12 @@
       "evidence": {}
     },
     {
-      "status": "pass",
+      "status": "fail",
       "name": "landing browser smoke (mobile)",
-      "detail": "No serious browser runtime errors detected.",
-      "evidence": {}
+      "detail": "locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Try the AI Agent Live' }) to be visible\u001b[22m\n",
+      "evidence": {
+        "stack": "locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Try the AI Agent Live' }) to be visible\u001b[22m\n\n    at testLanding (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:98:69)\n    at async runTest (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:26:12)\n    at async file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:218:16"
+      }
     },
     {
       "status": "pass",
@@ -75,10 +77,12 @@
       "evidence": {}
     },
     {
-      "status": "pass",
+      "status": "fail",
       "name": "landing CTA to onboarding (mobile)",
-      "detail": "No serious browser runtime errors detected.",
-      "evidence": {}
+      "detail": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Try the AI Agent Live' })\u001b[22m\n",
+      "evidence": {
+        "stack": "locator.click: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Try the AI Agent Live' })\u001b[22m\n\n    at testLandingCtas (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:170:69)\n    at async runTest (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:26:12)\n    at async file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:218:16"
+      }
     }
   ]
 }
