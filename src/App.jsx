@@ -29,6 +29,7 @@ import MemoryEventsPanel from './panels/MemoryEventsPanel';
 import MobileCommandDashboard from './panels/MobileCommandDashboard';
 import OnboardingPanel from './panels/OnboardingPanel';
 import OperationsReportPanel from './panels/OperationsReportPanel';
+import OwnerValueDashboard from './panels/OwnerValueDashboard';
 import QuickActionGrid from './panels/QuickActionGrid';
 import SettingsPanel from './panels/SettingsPanel';
 import ServiceAreasPanel from './panels/ServiceAreasPanel';
@@ -267,6 +268,12 @@ export default function App() {
             isLoading={isLoadingReal}
             syncStatus={realSyncStatus}
           />
+          <div className="mt-5">
+            <OwnerValueDashboard
+              fleet={fleet}
+              onQueueCommand={requestCommand}
+            />
+          </div>
         </div>
         <div className="hidden md:block">
           <PageHeader
@@ -281,6 +288,10 @@ export default function App() {
             avgProfitability={avgProfitability}
             avgAnomalyRisk={avgAnomalyRisk}
             forecast={forecast}
+          />
+          <OwnerValueDashboard
+            fleet={fleet}
+            onQueueCommand={requestCommand}
           />
           <TeslaTelemetryPanel
             vehicle={primaryTesla}

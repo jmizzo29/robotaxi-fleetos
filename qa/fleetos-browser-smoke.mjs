@@ -194,6 +194,18 @@ async function testLandingCtas(browser, profile) {
   return assertNoRuntimeErrors(`landing CTA to onboarding (${profile})`, telemetry);
 }
 
+async function testOwnerValueDashboard(browser, profile) {
+  const telemetry = await makePage(browser, profile);
+  const { page, context } = telemetry;
+  await page.goto(routeUrl('#/overview'), { waitUntil: 'networkidle' });
+  await page.getByText("Today's AI fleet brief").waitFor({ timeout: 15000 });
+  await page.getByText('Dynamic Pricing').waitFor({ timeout: 15000 });
+  await page.getByText('Predictive Maintenance').waitFor({ timeout: 15000 });
+  await page.getByText('Impact Tracking').waitFor({ timeout: 15000 });
+  await context.close();
+  return assertNoRuntimeErrors(`owner value dashboard (${profile})`, telemetry);
+}
+
 function summarize(results) {
   return results.reduce((acc, item) => {
     acc[item.status] = (acc[item.status] || 0) + 1;
@@ -225,6 +237,7 @@ for (const profile of ['desktop', 'mobile']) {
     [`legal standalone (${profile})`, () => testLegalStandalone(browser, profile)],
     [`service areas map (${profile})`, () => testServiceAreasMap(browser, profile)],
     [`landing CTA to onboarding (${profile})`, () => testLandingCtas(browser, profile)],
+    [`owner value dashboard (${profile})`, () => testOwnerValueDashboard(browser, profile)],
   );
 }
 
