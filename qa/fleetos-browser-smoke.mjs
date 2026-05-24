@@ -139,6 +139,19 @@ async function testLegalStandalone(browser, profile) {
   return assertNoRuntimeErrors(`legal standalone (${profile})`, telemetry);
 }
 
+async function testServiceAreasMap(browser, profile) {
+  const telemetry = await makePage(browser, profile);
+  const { page, context } = telemetry;
+  await page.goto(routeUrl('#/map'), { waitUntil: 'networkidle' });
+  await page.getByText('Fleet Map Intelligence').waitFor({ timeout: 15000 });
+  await page.getByText('Service Areas').first().waitFor({ timeout: 15000 });
+  await page.getByText('Demand and pricing zones').waitFor({ timeout: 15000 });
+  await page.getByText('Health on the map').waitFor({ timeout: 15000 });
+  await page.getByText('Recommended pricing zone').first().waitFor({ timeout: 15000 });
+  await context.close();
+  return assertNoRuntimeErrors(`service areas map (${profile})`, telemetry);
+}
+
 async function testLandingCtas(browser, profile) {
   const telemetry = await makePage(browser, profile);
   const { page, context } = telemetry;
@@ -183,6 +196,7 @@ for (const profile of ['desktop', 'mobile']) {
     [`onboarding standalone (${profile})`, () => testOnboardingStandalone(browser, profile)],
     [`account standalone (${profile})`, () => testAccountStandalone(browser, profile)],
     [`legal standalone (${profile})`, () => testLegalStandalone(browser, profile)],
+    [`service areas map (${profile})`, () => testServiceAreasMap(browser, profile)],
     [`landing CTA to onboarding (${profile})`, () => testLandingCtas(browser, profile)],
   );
 }

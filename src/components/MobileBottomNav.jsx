@@ -27,7 +27,7 @@ const items = [
 const menuItems = [
   ['overview', 'Overview', 'Live operations dashboard'],
   ['onboarding', 'Onboarding', 'Signup and Tesla connection'],
-  ['map', 'Live Map', 'Vehicles, demand, and chargers'],
+  ['map', 'Service Areas', 'Vehicles, demand, pricing, and health'],
   ['fleet', 'Fleet', 'Vehicle registry'],
   ['vehicle', 'Vehicle Detail', 'Selected vehicle view'],
   ['assets', 'Assets', 'Ownership and asset records'],

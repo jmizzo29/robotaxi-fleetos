@@ -31,6 +31,7 @@ import OnboardingPanel from './panels/OnboardingPanel';
 import OperationsReportPanel from './panels/OperationsReportPanel';
 import QuickActionGrid from './panels/QuickActionGrid';
 import SettingsPanel from './panels/SettingsPanel';
+import ServiceAreasPanel from './panels/ServiceAreasPanel';
 import TeslaCapabilitiesPanel from './panels/TeslaCapabilitiesPanel';
 import TeslaSyncHealthPanel from './panels/TeslaSyncHealthPanel';
 import TeslaTelemetryPanel from './panels/TeslaTelemetryPanel';
@@ -332,10 +333,15 @@ export default function App() {
     map: (
       <>
         <PageHeader
-          eyebrow="Live Map"
-          title="Fleet Map"
-          description="Track real Tesla telemetry, simulated fleet movement, charging hubs, and demand overlays in one operating view."
+          eyebrow="Service Areas"
+          title="Fleet Map Intelligence"
+          description="See vehicle locations, demand and earnings heat, recommended pricing zones, and vehicle health status in one operating map."
           action={operationsStatus}
+        />
+        <ServiceAreasPanel
+          fleet={fleet}
+          demandZones={demandZones}
+          onQueueCommand={requestCommand}
         />
         <FleetMap
           fleet={fleet}
