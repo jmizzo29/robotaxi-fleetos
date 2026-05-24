@@ -142,16 +142,16 @@ const demoPrompts = [
 function PricingSection({ onStart }) {
   return (
     <section id="pricing" className="scroll-mt-8 border-y border-white/10 bg-white/[0.03]">
-      <div className="mx-auto max-w-7xl px-5 py-14">
+      <div className="mx-auto max-w-7xl px-5 py-8 md:py-14">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-300">
               Pricing
             </p>
-            <h2 className="mt-3 max-w-3xl text-4xl font-black tracking-tight text-white">
+            <h2 className="mt-3 max-w-3xl text-3xl font-black tracking-tight text-white md:text-4xl">
               Simple, fair pricing.
             </h2>
-            <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-400">
+            <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-400 md:mt-4 md:leading-7">
               Start free with one Tesla during beta. Add vehicles only when RoboAgent starts saving real operator time.
             </p>
           </div>
@@ -183,7 +183,7 @@ function PricingSection({ onStart }) {
               <p className="mt-3 text-3xl font-black text-sky-300">{plan.price}</p>
               <p className="mt-3 text-xs font-black uppercase tracking-[0.16em] text-slate-500">Best For</p>
               <p className="mt-1 text-sm font-bold leading-6 text-slate-200">{plan.bestFor}</p>
-              <div className="mt-5 space-y-2">
+              <div className="mt-5 hidden space-y-2 md:block">
                 {plan.features.map((feature) => (
                   <div key={feature} className="flex gap-3 text-sm leading-6 text-slate-300">
                     <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-emerald-300" />
@@ -192,7 +192,7 @@ function PricingSection({ onStart }) {
                 ))}
               </div>
               {plan.note && (
-                <p className="mt-5 rounded-lg border border-amber-300/20 bg-amber-300/10 p-3 text-xs font-semibold leading-5 text-amber-100">
+                <p className="mt-5 hidden rounded-lg border border-amber-300/20 bg-amber-300/10 p-3 text-xs font-semibold leading-5 text-amber-100 md:block">
                   {plan.note}
                 </p>
               )}
@@ -203,6 +203,57 @@ function PricingSection({ onStart }) {
         <p className="mt-6 rounded-lg border border-emerald-300/20 bg-emerald-400/[0.06] p-4 text-sm font-bold leading-6 text-emerald-100">
           First Tesla is always free during beta. Billed monthly, cancel anytime. Popular choice: 3-5 vehicles on Owner Fleet.
         </p>
+      </div>
+    </section>
+  );
+}
+
+function MobileTrustSection() {
+  return (
+    <section className="border-y border-white/10 bg-slate-950/80 md:hidden">
+      <div className="mx-auto max-w-7xl px-5 py-8">
+        <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-300">Trust</p>
+        <h2 className="mt-3 text-3xl font-black tracking-tight text-white">Your Tesla login stays with Tesla.</h2>
+        <div className="mt-5 grid gap-3">
+          {[
+            ['RoboAgent account first', 'Your fleet, billing, and saved AI plans attach to your private app account.'],
+            ['Tesla OAuth second', 'You approve vehicle access directly with Tesla. RoboAgent never sees your Tesla password.'],
+            ['You stay in control', 'Revoke access, disconnect Tesla, or delete data from the app flow.'],
+          ].map(([title, detail]) => (
+            <article key={title} className="rounded-lg border border-emerald-300/15 bg-emerald-400/[0.06] p-4">
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-emerald-300">{title}</p>
+              <p className="mt-2 text-sm leading-6 text-slate-300">{detail}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function MobileSetupSection({ onStart }) {
+  return (
+    <section className="md:hidden">
+      <div className="mx-auto max-w-7xl px-5 py-8">
+        <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-300">Setup</p>
+        <h2 className="mt-3 text-3xl font-black tracking-tight text-white">Create account. Connect Tesla. Sync.</h2>
+        <div className="mt-5 grid gap-3">
+          {setupSteps.map(([title], index) => (
+            <div key={title} className="flex items-center gap-3 rounded-lg border border-white/10 bg-white/[0.04] px-4 py-3">
+              <span className="grid h-8 w-8 shrink-0 place-items-center rounded-md bg-sky-300 text-sm font-black text-slate-950">
+                {index + 1}
+              </span>
+              <span className="text-sm font-black text-slate-100">{title}</span>
+            </div>
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={onStart}
+          className="mt-5 w-full rounded-lg bg-sky-300 px-5 py-4 text-base font-black text-slate-950 transition hover:bg-sky-200"
+        >
+          Start Free
+        </button>
       </div>
     </section>
   );
@@ -698,18 +749,18 @@ export default function LandingPage({ onNavigate }) {
       </header>
 
       <main>
-        <section className="mx-auto grid max-w-7xl grid-cols-1 gap-6 px-5 pb-10 pt-4 sm:gap-8 sm:pt-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-12 lg:pb-14 lg:pt-10">
+        <section className="mx-auto grid max-w-7xl grid-cols-1 gap-5 px-5 pb-7 pt-2 sm:gap-8 sm:pt-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-12 lg:pb-14 lg:pt-10">
           <div className="max-w-2xl">
-            <p className="mb-4 text-xs font-black uppercase tracking-[0.28em] text-emerald-300">
+            <p className="mb-3 text-xs font-black uppercase tracking-[0.22em] text-emerald-300 sm:mb-4 sm:tracking-[0.28em]">
               AI Agent for Tesla Owners
             </p>
-            <h1 className="text-4xl font-black leading-[0.98] tracking-tight text-white sm:text-6xl lg:text-[4.65rem]">
+            <h1 className="text-4xl font-black leading-[1.02] tracking-tight text-white sm:text-6xl sm:leading-[0.98] lg:text-[4.65rem]">
               RoboAgent - Your AI Agent for Tesla Rentals & Robotaxis
             </h1>
-            <p className="mt-4 max-w-2xl text-base leading-7 text-slate-300 sm:mt-6 sm:text-lg sm:leading-8">
+            <p className="mt-3 max-w-2xl text-base leading-6 text-slate-300 sm:mt-6 sm:text-lg sm:leading-8">
               RoboAgent is your AI Agent that helps you maximize earnings from your Tesla vehicles - whether running them on Turo today or in Tesla's Robotaxi network tomorrow.
             </p>
-            <div className="mt-5 flex flex-wrap gap-2">
+            <div className="mt-4 grid grid-cols-2 gap-2 sm:mt-5 sm:flex sm:flex-wrap">
               {['First Tesla free', '$12 per extra Tesla', 'Secure Tesla OAuth', 'Not affiliated with Tesla'].map((label) => (
                 <span key={label} className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-emerald-200">
                   {label}
@@ -758,7 +809,7 @@ export default function LandingPage({ onNavigate }) {
                 </button>
               )}
             </div>
-            <p className="mt-5 text-sm leading-6 text-slate-500">
+            <p className="mt-5 hidden text-sm leading-6 text-slate-500 sm:block">
               RoboAgent plans and optimizes operations. Tesla controls actual autonomous driving availability and execution.
             </p>
           </div>
@@ -769,7 +820,7 @@ export default function LandingPage({ onNavigate }) {
           </div>
         </section>
 
-        <section className="border-y border-white/10 bg-slate-950/80">
+        <section className="hidden border-y border-white/10 bg-slate-950/80 md:block">
           <div className="mx-auto grid max-w-7xl grid-cols-1 gap-4 px-5 py-8 md:grid-cols-4">
             {[
               ['Why RoboAgent', 'It turns telemetry, rental economics, charging, and health signals into owner-approved actions.'],
@@ -787,7 +838,11 @@ export default function LandingPage({ onNavigate }) {
 
         <PricingSection onStart={() => onNavigate('onboarding')} />
 
-        <IntelligenceSignalSection />
+        <MobileTrustSection />
+
+        <div className="hidden md:block">
+          <IntelligenceSignalSection />
+        </div>
 
         <div className="hidden md:block">
           <RoboAgentWorkflowSection />
@@ -959,7 +1014,9 @@ export default function LandingPage({ onNavigate }) {
           </div>
         </section>
 
-        <section className="border-y border-white/10 bg-slate-950/70">
+        <MobileSetupSection onStart={() => onNavigate('onboarding')} />
+
+        <section className="hidden border-y border-white/10 bg-slate-950/70 md:block">
           <div className="mx-auto max-w-7xl px-5 py-14">
             <div className="mb-8 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
               <div>

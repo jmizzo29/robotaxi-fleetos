@@ -82,10 +82,10 @@ async function testLanding(browser, profile) {
   if (heroGoal !== 'Maximize my earnings this weekend with 3 Teslas') {
     throw new Error(`Unexpected hero agent prompt: ${heroGoal}`);
   }
-  await page.getByText('Signals in.').waitFor({ timeout: 15000 });
   await page.getByText('Simple, fair pricing.').waitFor({ timeout: 15000 });
-  await page.getByText('Connect Tesla in minutes').waitFor({ timeout: 15000 });
   if (profile === 'desktop') {
+    await page.getByText('Signals in.').waitFor({ timeout: 15000 });
+    await page.getByText('Connect Tesla in minutes').waitFor({ timeout: 15000 });
     await page.getByText('Security & Privacy').waitFor({ timeout: 15000 });
     await page.getByText('RoboAgent turns data into action').waitFor({ timeout: 15000 });
     await page.getByText('What Data Does RoboAgent Access?').first().waitFor({ timeout: 15000 });
@@ -105,6 +105,7 @@ async function testLanding(browser, profile) {
     await page.getByText('Secure Tesla Login').waitFor({ timeout: 15000 });
     await page.getByText('Data Encrypted').waitFor({ timeout: 15000 });
     await page.getByText('Revoke Anytime').waitFor({ timeout: 15000 });
+    await page.getByText('Create account. Connect Tesla. Sync.').waitFor({ timeout: 15000 });
   }
   await page.getByText('Join Early Access').count().then((count) => {
     if (count > 0) throw new Error('Old Join Early Access form is visible.');
