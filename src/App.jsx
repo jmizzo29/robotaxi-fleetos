@@ -344,15 +344,10 @@ export default function App() {
     map: (
       <>
         <PageHeader
-          eyebrow="Service Areas"
-          title="Fleet Map Intelligence"
-          description="See vehicle locations, demand and earnings heat, recommended pricing zones, and vehicle health status in one operating map."
+          eyebrow="Fleet Map"
+          title="My Tesla Vehicle Map"
+          description="See your own Teslas first: real-time location, status, battery, health score, and next rental context. Service-area demand layers are secondary."
           action={operationsStatus}
-        />
-        <ServiceAreasPanel
-          fleet={fleet}
-          demandZones={demandZones}
-          onQueueCommand={requestCommand}
         />
         <FleetMap
           fleet={fleet}
@@ -361,6 +356,11 @@ export default function App() {
           weatherZones={weatherZones}
           demandZones={demandZones}
           chargingStations={chargingStations}
+        />
+        <ServiceAreasPanel
+          fleet={fleet}
+          demandZones={demandZones}
+          onQueueCommand={requestCommand}
         />
       </>
     ),

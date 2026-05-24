@@ -9,7 +9,7 @@ export default function Sidebar({
   const navItems = [
     ['overview', 'Overview'],
     ['onboarding', 'Onboarding'],
-    ['map', 'Service Areas'],
+    ['map', 'Fleet Map'],
     ['fleet', 'Fleet'],
     ['vehicle', 'Vehicle Detail'],
     ['assets', 'Assets'],
