@@ -1,10 +1,10 @@
 {
   "baseUrl": "https://robotaxi-fleetos.vercel.app",
-  "generatedAt": "2026-05-24T20:53:48.161Z",
-  "durationMs": 3055,
+  "generatedAt": "2026-05-24T21:01:43.630Z",
+  "durationMs": 4130,
   "summary": {
-    "total": 12,
-    "pass": 12,
+    "total": 13,
+    "pass": 13,
     "warn": 0,
     "fail": 0
   },
@@ -12,10 +12,10 @@
     {
       "name": "public shell loads",
       "status": "pass",
-      "detail": "Homepage and bundle loaded in 720ms.",
+      "detail": "Homepage and bundle loaded in 781ms.",
       "evidence": {
-        "asset": "index-CUsLYTz1.js",
-        "bundleBytes": 680835
+        "asset": "index-byoy1ODZ.js",
+        "bundleBytes": 687677
       }
     },
     {
@@ -90,6 +90,12 @@
       "evidence": {}
     },
     {
+      "name": "agent ask gate",
+      "status": "pass",
+      "detail": "Signed-out user cannot ask RoboAgent to analyze private fleet data.",
+      "evidence": {}
+    },
+    {
       "name": "method hardening",
       "status": "pass",
       "detail": "Unsupported API method returns 405.",
@@ -98,10 +104,10 @@
     {
       "name": "health burst",
       "status": "pass",
-      "detail": "20 concurrent health requests passed in 772ms.",
+      "detail": "20 concurrent health requests passed in 843ms.",
       "evidence": {
-        "maxMs": 765,
-        "minMs": 66
+        "maxMs": 841,
+        "minMs": 76
       }
     }
   ]
