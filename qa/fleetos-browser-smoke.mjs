@@ -131,7 +131,7 @@ async function testAccountStandalone(browser, profile) {
   await page.getByLabel('I understand that FleetOS is a third-party app and is not affiliated with Tesla.').check();
   await page.getByLabel(/I have read and agree/).check();
   if (await allowAccess.isDisabled()) throw new Error('Allow Access should enable after both consent checkboxes.');
-  await page.getByRole('button', { name: 'Cancel' }).click();
+  await page.getByRole('button', { name: 'Cancel', exact: true }).click();
   const appMenuVisible = await page.getByRole('button', { name: 'Beta Admin' }).count();
   if (appMenuVisible > 0) throw new Error('App navigation is visible on account page.');
   await context.close();
