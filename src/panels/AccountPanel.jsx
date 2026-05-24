@@ -76,13 +76,34 @@ export default function AccountPanel({ onNavigate }) {
   const clerkReady = isClerkConfigured();
 
   const refresh = async () => {
-    const [nextSession, nextBilling] = await Promise.all([
+    const [sessionResult, billingResult] = await Promise.allSettled([
       getFleetOsSession(),
       getFleetOsBillingStatus(),
     ]);
-    setSession(nextSession);
-    setBilling(nextBilling.billing);
-    setProfileName(nextSession.user?.name || '');
+
+    if (sessionResult.status === 'fulfilled') {
+      setSession(sessionResult.value);
+      setProfileName(sessionResult.value.user?.name || '');
+    } else if (!String(sessionResult.reason?.message || '').toLowerCase().includes('sign in')) {
+      throw sessionResult.reason;
+    } else {
+      setSession({ authenticated: false, user: {} });
+      setProfileName('');
+    }
+
+    if (billingResult.status === 'fulfilled') {
+      setBilling(billingResult.value.billing);
+    } else if (!String(billingResult.reason?.message || '').toLowerCase().includes('sign in')) {
+      throw billingResult.reason;
+    } else {
+      setBilling({
+        vehicleCount: 0,
+        includedVehicles: 1,
+        coveredVehicles: 1,
+        billableVehicles: 0,
+        billingRequired: false,
+      });
+    }
   };
 
   useEffect(() => {

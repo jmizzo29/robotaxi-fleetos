@@ -123,7 +123,7 @@ async function testAccountStandalone(browser, profile) {
   const telemetry = await makePage(browser, profile);
   const { page, context } = telemetry;
   await page.goto(routeUrl('#/account'), { waitUntil: 'networkidle' });
-  await page.getByText('Sign in to FleetOS').waitFor({ timeout: 15000 });
+  await page.getByRole('heading', { name: 'Sign in to FleetOS' }).waitFor({ timeout: 15000 });
   const appMenuVisible = await page.getByRole('button', { name: 'Beta Admin' }).count();
   if (appMenuVisible > 0) throw new Error('App navigation is visible on account page.');
   await context.close();
