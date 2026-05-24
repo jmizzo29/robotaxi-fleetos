@@ -136,7 +136,7 @@ async function testExpectedLandingCopy() {
     'Utilization',
     'Live Operating Picture',
     'In Rental',
-    'Fleet Map Intelligence',
+    'My Tesla Vehicle Map',
     'Demand and pricing zones',
     'Health on the map',
     'Signals in.',
