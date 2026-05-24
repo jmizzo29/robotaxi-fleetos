@@ -122,6 +122,18 @@ const demoPrompts = [
   'Give me a full fleet summary',
 ];
 
+const heroMetrics = [
+  ['Earnings Today', '$428', '+18% vs avg', 'emerald'],
+  ['Fleet Health', '94%', '2 watches', 'sky'],
+  ['Utilization', '82%', 'weekend target', 'amber'],
+];
+
+const heroVehicles = [
+  { id: 'FL', status: 'Ready', position: 'left-[18%] top-[54%]', tone: 'bg-emerald-300 shadow-emerald-300/40' },
+  { id: 'OCE', status: 'Charging', position: 'left-[48%] top-[35%]', tone: 'bg-sky-300 shadow-sky-300/40' },
+  { id: 'Y3', status: 'In Rental', position: 'left-[74%] top-[62%]', tone: 'bg-amber-300 shadow-amber-300/40' },
+];
+
 function PricingSection({ onStart }) {
   return (
     <section id="pricing" className="scroll-mt-8 border-y border-white/10 bg-white/[0.03]">
@@ -417,6 +429,64 @@ function RealExampleWorkflows() {
   );
 }
 
+function HeroFleetMetrics() {
+  const toneClass = {
+    emerald: 'border-emerald-300/20 bg-emerald-400/[0.07] text-emerald-200',
+    sky: 'border-sky-300/20 bg-sky-400/[0.07] text-sky-200',
+    amber: 'border-amber-300/20 bg-amber-400/[0.07] text-amber-200',
+  };
+
+  return (
+    <div className="mt-8 grid grid-cols-1 gap-3 sm:grid-cols-3">
+      {heroMetrics.map(([label, value, detail, tone]) => (
+        <article key={label} className={`rounded-lg border p-4 ${toneClass[tone]}`}>
+          <p className="text-[11px] font-black uppercase tracking-[0.16em] opacity-75">{label}</p>
+          <p className="mt-2 text-3xl font-black text-white">{value}</p>
+          <p className="mt-1 text-xs font-bold opacity-80">{detail}</p>
+        </article>
+      ))}
+    </div>
+  );
+}
+
+function HeroMiniMap() {
+  return (
+    <div className="mt-5 rounded-xl border border-white/10 bg-slate-900/80 p-4">
+      <div className="flex items-center justify-between gap-4">
+        <div>
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-sky-300">Live Operating Picture</p>
+          <p className="mt-1 text-xs font-semibold text-slate-500">Sample fleet status layer</p>
+        </div>
+        <span className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-[11px] font-black uppercase text-emerald-200">
+          3 active
+        </span>
+      </div>
+
+      <div className="relative mt-4 h-36 overflow-hidden rounded-lg border border-white/10 bg-[#111827]">
+        <div className="absolute inset-0 opacity-35 [background-image:linear-gradient(to_right,rgba(148,163,184,.35)_1px,transparent_1px),linear-gradient(to_bottom,rgba(148,163,184,.35)_1px,transparent_1px)] [background-size:42px_42px]" />
+        <div className="absolute -left-12 top-20 h-px w-[130%] rotate-[-18deg] bg-slate-500/50" />
+        <div className="absolute left-24 -top-10 h-px w-[120%] rotate-[26deg] bg-slate-500/40" />
+        {heroVehicles.map((vehicle) => (
+          <div key={vehicle.id} className={`absolute ${vehicle.position}`}>
+            <span className={`flex h-11 w-11 items-center justify-center rounded-full text-xs font-black text-slate-950 shadow-xl ${vehicle.tone}`}>
+              {vehicle.id}
+            </span>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-3 grid grid-cols-3 gap-2">
+        {heroVehicles.map((vehicle) => (
+          <div key={vehicle.status} className="rounded-lg border border-white/10 bg-slate-950/60 px-3 py-2">
+            <p className="text-[10px] font-black uppercase tracking-[0.12em] text-slate-500">{vehicle.id}</p>
+            <p className="mt-1 text-xs font-black text-white">{vehicle.status}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function HeroAgentDemo({ onNavigate }) {
   const [goal, setGoal] = useState(demoPrompts[0]);
   const [response, setResponse] = useState(() => buildDemoResponse(demoPrompts[0]));
@@ -446,6 +516,8 @@ function HeroAgentDemo({ onNavigate }) {
           No signup needed
         </span>
       </div>
+
+      <HeroMiniMap />
 
       <div className="mt-5 rounded-xl border border-white/10 bg-slate-900/80 p-4 lg:p-5">
         <label htmlFor="hero-agent-input" className="text-xs font-black uppercase tracking-[0.18em] text-sky-300">
@@ -612,6 +684,7 @@ export default function LandingPage({ onNavigate }) {
                 </span>
               ))}
             </div>
+            <HeroFleetMetrics />
             <div className="mt-8 flex flex-col gap-3 sm:flex-row">
               <button
                 type="button"
