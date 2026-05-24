@@ -233,6 +233,21 @@ async function testVehiclesGate() {
   return pass('vehicles API gate', 'Signed-out user cannot read vehicle telemetry.');
 }
 
+async function testAgentAskGate() {
+  const agent = await request('/api/agent/ask?qa=breaker', {
+    method: 'POST',
+    accept: 'application/json',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ question: 'What should my fleet do today?' }),
+  });
+  if (agent.status !== 401) {
+    return fail('agent ask gate', `Expected 401 for signed-out agent ask, got ${agent.status}.`, {
+      body: truncate(agent.text),
+    });
+  }
+  return pass('agent ask gate', 'Signed-out user cannot ask RoboAgent to analyze private fleet data.');
+}
+
 async function testMethodHardening() {
   const sessionPost = await request('/api/auth/session', { method: 'POST', accept: 'application/json' });
   if (sessionPost.status !== 405) {
@@ -367,6 +382,7 @@ const tests = [
   ['Tesla OAuth account gate', testTeslaLoginGate],
   ['Tesla callback misuse', testTeslaCallbackMisuse],
   ['vehicles API gate', testVehiclesGate],
+  ['agent ask gate', testAgentAskGate],
   ['method hardening', testMethodHardening],
   ['health burst', testHealthBurst],
 ];

@@ -9,3 +9,10 @@ export async function getAiFleetAnalysis({ fleet, context = {} }) {
     }),
   });
 }
+
+export async function askRoboAgent({ question }) {
+  return fetchApiJson('/agent/ask', {
+    method: 'POST',
+    body: JSON.stringify({ question }),
+  });
+}

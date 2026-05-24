@@ -31,6 +31,7 @@ import OnboardingPanel from './panels/OnboardingPanel';
 import OperationsReportPanel from './panels/OperationsReportPanel';
 import OwnerValueDashboard from './panels/OwnerValueDashboard';
 import QuickActionGrid from './panels/QuickActionGrid';
+import RoboAgentAskPanel from './panels/RoboAgentAskPanel';
 import SettingsPanel from './panels/SettingsPanel';
 import ServiceAreasPanel from './panels/ServiceAreasPanel';
 import TeslaCapabilitiesPanel from './panels/TeslaCapabilitiesPanel';
@@ -494,6 +495,7 @@ export default function App() {
           description="Review next best actions, confidence scores, and one-click execution recommendations from the RoboAgent AI layer."
           action={operationsStatus}
         />
+        <RoboAgentAskPanel onQueueCommand={requestCommand} />
         <AIRecommendationPanel
           recommendations={aiAnalysis.recommendations}
           isAnalyzing={isAnalyzing}

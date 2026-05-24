@@ -209,6 +209,17 @@ async function testOwnerValueDashboard(browser, profile) {
   return assertNoRuntimeErrors(`owner value dashboard (${profile})`, telemetry);
 }
 
+async function testAiOperations(browser, profile) {
+  const telemetry = await makePage(browser, profile);
+  const { page, context } = telemetry;
+  await page.goto(routeUrl('#/ai'), { waitUntil: 'networkidle' });
+  await page.getByRole('heading', { name: 'Ask your fleet agent anything' }).waitFor({ timeout: 15000 });
+  await page.getByRole('button', { name: 'Ask RoboAgent' }).waitFor({ timeout: 15000 });
+  await page.getByText('Operator Next Best Actions').waitFor({ timeout: 15000 });
+  await context.close();
+  return assertNoRuntimeErrors(`ai operations (${profile})`, telemetry);
+}
+
 function summarize(results) {
   return results.reduce((acc, item) => {
     acc[item.status] = (acc[item.status] || 0) + 1;
@@ -241,6 +252,7 @@ for (const profile of ['desktop', 'mobile']) {
     [`service areas map (${profile})`, () => testServiceAreasMap(browser, profile)],
     [`landing CTA to onboarding (${profile})`, () => testLandingCtas(browser, profile)],
     [`owner value dashboard (${profile})`, () => testOwnerValueDashboard(browser, profile)],
+    [`ai operations (${profile})`, () => testAiOperations(browser, profile)],
   );
 }
 

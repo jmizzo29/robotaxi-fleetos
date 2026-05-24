@@ -80,6 +80,7 @@ app.get('/api/auth/magic/verify', (req, res) => handleServerlessRoute('api/auth/
 app.get('/api/billing/status', (req, res) => handleServerlessRoute('api/billing/status.js', req, res));
 app.post('/api/owner-context', (req, res) => handleServerlessRoute('api/owner-context.js', req, res));
 app.post('/api/ai/analyze', (req, res) => handleServerlessRoute('api/ai/analyze.js', req, res));
+app.post('/api/agent/ask', (req, res) => handleServerlessRoute('api/agent/ask.js', req, res));
 
 function updateLocalEnv(updates) {
   const current = fs.existsSync(ENV_PATH) ? fs.readFileSync(ENV_PATH, 'utf8') : '';
