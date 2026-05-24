@@ -101,7 +101,7 @@ async function testLanding(browser, profile) {
     await page.getByText('Tesla password never shared').first().waitFor({ timeout: 15000 });
   } else {
     await page.getByRole('button', { name: 'Run Agent' }).waitFor({ timeout: 15000 });
-    await page.getByRole('button', { name: 'Start Free' }).waitFor({ timeout: 15000 });
+    await page.getByRole('button', { name: 'Start Free' }).first().waitFor({ timeout: 15000 });
     await page.getByText('Secure Tesla Login').waitFor({ timeout: 15000 });
     await page.getByText('Data Encrypted').waitFor({ timeout: 15000 });
     await page.getByText('Revoke Anytime').waitFor({ timeout: 15000 });
