@@ -25,6 +25,32 @@ function formatPercent(value) {
   return `${Math.round(value)}%`;
 }
 
+function formatDecimalCurrency(value, decimals = 2) {
+  if (!Number.isFinite(Number(value))) return '$0.00';
+  return Number(value).toLocaleString('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: decimals,
+    maximumFractionDigits: decimals,
+  });
+}
+
+function formatDate(value) {
+  if (!value) return 'Unavailable';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return 'Unavailable';
+  return date.toLocaleDateString('en-US', {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  });
+}
+
+function formatMonths(value) {
+  if (!Number.isFinite(value) || value <= 0) return 'n/a';
+  return `${value.toFixed(value < 10 ? 1 : 0)} mo`;
+}
+
 const MARKET_RATE_KEY = 'fleetos_pricing_market_inputs';
 
 function readMarketInputs() {
@@ -69,6 +95,12 @@ function vehicleFinance(vehicle, revenueRecords = []) {
   const currentBalance = Number(ownership.currentBalance) || 0;
   const equity = Math.max(0, pricePaid - currentBalance);
   const roi = pricePaid ? (netProfit * 12 / pricePaid) * 100 : 0;
+  const totalMilesDriven = Math.round(Number(vehicle.odometer) || Number(vehicle.odometerMiles) || Number(vehicle.miles) || 0);
+  const estimatedOperatingCosts = operatingCost;
+  const profitPerMile = totalMilesDriven ? netProfit / Math.max(totalMilesDriven / 12, 1) : 0;
+  const paybackPeriodMonths = netProfit > 0 && pricePaid ? pricePaid / netProfit : null;
+  const monthlyAvgProfit = netProfit;
+  const trend = roi >= 24 ? 'up' : roi < 10 ? 'down' : 'flat';
 
   return {
     vehicle,
@@ -83,6 +115,14 @@ function vehicleFinance(vehicle, revenueRecords = []) {
     netProfit,
     equity,
     roi,
+    pricePaid,
+    currentBalance,
+    totalMilesDriven,
+    estimatedOperatingCosts,
+    profitPerMile,
+    paybackPeriodMonths,
+    monthlyAvgProfit,
+    trend,
     margin: revenue ? (netProfit / revenue) * 100 : 0,
   };
 }
@@ -108,13 +148,152 @@ function RoiBar({ value }) {
   );
 }
 
+function TrendBadge({ trend }) {
+  const labels = {
+    up: ['Up', 'border-emerald-400/25 bg-emerald-400/10 text-emerald-200'],
+    down: ['Down', 'border-rose-400/25 bg-rose-400/10 text-rose-200'],
+    flat: ['Stable', 'border-sky-400/25 bg-sky-400/10 text-sky-200'],
+  };
+  const [label, classes] = labels[trend] || labels.flat;
+  const symbol = trend === 'up' ? '+' : trend === 'down' ? '-' : '=';
+  return (
+    <span className={`rounded-full border px-2.5 py-1 text-[10px] font-black uppercase ${classes}`}>
+      {symbol} {label}
+    </span>
+  );
+}
+
+function VehicleEconomicsDashboard({ finance, totalNet, onQueueCommand }) {
+  const topByProfit = finance.reduce((best, item) => (!best || item.netProfit > best.netProfit ? item : best), null);
+  const topByMile = finance.reduce((best, item) => (!best || item.profitPerMile > best.profitPerMile ? item : best), null);
+  const totalPurchasePrice = finance.reduce((sum, item) => sum + item.pricePaid, 0);
+  const totalRevenue = finance.reduce((sum, item) => sum + item.revenue, 0);
+  const totalCost = finance.reduce((sum, item) => sum + item.estimatedOperatingCosts, 0);
+  const avgProfitPerMile = finance.length
+    ? finance.reduce((sum, item) => sum + item.profitPerMile, 0) / finance.length
+    : 0;
+
+  const askAgent = (prompt, priority = 'HIGH') => onQueueCommand?.(prompt, priority);
+
+  return (
+    <article className="rounded-lg border border-emerald-300/15 bg-slate-900/85 p-5 shadow-xl shadow-black/15">
+      <div className="grid grid-cols-1 gap-5 xl:grid-cols-[0.9fr_1.1fr]">
+        <div>
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-emerald-300">
+            Vehicle Economics
+          </p>
+          <h2 className="text-2xl font-black tracking-tight">Know exactly which Tesla is making money</h2>
+          <p className="mt-3 text-sm leading-6 text-slate-300">
+            FleetOS combines purchase price, loan balance, Tesla odometer data, Turo/imported revenue, and modeled operating costs to show true profit, payback, and profit per mile.
+          </p>
+
+          <div className="mt-5 grid grid-cols-2 gap-3">
+            <Metric label="Net Profit" value={formatCurrency(totalNet)} tone={totalNet >= 0 ? 'text-emerald-300' : 'text-rose-300'} helper="Fleet monthly view" />
+            <Metric label="Profit / Mile" value={formatDecimalCurrency(avgProfitPerMile, 3)} tone="text-sky-300" helper="Average across vehicles" />
+            <Metric label="Acquisition Cost" value={formatCurrency(totalPurchasePrice)} tone="text-violet-300" />
+            <Metric label="Operating Cost" value={formatCurrency(totalCost)} tone="text-amber-300" helper={`${formatCurrency(totalRevenue)} revenue tracked`} />
+          </div>
+
+          <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
+            {[
+              ["What's my real profit on Vehicle #2?", 'Calculate real profit by vehicle including debt, charging, cleaning, maintenance reserve, and imported Turo revenue.'],
+              ['Which car is making the most money per mile?', `Compare profit per mile across the fleet. Current leader: ${topByMile?.ownership?.tag || topByMile?.vehicle?.name || 'n/a'}.`],
+              ['When will my Model Y pay for itself?', 'Estimate payback period using purchase price, monthly net profit, and current utilization trend.'],
+              ['Show me a full financial breakdown of my fleet', 'Summarize revenue, costs, balance, equity, profit, and ROI side by side.'],
+            ].map(([label, detail]) => (
+              <button
+                key={label}
+                type="button"
+                onClick={() => askAgent(`${label} ${detail}`)}
+                className="rounded-lg border border-white/10 bg-slate-950/50 p-4 text-left transition hover:border-emerald-300/30 hover:bg-emerald-300/10"
+              >
+                <span className="block text-sm font-black text-slate-100">{label}</span>
+                <span className="mt-1 block text-xs leading-5 text-slate-400">{detail}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="overflow-hidden rounded-lg border border-white/10 bg-slate-950/45">
+          <div className="grid grid-cols-3 gap-3 border-b border-white/10 p-4">
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-500">Top Net</p>
+              <p className="mt-1 truncate text-lg font-black text-emerald-300">{topByProfit?.ownership?.tag || topByProfit?.vehicle?.name || 'n/a'}</p>
+            </div>
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-500">Profit</p>
+              <p className="mt-1 text-lg font-black text-emerald-300">{formatCurrency(topByProfit?.netProfit || 0)}</p>
+            </div>
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-500">Payback</p>
+              <p className="mt-1 text-lg font-black text-sky-300">{formatMonths(topByProfit?.paybackPeriodMonths)}</p>
+            </div>
+          </div>
+
+          <div className="max-h-[520px] overflow-auto">
+            <table className="w-full min-w-[760px] text-left text-sm">
+              <thead className="sticky top-0 bg-slate-950 text-[10px] uppercase tracking-[0.14em] text-slate-500">
+                <tr>
+                  <th className="px-4 py-3">Vehicle</th>
+                  <th className="px-4 py-3">Purchased</th>
+                  <th className="px-4 py-3">Price</th>
+                  <th className="px-4 py-3">Miles</th>
+                  <th className="px-4 py-3">Revenue</th>
+                  <th className="px-4 py-3">Costs</th>
+                  <th className="px-4 py-3">Net</th>
+                  <th className="px-4 py-3">$/Mile</th>
+                  <th className="px-4 py-3">Payback</th>
+                </tr>
+              </thead>
+              <tbody>
+                {finance.map((item) => (
+                  <tr key={item.vehicle.vin || item.vehicle.id} className="border-t border-white/10">
+                    <td className="px-4 py-3">
+                      <div className="flex items-center gap-2">
+                        <span className="font-black text-slate-100">{item.ownership.tag || item.vehicle.id}</span>
+                        <TrendBadge trend={item.trend} />
+                      </div>
+                      <p className="mt-1 text-xs text-slate-500">{item.ownership.modelYear || 'Unknown'} {item.ownership.model || 'Tesla'}</p>
+                    </td>
+                    <td className="px-4 py-3 text-slate-300">{formatDate(item.ownership.purchaseDate)}</td>
+                    <td className="px-4 py-3 text-slate-300">{formatCurrency(item.pricePaid)}</td>
+                    <td className="px-4 py-3 text-slate-300">{item.totalMilesDriven.toLocaleString()}</td>
+                    <td className="px-4 py-3 font-black text-sky-300">{formatCurrency(item.revenue)}</td>
+                    <td className="px-4 py-3 font-black text-amber-300">{formatCurrency(item.estimatedOperatingCosts)}</td>
+                    <td className={`px-4 py-3 font-black ${item.netProfit >= 0 ? 'text-emerald-300' : 'text-rose-300'}`}>{formatCurrency(item.netProfit)}</td>
+                    <td className="px-4 py-3 font-black text-slate-100">{formatDecimalCurrency(item.profitPerMile, 3)}</td>
+                    <td className="px-4 py-3 font-black text-slate-100">{formatMonths(item.paybackPeriodMonths)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </article>
+  );
+}
+
 function FinanceRow({ item, onQueueCommand }) {
-  const { vehicle, ownership, revenue, revenueSource, operatingCost, netProfit, margin, roi, equity } = item;
+  const {
+    vehicle,
+    ownership,
+    revenue,
+    revenueSource,
+    operatingCost,
+    netProfit,
+    margin,
+    roi,
+    equity,
+    profitPerMile,
+    paybackPeriodMonths,
+    totalMilesDriven,
+  } = item;
   const positive = netProfit >= 0;
 
   const handleReview = () => {
     onQueueCommand?.(
-      `Finance review requested for ${vehicle.name || vehicle.display_name || vehicle.id}: ${formatCurrency(netProfit)} monthly net, ${formatPercent(roi)} annualized ROI`,
+      `Vehicle economics review requested for ${vehicle.name || vehicle.display_name || vehicle.id}: ${formatCurrency(netProfit)} monthly net, ${formatDecimalCurrency(profitPerMile, 3)} profit per mile, ${formatMonths(paybackPeriodMonths)} payback estimate, ${formatPercent(roi)} annualized ROI`,
       roi < 15 ? 'HIGH' : 'NORMAL',
     );
   };
@@ -154,7 +333,7 @@ function FinanceRow({ item, onQueueCommand }) {
         <Metric label="Revenue" value={formatCurrency(revenue)} tone="text-sky-300" />
         <Metric label="Operating Cost" value={formatCurrency(operatingCost)} tone="text-amber-300" />
         <Metric label="Net Profit" value={formatCurrency(netProfit)} tone={positive ? 'text-emerald-300' : 'text-rose-300'} />
-        <Metric label="Equity" value={formatCurrency(equity)} tone="text-slate-100" />
+        <Metric label="Profit / Mile" value={formatDecimalCurrency(profitPerMile, 3)} tone="text-emerald-300" helper={`${totalMilesDriven.toLocaleString()} odometer miles`} />
       </div>
 
       <div className="mt-5 grid grid-cols-1 gap-4 lg:grid-cols-[1fr_0.75fr]">
@@ -173,6 +352,14 @@ function FinanceRow({ item, onQueueCommand }) {
           <div className="mt-2 flex justify-between gap-4">
             <span className="text-slate-400">Loan Payment</span>
             <span className="font-black text-slate-100">{formatCurrency(item.monthlyPayment)}</span>
+          </div>
+          <div className="mt-2 flex justify-between gap-4">
+            <span className="text-slate-400">Payback Period</span>
+            <span className="font-black text-slate-100">{formatMonths(paybackPeriodMonths)}</span>
+          </div>
+          <div className="mt-2 flex justify-between gap-4">
+            <span className="text-slate-400">Equity</span>
+            <span className="font-black text-slate-100">{formatCurrency(equity)}</span>
           </div>
           <div className="mt-2 flex justify-between gap-4">
             <span className="text-slate-400">Revenue Source</span>
@@ -576,6 +763,12 @@ export default function FleetFinancePanel({ fleet = [], onQueueCommand }) {
           This is the kind of view an owner pays for: vehicle-level ROI, loan exposure, operating cost, margin, and AI finance review. Current costs are modeled from your asset records and live/simulated operating signals, then can later be replaced with accounting imports.
         </p>
       </article>
+
+      <VehicleEconomicsDashboard
+        finance={finance}
+        totalNet={totalNet}
+        onQueueCommand={onQueueCommand}
+      />
 
       <RevenueTracker
         fleet={fleet}
