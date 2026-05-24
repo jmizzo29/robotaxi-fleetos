@@ -1,11 +1,11 @@
 {
   "baseUrl": "https://robotaxi-fleetos.vercel.app",
-  "generatedAt": "2026-05-24T19:37:08.667Z",
+  "generatedAt": "2026-05-24T19:40:41.851Z",
   "summary": {
     "total": 14,
-    "pass": 12,
+    "pass": 14,
     "warn": 0,
-    "fail": 2
+    "fail": 0
   },
   "results": [
     {
@@ -45,12 +45,10 @@
       "evidence": {}
     },
     {
-      "status": "fail",
+      "status": "pass",
       "name": "owner value dashboard (desktop)",
-      "detail": "{\n  \"pageErrors\": [],\n  \"consoleErrors\": [\n    \"Failed to load resource: the server responded with a status of 500 ()\"\n  ],\n  \"failedRequests\": []\n}",
-      "evidence": {
-        "stack": "Error: {\n  \"pageErrors\": [],\n  \"consoleErrors\": [\n    \"Failed to load resource: the server responded with a status of 500 ()\"\n  ],\n  \"failedRequests\": []\n}\n    at assertNoRuntimeErrors (file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:63:11)\n    at testOwnerValueDashboard (file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:207:10)\n    at async runTest (file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:26:12)\n    at async file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:248:16"
-      }
+      "detail": "No serious browser runtime errors detected.",
+      "evidence": {}
     },
     {
       "status": "pass",
@@ -89,12 +87,10 @@
       "evidence": {}
     },
     {
-      "status": "fail",
+      "status": "pass",
       "name": "owner value dashboard (mobile)",
-      "detail": "{\n  \"pageErrors\": [],\n  \"consoleErrors\": [\n    \"Failed to load resource: the server responded with a status of 500 ()\"\n  ],\n  \"failedRequests\": []\n}",
-      "evidence": {
-        "stack": "Error: {\n  \"pageErrors\": [],\n  \"consoleErrors\": [\n    \"Failed to load resource: the server responded with a status of 500 ()\"\n  ],\n  \"failedRequests\": []\n}\n    at assertNoRuntimeErrors (file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:63:11)\n    at testOwnerValueDashboard (file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:207:10)\n    at async runTest (file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:26:12)\n    at async file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:248:16"
-      }
+      "detail": "No serious browser runtime errors detected.",
+      "evidence": {}
     }
   ]
 }
