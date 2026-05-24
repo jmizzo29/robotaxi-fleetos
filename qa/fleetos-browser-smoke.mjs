@@ -199,9 +199,9 @@ async function testOwnerValueDashboard(browser, profile) {
   const { page, context } = telemetry;
   await page.goto(routeUrl('#/overview'), { waitUntil: 'networkidle' });
   await page.getByRole('heading', { name: "Today's AI fleet brief" }).first().waitFor({ timeout: 15000 });
-  await page.getByText('Dynamic Pricing').waitFor({ timeout: 15000 });
-  await page.getByText('Predictive Maintenance').waitFor({ timeout: 15000 });
-  await page.getByText('Impact Tracking').waitFor({ timeout: 15000 });
+  await page.getByText('Dynamic Pricing').first().waitFor({ timeout: 15000 });
+  await page.getByText('Predictive Maintenance').first().waitFor({ timeout: 15000 });
+  await page.getByText('Impact Tracking').first().waitFor({ timeout: 15000 });
   await context.close();
   return assertNoRuntimeErrors(`owner value dashboard (${profile})`, telemetry);
 }

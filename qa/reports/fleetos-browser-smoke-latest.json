@@ -1,6 +1,6 @@
 {
   "baseUrl": "https://robotaxi-fleetos.vercel.app",
-  "generatedAt": "2026-05-24T19:28:15.834Z",
+  "generatedAt": "2026-05-24T19:29:22.162Z",
   "summary": {
     "total": 14,
     "pass": 12,
@@ -47,9 +47,9 @@
     {
       "status": "fail",
       "name": "owner value dashboard (desktop)",
-      "detail": "locator.waitFor: Error: strict mode violation: getByText('Today\\'s AI fleet brief') resolved to 2 elements:\n    1) <h2 class=\"mt-3 text-3xl font-black tracking-tight text-white\">Today's AI fleet brief</h2> aka getByText('Today\\'s AI fleet brief').first()\n    2) <h2 class=\"mt-3 text-3xl font-black tracking-tight text-white\">Today's AI fleet brief</h2> aka getByRole('heading', { name: 'Today\\'s AI fleet brief' })\n\nCall log:\n\u001b[2m  - waiting for getByText('Today\\'s AI fleet brief') to be visible\u001b[22m\n",
+      "detail": "locator.waitFor: Error: strict mode violation: getByText('Dynamic Pricing') resolved to 2 elements:\n    1) <p class=\"text-[10px] font-black uppercase tracking-[0.16em] opacity-70\">Dynamic Pricing</p> aka getByText('Dynamic Pricing').first()\n    2) <p class=\"text-[10px] font-black uppercase tracking-[0.16em] opacity-70\">Dynamic Pricing</p> aka getByRole('paragraph').filter({ hasText: 'Dynamic Pricing' })\n\nCall log:\n\u001b[2m  - waiting for getByText('Dynamic Pricing') to be visible\u001b[22m\n",
       "evidence": {
-        "stack": "locator.waitFor: Error: strict mode violation: getByText('Today\\'s AI fleet brief') resolved to 2 elements:\n    1) <h2 class=\"mt-3 text-3xl font-black tracking-tight text-white\">Today's AI fleet brief</h2> aka getByText('Today\\'s AI fleet brief').first()\n    2) <h2 class=\"mt-3 text-3xl font-black tracking-tight text-white\">Today's AI fleet brief</h2> aka getByRole('heading', { name: 'Today\\'s AI fleet brief' })\n\nCall log:\n\u001b[2m  - waiting for getByText('Today\\'s AI fleet brief') to be visible\u001b[22m\n\n    at testOwnerValueDashboard (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:201:50)\n    at async runTest (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:26:12)\n    at async file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:247:16"
+        "stack": "locator.waitFor: Error: strict mode violation: getByText('Dynamic Pricing') resolved to 2 elements:\n    1) <p class=\"text-[10px] font-black uppercase tracking-[0.16em] opacity-70\">Dynamic Pricing</p> aka getByText('Dynamic Pricing').first()\n    2) <p class=\"text-[10px] font-black uppercase tracking-[0.16em] opacity-70\">Dynamic Pricing</p> aka getByRole('paragraph').filter({ hasText: 'Dynamic Pricing' })\n\nCall log:\n\u001b[2m  - waiting for getByText('Dynamic Pricing') to be visible\u001b[22m\n\n    at testOwnerValueDashboard (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:202:43)\n    at async runTest (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:26:12)\n    at async file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:247:16"
       }
     },
     {
@@ -91,9 +91,9 @@
     {
       "status": "fail",
       "name": "owner value dashboard (mobile)",
-      "detail": "locator.waitFor: Error: strict mode violation: getByText('Today\\'s AI fleet brief') resolved to 2 elements:\n    1) <h2 class=\"mt-3 text-3xl font-black tracking-tight text-white\">Today's AI fleet brief</h2> aka getByRole('heading', { name: 'Today\\'s AI fleet brief' })\n    2) <h2 class=\"mt-3 text-3xl font-black tracking-tight text-white\">Today's AI fleet brief</h2> aka getByText('Today\\'s AI fleet brief').nth(1)\n\nCall log:\n\u001b[2m  - waiting for getByText('Today\\'s AI fleet brief') to be visible\u001b[22m\n",
+      "detail": "locator.waitFor: Error: strict mode violation: getByText('Dynamic Pricing') resolved to 2 elements:\n    1) <p class=\"text-[10px] font-black uppercase tracking-[0.16em] opacity-70\">Dynamic Pricing</p> aka getByRole('paragraph').filter({ hasText: 'Dynamic Pricing' })\n    2) <p class=\"text-[10px] font-black uppercase tracking-[0.16em] opacity-70\">Dynamic Pricing</p> aka getByText('Dynamic Pricing').nth(1)\n\nCall log:\n\u001b[2m  - waiting for getByText('Dynamic Pricing') to be visible\u001b[22m\n",
       "evidence": {
-        "stack": "locator.waitFor: Error: strict mode violation: getByText('Today\\'s AI fleet brief') resolved to 2 elements:\n    1) <h2 class=\"mt-3 text-3xl font-black tracking-tight text-white\">Today's AI fleet brief</h2> aka getByRole('heading', { name: 'Today\\'s AI fleet brief' })\n    2) <h2 class=\"mt-3 text-3xl font-black tracking-tight text-white\">Today's AI fleet brief</h2> aka getByText('Today\\'s AI fleet brief').nth(1)\n\nCall log:\n\u001b[2m  - waiting for getByText('Today\\'s AI fleet brief') to be visible\u001b[22m\n\n    at testOwnerValueDashboard (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:201:50)\n    at async runTest (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:26:12)\n    at async file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:247:16"
+        "stack": "locator.waitFor: Error: strict mode violation: getByText('Dynamic Pricing') resolved to 2 elements:\n    1) <p class=\"text-[10px] font-black uppercase tracking-[0.16em] opacity-70\">Dynamic Pricing</p> aka getByRole('paragraph').filter({ hasText: 'Dynamic Pricing' })\n    2) <p class=\"text-[10px] font-black uppercase tracking-[0.16em] opacity-70\">Dynamic Pricing</p> aka getByText('Dynamic Pricing').nth(1)\n\nCall log:\n\u001b[2m  - waiting for getByText('Dynamic Pricing') to be visible\u001b[22m\n\n    at testOwnerValueDashboard (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:202:43)\n    at async runTest (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:26:12)\n    at async file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:247:16"
       }
     }
   ]
