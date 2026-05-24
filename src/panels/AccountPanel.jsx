@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { SignInButton, SignUpButton } from '@clerk/react';
 import { ClerkAccountSummary } from '../auth/ClerkAccountControls';
 import { isClerkConfigured } from '../auth/clerkConfig';
 import {
@@ -56,6 +57,16 @@ function Metric({ label, value, detail }) {
       <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">{label}</p>
       <p className="mt-2 text-xl font-black text-slate-100">{value}</p>
       {detail ? <p className="mt-1 text-sm text-slate-400">{detail}</p> : null}
+    </div>
+  );
+}
+
+function Divider() {
+  return (
+    <div className="flex items-center gap-4">
+      <span className="h-px flex-1 bg-white/10" />
+      <span className="text-xs font-bold uppercase tracking-[0.2em] text-slate-600">or</span>
+      <span className="h-px flex-1 bg-white/10" />
     </div>
   );
 }
@@ -132,6 +143,201 @@ export default function AccountPanel({ onNavigate }) {
   const hasRealAccount = Boolean(user.email);
   const billingRequired = Boolean(billing?.billingRequired);
   const activeForm = authMode === 'create' ? 'create' : 'signin';
+
+  if (!hasRealAccount) {
+    return (
+      <div className="grid min-h-[calc(100vh-6rem)] place-items-center px-4 py-10">
+        <section className="w-full max-w-md rounded-xl border border-white/10 bg-[#090909] p-8 shadow-2xl shadow-black/50">
+          <div className="text-center">
+            <button
+              type="button"
+              onClick={() => onNavigate?.('landing')}
+              className="mx-auto mb-6 flex items-center gap-2 text-xs font-black uppercase tracking-[0.26em] text-sky-200"
+            >
+              <span className="h-2 w-2 rounded-full bg-sky-300" />
+              FleetOS
+            </button>
+            <h1 className="text-2xl font-black text-white">Sign in to FleetOS</h1>
+            <p className="mt-3 text-sm leading-6 text-slate-400">
+              Secure access for Tesla rental and robotaxi fleet owners.
+            </p>
+          </div>
+
+          {(message || error) && (
+            <div
+              className={`mt-6 rounded-lg border p-4 text-sm font-semibold ${
+                error
+                  ? 'border-red-400/25 bg-red-400/10 text-red-100'
+                  : 'border-emerald-400/25 bg-emerald-400/10 text-emerald-100'
+              }`}
+            >
+              {error || message}
+            </div>
+          )}
+
+          {clerkReady ? (
+            <div className="mt-7 space-y-4">
+              <SignUpButton mode="modal">
+                <button
+                  type="button"
+                  className="flex w-full items-center justify-center rounded-lg bg-white px-5 py-4 text-base font-black text-black transition hover:bg-slate-200"
+                >
+                  Create free account
+                </button>
+              </SignUpButton>
+              <Divider />
+              <SignInButton mode="modal">
+                <button
+                  type="button"
+                  className="flex w-full items-center justify-center rounded-lg bg-white px-5 py-4 text-base font-black text-black transition hover:bg-slate-200"
+                >
+                  Sign in
+                </button>
+              </SignInButton>
+              <p className="pt-2 text-center text-xs leading-5 text-slate-500">
+                Use email code or passwordless sign-in if you do not know your password.
+              </p>
+            </div>
+          ) : (
+            <div className="mt-7 space-y-5">
+              <div className="flex rounded-lg border border-white/10 bg-black p-1">
+                <button
+                  type="button"
+                  onClick={() => setAuthMode('signin')}
+                  className={`flex-1 rounded-md px-4 py-2 text-sm font-black transition ${
+                    activeForm === 'signin'
+                      ? 'bg-white text-black'
+                      : 'text-slate-400 hover:bg-white/5 hover:text-slate-100'
+                  }`}
+                >
+                  Sign In
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setAuthMode('create')}
+                  className={`flex-1 rounded-md px-4 py-2 text-sm font-black transition ${
+                    activeForm === 'create'
+                      ? 'bg-white text-black'
+                      : 'text-slate-400 hover:bg-white/5 hover:text-slate-100'
+                  }`}
+                >
+                  Create
+                </button>
+              </div>
+
+              {activeForm === 'signin' ? (
+                <div className="space-y-4">
+                  <Field label="Email">
+                    <Input
+                      type="email"
+                      value={loginForm.email}
+                      onChange={(event) => setLoginForm({ ...loginForm, email: event.target.value })}
+                      placeholder="you@example.com"
+                    />
+                  </Field>
+                  <Field label="Password">
+                    <Input
+                      type="password"
+                      value={loginForm.password}
+                      onChange={(event) => setLoginForm({ ...loginForm, password: event.target.value })}
+                      placeholder="Password"
+                    />
+                  </Field>
+                  <button
+                    type="button"
+                    disabled={isBusy}
+                    onClick={() =>
+                      runAction(
+                        () => loginFleetOsAccount(loginForm),
+                        'Signed in successfully.',
+                      )
+                    }
+                    className="w-full rounded-lg bg-white px-5 py-4 text-base font-black text-black transition hover:bg-slate-200 disabled:cursor-wait disabled:opacity-60"
+                  >
+                    Sign In
+                  </button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <Field label="Name">
+                    <Input
+                      value={registerForm.name}
+                      onChange={(event) => setRegisterForm({ ...registerForm, name: event.target.value })}
+                      placeholder="Jane Owner"
+                    />
+                  </Field>
+                  <Field label="Email">
+                    <Input
+                      type="email"
+                      value={registerForm.email}
+                      onChange={(event) => setRegisterForm({ ...registerForm, email: event.target.value })}
+                      placeholder="you@example.com"
+                    />
+                  </Field>
+                  <Field label="Password">
+                    <Input
+                      type="password"
+                      value={registerForm.password}
+                      onChange={(event) => setRegisterForm({ ...registerForm, password: event.target.value })}
+                      placeholder="8+ characters"
+                    />
+                  </Field>
+                  <Field label="Invite Code">
+                    <Input
+                      value={registerForm.inviteCode}
+                      onChange={(event) => setRegisterForm({ ...registerForm, inviteCode: event.target.value })}
+                      placeholder="Provided beta code"
+                    />
+                  </Field>
+                  <button
+                    type="button"
+                    disabled={isBusy}
+                    onClick={() =>
+                      runAction(
+                        () => registerFleetOsAccount(registerForm),
+                        'Account created. This browser is now signed in.',
+                      )
+                    }
+                    className="w-full rounded-lg bg-white px-5 py-4 text-base font-black text-black transition hover:bg-slate-200 disabled:cursor-wait disabled:opacity-60"
+                  >
+                    Create FleetOS Account
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          <div className="mt-7 text-center">
+            <details className="text-left">
+              <summary className="cursor-pointer text-center text-sm font-semibold text-slate-500 hover:text-slate-300">
+                What happens after sign-in?
+              </summary>
+              <div className="mt-4 space-y-3 rounded-lg border border-white/10 bg-white/[0.03] p-4">
+                <Step
+                  number="1"
+                  title="Review data consent"
+                  detail="FleetOS explains the Tesla data it uses before connection."
+                />
+                <Step
+                  number="2"
+                  title="Connect Tesla OAuth"
+                  detail="You approve access with Tesla. FleetOS never gets your Tesla password."
+                />
+                <Step
+                  number="3"
+                  title="Open your dashboard"
+                  detail="Your first Tesla is free during beta."
+                />
+              </div>
+            </details>
+            <p className="mt-5 text-xs leading-5 text-slate-600">
+              By signing in, you agree to the FleetOS beta terms and privacy notice.
+            </p>
+          </div>
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto grid min-h-[70vh] w-full max-w-5xl place-items-center py-4">
