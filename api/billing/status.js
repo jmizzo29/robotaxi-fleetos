@@ -14,7 +14,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const billing = await getBillingStatusForSession(req, res, { create: true });
+    const billing = await getBillingStatusForSession(req, res, { create: false });
     if (!billing) {
       res.status(401).json({ error: 'LOGIN_REQUIRED', message: 'Sign in to review billing status.' });
       return;

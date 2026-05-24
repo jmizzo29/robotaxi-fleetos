@@ -15,7 +15,7 @@ export default async function handler(req, res) {
 
   let session;
   try {
-    session = await getSession(req, res, { create: true });
+    session = await getSession(req, res, { create: false });
   } catch (error) {
     res.status(error.status || 500).json({
       authenticated: false,
