@@ -6,8 +6,7 @@ import {
   formatPercent,
 } from '../services/robotaxiOperationsService';
 import { buildFleetPricingSummary, buildPricingRecommendations } from '../services/pricingAgentService';
-import { readRevenueRecords, syncRevenueFromBackend } from '../services/revenueService';
-import { getFleetOsSession } from '../services/sessionService';
+import { readRevenueRecords } from '../services/revenueService';
 
 function vehicleLabel(vehicle) {
   return vehicle?.ownership?.tag || vehicle?.name || vehicle?.display_name || vehicle?.id || 'Tesla';
@@ -106,14 +105,7 @@ export default function OwnerValueDashboard({ fleet = [], onQueueCommand }) {
 
   useEffect(() => {
     const refresh = () => setRevenueRecords(readRevenueRecords());
-    getFleetOsSession()
-      .then((session) => {
-        if (session?.authenticated) {
-          return syncRevenueFromBackend().then(setRevenueRecords);
-        }
-        return refresh();
-      })
-      .catch(refresh);
+    refresh();
     window.addEventListener('fleetos-revenue-updated', refresh);
     return () => window.removeEventListener('fleetos-revenue-updated', refresh);
   }, []);
