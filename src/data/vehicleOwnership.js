@@ -17,7 +17,7 @@ const vehicleOwnership = {
     registrationState: 'FL',
   },
   'CAR-001': {
-    model: 'FleetOS Sedan',
+    model: 'RoboAgent Sedan',
     modelYear: 2025,
     trim: 'Autonomy Package',
     color: 'Graphite',
@@ -32,7 +32,7 @@ const vehicleOwnership = {
     registrationState: 'FL',
   },
   'CAR-002': {
-    model: 'FleetOS Crossover',
+    model: 'RoboAgent Crossover',
     modelYear: 2025,
     trim: 'Airport Duty',
     color: 'Silver',
@@ -47,7 +47,7 @@ const vehicleOwnership = {
     registrationState: 'FL',
   },
   'CAR-003': {
-    model: 'FleetOS Sedan',
+    model: 'RoboAgent Sedan',
     modelYear: 2024,
     trim: 'Urban Duty',
     color: 'Midnight Blue',
@@ -62,7 +62,7 @@ const vehicleOwnership = {
     registrationState: 'FL',
   },
   'CAR-004': {
-    model: 'FleetOS Crossover',
+    model: 'RoboAgent Crossover',
     modelYear: 2025,
     trim: 'Premium Route',
     color: 'Deep Black',

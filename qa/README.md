@@ -1,6 +1,6 @@
-# FleetOS Breaker
+# RoboAgent Breaker
 
-FleetOS Breaker is a small external QA harness for trying to break the deployed FleetOS app before beta users do.
+RoboAgent Breaker is a small external QA harness for trying to break the deployed RoboAgent app before beta users do.
 
 It checks:
 

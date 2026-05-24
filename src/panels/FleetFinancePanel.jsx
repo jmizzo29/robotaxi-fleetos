@@ -184,7 +184,7 @@ function VehicleEconomicsDashboard({ finance, totalNet, onQueueCommand }) {
           </p>
           <h2 className="text-2xl font-black tracking-tight">Know exactly which Tesla is making money</h2>
           <p className="mt-3 text-sm leading-6 text-slate-300">
-            FleetOS combines purchase price, loan balance, Tesla odometer data, Turo/imported revenue, and modeled operating costs to show true profit, payback, and profit per mile.
+            RoboAgent combines purchase price, loan balance, Tesla odometer data, Turo/imported revenue, and modeled operating costs to show true profit, payback, and profit per mile.
           </p>
 
           <div className="mt-5 grid grid-cols-2 gap-3">
@@ -424,7 +424,7 @@ function RevenueTracker({ fleet, records, onRecordsChanged }) {
     setMessage(`Importing ${parsed.records.length} Turo trip earning records...`);
     try {
       await importRevenueRecords(parsed.records);
-      setMessage(`${parsed.records.length} Turo records saved. FleetOS parsed reservations, earnings, trips, and utilization signals.`);
+      setMessage(`${parsed.records.length} Turo records saved. RoboAgent parsed reservations, earnings, trips, and utilization signals.`);
       onRecordsChanged?.();
       event.target.value = '';
     } catch (error) {
@@ -441,13 +441,13 @@ function RevenueTracker({ fleet, records, onRecordsChanged }) {
           </p>
           <h2 className="text-2xl font-black tracking-tight">Manual + CSV Ledger</h2>
           <p className="mt-2 text-sm leading-6 text-slate-400">
-            Tesla does not report rental income. FleetOS starts with honest owner-entered revenue and Turo Host CSV imports, then uses that ledger for ROI, utilization, and trip economics.
+            Tesla does not report rental income. RoboAgent starts with honest owner-entered revenue and Turo Host CSV imports, then uses that ledger for ROI, utilization, and trip economics.
           </p>
           <div className="mt-4 rounded-lg border border-white/10 bg-slate-950/50 p-3 text-sm text-slate-400">
             {records.length} revenue records saved. CSV headers supported: <span className="font-bold text-slate-200">vin, vehicle, amount, date, source, notes</span>.
           </div>
           <div className="mt-3 rounded-lg border border-sky-400/20 bg-sky-400/10 p-3 text-sm leading-6 text-sky-100">
-            Export your Turo <span className="font-black">Earnings Report</span> or <span className="font-black">Trip History</span> CSV from the Turo Host dashboard, then upload it here. FleetOS will parse reservations, earnings, trips, booked days, and utilization.
+            Export your Turo <span className="font-black">Earnings Report</span> or <span className="font-black">Trip History</span> CSV from the Turo Host dashboard, then upload it here. RoboAgent will parse reservations, earnings, trips, booked days, and utilization.
           </div>
           {turoSummary && (
             <div className="mt-3 grid grid-cols-2 gap-2 text-sm lg:grid-cols-3">
@@ -562,7 +562,7 @@ function FinanceInsightBoard({ finance, totalNet, avgRoi, onQueueCommand }) {
           </p>
           <h2 className="text-2xl font-black tracking-tight">Owner Decision Brief</h2>
           <p className="mt-3 text-sm leading-6 text-slate-300">
-            FleetOS would position this as a paid finance layer: monthly owner reporting, AI margin analysis, and lender-ready snapshots. Current fleet ROI is estimated at <span className="font-black text-emerald-300">{formatPercent(avgRoi)}</span>, with modeled monthly net profit of <span className="font-black text-emerald-300">{formatCurrency(totalNet)}</span>.
+            RoboAgent would position this as a paid finance layer: monthly owner reporting, AI margin analysis, and lender-ready snapshots. Current fleet ROI is estimated at <span className="font-black text-emerald-300">{formatPercent(avgRoi)}</span>, with modeled monthly net profit of <span className="font-black text-emerald-300">{formatCurrency(totalNet)}</span>.
           </p>
 
           <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-3">
@@ -621,7 +621,7 @@ function PricingAgentPanel({ recommendations = [], summary, marketInputs, onMark
           </p>
           <h2 className="text-2xl font-black tracking-tight">Dynamic Pricing Suggestions</h2>
           <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-300">
-            FleetOS looks at weather, weekend/holiday demand, Tesla utilization, vehicle health, and imported Turo earnings to suggest price changes with confidence.
+            RoboAgent looks at weather, weekend/holiday demand, Tesla utilization, vehicle health, and imported Turo earnings to suggest price changes with confidence.
           </p>
         </div>
         <div className="grid grid-cols-2 gap-3 text-center sm:min-w-[320px]">

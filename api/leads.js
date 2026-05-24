@@ -100,7 +100,7 @@ export default async function handler(req, res) {
     return;
   }
 
-  console.log('FleetOS early access lead', {
+  console.log('RoboAgent early access lead', {
     email: lead.email,
     teslaCount: lead.teslaCount,
     useCase: lead.useCase,

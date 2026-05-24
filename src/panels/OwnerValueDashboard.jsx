@@ -159,7 +159,7 @@ export default function OwnerValueDashboard({ fleet = [], onQueueCommand }) {
         <ActionCard
           eyebrow="Realistic Goal"
           title="Maximize weekend earnings"
-          detail="FleetOS can balance local demand, weather, vehicle health, charge state, cleaning, and owner approval into one weekend plan."
+          detail="RoboAgent can balance local demand, weather, vehicle health, charge state, cleaning, and owner approval into one weekend plan."
           value={formatCurrency(impact.total)}
           tone="emerald"
           onQueue={() => onQueueCommand?.('Maximize earnings this weekend across my Tesla fleet', 'HIGH')}
@@ -175,7 +175,7 @@ export default function OwnerValueDashboard({ fleet = [], onQueueCommand }) {
         <ActionCard
           eyebrow="Predictive Maintenance"
           title={topMaintenance ? `${topMaintenance.name}: ${topMaintenance.task}` : 'No urgent watch'}
-          detail={topMaintenance ? `${topMaintenance.reason} Suggested window: ${topMaintenance.window}.` : 'FleetOS did not detect a high-priority maintenance item yet.'}
+          detail={topMaintenance ? `${topMaintenance.reason} Suggested window: ${topMaintenance.window}.` : 'RoboAgent did not detect a high-priority maintenance item yet.'}
           value={topMaintenance?.priority}
           tone={topMaintenance?.priority === 'HIGH' ? 'rose' : 'amber'}
           onQueue={() => onQueueCommand?.(`Schedule maintenance or cleaning: ${topMaintenance?.name || 'fleet review'}`, topMaintenance?.priority || 'NORMAL')}
@@ -186,7 +186,7 @@ export default function OwnerValueDashboard({ fleet = [], onQueueCommand }) {
           detail={`${formatCurrency(impact.pricing)} pricing, ${formatCurrency(impact.charging)} charging optimization, ${formatCurrency(impact.downtime)} downtime protection.`}
           value="Monthly proof"
           tone="emerald"
-          onQueue={() => onQueueCommand?.('Generate monthly FleetOS earnings impact report', 'NORMAL')}
+          onQueue={() => onQueueCommand?.('Generate monthly RoboAgent earnings impact report', 'NORMAL')}
         />
       </div>
     </section>

@@ -121,14 +121,14 @@ export default function TeslaSyncHealthPanel({
     return [
       {
         label: 'Backend Reachable',
-        detail: health?.backend?.ok ? `Runtime: ${health.backend.runtime || 'api'}` : healthError || 'FleetOS has not reached the backend diagnostics endpoint.',
+        detail: health?.backend?.ok ? `Runtime: ${health.backend.runtime || 'api'}` : healthError || 'RoboAgent has not reached the backend diagnostics endpoint.',
         status: health ? Boolean(health.backend?.ok) : null,
       },
       {
         label: 'Tesla Credentials',
         detail: health?.credentials?.ok
-          ? `Connected for this FleetOS user${health.credentials.connectedAt ? ` since ${formatTime(health.credentials.connectedAt)}` : ''}.`
-          : 'Connect Tesla for this FleetOS user. Tokens are stored per user in Postgres.',
+          ? `Connected for this RoboAgent user${health.credentials.connectedAt ? ` since ${formatTime(health.credentials.connectedAt)}` : ''}.`
+          : 'Connect Tesla for this RoboAgent user. Tokens are stored per user in Postgres.',
         status: health ? Boolean(health.credentials?.ok) : null,
       },
       {
@@ -161,8 +161,8 @@ export default function TeslaSyncHealthPanel({
         status: syncHealthy,
       },
       {
-        label: 'FleetOS User Session',
-        detail: session?.user?.id ? `Session ${String(session.sessionId || '').slice(0, 18)}...` : 'FleetOS session has not been created.',
+        label: 'RoboAgent User Session',
+        detail: session?.user?.id ? `Session ${String(session.sessionId || '').slice(0, 18)}...` : 'RoboAgent session has not been created.',
         status: Boolean(session?.user?.id),
       },
       {

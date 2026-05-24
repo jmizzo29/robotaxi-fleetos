@@ -68,7 +68,7 @@ function buildHeuristicFleetAnalysis(fleet = [], context = {}) {
     provider: 'heuristic',
     model: 'local-rules',
     generatedAt: new Date().toISOString(),
-    summary: context.summary || 'FleetOS generated a local AI-style operating assessment from current fleet telemetry.',
+    summary: context.summary || 'RoboAgent generated a local AI-style operating assessment from current fleet telemetry.',
     alerts,
     recommendations: [
       {
@@ -77,7 +77,7 @@ function buildHeuristicFleetAnalysis(fleet = [], context = {}) {
         confidence: realVehicles.length > 0 ? 92 : 74,
         impact: 'Improves dispatch confidence by separating observed state from modeled state.',
         rationale: realVehicles.length > 0
-          ? `${realVehicles.length} real Tesla vehicle${realVehicles.length === 1 ? '' : 's'} are feeding live state into FleetOS.`
+          ? `${realVehicles.length} real Tesla vehicle${realVehicles.length === 1 ? '' : 's'} are feeding live state into RoboAgent.`
           : 'No real Tesla vehicle is currently merged into the operating picture.',
         actionLabel: realVehicles.length > 0 ? 'Focus Real Tesla' : 'Sync Tesla',
         command: realVehicles.length > 0 ? 'Prioritize real Tesla telemetry in operator view' : 'Sync Tesla telemetry',
@@ -140,7 +140,7 @@ function buildFleetAnalysisPrompt(fleet = [], context = {}) {
     syncedAt: vehicle.syncedAt,
   }));
 
-  return `Analyze this autonomous fleet operations snapshot for FleetOS.
+  return `Analyze this autonomous fleet operations snapshot for RoboAgent.
 
 Return only valid JSON with keys: summary, alerts, recommendations. Prioritize real Tesla telemetry above simulation.
 
@@ -202,7 +202,7 @@ async function runAiFleetAnalysis(fleet = [], context = {}) {
         model: AI_MODEL,
         temperature: 0.2,
         messages: [
-          { role: 'system', content: 'You are the FleetOS AI operations orchestrator. Return only valid JSON.' },
+          { role: 'system', content: 'You are the RoboAgent AI operations orchestrator. Return only valid JSON.' },
           { role: 'user', content: prompt },
         ],
       }),
@@ -278,7 +278,7 @@ export default async function handler(req, res) {
     if (!session) {
       res.status(401).json({
         error: 'LOGIN_REQUIRED',
-        message: 'Sign in to FleetOS before requesting AI analysis.',
+        message: 'Sign in to RoboAgent before requesting AI analysis.',
       });
       return;
     }

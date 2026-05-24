@@ -5,7 +5,7 @@ export default function TeslaIndependenceNotice({ compact = false }) {
         Independent Tesla Integration
       </p>
       <p className={`${compact ? 'mt-1 text-xs' : 'mt-2 text-sm'} leading-6 text-slate-400`}>
-        FleetOS is not affiliated with, endorsed by, or sponsored by Tesla. Tesla controls vehicle access,
+        RoboAgent is not affiliated with, endorsed by, or sponsored by Tesla. Tesla controls vehicle access,
         API availability, command execution, and autonomous driving eligibility.
       </p>
     </div>

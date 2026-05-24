@@ -42,13 +42,13 @@ export default function Sidebar({
           <div className="h-2.5 w-2.5 rounded-full bg-sky-400"></div>
 
           <span className="text-sky-300 uppercase tracking-[0.28em] text-xs">
-            FleetOS
+            RoboAgent
           </span>
 
         </div>
 
         <h1 className="text-3xl font-black leading-tight">
-          FleetOS
+          RoboAgent
           <span className="block text-sky-300">
             Operations Console
           </span>

@@ -32,7 +32,7 @@ async function request(pathname, options = {}) {
     redirect: options.redirect || 'manual',
     method: options.method || 'GET',
     headers: {
-      'User-Agent': 'FleetOS-Breaker/1.0',
+      'User-Agent': 'RoboAgent-Breaker/1.0',
       Accept: options.accept || '*/*',
       ...(options.headers || {}),
     },
@@ -112,8 +112,8 @@ async function testStaleCopy() {
   const { bundle } = await getIndexAndBundle();
   const forbidden = [
     'Join Early Access',
-    'Start free, then pay only when FleetOS helps manage more Teslas',
-    'Open FleetOS Console',
+    'Start free, then pay only when RoboAgent helps manage more Teslas',
+    'Open RoboAgent Console',
     'Tesla OAuth only',
   ];
   const found = forbidden.filter((phrase) => bundle?.text.includes(phrase));
@@ -126,7 +126,7 @@ async function testStaleCopy() {
 async function testExpectedLandingCopy() {
   const { bundle } = await getIndexAndBundle();
   const expected = [
-    'FleetOS - Your AI Agent for Tesla Rentals & Robotaxis',
+    'RoboAgent - Your AI Agent for Tesla Rentals & Robotaxis',
     'No signup needed',
     'Maximize my earnings this weekend with 3 Teslas',
     'How many miles did my last rental drive?',
@@ -141,21 +141,21 @@ async function testExpectedLandingCopy() {
     'Health on the map',
     'Signals in.',
     'Owner actions out.',
-    'How FleetOS Works',
+    'How RoboAgent Works',
     'From Tesla connection to AI operating plan.',
     'Security & Privacy',
-    'What Data Does FleetOS Access?',
-    'FleetOS turns data into action',
+    'What Data Does RoboAgent Access?',
+    'RoboAgent turns data into action',
     'Dynamic Charging Advisor',
     'Built for robotaxis that need to stay earning',
-    'What FleetOS predicts first',
+    'What RoboAgent predicts first',
     'Fleet Telemetry First',
     'VIN-Scoped Limits',
     'Try the AI Agent Live',
     'Start Free (First Tesla Free)',
     'Simple, fair pricing.',
     'Real Example Workflows',
-    'What owners can ask FleetOS to handle.',
+    'What owners can ask RoboAgent to handle.',
     'Tesla password never shared',
   ];
   const missing = expected.filter((phrase) => !bundle?.text.includes(phrase));
@@ -199,7 +199,7 @@ async function testSignedOutSessionGate() {
       body: truncate(session.text),
     });
   }
-  return pass('signed-out session gate', 'Signed-out user cannot get an authenticated FleetOS session.');
+  return pass('signed-out session gate', 'Signed-out user cannot get an authenticated RoboAgent session.');
 }
 
 async function testAdminGate() {
@@ -230,7 +230,7 @@ async function testTeslaCallbackMisuse() {
       body: truncate(callback.text),
     });
   }
-  if (!callback.text.includes('Return to FleetOS onboarding')) {
+  if (!callback.text.includes('Return to RoboAgent onboarding')) {
     return warn('Tesla callback misuse', 'Callback blocks misuse, but friendly recovery copy was not detected.', {
       body: truncate(callback.text),
     });
@@ -325,7 +325,7 @@ async function writeReports(results) {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>FleetOS Breaker Report</title>
+    <title>RoboAgent Breaker Report</title>
     <style>
       body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #07111f; color: #e5eefb; }
       main { max-width: 1080px; margin: 0 auto; padding: 32px 20px; }
@@ -346,7 +346,7 @@ async function writeReports(results) {
   </head>
   <body>
     <main>
-      <h1>FleetOS Breaker Report</h1>
+      <h1>RoboAgent Breaker Report</h1>
       <p class="meta">Target: ${escapeHtml(BASE_URL)} · Generated: ${escapeHtml(generatedAt)}</p>
       <section class="summary">
         <div class="card">Total<strong>${summary.total}</strong></div>
@@ -395,7 +395,7 @@ for (const [name, fn] of tests) {
 }
 
 const report = await writeReports(results);
-console.log('\nFleetOS Breaker Summary');
+console.log('\nRoboAgent Breaker Summary');
 console.log(`Target: ${BASE_URL}`);
 console.log(`Pass: ${report.summary.pass}  Warn: ${report.summary.warn}  Fail: ${report.summary.fail}`);
 console.log(`HTML report: ${report.htmlPath}`);

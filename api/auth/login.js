@@ -9,7 +9,7 @@ export default async function handler(req, res) {
   }
 
   if (!hasPostgres()) {
-    res.status(503).json({ error: 'DATABASE_REQUIRED', message: 'Postgres is required for FleetOS login.' });
+    res.status(503).json({ error: 'DATABASE_REQUIRED', message: 'Postgres is required for RoboAgent login.' });
     return;
   }
 
@@ -19,7 +19,7 @@ export default async function handler(req, res) {
   if (!user || !valid) {
     res.status(401).json({
       error: 'INVALID_LOGIN',
-      message: 'Email or password did not match a FleetOS account.',
+      message: 'Email or password did not match a RoboAgent account.',
     });
     return;
   }

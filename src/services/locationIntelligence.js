@@ -1,5 +1,5 @@
 const OPERATING_BASE = {
-  label: 'FleetOS Central Florida Base',
+  label: 'RoboAgent Central Florida Base',
   latitude: 28.084192,
   longitude: -81.725751,
 };

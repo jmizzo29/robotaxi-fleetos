@@ -10,7 +10,7 @@ export function ClerkAccountSummary() {
         <p className="text-xs font-black uppercase tracking-[0.22em] text-sky-300">Secure Auth</p>
         <h2 className="mt-2 text-2xl font-black text-white">Sign in with Clerk</h2>
         <p className="mt-2 text-sm leading-6 text-slate-300">
-          FleetOS now uses Clerk for production-grade identity. Clerk handles hosted signup, login, session security, email verification, and passwordless options.
+          RoboAgent now uses Clerk for production-grade identity. Clerk handles hosted signup, login, session security, email verification, and passwordless options.
         </p>
         <div className="mt-5 flex flex-col gap-3 sm:flex-row">
           <SignUpButton mode="modal">
@@ -33,7 +33,7 @@ export function ClerkAccountSummary() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-200">Signed In</p>
-          <h2 className="mt-2 text-2xl font-black text-white">{user?.fullName || 'FleetOS Owner'}</h2>
+          <h2 className="mt-2 text-2xl font-black text-white">{user?.fullName || 'RoboAgent Owner'}</h2>
           <p className="mt-1 text-sm font-semibold text-emerald-100">{user?.primaryEmailAddress?.emailAddress}</p>
         </div>
         <div className="flex items-center gap-3">
@@ -57,7 +57,7 @@ export function ClerkOnboardingAuthStep({ onAuthChange }) {
   if (isSignedIn) {
     return (
       <p className="rounded-lg border border-emerald-400/20 bg-emerald-400/10 p-4 text-sm font-semibold text-emerald-100">
-        Signed in securely as {user?.primaryEmailAddress?.emailAddress || user?.fullName || 'FleetOS owner'}.
+        Signed in securely as {user?.primaryEmailAddress?.emailAddress || user?.fullName || 'RoboAgent owner'}.
       </p>
     );
   }

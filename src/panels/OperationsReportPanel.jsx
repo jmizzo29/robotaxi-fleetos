@@ -50,7 +50,7 @@ export default function OperationsReportPanel({
           </p>
           <h2 className="text-2xl font-black tracking-tight">AI Operating Report</h2>
           <p className="mt-4 text-sm leading-6 text-slate-300">
-            {analysis?.summary || 'FleetOS AI has not generated a report yet.'}
+            {analysis?.summary || 'RoboAgent AI has not generated a report yet.'}
           </p>
 
           <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">

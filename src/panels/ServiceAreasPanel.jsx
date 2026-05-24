@@ -91,7 +91,7 @@ export default function ServiceAreasPanel({ fleet = [], demandZones = [], onQueu
               <p className="text-xs font-black uppercase tracking-[0.22em] text-sky-300">Service Areas</p>
               <h2 className="mt-2 text-2xl font-black text-white">Demand and pricing zones</h2>
               <p className="mt-2 text-sm leading-6 text-slate-400">
-                FleetOS blends vehicle location, demand heat, owner economics, and health status into service-area recommendations.
+                RoboAgent blends vehicle location, demand heat, owner economics, and health status into service-area recommendations.
               </p>
             </div>
             <button

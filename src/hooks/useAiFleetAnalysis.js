@@ -5,7 +5,7 @@ const initialAnalysis = {
   provider: 'pending',
   model: 'pending',
   generatedAt: null,
-  summary: 'FleetOS AI is preparing an operating assessment.',
+  summary: 'RoboAgent AI is preparing an operating assessment.',
   alerts: [],
   recommendations: [],
 };
@@ -36,7 +36,7 @@ export default function useAiFleetAnalysis({ fleet, realSyncStatus, enabled = tr
         setAnalysis((current) => ({
           ...current,
           provider: 'unavailable',
-          summary: error.message || 'FleetOS AI analysis is unavailable.',
+          summary: error.message || 'RoboAgent AI analysis is unavailable.',
         }));
       } finally {
         setIsAnalyzing(false);

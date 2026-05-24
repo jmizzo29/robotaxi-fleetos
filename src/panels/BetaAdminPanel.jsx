@@ -65,7 +65,7 @@ export default function BetaAdminPanel() {
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-emerald-300">Beta Admin</p>
             <h2 className="mt-2 text-3xl font-black text-white">Tester Operations</h2>
             <p className="mt-2 text-sm leading-6 text-slate-400">
-              Track redacted feedback and confirm whether FleetOS is using Postgres for durable beta storage.
+              Track redacted feedback and confirm whether RoboAgent is using Postgres for durable beta storage.
             </p>
           </div>
           <button type="button" onClick={refresh} className="rounded-md border border-sky-400/30 bg-sky-400/10 px-4 py-3 text-sm font-bold text-sky-100">

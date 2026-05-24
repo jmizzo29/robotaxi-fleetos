@@ -17,7 +17,7 @@ export function normalizeEmail(email) {
 }
 
 export function betaInviteCode() {
-  return process.env.BETA_INVITE_CODE || process.env.FLEETOS_BETA_INVITE_CODE || 'FLEETOS-BETA';
+  return process.env.BETA_INVITE_CODE || process.env.FLEETOS_BETA_INVITE_CODE || 'RoboAgent-BETA';
 }
 
 export function validateInviteCode(inviteCode) {
@@ -544,7 +544,7 @@ export async function refreshTeslaTokenForConnection(connection) {
 export async function getTeslaAccessTokenForRequest(req, res) {
   const result = await getTeslaConnectionForSession(req, res);
   if (!result?.connection) {
-    const error = new Error('Connect Tesla for this FleetOS user before syncing telemetry.');
+    const error = new Error('Connect Tesla for this RoboAgent user before syncing telemetry.');
     error.status = 401;
     throw error;
   }

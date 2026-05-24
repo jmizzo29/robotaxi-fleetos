@@ -98,8 +98,8 @@ function TeslaConsentModal({
   ];
   const trustRows = [
     'You are granting access only to the vehicles you choose.',
-    'FleetOS will never share your data with third parties.',
-    'Tesla does not share your login credentials with FleetOS.',
+    'RoboAgent will never share your data with third parties.',
+    'Tesla does not share your login credentials with RoboAgent.',
     'You can revoke access at any time directly from your Tesla Account settings.',
     'All sensitive tokens are encrypted and stored securely.',
   ];
@@ -110,9 +110,9 @@ function TeslaConsentModal({
         <div className="flex items-start justify-between gap-4">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-300">Tesla OAuth Consent</p>
-            <h2 className="mt-3 text-2xl font-black text-white">FleetOS wants to connect to your Tesla Account</h2>
+            <h2 className="mt-3 text-2xl font-black text-white">RoboAgent wants to connect to your Tesla Account</h2>
             <p className="mt-3 text-sm leading-6 text-slate-400">
-              This lets the FleetOS AI Agent optimize earnings, plan maintenance, manage charging, and run your Tesla rental or robotaxi fleet more efficiently.
+              This lets the RoboAgent AI Agent optimize earnings, plan maintenance, manage charging, and run your Tesla rental or robotaxi fleet more efficiently.
             </p>
           </div>
           <button
@@ -127,7 +127,7 @@ function TeslaConsentModal({
 
         <div className="mt-6 grid gap-4 lg:grid-cols-2">
           <div className="rounded-lg border border-white/10 bg-white/[0.03] p-4">
-            <h3 className="font-black text-white">This will allow FleetOS to</h3>
+            <h3 className="font-black text-white">This will allow RoboAgent to</h3>
             <ul className="mt-3 space-y-3 text-sm leading-5 text-slate-300">
               {dataRows.map((row) => (
                 <li key={row} className="flex gap-2">
@@ -152,7 +152,7 @@ function TeslaConsentModal({
         </div>
 
         <div className="mt-5 rounded-lg border border-sky-300/15 bg-sky-300/5 p-4">
-          <h3 className="font-black text-white">Why does FleetOS need this?</h3>
+          <h3 className="font-black text-white">Why does RoboAgent need this?</h3>
           <p className="mt-2 text-sm leading-6 text-slate-300">
             To power the AI Agent that helps you optimize earnings, plan maintenance, manage charging, and run your Tesla rental or robotaxi fleet more efficiently.
           </p>
@@ -166,7 +166,7 @@ function TeslaConsentModal({
               onChange={(event) => onToggle('independent', event.target.checked)}
               className="mt-1"
             />
-            <span>I understand that FleetOS is a third-party app and is not affiliated with Tesla.</span>
+            <span>I understand that RoboAgent is a third-party app and is not affiliated with Tesla.</span>
           </label>
           <label className="flex gap-3 rounded-lg border border-white/10 bg-white/[0.03] p-4 text-sm leading-5 text-slate-200">
             <input
@@ -309,11 +309,11 @@ export default function AccountPanel({ onNavigate }) {
               className="mx-auto mb-6 flex items-center gap-2 text-xs font-black uppercase tracking-[0.26em] text-sky-200"
             >
               <span className="h-2 w-2 rounded-full bg-sky-300" />
-              FleetOS
+              RoboAgent
             </button>
-            <h1 className="text-2xl font-black text-white">Sign in to FleetOS</h1>
+            <h1 className="text-2xl font-black text-white">Sign in to RoboAgent</h1>
             <p className="mt-3 text-sm leading-6 text-slate-400">
-              Start with your Tesla account. FleetOS never sees your Tesla password.
+              Start with your Tesla account. RoboAgent never sees your Tesla password.
             </p>
           </div>
 
@@ -462,7 +462,7 @@ export default function AccountPanel({ onNavigate }) {
                     }
                     className="w-full rounded-lg bg-white px-5 py-4 text-base font-black text-black transition hover:bg-slate-200 disabled:cursor-wait disabled:opacity-60"
                   >
-                    Create FleetOS Account
+                    Create RoboAgent Account
                   </button>
                 </div>
               )}
@@ -478,12 +478,12 @@ export default function AccountPanel({ onNavigate }) {
                 <Step
                   number="1"
                   title="Review data consent"
-                  detail="FleetOS explains the Tesla data it uses before connection."
+                  detail="RoboAgent explains the Tesla data it uses before connection."
                 />
                 <Step
                   number="2"
                   title="Connect Tesla OAuth"
-                  detail="You approve access with Tesla. FleetOS stores encrypted tokens and never gets your Tesla password."
+                  detail="You approve access with Tesla. RoboAgent stores encrypted tokens and never gets your Tesla password."
                 />
                 <Step
                   number="3"
@@ -493,7 +493,7 @@ export default function AccountPanel({ onNavigate }) {
               </div>
             </details>
             <p className="mt-5 text-xs leading-5 text-slate-600">
-              By signing in, you agree to the FleetOS beta terms and privacy notice.
+              By signing in, you agree to the RoboAgent beta terms and privacy notice.
             </p>
           </div>
         </section>
@@ -514,27 +514,27 @@ export default function AccountPanel({ onNavigate }) {
     <div className="mx-auto grid min-h-[70vh] w-full max-w-5xl place-items-center py-4">
       <section className="grid w-full gap-6 lg:grid-cols-[0.9fr_1.1fr]">
         <aside className="rounded-xl border border-white/10 bg-slate-950/70 p-6 shadow-2xl shadow-black/20">
-          <p className="text-xs font-black uppercase tracking-[0.26em] text-sky-300">FleetOS Account</p>
-          <h1 className="mt-4 text-3xl font-black tracking-tight text-white sm:text-4xl">Sign in to FleetOS</h1>
+          <p className="text-xs font-black uppercase tracking-[0.26em] text-sky-300">RoboAgent Account</p>
+          <h1 className="mt-4 text-3xl font-black tracking-tight text-white sm:text-4xl">Sign in to RoboAgent</h1>
           <p className="mt-4 text-base leading-7 text-slate-300">
-            Create one secure owner account first. After that, FleetOS guides you through data consent and Tesla OAuth.
+            Create one secure owner account first. After that, RoboAgent guides you through data consent and Tesla OAuth.
           </p>
 
           <div className="mt-6 space-y-4">
             <Step
               number="1"
               title="Sign in or create account"
-              detail="Use email-based identity for FleetOS. This is separate from your Tesla password."
+              detail="Use email-based identity for RoboAgent. This is separate from your Tesla password."
             />
             <Step
               number="2"
               title="Review consent"
-              detail="You will see exactly what vehicle data FleetOS uses before connecting a Tesla."
+              detail="You will see exactly what vehicle data RoboAgent uses before connecting a Tesla."
             />
             <Step
               number="3"
               title="Connect Tesla securely"
-              detail="Tesla OAuth happens after signup. FleetOS never asks for your Tesla password."
+              detail="Tesla OAuth happens after signup. RoboAgent never asks for your Tesla password."
             />
           </div>
 
@@ -560,7 +560,7 @@ export default function AccountPanel({ onNavigate }) {
             <div className="space-y-5">
               <div className="rounded-lg border border-emerald-400/20 bg-emerald-400/10 p-5">
                 <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-200">Signed In</p>
-                <h2 className="mt-2 text-2xl font-black text-white">{user.name || 'FleetOS Owner'}</h2>
+                <h2 className="mt-2 text-2xl font-black text-white">{user.name || 'RoboAgent Owner'}</h2>
                 <p className="mt-1 text-sm font-semibold text-emerald-100">{user.email}</p>
               </div>
 
@@ -746,7 +746,7 @@ export default function AccountPanel({ onNavigate }) {
                       }
                       className="sm:col-span-2 w-full rounded-lg bg-sky-300 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-sky-200 disabled:cursor-wait disabled:opacity-60"
                     >
-                      Create FleetOS Account
+                      Create RoboAgent Account
                     </button>
                   </div>
                 )}
@@ -858,7 +858,7 @@ export default function AccountPanel({ onNavigate }) {
                           }
                           className="w-full rounded-lg bg-sky-300 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-sky-200 disabled:cursor-wait disabled:opacity-60 sm:col-span-2"
                         >
-                          Create FleetOS Account
+                          Create RoboAgent Account
                         </button>
                       </div>
                     )}

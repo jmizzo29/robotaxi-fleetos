@@ -20,7 +20,7 @@ export default async function handler(req, res) {
     res.status(error.status || 500).json({
       authenticated: false,
       error: error.status === 401 ? 'LOGIN_REQUIRED' : 'AUTH_UNAVAILABLE',
-      message: error.status === 401 ? 'Sign in to FleetOS to continue.' : 'FleetOS authentication is not available.',
+      message: error.status === 401 ? 'Sign in to RoboAgent to continue.' : 'RoboAgent authentication is not available.',
     });
     return;
   }
@@ -28,7 +28,7 @@ export default async function handler(req, res) {
     res.status(401).json({
       authenticated: false,
       error: 'LOGIN_REQUIRED',
-      message: 'Sign in to FleetOS to continue.',
+      message: 'Sign in to RoboAgent to continue.',
     });
     return;
   }

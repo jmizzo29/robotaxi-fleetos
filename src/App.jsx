@@ -278,7 +278,7 @@ export default function App() {
         <div className="hidden md:block">
           <PageHeader
             eyebrow="Live Operations"
-            title={<><span>FleetOS</span><span className="block text-sky-300">Operations Console</span></>}
+            title={<><span>RoboAgent</span><span className="block text-sky-300">Operations Console</span></>}
             description="A fleet operating system for live Tesla telemetry, dispatch simulation, charging intelligence, and operational risk monitoring."
             action={operationsStatus}
           />
@@ -418,7 +418,7 @@ export default function App() {
         <PageHeader
           eyebrow="Owner Economics"
           title="Finance"
-          description="Track revenue, operating cost, loan exposure, equity, and ROI so FleetOS can prove whether the fleet is making money."
+          description="Track revenue, operating cost, loan exposure, equity, and ROI so RoboAgent can prove whether the fleet is making money."
           action={operationsStatus}
         />
         <FleetFinancePanel
@@ -491,7 +491,7 @@ export default function App() {
         <PageHeader
           eyebrow="AI Command"
           title="AI Operations"
-          description="Review next best actions, confidence scores, and one-click execution recommendations from the FleetOS AI layer."
+          description="Review next best actions, confidence scores, and one-click execution recommendations from the RoboAgent AI layer."
           action={operationsStatus}
         />
         <AIRecommendationPanel
@@ -525,7 +525,7 @@ export default function App() {
         <PageHeader
           eyebrow="Fleet Memory"
           title="Events"
-          description="Capture telemetry, alerts, recommendations, and commands as future retrieval memory for FleetOS AI."
+          description="Capture telemetry, alerts, recommendations, and commands as future retrieval memory for RoboAgent AI."
           action={operationsStatus}
         />
         <MemoryEventsPanel
@@ -574,7 +574,7 @@ export default function App() {
         <PageHeader
           eyebrow="Tesla Fleet API"
           title="Capabilities"
-          description="See exactly which Tesla APIs FleetOS uses today, which controls are safe to operate, and which commands should be added next."
+          description="See exactly which Tesla APIs RoboAgent uses today, which controls are safe to operate, and which commands should be added next."
           action={operationsStatus}
         />
         <TeslaCapabilitiesPanel
@@ -630,7 +630,7 @@ export default function App() {
         <PageHeader
           eyebrow="Privacy"
           title="Privacy Notice"
-          description="Draft beta privacy language and data handling summary for FleetOS testers."
+          description="Draft beta privacy language and data handling summary for RoboAgent testers."
         />
         <LegalPage type="privacy" />
       </>
@@ -657,7 +657,7 @@ export default function App() {
         <header className="mx-auto mb-8 flex max-w-5xl items-center justify-between">
           <button type="button" onClick={() => navigate('landing')} className="flex items-center gap-3">
             <span className="h-2.5 w-2.5 rounded-full bg-sky-300 shadow-lg shadow-sky-300/50" />
-            <span className="text-sm font-black uppercase tracking-[0.28em] text-sky-200">FleetOS</span>
+            <span className="text-sm font-black uppercase tracking-[0.28em] text-sky-200">RoboAgent</span>
           </button>
           <button
             type="button"
@@ -678,7 +678,7 @@ export default function App() {
         <header className="mx-auto mb-8 flex max-w-5xl items-center justify-between">
           <button type="button" onClick={() => navigate('landing')} className="flex items-center gap-3">
             <span className="h-2.5 w-2.5 rounded-full bg-sky-300 shadow-lg shadow-sky-300/50" />
-            <span className="text-sm font-black uppercase tracking-[0.28em] text-sky-200">FleetOS</span>
+            <span className="text-sm font-black uppercase tracking-[0.28em] text-sky-200">RoboAgent</span>
           </button>
           <button
             type="button"

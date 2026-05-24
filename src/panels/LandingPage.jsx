@@ -37,8 +37,8 @@ const agentCapabilityRoadmap = [
 ];
 
 const setupSteps = [
-  ['Create FleetOS account', 'Start with one Tesla and keep the first vehicle free while you learn the product.'],
-  ['Authenticate with Tesla', 'Use Tesla OAuth to approve telemetry access. FleetOS never needs your Tesla password.'],
+  ['Create RoboAgent account', 'Start with one Tesla and keep the first vehicle free while you learn the product.'],
+  ['Authenticate with Tesla', 'Use Tesla OAuth to approve telemetry access. RoboAgent never needs your Tesla password.'],
   ['Sync and monitor', 'See battery, location, charging, odometer, parking history, and owner economics in one console.'],
 ];
 
@@ -49,28 +49,28 @@ const intelligenceSignals = [
   ['Fleet Memory', 'Past trips, accepted recommendations, maintenance records, cleaning tasks, and command outcomes.', 'Learning loop'],
 ];
 
-const fleetOsWorkflow = [
+const RoboAgentWorkflow = [
   ['Connect', 'Owner signs in, approves data consent, and connects Tesla through OAuth.'],
-  ['Observe', 'FleetOS reads vehicle state, rental history, finance records, and service-area context.'],
+  ['Observe', 'RoboAgent reads vehicle state, rental history, finance records, and service-area context.'],
   ['Reason', 'The AI agent explains risk, earnings opportunity, maintenance needs, and charging tradeoffs.'],
   ['Approve', 'Owners review recommended actions before sensitive commands or workflow changes happen.'],
   ['Improve', 'Outcomes become fleet memory so future recommendations get more useful.'],
 ];
 
 const trustPoints = [
-  ['Secure account login', 'FleetOS uses managed identity with verified sessions before any Tesla connection can be attached.'],
-  ['Tesla password never shared', 'Owners authenticate directly with Tesla. FleetOS never asks for or stores Tesla account passwords.'],
-  ['Encrypted access tokens', 'Tesla connection tokens are encrypted server-side and tied to the signed-in FleetOS user.'],
-  ['Owner-controlled data', 'Users can disconnect Tesla, revoke consent, or request deletion of FleetOS data.'],
+  ['Secure account login', 'RoboAgent uses managed identity with verified sessions before any Tesla connection can be attached.'],
+  ['Tesla password never shared', 'Owners authenticate directly with Tesla. RoboAgent never asks for or stores Tesla account passwords.'],
+  ['Encrypted access tokens', 'Tesla connection tokens are encrypted server-side and tied to the signed-in RoboAgent user.'],
+  ['Owner-controlled data', 'Users can disconnect Tesla, revoke consent, or request deletion of RoboAgent data.'],
 ];
 
 const securityFeatures = [
-  ['Verified identity first', 'Users create or sign into a FleetOS account before connecting a vehicle. Tesla access is scoped to that user.'],
-  ['Consent before telemetry', 'FleetOS asks for explicit consent before processing VIN, battery, odometer, charging, vehicle state, or location.'],
+  ['Verified identity first', 'Users create or sign into a RoboAgent account before connecting a vehicle. Tesla access is scoped to that user.'],
+  ['Consent before telemetry', 'RoboAgent asks for explicit consent before processing VIN, battery, odometer, charging, vehicle state, or location.'],
   ['Protected vehicle location', 'Precise location is treated as sensitive data and API responses use privacy-safe rounding by default.'],
   ['Encrypted token storage', 'Tesla refresh tokens are stored encrypted in Postgres, not in the browser and not in Clerk.'],
   ['Admin data minimization', 'Admin views are server-protected and redact sensitive lead, feedback, and vehicle/user details.'],
-  ['Revocation and deletion', 'Users can disconnect Tesla and delete their FleetOS account data from the product flow.'],
+  ['Revocation and deletion', 'Users can disconnect Tesla and delete their RoboAgent account data from the product flow.'],
 ];
 
 const pricing = [
@@ -124,7 +124,7 @@ const predictiveMaintenancePriorities = [
 ];
 
 const teslaBestPractices = [
-  ['Fleet Telemetry First', 'FleetOS is designed to prefer Tesla Fleet Telemetry streaming, where vehicles push changed fields to the backend instead of forcing constant polling.'],
+  ['Fleet Telemetry First', 'RoboAgent is designed to prefer Tesla Fleet Telemetry streaming, where vehicles push changed fields to the backend instead of forcing constant polling.'],
   ['VIN-Scoped Limits', 'Rate limits are keyed by user, VIN, and action so one vehicle cannot accidentally throttle the whole fleet.'],
   ['Wake-Safe Agent Design', 'The AI agent should avoid unnecessary wakes, batch requests, wait for naturally-awake vehicles, and warn users as limits get close.'],
   ['Command Cooldowns', 'Operational commands need cooldowns, audit logs, last-known-state caching, and clear user approval before anything important or repeated is queued.'],
@@ -162,7 +162,7 @@ function PricingSection({ onStart }) {
               Simple, fair pricing.
             </h2>
             <p className="mt-4 max-w-3xl text-sm leading-7 text-slate-400">
-              Start free with one Tesla during beta. Add vehicles only when FleetOS starts saving real operator time.
+              Start free with one Tesla during beta. Add vehicles only when RoboAgent starts saving real operator time.
             </p>
           </div>
           <button
@@ -234,8 +234,8 @@ function buildDemoResponse(goal) {
       steps: [
         'Average speed was 42 mph, which is normal for this route mix.',
         'The trip used 61% battery and returned with enough range for a same-day cleaning and recharge.',
-        'No maintenance exception was triggered, but FleetOS added the 287 miles to tire and service forecasts.',
-        'FleetOS can show the full trip record or compare it against previous rentals.',
+        'No maintenance exception was triggered, but RoboAgent added the 287 miles to tire and service forecasts.',
+        'RoboAgent can show the full trip record or compare it against previous rentals.',
       ],
       confidence: 95,
       impact: 'This rental performed well: strong earnings, normal driving profile, and no immediate maintenance flags.',
@@ -245,7 +245,7 @@ function buildDemoResponse(goal) {
   if (lower.includes('health') || lower.includes('prepare')) {
     return {
       title: 'Tomorrow readiness command',
-      summary: 'FleetOS found two vehicles that need action before morning demand and built a low-wake prep plan.',
+      summary: 'RoboAgent found two vehicles that need action before morning demand and built a low-wake prep plan.',
       metrics: ['94% fleet health', '2 prep tasks', '7:30 AM ready target'],
       steps: [
         'Charge Vehicle 2 from 48% to 82% overnight during the lowest-cost window.',
@@ -261,7 +261,7 @@ function buildDemoResponse(goal) {
   if (wantsPricing) {
     return {
       title: 'Turo revenue plan',
-      summary: 'FleetOS sees stronger weekend demand and recommends price moves only where readiness and health support it.',
+      summary: 'RoboAgent sees stronger weekend demand and recommends price moves only where readiness and health support it.',
       metrics: ['+$284 projected', '+18% Model Y', '82% utilization target'],
       steps: [
         'Raise the Model Y weekend rate 18% because health score, battery readiness, and utilization are strong.',
@@ -277,7 +277,7 @@ function buildDemoResponse(goal) {
   if (wantsCharging) {
     return {
       title: 'Dynamic charging plan',
-      summary: 'FleetOS found one avoidable charge window conflict and moved charging away from likely earning hours.',
+      summary: 'RoboAgent found one avoidable charge window conflict and moved charging away from likely earning hours.',
       metrics: ['11:30 PM charge start', '$9 estimated savings', '76 mi buffer'],
       steps: [
         'Start charging after 11:30 PM so Vehicle 1 reaches 85% before its morning rental.',
@@ -293,7 +293,7 @@ function buildDemoResponse(goal) {
   if (wantsWeather) {
     return {
       title: 'Weather and traffic protection plan',
-      summary: 'FleetOS identified pickup risk and moved prep tasks earlier so delays do not eat into utilization.',
+      summary: 'RoboAgent identified pickup risk and moved prep tasks earlier so delays do not eat into utilization.',
       metrics: ['35 min buffer', '1 weather risk', '2 pickup zones'],
       steps: [
         'Move cleaning for Vehicle 1 earlier because rain risk overlaps the handoff window.',
@@ -309,10 +309,10 @@ function buildDemoResponse(goal) {
   if (wantsOnboarding) {
     return {
       title: 'Owner onboarding plan',
-      summary: 'FleetOS turns signup into a guided checklist so the owner sees value before and after Tesla OAuth.',
+      summary: 'RoboAgent turns signup into a guided checklist so the owner sees value before and after Tesla OAuth.',
       metrics: ['5 steps', 'Tesla OAuth', 'No password sharing'],
       steps: [
-        'Create a secure FleetOS account and save this plan to the owner profile.',
+        'Create a secure RoboAgent account and save this plan to the owner profile.',
         'Approve telemetry consent so the owner understands what data is used and why.',
         'Connect Tesla through OAuth, keeping the Tesla password with Tesla.',
         'Run the first sync, then review pricing, finance, health, and map views.',
@@ -325,7 +325,7 @@ function buildDemoResponse(goal) {
   if (lower.includes('summary') || lower.includes('fleet')) {
     return {
       title: 'Fleet summary brief',
-      summary: 'FleetOS combines telemetry, imported earnings, health, and utilization into a single owner action brief.',
+      summary: 'RoboAgent combines telemetry, imported earnings, health, and utilization into a single owner action brief.',
       metrics: ['3 vehicles', '$1,284 weekend estimate', '1 maintenance watch'],
       steps: [
         'Summarize live battery, location, odometer, charging state, and last sync age.',
@@ -340,7 +340,7 @@ function buildDemoResponse(goal) {
 
   return {
     title: 'Weekend earnings command',
-    summary: 'FleetOS built a weekend plan that balances price, charging, cleaning, and approval-safe Tesla actions.',
+    summary: 'RoboAgent built a weekend plan that balances price, charging, cleaning, and approval-safe Tesla actions.',
     metrics: ['$1,284 projected', '3 Teslas planned', '92% ready score'],
     steps: [
       'Raise weekend pricing 15-20% on the highest-readiness vehicle and keep one car priced for fast booking.',
@@ -380,16 +380,16 @@ function RealExampleWorkflows() {
         <div>
           <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-300">Real Example Workflows</p>
           <h2 className="mt-3 text-4xl font-black tracking-tight text-white">
-            What owners can ask FleetOS to handle.
+            What owners can ask RoboAgent to handle.
           </h2>
           <p className="mt-4 text-sm leading-7 text-slate-400">
-            The hero demo lets visitors try the agent live. This section shows the kinds of operational plans FleetOS can turn into owner-ready actions.
+            The hero demo lets visitors try the agent live. This section shows the kinds of operational plans RoboAgent can turn into owner-ready actions.
           </p>
 
           <div className="mt-6 rounded-xl border border-emerald-300/20 bg-emerald-400/[0.06] p-4">
             <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-300">Agent pattern</p>
             <p className="mt-2 text-sm leading-6 text-slate-300">
-              Goal in, plan out: FleetOS explains why, estimates impact, and queues approval-safe actions.
+              Goal in, plan out: RoboAgent explains why, estimates impact, and queues approval-safe actions.
             </p>
           </div>
         </div>
@@ -408,7 +408,7 @@ function RealExampleWorkflows() {
               </div>
 
               <div className="mt-4 rounded-xl border border-emerald-300/20 bg-emerald-400/[0.06] p-4">
-                <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-300">FleetOS responds</p>
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-300">RoboAgent responds</p>
                 <h4 className="mt-2 text-2xl font-black text-white">{response.title}</h4>
                 <p className="mt-2 text-sm leading-6 text-slate-300">{response.summary}</p>
                 {response.metrics?.length > 0 && (
@@ -538,7 +538,7 @@ function HeroAgentDemo({ onNavigate }) {
 
       <div className="mt-5 rounded-xl border border-white/10 bg-slate-900/80 p-4 lg:p-5">
         <label htmlFor="hero-agent-input" className="text-xs font-black uppercase tracking-[0.18em] text-sky-300">
-          Give FleetOS a goal
+          Give RoboAgent a goal
         </label>
         <textarea
           id="hero-agent-input"
@@ -546,7 +546,7 @@ function HeroAgentDemo({ onNavigate }) {
           onChange={(event) => setGoal(event.target.value)}
           rows={3}
           className="mt-3 w-full resize-none rounded-lg border border-white/10 bg-slate-950 px-3 py-3 text-sm font-semibold leading-6 text-white outline-none transition focus:border-sky-300/50"
-          placeholder="Tell FleetOS what you want your fleet to do..."
+          placeholder="Tell RoboAgent what you want your fleet to do..."
         />
         <button
           type="button"
@@ -654,7 +654,7 @@ function IntelligenceSignalSection() {
             <span className="block text-sky-300">Owner actions out.</span>
           </h2>
           <p className="mt-4 text-sm leading-7 text-slate-400">
-            FleetOS is not just a dashboard. The agent labels what it knows, explains why it matters, and turns fleet signals into reviewable actions.
+            RoboAgent is not just a dashboard. The agent labels what it knows, explains why it matters, and turns fleet signals into reviewable actions.
           </p>
         </div>
 
@@ -672,21 +672,21 @@ function IntelligenceSignalSection() {
   );
 }
 
-function FleetOsWorkflowSection() {
+function RoboAgentWorkflowSection() {
   return (
     <section className="mx-auto max-w-7xl px-5 py-12">
       <div className="mb-8 max-w-3xl">
-        <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-300">How FleetOS Works</p>
+        <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-300">How RoboAgent Works</p>
         <h2 className="mt-3 text-4xl font-black tracking-tight text-white">
           From Tesla connection to AI operating plan.
         </h2>
         <p className="mt-4 text-sm leading-7 text-slate-400">
-          The reference pattern I liked is simple: show the pipeline. For FleetOS, the pipeline is private owner data, transparent reasoning, and owner-approved execution.
+          The reference pattern I liked is simple: show the pipeline. For RoboAgent, the pipeline is private owner data, transparent reasoning, and owner-approved execution.
         </p>
       </div>
 
       <div className="grid grid-cols-1 gap-3 md:grid-cols-5">
-        {fleetOsWorkflow.map(([title, detail], index) => (
+        {RoboAgentWorkflow.map(([title, detail], index) => (
           <article key={title} className="rounded-lg border border-white/10 bg-white/[0.04] p-5">
             <span className="flex h-9 w-9 items-center justify-center rounded-md bg-sky-300 text-sm font-black text-slate-950">
               {index + 1}
@@ -730,7 +730,7 @@ export default function LandingPage({ onNavigate }) {
       <header className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5">
         <button type="button" onClick={() => onNavigate('landing')} className="flex items-center gap-3">
           <span className="h-2.5 w-2.5 rounded-full bg-sky-300 shadow-lg shadow-sky-300/50" />
-          <span className="text-sm font-black uppercase tracking-[0.28em] text-sky-200">FleetOS</span>
+          <span className="text-sm font-black uppercase tracking-[0.28em] text-sky-200">RoboAgent</span>
         </button>
         <nav className="flex items-center gap-3">
           {!isSignedIn && (
@@ -768,13 +768,13 @@ export default function LandingPage({ onNavigate }) {
         <section className="mx-auto grid max-w-7xl grid-cols-1 gap-5 px-5 pb-10 pt-4 sm:gap-8 sm:pt-8 lg:grid-cols-2 lg:items-center lg:gap-12 lg:pb-16 lg:pt-12">
           <div className="max-w-2xl">
             <p className="mb-4 text-xs font-black uppercase tracking-[0.28em] text-emerald-300">
-              FleetOS AI Agent
+              RoboAgent AI Agent
             </p>
             <h1 className="text-4xl font-black leading-[0.98] tracking-tight text-white sm:text-6xl lg:text-[4.65rem]">
-              FleetOS - Your AI Agent for Tesla Rentals & Robotaxis
+              RoboAgent - Your AI Agent for Tesla Rentals & Robotaxis
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-slate-300 sm:mt-6 sm:text-lg sm:leading-8">
-              FleetOS is your AI Agent that helps you maximize earnings from your Tesla vehicles - whether running them on Turo today or in Tesla's Robotaxi network tomorrow.
+              RoboAgent is your AI Agent that helps you maximize earnings from your Tesla vehicles - whether running them on Turo today or in Tesla's Robotaxi network tomorrow.
             </p>
             <div className="mt-5 hidden flex-wrap gap-2 sm:flex">
               {['First Tesla free', '$12 per extra Tesla', 'Tesla password never shared'].map((label) => (
@@ -829,7 +829,7 @@ export default function LandingPage({ onNavigate }) {
               )}
             </div>
             <p className="mt-5 text-sm leading-6 text-slate-500">
-              FleetOS plans and optimizes operations. Tesla controls actual autonomous driving availability and execution.
+              RoboAgent plans and optimizes operations. Tesla controls actual autonomous driving availability and execution.
             </p>
           </div>
 
@@ -842,7 +842,7 @@ export default function LandingPage({ onNavigate }) {
         <IntelligenceSignalSection />
 
         <div className="hidden md:block">
-          <FleetOsWorkflowSection />
+          <RoboAgentWorkflowSection />
         </div>
 
         <PricingSection onStart={() => onNavigate('onboarding')} />
@@ -875,7 +875,7 @@ export default function LandingPage({ onNavigate }) {
               Built for trust before telemetry.
             </h2>
             <p className="mt-4 text-sm leading-7 text-slate-400">
-              FleetOS is designed around user-controlled access: sign in first, consent before syncing, connect through Tesla, encrypt sensitive tokens, and keep admin visibility limited.
+              RoboAgent is designed around user-controlled access: sign in first, consent before syncing, connect through Tesla, encrypt sensitive tokens, and keep admin visibility limited.
             </p>
           </div>
 
@@ -892,13 +892,13 @@ export default function LandingPage({ onNavigate }) {
         <section className="hidden border-y border-white/10 bg-white/[0.03] md:block">
           <div className="mx-auto max-w-7xl px-5 py-10">
             <div className="mb-8 max-w-3xl">
-              <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-300">Why FleetOS?</p>
+              <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-300">Why RoboAgent?</p>
               <h2 className="mt-3 text-4xl font-black tracking-tight text-white">
                 Most tools just show you data.
-                <span className="block text-sky-300">FleetOS turns data into action.</span>
+                <span className="block text-sky-300">RoboAgent turns data into action.</span>
               </h2>
               <p className="mt-4 text-sm leading-7 text-slate-400">
-                The FleetOS AI agent watches telemetry, owner economics, maintenance signals, and schedule constraints, then turns them into practical workflows you can review and approve.
+                The RoboAgent AI agent watches telemetry, owner economics, maintenance signals, and schedule constraints, then turns them into practical workflows you can review and approve.
               </p>
             </div>
 
@@ -922,7 +922,7 @@ export default function LandingPage({ onNavigate }) {
               The agent should find revenue and risk before you do.
             </h2>
             <p className="mt-4 text-sm leading-7 text-slate-400">
-              FleetOS is being built to combine Tesla telemetry with owner revenue, weather, traffic, electricity, and event signals so the AI agent can recommend practical actions instead of only showing dashboards.
+              RoboAgent is being built to combine Tesla telemetry with owner revenue, weather, traffic, electricity, and event signals so the AI agent can recommend practical actions instead of only showing dashboards.
             </p>
           </div>
 
@@ -946,7 +946,7 @@ export default function LandingPage({ onNavigate }) {
               Built for robotaxis that need to stay earning.
             </h2>
             <p className="mt-4 text-sm leading-7 text-slate-400">
-              Your AI agent watches vehicle health 24/7 and helps you stay ahead of issues that kill earnings. FleetOS turns Tesla telemetry, owner records, cleaning status, and service history into a practical maintenance plan.
+              Your AI agent watches vehicle health 24/7 and helps you stay ahead of issues that kill earnings. RoboAgent turns Tesla telemetry, owner records, cleaning status, and service history into a practical maintenance plan.
             </p>
             <div className="mt-6 grid gap-2">
               {maintenanceOutcomes.map((item) => (
@@ -977,7 +977,7 @@ export default function LandingPage({ onNavigate }) {
 
           <div>
             <div className="mb-4 rounded-lg border border-sky-300/20 bg-sky-300/[0.06] p-5">
-              <p className="text-xs font-black uppercase tracking-[0.2em] text-sky-300">What FleetOS predicts first</p>
+              <p className="text-xs font-black uppercase tracking-[0.2em] text-sky-300">What RoboAgent predicts first</p>
               <div className="mt-4 space-y-3">
                 {predictiveMaintenancePriorities.map(([priority, component, why, leadTime, dataNeeded]) => (
                   <article key={component} className="grid gap-3 rounded-lg border border-white/10 bg-slate-950/70 p-4 lg:grid-cols-[44px_0.9fr_1fr_0.65fr_1.2fr] lg:items-start">
@@ -1045,7 +1045,7 @@ export default function LandingPage({ onNavigate }) {
               ))}
             </div>
             <p className="mt-6 text-xs leading-5 text-slate-600">
-              FleetOS uses Tesla-approved authentication flows and is not affiliated with or endorsed by Tesla.
+              RoboAgent uses Tesla-approved authentication flows and is not affiliated with or endorsed by Tesla.
             </p>
             <div className="mt-5 max-w-3xl">
               <TeslaIndependenceNotice compact />
@@ -1062,7 +1062,7 @@ export default function LandingPage({ onNavigate }) {
               Built to respect rate limits, wakes, and owner control.
             </h2>
             <p className="mt-4 text-sm leading-7 text-slate-400">
-              A serious robotaxi fleet tool cannot have an overactive agent hammering vehicle APIs. FleetOS is being designed around telemetry streaming, wake minimization, command cooldowns, and explicit approval for sensitive actions.
+              A serious robotaxi fleet tool cannot have an overactive agent hammering vehicle APIs. RoboAgent is being designed around telemetry streaming, wake minimization, command cooldowns, and explicit approval for sensitive actions.
             </p>
           </div>
 
@@ -1092,7 +1092,7 @@ export default function LandingPage({ onNavigate }) {
         </section>
       </main>
       <footer className="mx-auto flex max-w-7xl flex-col gap-3 border-t border-white/10 px-5 py-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
-        <p>FleetOS beta. Not affiliated with or endorsed by Tesla.</p>
+        <p>RoboAgent beta. Not affiliated with or endorsed by Tesla.</p>
         <div className="flex gap-4">
           <button type="button" onClick={() => onNavigate('privacy')} className="hover:text-sky-300">Privacy</button>
           <button type="button" onClick={() => onNavigate('terms')} className="hover:text-sky-300">Terms</button>

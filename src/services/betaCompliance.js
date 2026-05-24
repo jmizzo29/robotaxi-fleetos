@@ -9,7 +9,7 @@ const DATA_KEYS = [
 ];
 
 function inviteCode() {
-  return import.meta.env.VITE_BETA_INVITE_CODE || 'FLEETOS-BETA';
+  return import.meta.env.VITE_BETA_INVITE_CODE || 'RoboAgent-BETA';
 }
 
 export function hasBetaAccess() {

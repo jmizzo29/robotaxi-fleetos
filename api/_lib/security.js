@@ -102,7 +102,7 @@ export async function requireAdmin(req, res) {
       resource: 'admin',
       metadata: { email },
     }).catch(() => {});
-    const error = new Error('This account is not authorized for FleetOS admin.');
+    const error = new Error('This account is not authorized for RoboAgent admin.');
     error.status = 403;
     throw error;
   }

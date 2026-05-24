@@ -166,7 +166,7 @@ export default function DriverlessReadinessPanel({ fleet = [], onQueueCommand })
         </p>
         <h2 className="text-2xl font-black tracking-tight">Driverless Readiness Score</h2>
         <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">
-          FleetOS can evaluate whether a vehicle is operationally ready for a future driverless network: energy, telemetry, maintenance, anomaly risk, compliance, and autonomy dependency. Tesla still controls whether autonomous dispatch is available and where it can operate.
+          RoboAgent can evaluate whether a vehicle is operationally ready for a future driverless network: energy, telemetry, maintenance, anomaly risk, compliance, and autonomy dependency. Tesla still controls whether autonomous dispatch is available and where it can operate.
         </p>
       </article>
 

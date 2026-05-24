@@ -9,10 +9,10 @@ function normalizeEvent(event) {
   return {
     id: event.id || `mem-${Date.now()}-${Math.random().toString(16).slice(2)}`,
     type: event.type || 'Event',
-    title: event.title || 'FleetOS event',
+    title: event.title || 'RoboAgent event',
     detail: event.detail || '',
     timestamp: event.timestamp || new Date().toISOString(),
-    source: event.source || 'FleetOS',
+    source: event.source || 'fleetos',
     status: event.status || 'recorded',
     ragReady: Boolean(event.ragReady),
     metadata: event.metadata || {},

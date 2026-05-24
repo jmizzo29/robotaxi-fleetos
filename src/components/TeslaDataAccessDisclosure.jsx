@@ -13,13 +13,13 @@ export default function TeslaDataAccessDisclosure({ compact = false }) {
       <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
         <div>
           <p className="text-xs font-black uppercase tracking-[0.22em] text-sky-300">
-            What Data Does FleetOS Access?
+            What Data Does RoboAgent Access?
           </p>
           <h2 className={`${compact ? 'mt-2 text-xl' : 'mt-3 text-3xl'} font-black tracking-tight text-white`}>
             Minimum data for useful AI fleet operations.
           </h2>
           <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-400">
-            FleetOS only requests data needed for AI agent features, fleet monitoring, predictive maintenance, charging advice, location intelligence, and earnings optimization.
+            RoboAgent only requests data needed for AI agent features, fleet monitoring, predictive maintenance, charging advice, location intelligence, and earnings optimization.
           </p>
         </div>
         <span className="shrink-0 rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-xs font-black uppercase text-emerald-200">
@@ -47,9 +47,9 @@ export default function TeslaDataAccessDisclosure({ compact = false }) {
       <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-4">
         {[
           'You stay in full control and can revoke access.',
-          'FleetOS only reads vehicles you explicitly connect.',
+          'RoboAgent only reads vehicles you explicitly connect.',
           'Sensitive tokens are encrypted server-side.',
-          'FleetOS does not sell Tesla telemetry.',
+          'RoboAgent does not sell Tesla telemetry.',
         ].map((note) => (
           <div key={note} className="rounded-md border border-emerald-300/15 bg-emerald-400/[0.06] px-3 py-2 text-xs font-bold leading-5 text-emerald-100">
             {note}

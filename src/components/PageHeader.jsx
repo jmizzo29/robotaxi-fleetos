@@ -1,4 +1,4 @@
-export default function PageHeader({ eyebrow = 'FleetOS', title, description, action }) {
+export default function PageHeader({ eyebrow = 'fleetos', title, description, action }) {
   return (
     <header className="mb-6 sm:mb-8">
       <div className="mb-3 flex items-center gap-3">

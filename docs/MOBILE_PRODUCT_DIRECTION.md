@@ -1,6 +1,6 @@
-# FleetOS Mobile Product Direction
+# RoboAgent Mobile Product Direction
 
-The mockups point toward a strong mobile identity for FleetOS: compact, dark, operational, and command-first. The app should feel like a real fleet operator tool, not a generic responsive dashboard.
+The mockups point toward a strong mobile identity for RoboAgent: compact, dark, operational, and command-first. The app should feel like a real fleet operator tool, not a generic responsive dashboard.
 
 ## Visual Direction
 
@@ -16,7 +16,7 @@ The mockups point toward a strong mobile identity for FleetOS: compact, dark, op
 
 ## Mobile App Shell
 
-FleetOS should gain a dedicated mobile shell with four primary tabs:
+RoboAgent should gain a dedicated mobile shell with four primary tabs:
 
 - Home: live KPIs, OCE status, AI recommendations, quick actions.
 - Map: real Tesla location, simulation layer, demand/charging overlays.

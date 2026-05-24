@@ -208,7 +208,7 @@ export default async function handler(req, res) {
     if (vehicles.length > billing.coveredVehicles) {
       res.status(402).json({
         error: 'BILLING_REQUIRED',
-        message: 'This FleetOS beta account includes the first Tesla free. Add a paid vehicle plan before syncing additional Teslas.',
+        message: 'This RoboAgent beta account includes the first Tesla free. Add a paid vehicle plan before syncing additional Teslas.',
         billing,
       });
       return;

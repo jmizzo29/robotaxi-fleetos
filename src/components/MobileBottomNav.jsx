@@ -70,7 +70,7 @@ export default function MobileBottomNav({ route, onNavigate }) {
         <div className="fixed inset-x-4 bottom-24 z-50 max-h-[68vh] overflow-hidden rounded-2xl border border-white/10 bg-slate-950/96 shadow-2xl shadow-black/50 backdrop-blur lg:hidden">
           <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-sky-300">FleetOS</p>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-sky-300">RoboAgent</p>
               <h2 className="text-lg font-black text-slate-100">Menu</h2>
             </div>
             <button

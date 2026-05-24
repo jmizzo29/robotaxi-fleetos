@@ -50,7 +50,7 @@ export default async function handler(req, res) {
   }
 
   if (!session) {
-    res.status(401).send('Sign in to FleetOS before connecting Tesla.');
+    res.status(401).send('Sign in to RoboAgent before connecting Tesla.');
     return;
   }
   const redirectUri = redirectUriFromRequest(req);

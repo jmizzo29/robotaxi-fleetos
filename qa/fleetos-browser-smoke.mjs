@@ -74,8 +74,8 @@ async function testLanding(browser, profile) {
   const telemetry = await makePage(browser, profile);
   const { page, context } = telemetry;
   await page.goto(routeUrl('?qa=browser'), { waitUntil: 'networkidle' });
-  await page.getByText('FleetOS', { exact: true }).first().waitFor({ timeout: 15000 });
-  await page.getByText('FleetOS - Your AI Agent for Tesla Rentals & Robotaxis').waitFor({ timeout: 15000 });
+  await page.getByText('fleetos', { exact: true }).first().waitFor({ timeout: 15000 });
+  await page.getByText('RoboAgent - Your AI Agent for Tesla Rentals & Robotaxis').waitFor({ timeout: 15000 });
   await page.getByText('No signup needed', { exact: true }).waitFor({ timeout: 15000 });
   await page.locator('#hero-agent-input').waitFor({ timeout: 15000 });
   const heroGoal = await page.locator('#hero-agent-input').inputValue();
@@ -87,11 +87,11 @@ async function testLanding(browser, profile) {
   await page.getByText('Connect Tesla in minutes').waitFor({ timeout: 15000 });
   if (profile === 'desktop') {
     await page.getByText('Security & Privacy').waitFor({ timeout: 15000 });
-    await page.getByText('FleetOS turns data into action').waitFor({ timeout: 15000 });
-    await page.getByText('What Data Does FleetOS Access?').first().waitFor({ timeout: 15000 });
+    await page.getByText('RoboAgent turns data into action').waitFor({ timeout: 15000 });
+    await page.getByText('What Data Does RoboAgent Access?').first().waitFor({ timeout: 15000 });
     await page.getByText('Dynamic Charging Advisor').waitFor({ timeout: 15000 });
     await page.getByText('Built for robotaxis that need to stay earning').waitFor({ timeout: 15000 });
-    await page.getByText('What FleetOS predicts first').waitFor({ timeout: 15000 });
+    await page.getByText('What RoboAgent predicts first').waitFor({ timeout: 15000 });
     await page.getByText('Fleet Telemetry First').waitFor({ timeout: 15000 });
     await page.getByText('VIN-Scoped Limits').waitFor({ timeout: 15000 });
   }
@@ -131,12 +131,12 @@ async function testAccountStandalone(browser, profile) {
   const telemetry = await makePage(browser, profile);
   const { page, context } = telemetry;
   await page.goto(routeUrl('#/account'), { waitUntil: 'networkidle' });
-  await page.getByRole('heading', { name: 'Sign in to FleetOS' }).waitFor({ timeout: 15000 });
+  await page.getByRole('heading', { name: 'Sign in to RoboAgent' }).waitFor({ timeout: 15000 });
   await page.getByRole('button', { name: 'Sign in with Tesla' }).click();
-  await page.getByRole('heading', { name: 'FleetOS wants to connect to your Tesla Account' }).waitFor({ timeout: 15000 });
+  await page.getByRole('heading', { name: 'RoboAgent wants to connect to your Tesla Account' }).waitFor({ timeout: 15000 });
   const allowAccess = page.getByRole('button', { name: 'Allow Access' });
   if (!(await allowAccess.isDisabled())) throw new Error('Allow Access should require both consent checkboxes.');
-  await page.getByLabel('I understand that FleetOS is a third-party app and is not affiliated with Tesla.').check();
+  await page.getByLabel('I understand that RoboAgent is a third-party app and is not affiliated with Tesla.').check();
   await page.getByLabel(/I have read and agree/).check();
   if (await allowAccess.isDisabled()) throw new Error('Allow Access should enable after both consent checkboxes.');
   await page.getByRole('button', { name: 'Cancel', exact: true }).click();
@@ -150,8 +150,8 @@ async function testLegalStandalone(browser, profile) {
   const telemetry = await makePage(browser, profile);
   const { page, context } = telemetry;
   await page.goto(routeUrl('#/privacy'), { waitUntil: 'networkidle' });
-  await page.getByText('FleetOS Privacy Notice').waitFor({ timeout: 15000 });
-  await page.getByText('What Data Does FleetOS Access?').waitFor({ timeout: 15000 });
+  await page.getByText('RoboAgent Privacy Notice').waitFor({ timeout: 15000 });
+  await page.getByText('What Data Does RoboAgent Access?').waitFor({ timeout: 15000 });
   await page.getByRole('button', { name: 'Back to Home' }).waitFor({ timeout: 15000 });
   const appMenuVisible = await page.getByRole('button', { name: 'Settings' }).count();
   if (appMenuVisible > 0) throw new Error('App navigation is visible on legal page.');
@@ -188,7 +188,7 @@ async function testLandingCtas(browser, profile) {
   } else {
     await page.getByRole('button', { name: 'Sign in with Tesla' }).click();
     await page.waitForURL('**/#/account', { timeout: 10000 });
-    await page.getByRole('heading', { name: 'Sign in to FleetOS' }).waitFor({ timeout: 15000 });
+    await page.getByRole('heading', { name: 'Sign in to RoboAgent' }).waitFor({ timeout: 15000 });
   }
   await context.close();
   return assertNoRuntimeErrors(`landing CTA to onboarding (${profile})`, telemetry);

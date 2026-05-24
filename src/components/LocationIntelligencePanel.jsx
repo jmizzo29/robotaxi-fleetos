@@ -175,8 +175,8 @@ export default function LocationIntelligencePanel({ vehicle, onShowMap }) {
 
           <div className="rounded-lg border border-emerald-300/15 bg-emerald-400/10 p-4 text-sm leading-6 text-emerald-50">
             {hasLocation
-              ? place?.label || 'This position is coming from Tesla telemetry. If the car is parked, FleetOS should anchor it here instead of moving it through simulation.'
-              : 'FleetOS does not have a real Tesla GPS fix yet. Re-sync after confirming Vehicle Location scope and in-car data sharing.'}
+              ? place?.label || 'This position is coming from Tesla telemetry. If the car is parked, RoboAgent should anchor it here instead of moving it through simulation.'
+              : 'RoboAgent does not have a real Tesla GPS fix yet. Re-sync after confirming Vehicle Location scope and in-car data sharing.'}
           </div>
 
           {streetViewPreviewUrl && (

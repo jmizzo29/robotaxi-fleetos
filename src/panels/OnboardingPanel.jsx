@@ -143,7 +143,7 @@ export default function OnboardingPanel({
     try {
       await onSync?.();
       await refreshSession();
-      setMessage('Telemetry sync requested. If the car is awake and permissions are granted, it will appear in FleetOS.');
+      setMessage('Telemetry sync requested. If the car is awake and permissions are granted, it will appear in RoboAgent.');
     } catch (syncError) {
       setError(syncError.message);
     } finally {
@@ -189,12 +189,12 @@ export default function OnboardingPanel({
         <p className="text-xs font-bold uppercase tracking-[0.24em] text-sky-300">Tesla Owner Setup</p>
         <h2 className="mt-2 text-3xl font-black tracking-tight text-white">Get from signup to first live Tesla sync</h2>
         <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-400">
-          This is the clean beta path for a mobile Tesla owner: create a FleetOS account, approve data use, connect Tesla, sync once, then land on the operating dashboard.
+          This is the clean beta path for a mobile Tesla owner: create a RoboAgent account, approve data use, connect Tesla, sync once, then land on the operating dashboard.
         </p>
         <div className="mt-5 grid gap-3 md:grid-cols-3">
           {[
-            ['Tesla password stays with Tesla', 'FleetOS uses OAuth and never asks for your Tesla password.'],
-            ['Owner-controlled access', 'You can disconnect Tesla, revoke consent, or delete FleetOS data from the app.'],
+            ['Tesla password stays with Tesla', 'RoboAgent uses OAuth and never asks for your Tesla password.'],
+            ['Owner-controlled access', 'You can disconnect Tesla, revoke consent, or delete RoboAgent data from the app.'],
             ['Private by default', 'Tesla tokens are encrypted and location is handled only after explicit consent.'],
           ].map(([title, detail]) => (
             <div key={title} className="rounded-lg border border-emerald-300/15 bg-emerald-400/[0.06] p-4">
@@ -207,10 +207,10 @@ export default function OnboardingPanel({
 
       <StepShell
         number="1"
-        title={isClerkConfigured() ? 'Create your secure FleetOS account' : 'Create your FleetOS account'}
+        title={isClerkConfigured() ? 'Create your secure RoboAgent account' : 'Create your RoboAgent account'}
         detail={isClerkConfigured()
-          ? 'Use Clerk-hosted signup or sign-in. FleetOS maps that verified identity to your private fleet records.'
-          : 'Use the beta invite code so FleetOS can attach telemetry and billing status to the right person.'}
+          ? 'Use Clerk-hosted signup or sign-in. RoboAgent maps that verified identity to your private fleet records.'
+          : 'Use the beta invite code so RoboAgent can attach telemetry and billing status to the right person.'}
         status={statusFor(1)}
       >
         {isClerkConfigured() ? (
@@ -258,7 +258,7 @@ export default function OnboardingPanel({
       <StepShell
         number="2"
         title="Approve beta telemetry consent"
-        detail="FleetOS uses VIN, battery, odometer, charging state, vehicle state, and precise location to power the dashboard."
+        detail="RoboAgent uses VIN, battery, odometer, charging state, vehicle state, and precise location to power the dashboard."
         status={statusFor(2)}
       >
         {consentReady ? (
@@ -278,12 +278,12 @@ export default function OnboardingPanel({
       <StepShell
         number="3"
         title="Connect Tesla"
-        detail="Tesla OAuth opens in the browser. FleetOS never asks for your Tesla password."
+        detail="Tesla OAuth opens in the browser. RoboAgent never asks for your Tesla password."
         status={statusFor(3)}
       >
         {teslaConnected ? (
           <p className="rounded-lg border border-emerald-400/20 bg-emerald-400/10 p-4 text-sm font-semibold text-emerald-100">
-            Tesla is connected for this FleetOS account.
+            Tesla is connected for this RoboAgent account.
           </p>
         ) : (
           <a
@@ -302,7 +302,7 @@ export default function OnboardingPanel({
       <StepShell
         number="4"
         title="Run first telemetry sync"
-        detail="FleetOS pulls your Tesla list and live data. Your first Tesla is included free during beta."
+        detail="RoboAgent pulls your Tesla list and live data. Your first Tesla is included free during beta."
         status={statusFor(4)}
       >
         {syncedVehicle ? (
@@ -324,12 +324,12 @@ export default function OnboardingPanel({
       <StepShell
         number="5"
         title="Open the dashboard"
-        detail="Once synced, FleetOS can show the map, finance, health, charging, alerts, and owner intelligence views."
+        detail="Once synced, RoboAgent can show the map, finance, health, charging, alerts, and owner intelligence views."
         status={statusFor(5)}
       >
         {!syncedVehicle && (
           <p className="mb-3 rounded-lg border border-amber-300/20 bg-amber-400/10 p-4 text-sm font-semibold text-amber-100">
-            Finish Tesla connection and first telemetry sync before opening the FleetOS dashboard.
+            Finish Tesla connection and first telemetry sync before opening the RoboAgent dashboard.
           </p>
         )}
         <div className="grid gap-3 sm:grid-cols-2">
