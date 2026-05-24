@@ -75,7 +75,6 @@ async function testLanding(browser, profile) {
   const { page, context } = telemetry;
   await page.goto(routeUrl('?qa=browser'), { waitUntil: 'networkidle' });
   await page.getByText('FleetOS', { exact: true }).first().waitFor({ timeout: 15000 });
-  await page.getByText('Security & Privacy').waitFor({ timeout: 15000 });
   await page.getByText('FleetOS - Your AI Agent for Tesla Rentals & Robotaxis').waitFor({ timeout: 15000 });
   await page.getByText('No signup needed', { exact: true }).waitFor({ timeout: 15000 });
   await page.locator('#hero-agent-input').waitFor({ timeout: 15000 });
@@ -83,16 +82,21 @@ async function testLanding(browser, profile) {
   if (heroGoal !== 'Maximize my earnings this weekend with 3 Teslas') {
     throw new Error(`Unexpected hero agent prompt: ${heroGoal}`);
   }
-  await page.getByText('FleetOS turns data into action').waitFor({ timeout: 15000 });
-  await page.getByText('What Data Does FleetOS Access?').first().waitFor({ timeout: 15000 });
-  await page.getByText('Dynamic Charging Advisor').waitFor({ timeout: 15000 });
-  await page.getByText('Built for robotaxis that need to stay earning').waitFor({ timeout: 15000 });
-  await page.getByText('What FleetOS predicts first').waitFor({ timeout: 15000 });
-  await page.getByText('Fleet Telemetry First').waitFor({ timeout: 15000 });
-  await page.getByText('VIN-Scoped Limits').waitFor({ timeout: 15000 });
+  await page.getByText('Signals in.').waitFor({ timeout: 15000 });
+  await page.getByText('Simple, fair pricing.').waitFor({ timeout: 15000 });
+  await page.getByText('Connect Tesla in minutes').waitFor({ timeout: 15000 });
+  if (profile === 'desktop') {
+    await page.getByText('Security & Privacy').waitFor({ timeout: 15000 });
+    await page.getByText('FleetOS turns data into action').waitFor({ timeout: 15000 });
+    await page.getByText('What Data Does FleetOS Access?').first().waitFor({ timeout: 15000 });
+    await page.getByText('Dynamic Charging Advisor').waitFor({ timeout: 15000 });
+    await page.getByText('Built for robotaxis that need to stay earning').waitFor({ timeout: 15000 });
+    await page.getByText('What FleetOS predicts first').waitFor({ timeout: 15000 });
+    await page.getByText('Fleet Telemetry First').waitFor({ timeout: 15000 });
+    await page.getByText('VIN-Scoped Limits').waitFor({ timeout: 15000 });
+  }
   await page.getByRole('button', { name: 'Try the AI Agent Live' }).waitFor({ timeout: 15000 });
   await page.getByRole('button', { name: 'Start Free (First Tesla Free)' }).waitFor({ timeout: 15000 });
-  await page.getByText('Simple, fair pricing.').waitFor({ timeout: 15000 });
   await page.getByText('Tesla password never shared').first().waitFor({ timeout: 15000 });
   await page.getByText('Join Early Access').count().then((count) => {
     if (count > 0) throw new Error('Old Join Early Access form is visible.');
