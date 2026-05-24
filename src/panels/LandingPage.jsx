@@ -42,6 +42,21 @@ const setupSteps = [
   ['Sync and monitor', 'See battery, location, charging, odometer, parking history, and owner economics in one console.'],
 ];
 
+const intelligenceSignals = [
+  ['Tesla Telemetry', 'Battery, GPS, odometer, charging state, online state, software, alerts, and sync freshness.', 'Live vehicle state'],
+  ['Rental Economics', 'Turo CSV imports, manual revenue, trip mileage, utilization, pricing changes, and owner costs.', 'Owner money layer'],
+  ['Local Context', 'Weather, electricity-rate context, demand zones, service areas, and future event signals.', 'Market awareness'],
+  ['Fleet Memory', 'Past trips, accepted recommendations, maintenance records, cleaning tasks, and command outcomes.', 'Learning loop'],
+];
+
+const fleetOsWorkflow = [
+  ['Connect', 'Owner signs in, approves data consent, and connects Tesla through OAuth.'],
+  ['Observe', 'FleetOS reads vehicle state, rental history, finance records, and service-area context.'],
+  ['Reason', 'The AI agent explains risk, earnings opportunity, maintenance needs, and charging tradeoffs.'],
+  ['Approve', 'Owners review recommended actions before sensitive commands or workflow changes happen.'],
+  ['Improve', 'Outcomes become fleet memory so future recommendations get more useful.'],
+];
+
 const trustPoints = [
   ['Secure account login', 'FleetOS uses managed identity with verified sessions before any Tesla connection can be attached.'],
   ['Tesla password never shared', 'Owners authenticate directly with Tesla. FleetOS never asks for or stores Tesla account passwords.'],
@@ -601,6 +616,64 @@ function HeroAgentDemo({ onNavigate }) {
     </aside>
   );
 }
+
+function IntelligenceSignalSection() {
+  return (
+    <section className="border-y border-white/10 bg-slate-950/70">
+      <div className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-5 py-12 lg:grid-cols-[0.78fr_1.22fr] lg:items-start">
+        <div>
+          <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-300">How It Thinks</p>
+          <h2 className="mt-3 text-4xl font-black tracking-tight text-white">
+            Signals in.
+            <span className="block text-sky-300">Owner actions out.</span>
+          </h2>
+          <p className="mt-4 text-sm leading-7 text-slate-400">
+            FleetOS is not just a dashboard. The agent labels what it knows, explains why it matters, and turns fleet signals into reviewable actions.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+          {intelligenceSignals.map(([title, detail, label]) => (
+            <article key={title} className="rounded-lg border border-white/10 bg-slate-900/80 p-5">
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-300">{label}</p>
+              <h3 className="mt-3 text-lg font-black text-white">{title}</h3>
+              <p className="mt-3 text-sm leading-6 text-slate-400">{detail}</p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function FleetOsWorkflowSection() {
+  return (
+    <section className="mx-auto max-w-7xl px-5 py-12">
+      <div className="mb-8 max-w-3xl">
+        <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-300">How FleetOS Works</p>
+        <h2 className="mt-3 text-4xl font-black tracking-tight text-white">
+          From Tesla connection to AI operating plan.
+        </h2>
+        <p className="mt-4 text-sm leading-7 text-slate-400">
+          The reference pattern I liked is simple: show the pipeline. For FleetOS, the pipeline is private owner data, transparent reasoning, and owner-approved execution.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 gap-3 md:grid-cols-5">
+        {fleetOsWorkflow.map(([title, detail], index) => (
+          <article key={title} className="rounded-lg border border-white/10 bg-white/[0.04] p-5">
+            <span className="flex h-9 w-9 items-center justify-center rounded-md bg-sky-300 text-sm font-black text-slate-950">
+              {index + 1}
+            </span>
+            <h3 className="mt-5 text-lg font-black text-white">{title}</h3>
+            <p className="mt-3 text-sm leading-6 text-slate-400">{detail}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 export default function LandingPage({ onNavigate }) {
   const { isSignedIn } = useFleetAuthStatus();
   const enterApp = (route = 'overview') => {
@@ -734,6 +807,10 @@ export default function LandingPage({ onNavigate }) {
 
           <HeroAgentDemo onNavigate={onNavigate} />
         </section>
+
+        <IntelligenceSignalSection />
+
+        <FleetOsWorkflowSection />
 
         <PricingSection onStart={() => onNavigate('onboarding')} />
 
