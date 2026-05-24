@@ -101,7 +101,7 @@ async function testLanding(browser, profile) {
     await page.getByText('Tesla password never shared').first().waitFor({ timeout: 15000 });
   } else {
     await page.getByRole('button', { name: 'Run Agent' }).waitFor({ timeout: 15000 });
-    await page.getByRole('button', { name: 'Sign in with Tesla' }).waitFor({ timeout: 15000 });
+    await page.getByRole('button', { name: 'Start Free' }).waitFor({ timeout: 15000 });
     await page.getByText('Secure Tesla Login').waitFor({ timeout: 15000 });
     await page.getByText('Data Encrypted').waitFor({ timeout: 15000 });
     await page.getByText('Revoke Anytime').waitFor({ timeout: 15000 });
@@ -132,7 +132,7 @@ async function testAccountStandalone(browser, profile) {
   const { page, context } = telemetry;
   await page.goto(routeUrl('#/account'), { waitUntil: 'networkidle' });
   await page.getByRole('heading', { name: 'Sign in to RoboAgent' }).waitFor({ timeout: 15000 });
-  await page.getByRole('button', { name: 'Sign in with Tesla' }).click();
+  await page.getByRole('button', { name: 'Preview Tesla Data Permissions' }).click();
   await page.getByRole('heading', { name: 'RoboAgent wants to connect to your Tesla Account' }).waitFor({ timeout: 15000 });
   const allowAccess = page.getByRole('button', { name: 'Allow Access' });
   if (!(await allowAccess.isDisabled())) throw new Error('Allow Access should require both consent checkboxes.');
@@ -194,9 +194,9 @@ async function testLandingCtas(browser, profile) {
     await page.waitForURL('**/#/onboarding', { timeout: 10000 });
     await page.getByText('Connect Your First Tesla').waitFor({ timeout: 15000 });
   } else {
-    await page.getByRole('button', { name: 'Sign in with Tesla' }).click();
-    await page.waitForURL('**/#/account', { timeout: 10000 });
-    await page.getByRole('heading', { name: 'Sign in to RoboAgent' }).waitFor({ timeout: 15000 });
+    await page.getByRole('button', { name: 'Start Free' }).first().click();
+    await page.waitForURL('**/#/onboarding', { timeout: 10000 });
+    await page.getByText('Sign in to RoboAgent before connecting Tesla').waitFor({ timeout: 15000 });
   }
   await context.close();
   return assertNoRuntimeErrors(`landing CTA to onboarding (${profile})`, telemetry);

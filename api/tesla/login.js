@@ -49,7 +49,7 @@ export default async function handler(req, res) {
     session = null;
   }
 
-  if (!session) {
+  if (!session?.user?.email) {
     res.status(401).send('Sign in to RoboAgent before connecting Tesla.');
     return;
   }

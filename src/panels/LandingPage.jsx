@@ -557,13 +557,13 @@ function MobileHeroCta({ onNavigate }) {
     <div className="mt-5 space-y-3 md:hidden">
       <button
         type="button"
-        onClick={() => onNavigate('account')}
+        onClick={() => onNavigate('onboarding')}
         className="w-full rounded-lg bg-white px-5 py-4 text-base font-black text-black transition hover:bg-slate-200"
       >
-        Sign in with Tesla
+        Start Free
       </button>
       <p className="text-center text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
-        First Tesla is free
+        Create account first, then connect Tesla
       </p>
       <div className="grid grid-cols-3 gap-2 text-center">
         {['Secure Tesla Login', 'Data Encrypted', 'Revoke Anytime'].map((item) => (

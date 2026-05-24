@@ -212,13 +212,13 @@ async function testAdminGate() {
 
 async function testTeslaLoginGate() {
   const login = await request('/api/tesla/login?returnTo=%2F%23%2Fonboarding', { redirect: 'manual' });
-  if (![302, 307, 308].includes(login.status) || !String(login.location || '').includes('tesla.com')) {
-    return fail('Tesla OAuth entry', `Expected Tesla OAuth redirect, got ${login.status}.`, {
+  if (login.status !== 401 || !String(login.text || '').includes('Sign in to RoboAgent')) {
+    return fail('Tesla OAuth account gate', `Expected 401 account gate, got ${login.status}.`, {
       location: login.location,
       body: truncate(login.text),
     });
   }
-  return pass('Tesla OAuth entry', 'Signed-out visitor can start the Tesla-first OAuth flow.');
+  return pass('Tesla OAuth account gate', 'Signed-out visitor must create or sign into RoboAgent before Tesla OAuth starts.');
 }
 
 async function testTeslaCallbackMisuse() {
@@ -377,7 +377,7 @@ const tests = [
   ['health endpoint', testHealth],
   ['signed-out session gate', testSignedOutSessionGate],
   ['admin gate', testAdminGate],
-  ['Tesla OAuth entry', testTeslaLoginGate],
+  ['Tesla OAuth account gate', testTeslaLoginGate],
   ['Tesla callback misuse', testTeslaCallbackMisuse],
   ['vehicles API gate', testVehiclesGate],
   ['method hardening', testMethodHardening],

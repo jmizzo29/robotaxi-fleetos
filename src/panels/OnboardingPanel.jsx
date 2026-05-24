@@ -90,8 +90,17 @@ export default function OnboardingPanel({
   const [, setComplianceRevision] = useState(0);
 
   const refreshSession = useCallback(async () => {
-    const nextSession = await getFleetOsSession();
-    setSession(nextSession);
+    try {
+      const nextSession = await getFleetOsSession();
+      setSession(nextSession);
+      setError('');
+    } catch (sessionError) {
+      if (String(sessionError.message || '').toLowerCase().includes('sign in')) {
+        setSession({ authenticated: false, user: {} });
+        return;
+      }
+      throw sessionError;
+    }
   }, []);
 
   useEffect(() => {
@@ -204,6 +213,24 @@ export default function OnboardingPanel({
           ))}
         </div>
       </div>
+
+      {!hasAccount && (
+        <div className="rounded-lg border border-sky-300/30 bg-sky-300/10 p-5">
+          <p className="text-xs font-black uppercase tracking-[0.22em] text-sky-300">Start Here</p>
+          <h2 className="mt-2 text-2xl font-black text-white">Sign in to RoboAgent before connecting Tesla</h2>
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-300">
+            Tesla OAuth attaches vehicle access to your private RoboAgent account. The clean order is:
+            create or sign in to RoboAgent, review data consent, then connect Tesla.
+          </p>
+          <button
+            type="button"
+            onClick={() => onNavigate?.('account')}
+            className="mt-5 rounded-lg bg-sky-300 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-sky-200"
+          >
+            Sign In / Create Account
+          </button>
+        </div>
+      )}
 
       <StepShell
         number="1"

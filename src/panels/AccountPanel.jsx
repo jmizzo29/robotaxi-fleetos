@@ -294,6 +294,12 @@ export default function AccountPanel({ onNavigate }) {
   };
 
   const confirmTeslaConsent = () => {
+    if (!hasRealAccount) {
+      setShowTeslaConsent(false);
+      setMessage('');
+      setError('Create or sign in to RoboAgent first. Then connect Tesla from onboarding.');
+      return;
+    }
     acceptTeslaConsent();
     startTeslaSignIn();
   };
@@ -313,7 +319,7 @@ export default function AccountPanel({ onNavigate }) {
             </button>
             <h1 className="text-2xl font-black text-white">Sign in to RoboAgent</h1>
             <p className="mt-3 text-sm leading-6 text-slate-400">
-              Start with your Tesla account. RoboAgent never sees your Tesla password.
+              Create or sign in to your RoboAgent account first. Then connect Tesla with OAuth so vehicle access is encrypted per user.
             </p>
           </div>
 
@@ -330,35 +336,45 @@ export default function AccountPanel({ onNavigate }) {
           )}
 
           <div className="mt-7 space-y-4">
+            {clerkReady ? (
+              <>
+                <SignUpButton mode="modal">
+                  <button
+                    type="button"
+                    className="w-full rounded-lg bg-white px-5 py-4 text-base font-black text-black transition hover:bg-slate-200"
+                  >
+                    Create RoboAgent Account
+                  </button>
+                </SignUpButton>
+                <SignInButton mode="modal">
+                  <button
+                    type="button"
+                    className="w-full rounded-lg border border-white/10 bg-white/[0.04] px-5 py-4 text-base font-black text-slate-100 transition hover:bg-white/10"
+                  >
+                    Sign In to RoboAgent
+                  </button>
+                </SignInButton>
+              </>
+            ) : null}
             <button
               type="button"
               onClick={() => setShowTeslaConsent(true)}
-              className="flex w-full items-center justify-center gap-3 rounded-lg bg-white px-5 py-4 text-base font-black text-black transition hover:bg-slate-200"
+              className="flex w-full items-center justify-center gap-3 rounded-lg border border-sky-300/25 bg-sky-300/10 px-5 py-4 text-base font-black text-sky-100 transition hover:bg-sky-300/20"
             >
               <TeslaMark />
-              Sign in with Tesla
+              Preview Tesla Data Permissions
             </button>
             <p className="text-center text-xs leading-5 text-slate-500">
-              You will approve access on Tesla&apos;s secure OAuth screen. We request vehicle status, location, charging, odometer, and alerts so the AI agent can monitor your fleet.
+              Tesla connection comes after RoboAgent sign-in. RoboAgent never sees your Tesla password.
             </p>
           </div>
 
           {clerkReady ? (
             <div className="mt-7 space-y-4">
               <Divider />
-              <SignInButton mode="modal">
-                <button
-                  type="button"
-                  className="flex w-full items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] px-5 py-4 text-base font-black text-slate-100 transition hover:bg-white/10"
-                >
-                  Continue with Email
-                </button>
-              </SignInButton>
-              <SignUpButton mode="modal">
-                <button type="button" className="w-full text-sm font-semibold text-slate-500 transition hover:text-slate-300">
-                  Create email account instead
-                </button>
-              </SignUpButton>
+              <p className="text-center text-sm leading-6 text-slate-500">
+                After sign-in, return to onboarding to review consent and connect Tesla securely.
+              </p>
             </div>
           ) : (
             <div className="mt-7 space-y-5">
