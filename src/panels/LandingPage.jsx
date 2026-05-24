@@ -810,17 +810,21 @@ export default function LandingPage({ onNavigate }) {
 
         <IntelligenceSignalSection />
 
-        <FleetOsWorkflowSection />
+        <div className="hidden md:block">
+          <FleetOsWorkflowSection />
+        </div>
 
         <PricingSection onStart={() => onNavigate('onboarding')} />
 
-        <RealExampleWorkflows />
+        <div className="hidden md:block">
+          <RealExampleWorkflows />
+        </div>
 
-        <section className="mx-auto max-w-7xl px-5 py-10">
+        <section className="hidden mx-auto max-w-7xl px-5 py-10 md:block">
           <TeslaDataAccessDisclosure />
         </section>
 
-        <section className="border-y border-white/10 bg-slate-950/80">
+        <section className="hidden border-y border-white/10 bg-slate-950/80 md:block">
           <div className="mx-auto grid max-w-7xl grid-cols-1 gap-4 px-5 py-8 md:grid-cols-4">
             {trustPoints.map(([title, detail]) => (
               <article key={title} className="rounded-lg border border-emerald-300/15 bg-emerald-400/[0.06] p-4">
@@ -831,7 +835,7 @@ export default function LandingPage({ onNavigate }) {
           </div>
         </section>
 
-        <section className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-5 py-10 lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
+        <section className="hidden mx-auto max-w-7xl grid-cols-1 gap-8 px-5 py-10 md:grid lg:grid-cols-[0.8fr_1.2fr] lg:items-start">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-300">
               Security & Privacy
@@ -854,7 +858,7 @@ export default function LandingPage({ onNavigate }) {
           </div>
         </section>
 
-        <section className="border-y border-white/10 bg-white/[0.03]">
+        <section className="hidden border-y border-white/10 bg-white/[0.03] md:block">
           <div className="mx-auto max-w-7xl px-5 py-10">
             <div className="mb-8 max-w-3xl">
               <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-300">Why FleetOS?</p>
@@ -878,7 +882,7 @@ export default function LandingPage({ onNavigate }) {
           </div>
         </section>
 
-        <section className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-5 py-10 lg:grid-cols-[0.75fr_1.25fr] lg:items-start">
+        <section className="hidden mx-auto max-w-7xl grid-cols-1 gap-8 px-5 py-10 md:grid lg:grid-cols-[0.75fr_1.25fr] lg:items-start">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-300">
               Agent Capabilities Roadmap
@@ -902,7 +906,7 @@ export default function LandingPage({ onNavigate }) {
           </div>
         </section>
 
-        <section className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-5 py-10 lg:grid-cols-[0.82fr_1.18fr]">
+        <section className="hidden mx-auto max-w-7xl grid-cols-1 gap-8 px-5 py-10 md:grid lg:grid-cols-[0.82fr_1.18fr]">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-300">
               Fleet Health & Maintenance
@@ -1018,7 +1022,7 @@ export default function LandingPage({ onNavigate }) {
           </div>
         </section>
 
-        <section className="mx-auto grid max-w-7xl grid-cols-1 gap-8 px-5 py-14 lg:grid-cols-[0.85fr_1.15fr]">
+        <section className="hidden mx-auto max-w-7xl grid-cols-1 gap-8 px-5 py-14 md:grid lg:grid-cols-[0.85fr_1.15fr]">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-300">
               Tesla API Strategy
@@ -1041,7 +1045,7 @@ export default function LandingPage({ onNavigate }) {
           </div>
         </section>
 
-        <section className="mx-auto max-w-7xl px-5 py-10">
+        <section className="hidden mx-auto max-w-7xl px-5 py-10 md:block">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
             {[
               ['For Owners', 'Understand whether each vehicle is making money, ready to dispatch, and properly documented.'],
