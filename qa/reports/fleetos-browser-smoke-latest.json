@@ -1,11 +1,11 @@
 {
   "baseUrl": "https://robotaxi-fleetos.vercel.app",
-  "generatedAt": "2026-05-24T19:23:21.548Z",
+  "generatedAt": "2026-05-24T19:28:15.834Z",
   "summary": {
-    "total": 12,
+    "total": 14,
     "pass": 12,
     "warn": 0,
-    "fail": 0
+    "fail": 2
   },
   "results": [
     {
@@ -45,6 +45,14 @@
       "evidence": {}
     },
     {
+      "status": "fail",
+      "name": "owner value dashboard (desktop)",
+      "detail": "locator.waitFor: Error: strict mode violation: getByText('Today\\'s AI fleet brief') resolved to 2 elements:\n    1) <h2 class=\"mt-3 text-3xl font-black tracking-tight text-white\">Today's AI fleet brief</h2> aka getByText('Today\\'s AI fleet brief').first()\n    2) <h2 class=\"mt-3 text-3xl font-black tracking-tight text-white\">Today's AI fleet brief</h2> aka getByRole('heading', { name: 'Today\\'s AI fleet brief' })\n\nCall log:\n\u001b[2m  - waiting for getByText('Today\\'s AI fleet brief') to be visible\u001b[22m\n",
+      "evidence": {
+        "stack": "locator.waitFor: Error: strict mode violation: getByText('Today\\'s AI fleet brief') resolved to 2 elements:\n    1) <h2 class=\"mt-3 text-3xl font-black tracking-tight text-white\">Today's AI fleet brief</h2> aka getByText('Today\\'s AI fleet brief').first()\n    2) <h2 class=\"mt-3 text-3xl font-black tracking-tight text-white\">Today's AI fleet brief</h2> aka getByRole('heading', { name: 'Today\\'s AI fleet brief' })\n\nCall log:\n\u001b[2m  - waiting for getByText('Today\\'s AI fleet brief') to be visible\u001b[22m\n\n    at testOwnerValueDashboard (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:201:50)\n    at async runTest (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:26:12)\n    at async file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:247:16"
+      }
+    },
+    {
       "status": "pass",
       "name": "landing browser smoke (mobile)",
       "detail": "No serious browser runtime errors detected.",
@@ -79,6 +87,14 @@
       "name": "landing CTA to onboarding (mobile)",
       "detail": "No serious browser runtime errors detected.",
       "evidence": {}
+    },
+    {
+      "status": "fail",
+      "name": "owner value dashboard (mobile)",
+      "detail": "locator.waitFor: Error: strict mode violation: getByText('Today\\'s AI fleet brief') resolved to 2 elements:\n    1) <h2 class=\"mt-3 text-3xl font-black tracking-tight text-white\">Today's AI fleet brief</h2> aka getByRole('heading', { name: 'Today\\'s AI fleet brief' })\n    2) <h2 class=\"mt-3 text-3xl font-black tracking-tight text-white\">Today's AI fleet brief</h2> aka getByText('Today\\'s AI fleet brief').nth(1)\n\nCall log:\n\u001b[2m  - waiting for getByText('Today\\'s AI fleet brief') to be visible\u001b[22m\n",
+      "evidence": {
+        "stack": "locator.waitFor: Error: strict mode violation: getByText('Today\\'s AI fleet brief') resolved to 2 elements:\n    1) <h2 class=\"mt-3 text-3xl font-black tracking-tight text-white\">Today's AI fleet brief</h2> aka getByRole('heading', { name: 'Today\\'s AI fleet brief' })\n    2) <h2 class=\"mt-3 text-3xl font-black tracking-tight text-white\">Today's AI fleet brief</h2> aka getByText('Today\\'s AI fleet brief').nth(1)\n\nCall log:\n\u001b[2m  - waiting for getByText('Today\\'s AI fleet brief') to be visible\u001b[22m\n\n    at testOwnerValueDashboard (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:201:50)\n    at async runTest (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:26:12)\n    at async file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:247:16"
+      }
     }
   ]
 }

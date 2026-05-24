@@ -198,7 +198,7 @@ async function testOwnerValueDashboard(browser, profile) {
   const telemetry = await makePage(browser, profile);
   const { page, context } = telemetry;
   await page.goto(routeUrl('#/overview'), { waitUntil: 'networkidle' });
-  await page.getByText("Today's AI fleet brief").waitFor({ timeout: 15000 });
+  await page.getByRole('heading', { name: "Today's AI fleet brief" }).first().waitFor({ timeout: 15000 });
   await page.getByText('Dynamic Pricing').waitFor({ timeout: 15000 });
   await page.getByText('Predictive Maintenance').waitFor({ timeout: 15000 });
   await page.getByText('Impact Tracking').waitFor({ timeout: 15000 });
