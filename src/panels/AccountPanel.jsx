@@ -12,6 +12,7 @@ import {
   updateFleetOsProfile,
 } from '../services/sessionService';
 import { getTeslaLoginUrl } from '../services/teslaHealthService';
+import { acceptTeslaConsent } from '../services/betaCompliance';
 
 const emptyRegister = {
   name: '',
@@ -80,6 +81,136 @@ function TeslaMark() {
   );
 }
 
+function TeslaConsentModal({
+  checks,
+  onCancel,
+  onConfirm,
+  onToggle,
+  onNavigate,
+}) {
+  const canAllow = checks.independent && checks.legal;
+  const dataRows = [
+    'View real-time vehicle data including battery level, location, charging status, odometer, tire pressure, and alerts.',
+    'Access basic vehicle commands such as wake vehicle, lock or unlock, start or stop charging, and climate preconditioning.',
+    'Receive Fleet Telemetry for smart monitoring and AI recommendations.',
+    'View trip history and service information.',
+    'Import rental earnings data if you choose to connect Turo later.',
+  ];
+  const trustRows = [
+    'You are granting access only to the vehicles you choose.',
+    'FleetOS will never share your data with third parties.',
+    'Tesla does not share your login credentials with FleetOS.',
+    'You can revoke access at any time directly from your Tesla Account settings.',
+    'All sensitive tokens are encrypted and stored securely.',
+  ];
+
+  return (
+    <div className="fixed inset-0 z-50 grid place-items-center bg-black/80 px-4 py-6 backdrop-blur-sm">
+      <section className="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-xl border border-white/10 bg-[#0b0b0b] p-6 shadow-2xl shadow-black">
+        <div className="flex items-start justify-between gap-4">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-300">Tesla OAuth Consent</p>
+            <h2 className="mt-3 text-2xl font-black text-white">FleetOS wants to connect to your Tesla Account</h2>
+            <p className="mt-3 text-sm leading-6 text-slate-400">
+              This lets the FleetOS AI Agent optimize earnings, plan maintenance, manage charging, and run your Tesla rental or robotaxi fleet more efficiently.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={onCancel}
+            className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-sm font-black text-slate-300 transition hover:bg-white/10"
+            aria-label="Cancel Tesla access"
+          >
+            X
+          </button>
+        </div>
+
+        <div className="mt-6 grid gap-4 lg:grid-cols-2">
+          <div className="rounded-lg border border-white/10 bg-white/[0.03] p-4">
+            <h3 className="font-black text-white">This will allow FleetOS to</h3>
+            <ul className="mt-3 space-y-3 text-sm leading-5 text-slate-300">
+              {dataRows.map((row) => (
+                <li key={row} className="flex gap-2">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-sky-300" />
+                  <span>{row}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          <div className="rounded-lg border border-emerald-300/15 bg-emerald-300/5 p-4">
+            <h3 className="font-black text-white">Important details</h3>
+            <ul className="mt-3 space-y-3 text-sm leading-5 text-slate-300">
+              {trustRows.map((row) => (
+                <li key={row} className="flex gap-2">
+                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-300" />
+                  <span>{row}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        <div className="mt-5 rounded-lg border border-sky-300/15 bg-sky-300/5 p-4">
+          <h3 className="font-black text-white">Why does FleetOS need this?</h3>
+          <p className="mt-2 text-sm leading-6 text-slate-300">
+            To power the AI Agent that helps you optimize earnings, plan maintenance, manage charging, and run your Tesla rental or robotaxi fleet more efficiently.
+          </p>
+        </div>
+
+        <div className="mt-5 space-y-3">
+          <label className="flex gap-3 rounded-lg border border-white/10 bg-white/[0.03] p-4 text-sm leading-5 text-slate-200">
+            <input
+              type="checkbox"
+              checked={checks.independent}
+              onChange={(event) => onToggle('independent', event.target.checked)}
+              className="mt-1"
+            />
+            <span>I understand that FleetOS is a third-party app and is not affiliated with Tesla.</span>
+          </label>
+          <label className="flex gap-3 rounded-lg border border-white/10 bg-white/[0.03] p-4 text-sm leading-5 text-slate-200">
+            <input
+              type="checkbox"
+              checked={checks.legal}
+              onChange={(event) => onToggle('legal', event.target.checked)}
+              className="mt-1"
+            />
+            <span>
+              I have read and agree to the{' '}
+              <button type="button" onClick={() => onNavigate?.('privacy')} className="font-bold text-sky-300 hover:text-sky-200">
+                Privacy Policy
+              </button>{' '}
+              and{' '}
+              <button type="button" onClick={() => onNavigate?.('terms')} className="font-bold text-sky-300 hover:text-sky-200">
+                Terms of Service
+              </button>
+              .
+            </span>
+          </label>
+        </div>
+
+        <div className="mt-6 grid gap-3 sm:grid-cols-[0.8fr_1.2fr]">
+          <button
+            type="button"
+            onClick={onCancel}
+            className="rounded-lg border border-white/10 bg-white/5 px-5 py-4 text-sm font-black text-slate-200 transition hover:bg-white/10"
+          >
+            Cancel
+          </button>
+          <button
+            type="button"
+            disabled={!canAllow}
+            onClick={onConfirm}
+            className="rounded-lg bg-white px-5 py-4 text-sm font-black text-black transition hover:bg-slate-200 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            Allow Access
+          </button>
+        </div>
+      </section>
+    </div>
+  );
+}
+
 export default function AccountPanel({ onNavigate }) {
   const [session, setSession] = useState(null);
   const [billing, setBilling] = useState(null);
@@ -92,6 +223,11 @@ export default function AccountPanel({ onNavigate }) {
   const [error, setError] = useState('');
   const [isBusy, setIsBusy] = useState(false);
   const [authMode, setAuthMode] = useState('signin');
+  const [showTeslaConsent, setShowTeslaConsent] = useState(false);
+  const [teslaConsentChecks, setTeslaConsentChecks] = useState({
+    independent: false,
+    legal: false,
+  });
 
   const clerkReady = isClerkConfigured();
 
@@ -157,6 +293,11 @@ export default function AccountPanel({ onNavigate }) {
     window.location.href = getTeslaLoginUrl('onboarding');
   };
 
+  const confirmTeslaConsent = () => {
+    acceptTeslaConsent();
+    startTeslaSignIn();
+  };
+
   if (!hasRealAccount) {
     return (
       <div className="grid min-h-[calc(100vh-6rem)] place-items-center px-4 py-10">
@@ -191,7 +332,7 @@ export default function AccountPanel({ onNavigate }) {
           <div className="mt-7 space-y-4">
             <button
               type="button"
-              onClick={startTeslaSignIn}
+              onClick={() => setShowTeslaConsent(true)}
               className="flex w-full items-center justify-center gap-3 rounded-lg bg-white px-5 py-4 text-base font-black text-black transition hover:bg-slate-200"
             >
               <TeslaMark />
@@ -356,6 +497,15 @@ export default function AccountPanel({ onNavigate }) {
             </p>
           </div>
         </section>
+        {showTeslaConsent ? (
+          <TeslaConsentModal
+            checks={teslaConsentChecks}
+            onCancel={() => setShowTeslaConsent(false)}
+            onConfirm={confirmTeslaConsent}
+            onNavigate={onNavigate}
+            onToggle={(key, value) => setTeslaConsentChecks((current) => ({ ...current, [key]: value }))}
+          />
+        ) : null}
       </div>
     );
   }

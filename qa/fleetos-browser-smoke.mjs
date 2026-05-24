@@ -124,6 +124,14 @@ async function testAccountStandalone(browser, profile) {
   const { page, context } = telemetry;
   await page.goto(routeUrl('#/account'), { waitUntil: 'networkidle' });
   await page.getByRole('heading', { name: 'Sign in to FleetOS' }).waitFor({ timeout: 15000 });
+  await page.getByRole('button', { name: 'Sign in with Tesla' }).click();
+  await page.getByRole('heading', { name: 'FleetOS wants to connect to your Tesla Account' }).waitFor({ timeout: 15000 });
+  const allowAccess = page.getByRole('button', { name: 'Allow Access' });
+  if (!(await allowAccess.isDisabled())) throw new Error('Allow Access should require both consent checkboxes.');
+  await page.getByLabel('I understand that FleetOS is a third-party app and is not affiliated with Tesla.').check();
+  await page.getByLabel(/I have read and agree/).check();
+  if (await allowAccess.isDisabled()) throw new Error('Allow Access should enable after both consent checkboxes.');
+  await page.getByRole('button', { name: 'Cancel' }).click();
   const appMenuVisible = await page.getByRole('button', { name: 'Beta Admin' }).count();
   if (appMenuVisible > 0) throw new Error('App navigation is visible on account page.');
   await context.close();
