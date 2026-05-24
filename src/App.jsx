@@ -583,7 +583,7 @@ export default function App() {
           title="Account & Access"
           description="Create a beta account, sign in, manage profile details, use passwordless magic links, and confirm first-Tesla-free billing status."
         />
-        <AccountPanel />
+        <AccountPanel onNavigate={navigate} />
       </>
     ),
     settings: (
@@ -711,12 +711,7 @@ export default function App() {
           </button>
         </header>
         <main className="mx-auto max-w-5xl">
-          <PageHeader
-            eyebrow="Account"
-            title="Account & Access"
-            description="Sign in, manage your FleetOS profile, and review first-Tesla-free account status."
-          />
-          <AccountPanel />
+          <AccountPanel onNavigate={navigate} />
         </main>
       </div>
     );
