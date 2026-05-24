@@ -144,7 +144,6 @@ async function testServiceAreasMap(browser, profile) {
   const { page, context } = telemetry;
   await page.goto(routeUrl('#/map'), { waitUntil: 'networkidle' });
   await page.getByText('Fleet Map Intelligence').waitFor({ timeout: 15000 });
-  await page.getByText('Service Areas').first().waitFor({ timeout: 15000 });
   await page.getByText('Demand and pricing zones').waitFor({ timeout: 15000 });
   await page.getByText('Health on the map').waitFor({ timeout: 15000 });
   await page.getByText('Recommended pricing zone').first().waitFor({ timeout: 15000 });

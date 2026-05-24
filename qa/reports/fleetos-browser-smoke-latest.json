@@ -1,9 +1,9 @@
 {
   "baseUrl": "https://robotaxi-fleetos.vercel.app",
-  "generatedAt": "2026-05-24T13:25:10.643Z",
+  "generatedAt": "2026-05-24T13:32:01.614Z",
   "summary": {
-    "total": 10,
-    "pass": 10,
+    "total": 12,
+    "pass": 12,
     "warn": 0,
     "fail": 0
   },
@@ -34,6 +34,12 @@
     },
     {
       "status": "pass",
+      "name": "service areas map (desktop)",
+      "detail": "No serious browser runtime errors detected.",
+      "evidence": {}
+    },
+    {
+      "status": "pass",
       "name": "landing CTA to onboarding (desktop)",
       "detail": "No serious browser runtime errors detected.",
       "evidence": {}
@@ -59,6 +65,12 @@
     {
       "status": "pass",
       "name": "legal standalone (mobile)",
+      "detail": "No serious browser runtime errors detected.",
+      "evidence": {}
+    },
+    {
+      "status": "pass",
+      "name": "service areas map (mobile)",
       "detail": "No serious browser runtime errors detected.",
       "evidence": {}
     },
