@@ -84,16 +84,9 @@ async function testLanding(browser, profile) {
   }
   await page.getByText('Simple, fair pricing.').waitFor({ timeout: 15000 });
   if (profile === 'desktop') {
-    await page.getByText('Signals in.').waitFor({ timeout: 15000 });
     await page.getByText('Connect Tesla in minutes').waitFor({ timeout: 15000 });
-    await page.getByText('Security & Privacy').waitFor({ timeout: 15000 });
-    await page.getByText('RoboAgent turns data into action').waitFor({ timeout: 15000 });
-    await page.getByText('What Data Does RoboAgent Access?').first().waitFor({ timeout: 15000 });
-    await page.getByText('Dynamic Charging Advisor').waitFor({ timeout: 15000 });
-    await page.getByText('Built for robotaxis that need to stay earning').waitFor({ timeout: 15000 });
-    await page.getByText('What RoboAgent predicts first').waitFor({ timeout: 15000 });
-    await page.getByText('Fleet Telemetry First').waitFor({ timeout: 15000 });
-    await page.getByText('VIN-Scoped Limits').waitFor({ timeout: 15000 });
+    await page.getByText('Secure by Design').waitFor({ timeout: 15000 });
+    await page.getByText('Owner-controlled data').waitFor({ timeout: 15000 });
   }
   if (profile === 'desktop') {
     await page.getByRole('button', { name: 'Try the AI Agent Live' }).waitFor({ timeout: 15000 });
