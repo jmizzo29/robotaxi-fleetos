@@ -82,8 +82,8 @@ async function testLanding(browser, profile) {
   if (heroGoal !== 'Maximize my earnings this weekend with 3 Teslas') {
     throw new Error(`Unexpected hero agent prompt: ${heroGoal}`);
   }
-  await page.getByText('Simple, fair pricing.').waitFor({ timeout: 15000 });
   if (profile === 'desktop') {
+    await page.getByText('Simple, fair pricing.').waitFor({ timeout: 15000 });
     await page.getByText('Connect Tesla in minutes').waitFor({ timeout: 15000 });
     await page.getByText('Secure by Design').waitFor({ timeout: 15000 });
     await page.getByText('Owner-controlled data').waitFor({ timeout: 15000 });

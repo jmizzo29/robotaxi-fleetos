@@ -51,7 +51,7 @@ const demoPrompts = [
 
 function PricingSection({ onStart }) {
   return (
-    <section id="pricing" className="scroll-mt-8 border-y border-white/10 bg-white/[0.03]">
+    <section id="pricing" className="hidden scroll-mt-8 border-y border-white/10 bg-white/[0.03] md:block">
       <div className="mx-auto max-w-7xl px-5 py-8 md:py-14">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
