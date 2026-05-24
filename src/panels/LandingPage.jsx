@@ -774,7 +774,7 @@ export default function LandingPage({ onNavigate }) {
               FleetOS - Your AI Agent for Tesla Rentals & Robotaxis
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-slate-300 sm:mt-6 sm:text-lg sm:leading-8">
-              Give it a goal. Watch it plan charging, maintenance, cleaning & earnings.
+              FleetOS is your AI Agent that helps you maximize earnings from your Tesla vehicles - whether running them on Turo today or in Tesla's Robotaxi network tomorrow.
             </p>
             <div className="mt-5 hidden flex-wrap gap-2 sm:flex">
               {['First Tesla free', '$12 per extra Tesla', 'Tesla password never shared'].map((label) => (
