@@ -198,10 +198,11 @@ async function testOwnerValueDashboard(browser, profile) {
   const telemetry = await makePage(browser, profile);
   const { page, context } = telemetry;
   await page.goto(routeUrl('#/overview'), { waitUntil: 'networkidle' });
-  await page.getByRole('heading', { name: "Today's AI fleet brief" }).first().waitFor({ timeout: 15000 });
-  await page.getByText('Dynamic Pricing').first().waitFor({ timeout: 15000 });
-  await page.getByText('Predictive Maintenance').first().waitFor({ timeout: 15000 });
-  await page.getByText('Impact Tracking').first().waitFor({ timeout: 15000 });
+  const dashboard = page.locator('[data-testid="owner-value-dashboard"]:visible').first();
+  await dashboard.getByRole('heading', { name: "Today's AI fleet brief" }).waitFor({ timeout: 15000 });
+  await dashboard.getByText('Dynamic Pricing').waitFor({ timeout: 15000 });
+  await dashboard.getByText('Predictive Maintenance').waitFor({ timeout: 15000 });
+  await dashboard.getByText('Impact Tracking').waitFor({ timeout: 15000 });
   await context.close();
   return assertNoRuntimeErrors(`owner value dashboard (${profile})`, telemetry);
 }

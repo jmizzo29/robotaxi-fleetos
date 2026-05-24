@@ -7,6 +7,7 @@ import {
 } from '../services/robotaxiOperationsService';
 import { buildFleetPricingSummary, buildPricingRecommendations } from '../services/pricingAgentService';
 import { readRevenueRecords, syncRevenueFromBackend } from '../services/revenueService';
+import { getFleetOsSession } from '../services/sessionService';
 
 function vehicleLabel(vehicle) {
   return vehicle?.ownership?.tag || vehicle?.name || vehicle?.display_name || vehicle?.id || 'Tesla';
@@ -105,7 +106,14 @@ export default function OwnerValueDashboard({ fleet = [], onQueueCommand }) {
 
   useEffect(() => {
     const refresh = () => setRevenueRecords(readRevenueRecords());
-    syncRevenueFromBackend().then(setRevenueRecords).catch(refresh);
+    getFleetOsSession()
+      .then((session) => {
+        if (session?.authenticated) {
+          return syncRevenueFromBackend().then(setRevenueRecords);
+        }
+        return refresh();
+      })
+      .catch(refresh);
     window.addEventListener('fleetos-revenue-updated', refresh);
     return () => window.removeEventListener('fleetos-revenue-updated', refresh);
   }, []);
@@ -131,7 +139,7 @@ export default function OwnerValueDashboard({ fleet = [], onQueueCommand }) {
   const avgHealth = Math.round(healthSummary.avgHealth || 0);
 
   return (
-    <section className="space-y-4">
+    <section className="space-y-4" data-testid="owner-value-dashboard">
       <article className="rounded-xl border border-emerald-300/20 bg-slate-900/90 p-5 shadow-xl shadow-black/20">
         <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
           <div className="max-w-4xl">
