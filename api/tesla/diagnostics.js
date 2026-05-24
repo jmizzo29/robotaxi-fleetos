@@ -10,7 +10,14 @@ export default async function handler(req, res) {
     return;
   }
 
-  const connectionResult = await getTeslaConnectionForSession(req, res);
+  let connectionResult = null;
+  let connectionError = null;
+  try {
+    connectionResult = await getTeslaConnectionForSession(req, res);
+  } catch (error) {
+    connectionError = error;
+  }
+
   await auditEvent({
     userId: connectionResult?.session?.userId || null,
     action: 'tesla_diagnostics_viewed',
@@ -35,7 +42,12 @@ export default async function handler(req, res) {
   if (!connectionResult?.connection) {
     res.status(200).json({
       ...checks,
-      token: { ok: false, message: 'Tesla is not connected for this FleetOS user.' },
+      token: {
+        ok: false,
+        message: connectionError?.status === 401
+          ? 'Sign in to check Tesla connection health.'
+          : 'Tesla is not connected for this FleetOS user.',
+      },
     });
     return;
   }
