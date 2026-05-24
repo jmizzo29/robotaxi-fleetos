@@ -121,7 +121,14 @@ export async function createAnonymousSession(res) {
 
 export async function getSession(req, res, { create = false } = {}) {
   await ensureFleetSchema();
-  const clerkSession = await getVerifiedClerkSession(req);
+  let clerkSession = null;
+  try {
+    clerkSession = await getVerifiedClerkSession(req);
+  } catch (error) {
+    if (!(create && error.status === 401)) {
+      throw error;
+    }
+  }
   if (clerkSession) {
     await ensureBillingEntitlement(clerkSession.userId, clerkSession.user?.email);
     return clerkSession;
