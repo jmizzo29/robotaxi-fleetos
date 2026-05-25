@@ -399,40 +399,51 @@ function HeroAgentDemo({ onNavigate, inputId = 'hero-agent-input', testId = 'her
 }
 
 function MobileHeroPreview() {
-  const metrics = [
-    ['Health', '94%'],
-    ['Impact', '+$380'],
-    ['Ready', '2/3'],
+  const vehicles = [
+    ['Model Y', 'Ready', 'bg-white'],
+    ['Model 3', 'Charging', 'bg-slate-300'],
+    ['Cybertruck', 'Booked', 'bg-zinc-400'],
   ];
 
   return (
     <aside
-      className="mt-5 rounded-2xl border border-sky-300/25 bg-[linear-gradient(145deg,rgba(30,41,59,0.92),rgba(17,17,17,0.94))] p-4 shadow-2xl shadow-black/30 md:hidden"
+      className="mt-5 rounded-2xl border border-white/10 bg-[linear-gradient(145deg,rgba(30,41,59,0.88),rgba(15,23,42,0.96))] p-4 shadow-2xl shadow-black/25 md:hidden"
       data-testid="mobile-hero-preview"
     >
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="text-[10px] font-black uppercase tracking-[0.22em] text-sky-300">RoboAgent</p>
-          <h2 className="mt-1 text-xl font-black tracking-tight text-white">Owner Dashboard Preview</h2>
+          <h2 className="mt-1 text-xl font-black tracking-tight text-white">Your Tesla Fleet</h2>
         </div>
         <span className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-[10px] font-black uppercase text-emerald-200">
-          Beta Ready
+          1-10 Cars
         </span>
       </div>
 
-      <div className="mt-4 grid grid-cols-3 gap-2">
-        {metrics.map(([label, value]) => (
-          <div key={label} className="rounded-lg border border-white/[0.12] bg-white/[0.05] px-3 py-3">
-            <p className="text-[9px] font-black uppercase tracking-[0.12em] text-slate-400">{label}</p>
-            <p className="mt-1 text-xl font-black text-white">{value}</p>
+      <div className="mt-4 space-y-2">
+        {vehicles.map(([model, status, color], index) => (
+          <div key={model} className="flex items-center gap-3 rounded-xl border border-white/[0.12] bg-white/[0.05] p-3">
+            <div className="relative h-9 w-20 shrink-0">
+              <div className={`absolute left-1 top-2 h-5 w-16 rounded-[55%_45%_40%_40%] ${color} shadow-lg shadow-black/20`} />
+              <div className="absolute left-4 top-0 h-5 w-9 rounded-t-full bg-slate-700/90" />
+              <div className="absolute bottom-0 left-3 h-3 w-3 rounded-full bg-slate-950 ring-2 ring-slate-500" />
+              <div className="absolute bottom-0 right-4 h-3 w-3 rounded-full bg-slate-950 ring-2 ring-slate-500" />
+            </div>
+            <div className="min-w-0 flex-1">
+              <p className="truncate text-sm font-black text-white">{model}</p>
+              <p className="text-xs font-semibold text-slate-300">{status}</p>
+            </div>
+            <span className="rounded-full border border-white/10 bg-slate-950/50 px-2 py-1 text-[10px] font-black text-slate-200">
+              #{index + 1}
+            </span>
           </div>
         ))}
       </div>
 
       <div className="mt-3 rounded-xl border border-emerald-300/20 bg-[linear-gradient(145deg,rgba(16,185,129,0.10),rgba(30,41,59,0.42))] p-3">
-        <p className="text-[10px] font-black uppercase tracking-[0.16em] text-emerald-300">Agent Plan</p>
+        <p className="text-[10px] font-black uppercase tracking-[0.16em] text-emerald-300">Owner Plan</p>
         <p className="mt-2 text-sm font-bold leading-6 text-slate-100">
-          Charge tonight, prep cleaning tomorrow, and review weekend rental pricing.
+          Turo today. Robotaxis tomorrow. Keep each car earning, charged, clean, and ready.
         </p>
       </div>
     </aside>
@@ -455,7 +466,7 @@ function MobileHeroCta({ onNavigate, onSeeMore, isMoreOpen }) {
           onClick={onSeeMore}
           className="rounded-lg border border-white/10 bg-white/[0.04] px-4 py-3 text-xs font-black uppercase tracking-[0.12em] text-slate-200 transition hover:bg-white/10"
         >
-          {isMoreOpen ? 'Hide' : 'See More'}
+          {isMoreOpen ? 'Hide' : 'Show Me'}
         </button>
       </div>
     </div>
@@ -531,10 +542,10 @@ export default function LandingPage({ onNavigate }) {
         <section className="mx-auto grid max-w-7xl grid-cols-1 gap-5 px-5 pb-7 pt-2 sm:gap-8 sm:pt-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-12 lg:pb-14 lg:pt-10">
           <div className="max-w-2xl">
             <h1 className="text-[2.85rem] font-black leading-[0.94] tracking-tight text-white sm:text-6xl sm:leading-[0.98] lg:text-[4.65rem]">
-              RoboAgent helps Tesla owners earn more from their cars
+              Your personal AI agent for 1-10 Teslas
             </h1>
             <p className="mt-3 max-w-2xl text-lg font-semibold leading-7 text-slate-200 sm:mt-6 sm:text-lg sm:font-normal sm:leading-8">
-              A practical assistant for Tesla Turo hosts: track cars, plan upkeep, import earnings, and spot pricing opportunities.
+              Run your Turo business today and get ready for robotaxis tomorrow with help for pricing, charging, maintenance, and earnings.
             </p>
             <div className="md:hidden">
               <MobileHeroCta
