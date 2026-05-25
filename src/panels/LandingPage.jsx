@@ -356,7 +356,7 @@ function HeroAgentDemo({
         </div>
         <p className="mt-3 text-sm leading-6 text-slate-200">{response.summary}</p>
         {response.metrics?.length > 0 && (
-          <div className="mt-4 hidden grid-cols-1 gap-2 sm:grid sm:grid-cols-3">
+          <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
             {response.metrics.map((metric) => (
               <div key={metric} className="rounded-lg border border-sky-300/15 bg-sky-300/[0.07] px-3 py-2 text-xs font-black text-sky-100">
                 {metric}
