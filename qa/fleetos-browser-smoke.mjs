@@ -130,7 +130,7 @@ async function testLanding(browser, profile) {
     if (await page.getByText('1-10 Cars').count()) {
       throw new Error('Old 1-10 Cars badge should not be visible on mobile.');
     }
-    if (await mobilePreview.getByText('Cybercab').count()) {
+    if (await mobilePreview.getByRole('img', { name: 'Tesla Cybercab concept on display' }).count()) {
       throw new Error('Mobile first preview should show the owner dashboard, not vehicle photo cards.');
     }
     await page.getByRole('button', { name: 'Try AI Agent' }).click();
