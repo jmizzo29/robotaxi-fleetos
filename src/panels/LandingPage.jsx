@@ -401,7 +401,13 @@ function HeroAgentDemo({ onNavigate, inputId = 'hero-agent-input', testId = 'her
 function MobileHeroPreview() {
   const vehiclePhotos = [
     ['/images/tesla-model-3-road-mobile.jpg', 'Tesla Model 3 on the road', 'Model 3', 'Turo ready'],
-    ['/images/tesla-cybertruck-road-mobile.jpg', 'Tesla Cybertruck on the road', 'Cybertruck', 'Future robotaxi asset'],
+    [
+      '/images/tesla-cybercab-mobile.jpg',
+      'Tesla Cybercab concept on display',
+      'Cybercab',
+      'Future robotaxi asset',
+      'Photo: Dllu / CC BY-SA 4.0',
+    ],
   ];
 
   return (
@@ -420,7 +426,7 @@ function MobileHeroPreview() {
       </div>
 
       <div className="mt-4 grid grid-cols-2 gap-2">
-        {vehiclePhotos.map(([src, alt, model, status]) => (
+        {vehiclePhotos.map(([src, alt, model, status, credit]) => (
           <div key={model} className="overflow-hidden rounded-xl border border-white/[0.12] bg-white/[0.05]">
             <div className="h-28 overflow-hidden bg-slate-900">
               <img
@@ -433,6 +439,7 @@ function MobileHeroPreview() {
             <div className="p-3">
               <p className="truncate text-sm font-black text-white">{model}</p>
               <p className="mt-1 text-xs font-semibold text-slate-300">{status}</p>
+              {credit ? <p className="mt-1 text-[9px] font-semibold uppercase tracking-[0.08em] text-slate-500">{credit}</p> : null}
             </div>
           </div>
         ))}

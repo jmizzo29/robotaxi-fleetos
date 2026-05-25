@@ -101,8 +101,9 @@ async function testLanding(browser, profile) {
     await mobilePreview.getByText('Your Tesla Fleet').waitFor({ timeout: 15000 });
     await mobilePreview.getByText('Owner Plan').waitFor({ timeout: 15000 });
     await mobilePreview.getByText('Model 3').waitFor({ timeout: 15000 });
-    await mobilePreview.getByText('Cybertruck').waitFor({ timeout: 15000 });
+    await mobilePreview.getByText('Cybercab').waitFor({ timeout: 15000 });
     await mobilePreview.getByRole('img', { name: 'Tesla Model 3 on the road' }).waitFor({ timeout: 15000 });
+    await mobilePreview.getByRole('img', { name: 'Tesla Cybercab concept on display' }).waitFor({ timeout: 15000 });
     const ctaBox = await page.getByRole('button', { name: 'Get Started' }).first().boundingBox();
     const previewBox = await mobilePreview.boundingBox();
     if (!ctaBox || !previewBox || ctaBox.y >= previewBox.y) {
