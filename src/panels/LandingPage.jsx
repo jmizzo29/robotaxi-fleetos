@@ -44,17 +44,17 @@ const demoPrompts = [
 
 function PricingSection({ onStart }) {
   return (
-    <section id="pricing" className="hidden scroll-mt-8 border-y border-white/10 bg-white/[0.03] md:block">
+    <section id="pricing" className="hidden scroll-mt-8 border-y border-slate-200 bg-white/65 md:block">
       <div className="mx-auto max-w-7xl px-5 py-8 md:py-14">
         <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-300">
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-700">
               Pricing
             </p>
-            <h2 className="mt-3 max-w-3xl text-3xl font-black tracking-tight text-white md:text-4xl">
+            <h2 className="mt-3 max-w-3xl text-3xl font-black tracking-tight text-slate-950 md:text-4xl">
               Simple, fair pricing.
             </h2>
-            <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-400 md:mt-4 md:leading-7">
+            <p className="mt-3 max-w-3xl text-sm font-semibold leading-6 text-slate-600 md:mt-4 md:leading-7">
               Start free with one Tesla during beta. Add vehicles only when RoboAgent starts saving real operator time.
             </p>
           </div>
@@ -73,29 +73,29 @@ function PricingSection({ onStart }) {
               key={plan.plan}
               className={`relative rounded-lg border p-5 ${
                 plan.popular
-                  ? 'border-sky-300/35 bg-sky-300/[0.08] shadow-xl shadow-sky-950/30'
-                  : 'border-white/10 bg-slate-950/55'
+                  ? 'border-sky-200 bg-sky-50 shadow-xl shadow-sky-100/60'
+                  : 'border-slate-200 bg-white'
               }`}
             >
               {plan.popular && (
-                <span className="absolute right-4 top-4 rounded-full border border-sky-300/30 bg-sky-300/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-sky-200">
+                <span className="absolute right-4 top-4 rounded-full border border-sky-200 bg-white px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-sky-800">
                   Popular
                 </span>
               )}
-              <p className="text-sm font-black text-white">{plan.plan}</p>
+              <p className="text-sm font-black text-slate-950">{plan.plan}</p>
               <p className="mt-3 text-3xl font-black text-sky-300">{plan.price}</p>
               <p className="mt-3 text-xs font-black uppercase tracking-[0.16em] text-slate-500">Best For</p>
-              <p className="mt-1 text-sm font-bold leading-6 text-slate-200">{plan.bestFor}</p>
+              <p className="mt-1 text-sm font-bold leading-6 text-slate-700">{plan.bestFor}</p>
               <div className="mt-5 hidden space-y-2 md:block">
                 {plan.features.map((feature) => (
-                  <div key={feature} className="flex gap-3 text-sm leading-6 text-slate-300">
+                  <div key={feature} className="flex gap-3 text-sm font-semibold leading-6 text-slate-600">
                     <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-emerald-300" />
                     <span>{feature}</span>
                   </div>
                 ))}
               </div>
               {plan.note && (
-                <p className="mt-5 hidden rounded-lg border border-amber-300/20 bg-amber-300/10 p-3 text-xs font-semibold leading-5 text-amber-100 md:block">
+                <p className="mt-5 hidden rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs font-semibold leading-5 text-amber-800 md:block">
                   {plan.note}
                 </p>
               )}
@@ -103,7 +103,7 @@ function PricingSection({ onStart }) {
           ))}
         </div>
 
-        <p className="mt-6 rounded-lg border border-emerald-300/20 bg-emerald-400/[0.06] p-4 text-sm font-bold leading-6 text-emerald-100">
+        <p className="mt-6 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm font-bold leading-6 text-emerald-800">
           First Tesla is always free during beta. Billed monthly, cancel anytime. Popular choice: 3-5 vehicles on Owner Fleet.
         </p>
       </div>
@@ -587,9 +587,8 @@ export default function LandingPage({ onNavigate }) {
       </header>
 
       <main>
-        <section className="relative isolate mx-auto grid max-w-7xl grid-cols-1 gap-5 px-5 pb-7 pt-2 sm:gap-8 sm:pt-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-12 lg:pb-14 lg:pt-10">
-          <div className="absolute inset-x-5 top-2 z-0 hidden rounded-[2rem] border border-white/70 bg-white/60 shadow-xl shadow-slate-300/20 backdrop-blur sm:block lg:bottom-12" aria-hidden="true" />
-          <div className="relative z-10 max-w-2xl">
+        <section className="relative mx-auto grid max-w-7xl grid-cols-1 gap-5 px-5 pb-7 pt-2 sm:gap-8 sm:pt-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-12 lg:pb-14 lg:pt-10">
+          <div className="max-w-2xl">
             <h1 className="text-[2.65rem] font-black leading-[0.96] tracking-tight text-slate-950 sm:text-6xl sm:leading-[0.98] lg:text-[4.65rem]">
               Your AI Agent for Tesla Rentals & Robotaxis
             </h1>
@@ -657,7 +656,7 @@ export default function LandingPage({ onNavigate }) {
             </p>
           </div>
 
-          <div className="relative z-10">
+          <div>
             <div className="hidden md:block">
               <HeroAgentDemo onNavigate={onNavigate} />
             </div>
@@ -674,17 +673,17 @@ export default function LandingPage({ onNavigate }) {
           </div>
         </section>
 
-        <section className="hidden border-y border-white/10 bg-[linear-gradient(180deg,rgba(30,41,59,0.58),rgba(17,17,17,0.92))] md:block">
-          <div className="mx-auto grid max-w-7xl grid-cols-1 gap-4 px-5 py-8 md:grid-cols-4">
+        <section className="hidden border-y border-slate-200/80 bg-white/45 md:block">
+          <div className="mx-auto grid max-w-7xl grid-cols-1 divide-y divide-slate-200 px-5 py-5 md:grid-cols-4 md:divide-x md:divide-y-0">
             {[
               ['Why RoboAgent', 'It turns Tesla data, rental economics, charging, and health signals into practical owner decisions.'],
               ['Simple Pricing', 'First Tesla is free during beta. Add vehicles at $12 per Tesla per month.'],
               ['Secure by Design', 'Tesla OAuth, encrypted tokens, explicit consent, and revoke-anytime controls.'],
               ['Tesla Boundary', 'RoboAgent is not affiliated with Tesla. Tesla controls autonomous availability and execution.'],
             ].map(([title, detail]) => (
-              <article key={title} className="rounded-lg border border-white/[0.12] bg-[linear-gradient(145deg,rgba(30,41,59,0.78),rgba(17,17,17,0.78))] p-4 shadow-lg shadow-black/10">
-                <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-300">{title}</p>
-                <p className="mt-3 text-sm leading-6 text-slate-200">{detail}</p>
+              <article key={title} className="py-4 md:px-5 md:py-3">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-700">{title}</p>
+                <p className="mt-3 text-sm font-semibold leading-6 text-slate-600">{detail}</p>
               </article>
             ))}
           </div>
@@ -694,12 +693,12 @@ export default function LandingPage({ onNavigate }) {
 
         {showMobileMore && <MobileTrustSection />}
 
-        <section className="hidden border-y border-white/10 bg-[linear-gradient(180deg,rgba(17,17,17,0.92),rgba(30,41,59,0.42))] md:block">
-          <div className="mx-auto grid max-w-7xl grid-cols-1 gap-4 px-5 py-8 md:grid-cols-4">
+        <section className="hidden border-y border-slate-200/80 bg-white/55 md:block">
+          <div className="mx-auto grid max-w-7xl grid-cols-1 divide-y divide-slate-200 px-5 py-5 md:grid-cols-4 md:divide-x md:divide-y-0">
             {trustPoints.map(([title, detail]) => (
-              <article key={title} className="rounded-lg border border-emerald-300/20 bg-[linear-gradient(145deg,rgba(16,185,129,0.10),rgba(30,41,59,0.52))] p-4 shadow-lg shadow-black/10">
-                <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-300">{title}</p>
-                <p className="mt-3 text-sm leading-6 text-slate-200">{detail}</p>
+              <article key={title} className="py-4 md:px-5 md:py-3">
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-700">{title}</p>
+                <p className="mt-3 text-sm font-semibold leading-6 text-slate-600">{detail}</p>
               </article>
             ))}
           </div>
