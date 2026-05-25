@@ -505,18 +505,18 @@ export default function LandingPage({ onNavigate }) {
       onClick={() => {
         if (!clerkReady) onNavigate('account');
       }}
-      className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-slate-200 transition hover:bg-white/10"
+      className="rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-50"
     >
       Sign In
     </button>
   );
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(circle_at_top_right,rgba(14,165,233,0.18),transparent_32%),linear-gradient(180deg,#172033_0%,#0f172a_54%,#111827_100%)] text-slate-100 md:bg-[#0f172a]">
+    <div className="min-h-screen bg-[linear-gradient(180deg,#f8fafc_0%,#eef6fb_52%,#ffffff_100%)] text-slate-950">
       <header className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5">
         <button type="button" onClick={() => onNavigate('landing')} className="flex items-center gap-3">
-          <span className="h-2.5 w-2.5 rounded-full bg-sky-300 shadow-lg shadow-sky-300/50" />
-          <span className="text-sm font-black uppercase tracking-[0.28em] text-sky-200">RoboAgent</span>
+          <span className="h-2.5 w-2.5 rounded-full bg-sky-500 shadow-lg shadow-sky-300/50" />
+          <span className="text-sm font-black uppercase tracking-[0.28em] text-slate-900">RoboAgent</span>
         </button>
         <nav className="flex items-center gap-3">
           {!isSignedIn && (
@@ -529,21 +529,21 @@ export default function LandingPage({ onNavigate }) {
           <button
             type="button"
             onClick={() => onNavigate('onboarding')}
-            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-slate-200 transition hover:bg-white/10"
+            className="rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-50"
           >
             Get Started
           </button>
           <button
             type="button"
             onClick={scrollToPricing}
-            className="hidden rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-slate-200 transition hover:bg-white/10 sm:block"
+            className="hidden rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-50 sm:block"
           >
             Pricing
           </button>
           <button
             type="button"
             onClick={scrollToDemo}
-            className="hidden rounded-full border border-sky-400/30 bg-sky-400/10 px-4 py-2 text-sm font-bold text-sky-100 transition hover:bg-sky-400/20 sm:block"
+            className="hidden rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-sm font-bold text-sky-800 shadow-sm transition hover:bg-sky-100 sm:block"
           >
             View Demo
           </button>
@@ -553,10 +553,10 @@ export default function LandingPage({ onNavigate }) {
       <main>
         <section className="mx-auto grid max-w-7xl grid-cols-1 gap-5 px-5 pb-7 pt-2 sm:gap-8 sm:pt-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-12 lg:pb-14 lg:pt-10">
           <div className="max-w-2xl">
-            <h1 className="text-[2.65rem] font-black leading-[0.96] tracking-tight text-white sm:text-6xl sm:leading-[0.98] lg:text-[4.65rem]">
+            <h1 className="text-[2.65rem] font-black leading-[0.96] tracking-tight text-slate-950 sm:text-6xl sm:leading-[0.98] lg:text-[4.65rem]">
               Your AI Agent for Tesla Rentals & Robotaxis
             </h1>
-            <p className="mt-3 max-w-md text-base font-semibold leading-6 text-slate-300 md:hidden">
+            <p className="mt-3 max-w-md text-base font-semibold leading-6 text-slate-600 md:hidden">
               Give it goals. Get smart plans for pricing, charging, maintenance and earnings.
             </p>
             <div className="md:hidden">
@@ -584,7 +584,7 @@ export default function LandingPage({ onNavigate }) {
               <button
                 type="button"
                 onClick={() => onNavigate('onboarding')}
-                className="rounded-md border border-sky-300/30 bg-sky-300/10 px-5 py-4 text-sm font-black text-sky-100 transition hover:bg-sky-300/20"
+                className="rounded-md border border-sky-200 bg-sky-50 px-5 py-4 text-sm font-black text-sky-800 transition hover:bg-sky-100"
               >
                 Start free
               </button>
@@ -592,7 +592,7 @@ export default function LandingPage({ onNavigate }) {
                 <button
                   type="button"
                   onClick={() => enterApp('overview')}
-                  className="rounded-md border border-white/10 bg-white/5 px-5 py-4 text-sm font-black text-slate-100 transition hover:bg-white/10"
+                  className="rounded-md border border-slate-300 bg-white px-5 py-4 text-sm font-black text-slate-700 shadow-sm transition hover:bg-slate-50"
                 >
                   Open Console
                 </button>
@@ -600,7 +600,7 @@ export default function LandingPage({ onNavigate }) {
                 <SignInButton mode="modal">
                   <button
                     type="button"
-                    className="rounded-md border border-white/10 bg-white/5 px-5 py-4 text-sm font-black text-slate-100 transition hover:bg-white/10"
+                    className="rounded-md border border-slate-300 bg-white px-5 py-4 text-sm font-black text-slate-700 shadow-sm transition hover:bg-slate-50"
                   >
                     Sign In
                   </button>
@@ -609,13 +609,13 @@ export default function LandingPage({ onNavigate }) {
                 <button
                   type="button"
                   onClick={() => onNavigate('account')}
-                  className="rounded-md border border-white/10 bg-white/5 px-5 py-4 text-sm font-black text-slate-100 transition hover:bg-white/10"
+                  className="rounded-md border border-slate-300 bg-white px-5 py-4 text-sm font-black text-slate-700 shadow-sm transition hover:bg-slate-50"
                 >
                   Sign In
                 </button>
               )}
             </div>
-            <p className="mt-5 hidden text-sm leading-6 text-slate-400 sm:block">
+            <p className="mt-5 hidden text-sm leading-6 text-slate-600 sm:block">
               Built by a Tesla owner in Florida for other Tesla owners. Tesla controls autonomous driving availability and execution.
             </p>
           </div>
