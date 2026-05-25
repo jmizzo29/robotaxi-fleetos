@@ -451,18 +451,18 @@ function MobileHeroPreview() {
 function MobileHeroCta({ onNavigate, onSeeMore, isMoreOpen }) {
   return (
     <div className="mt-5 space-y-3 md:hidden">
-      <div className="flex items-center gap-3">
+      <div className="grid grid-cols-2 gap-3">
         <button
           type="button"
           onClick={() => onNavigate('onboarding')}
-          className="flex-1 rounded-lg bg-white px-5 py-4 text-base font-black text-black transition hover:bg-slate-200"
+          className="rounded-lg bg-white px-4 py-4 text-base font-black text-black transition hover:bg-slate-200"
         >
           Get Started
         </button>
         <button
           type="button"
           onClick={onSeeMore}
-          className="rounded-lg border border-white/10 bg-white/[0.04] px-4 py-3 text-xs font-black uppercase tracking-[0.12em] text-slate-200 transition hover:bg-white/10"
+          className="rounded-lg border border-white/10 bg-white/[0.04] px-4 py-4 text-base font-black text-slate-100 transition hover:bg-white/10"
         >
           {isMoreOpen ? 'Hide' : 'Show Me'}
         </button>
