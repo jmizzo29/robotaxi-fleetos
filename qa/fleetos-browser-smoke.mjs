@@ -76,13 +76,13 @@ async function testLanding(browser, profile) {
   await page.goto(routeUrl('?qa=browser'), { waitUntil: 'networkidle' });
   await page.getByText('RoboAgent', { exact: true }).first().waitFor({ timeout: 15000 });
   await page.getByText('RoboAgent - Your AI Agent for Tesla Rentals & Robotaxis').waitFor({ timeout: 15000 });
-  await page.getByText('No signup needed', { exact: true }).waitFor({ timeout: 15000 });
-  await page.locator('#hero-agent-input').waitFor({ timeout: 15000 });
-  const heroGoal = await page.locator('#hero-agent-input').inputValue();
-  if (heroGoal !== 'Maximize my earnings this weekend with 3 Teslas') {
-    throw new Error(`Unexpected hero agent prompt: ${heroGoal}`);
-  }
   if (profile === 'desktop') {
+    await page.getByText('No signup needed', { exact: true }).waitFor({ timeout: 15000 });
+    await page.locator('#hero-agent-input').waitFor({ timeout: 15000 });
+    const heroGoal = await page.locator('#hero-agent-input').inputValue();
+    if (heroGoal !== 'Maximize my earnings this weekend with 3 Teslas') {
+      throw new Error(`Unexpected hero agent prompt: ${heroGoal}`);
+    }
     await page.getByText('Simple, fair pricing.').waitFor({ timeout: 15000 });
     await page.getByText('Secure by Design').waitFor({ timeout: 15000 });
     await page.getByText('Owner-controlled data').waitFor({ timeout: 15000 });
@@ -92,16 +92,25 @@ async function testLanding(browser, profile) {
     await page.getByRole('button', { name: 'Start Free (First Tesla Free)' }).waitFor({ timeout: 15000 });
     await page.getByText('Tesla password never shared').first().waitFor({ timeout: 15000 });
   } else {
-    await page.getByRole('button', { name: 'Run Agent' }).waitFor({ timeout: 15000 });
     await page.getByRole('button', { name: 'Get Started' }).first().waitFor({ timeout: 15000 });
     await page.getByRole('button', { name: 'See More' }).waitFor({ timeout: 15000 });
     await page.getByText('Secure Tesla Login').waitFor({ timeout: 15000 });
     await page.getByText('Data Encrypted').waitFor({ timeout: 15000 });
     await page.getByText('Revoke Anytime').waitFor({ timeout: 15000 });
+    if (await page.locator('#hero-agent-input:visible').count()) {
+      throw new Error('Mobile AI demo should be hidden before tapping See More.');
+    }
     if (await page.getByText('Your Tesla login stays with Tesla.').count()) {
       throw new Error('Mobile details should be hidden before tapping See More.');
     }
     await page.getByRole('button', { name: 'See More' }).click();
+    await page.getByText('No signup needed', { exact: true }).waitFor({ timeout: 15000 });
+    await page.locator('#hero-agent-input').waitFor({ timeout: 15000 });
+    const heroGoal = await page.locator('#hero-agent-input').inputValue();
+    if (heroGoal !== 'Maximize my earnings this weekend with 3 Teslas') {
+      throw new Error(`Unexpected hero agent prompt after See More: ${heroGoal}`);
+    }
+    await page.getByRole('button', { name: 'Run Agent' }).waitFor({ timeout: 15000 });
     await page.getByText('Your Tesla login stays with Tesla.').waitFor({ timeout: 15000 });
   }
   await page.getByText('Join Early Access').count().then((count) => {
@@ -180,6 +189,9 @@ async function testLandingCtas(browser, profile) {
   await page.goto(routeUrl('/'), { waitUntil: 'networkidle' });
   if (profile === 'desktop') {
     await page.getByRole('button', { name: 'Try the AI Agent Live' }).click();
+  } else {
+    await page.getByRole('button', { name: 'See More' }).click();
+    await page.locator('#hero-agent-input').waitFor({ timeout: 15000 });
   }
   await page.locator('#hero-agent-input').fill('Should I raise price this weekend in Tampa?');
   await page.getByRole('button', { name: 'Run Agent' }).click();

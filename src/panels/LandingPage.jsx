@@ -560,7 +560,9 @@ export default function LandingPage({ onNavigate }) {
           </div>
 
           <div>
-            <HeroAgentDemo onNavigate={onNavigate} />
+            <div className={showMobileMore ? 'block' : 'hidden md:block'}>
+              <HeroAgentDemo onNavigate={onNavigate} />
+            </div>
             <MobileHeroCta
               onNavigate={onNavigate}
               onSeeMore={() => setShowMobileMore((current) => !current)}
