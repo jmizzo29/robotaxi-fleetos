@@ -307,21 +307,20 @@ function HeroAgentDemo({
 
   return (
     <aside
-      className="rounded-2xl border border-sky-300/25 bg-[linear-gradient(145deg,rgba(30,41,59,0.92),rgba(17,17,17,0.94))] p-4 shadow-2xl shadow-black/30 sm:p-5 lg:p-6"
+      className="rounded-2xl border border-slate-200 bg-white p-4 shadow-xl shadow-slate-300/40 sm:p-5 lg:p-6"
       data-testid={testId}
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-300">Planning Demo</p>
-          <h2 className="mt-2 text-2xl font-black tracking-tight text-white sm:text-3xl lg:text-4xl">Ask about your Tesla business.</h2>
+          <h2 className="text-2xl font-black tracking-tight text-slate-950 sm:text-3xl lg:text-4xl">Ask about your Tesla business.</h2>
         </div>
-        <span className="w-fit rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-xs font-black text-emerald-200">
+        <span className="w-fit rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">
           No signup needed
         </span>
       </div>
 
-      <div className="mt-5 rounded-xl border border-white/[0.12] bg-[linear-gradient(145deg,rgba(51,65,85,0.56),rgba(24,24,27,0.80))] p-4 lg:p-5">
-        <label htmlFor={inputId} className="text-xs font-black uppercase tracking-[0.18em] text-sky-300">
+      <div className="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4 lg:p-5">
+        <label htmlFor={inputId} className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">
           Ask RoboAgent anything
         </label>
         <textarea
@@ -329,7 +328,7 @@ function HeroAgentDemo({
           value={goal}
           onChange={(event) => setGoal(event.target.value)}
           rows={3}
-          className="mt-3 w-full resize-none rounded-lg border border-white/[0.12] bg-[#111111] px-3 py-3 text-sm font-semibold leading-6 text-white outline-none transition placeholder:text-slate-500 focus:border-sky-300/50"
+          className="mt-3 w-full resize-none rounded-lg border border-slate-300 bg-white px-3 py-3 text-sm font-semibold leading-6 text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-sky-400 focus:ring-4 focus:ring-sky-100"
           placeholder="Ask about revenue, trips, pricing, market demand, charging, or maintenance..."
         />
         <button
@@ -342,23 +341,23 @@ function HeroAgentDemo({
         </button>
       </div>
 
-      <div className="mt-4 rounded-xl border border-emerald-300/20 bg-[linear-gradient(145deg,rgba(16,185,129,0.10),rgba(30,41,59,0.52))] p-4 lg:p-5">
+      <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4 lg:p-5">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-300">
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">
               Instant response
             </p>
-            <h3 className="mt-2 text-xl font-black text-white sm:text-2xl">{response.title}</h3>
+            <h3 className="mt-2 text-xl font-black text-slate-950 sm:text-2xl">{response.title}</h3>
           </div>
-          <span className="w-fit rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-xs font-black text-emerald-200">
+          <span className="w-fit rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">
             {response.confidence}% confidence
           </span>
         </div>
-        <p className="mt-3 text-sm leading-6 text-slate-200">{response.summary}</p>
+        <p className="mt-3 text-sm font-semibold leading-6 text-slate-700">{response.summary}</p>
         {response.metrics?.length > 0 && (
           <div className="mt-4 grid grid-cols-1 gap-2 sm:grid-cols-3">
             {response.metrics.map((metric) => (
-              <div key={metric} className="rounded-lg border border-sky-300/15 bg-sky-300/[0.07] px-3 py-2 text-xs font-black text-sky-100">
+              <div key={metric} className="rounded-lg border border-sky-200 bg-sky-50 px-3 py-2 text-xs font-black text-sky-800">
                 {metric}
               </div>
             ))}
@@ -366,15 +365,15 @@ function HeroAgentDemo({
         )}
         <div className="mt-4 hidden space-y-3 sm:block">
           {response.steps.slice(0, 3).map((step, index) => (
-            <div key={step} className="flex gap-3 rounded-lg border border-white/10 bg-[#111111]/80 px-3 py-3">
+            <div key={step} className="flex gap-3 rounded-lg border border-slate-200 bg-slate-50 px-3 py-3">
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-sky-300 text-xs font-black text-slate-950">
                 {index + 1}
               </span>
-              <p className="text-sm leading-6 text-slate-200">{step}</p>
+              <p className="text-sm font-semibold leading-6 text-slate-700">{step}</p>
             </div>
           ))}
         </div>
-        <p className="mt-4 hidden rounded-lg border border-white/10 bg-[#111111]/80 px-3 py-3 text-sm font-bold text-emerald-200 sm:block">
+        <p className="mt-4 hidden rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-3 text-sm font-bold text-emerald-800 sm:block">
           Expected impact: {response.impact}
         </p>
       </div>
@@ -394,7 +393,7 @@ function HeroAgentDemo({
             setGoal(nextGoal);
             setResponse(buildDemoResponse(nextGoal));
           }}
-          className="rounded-md border border-white/10 bg-white/5 px-5 py-3 text-sm font-black text-slate-100 transition hover:bg-white/10"
+          className="rounded-md border border-slate-300 bg-white px-5 py-3 text-sm font-black text-slate-700 shadow-sm transition hover:bg-slate-50"
         >
           Try Another Goal
         </button>
