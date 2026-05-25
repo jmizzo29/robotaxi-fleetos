@@ -103,7 +103,7 @@ async function testLanding(browser, profile) {
     await mobilePreview.getByText('Owner Dashboard').waitFor({ timeout: 15000 });
     await mobilePreview.getByText("Today's Fleet Plan").waitFor({ timeout: 15000 });
     await mobilePreview.getByText('AI Ready').waitFor({ timeout: 15000 });
-    await mobilePreview.getByText('Earnings').waitFor({ timeout: 15000 });
+    await mobilePreview.getByText('Revenue').waitFor({ timeout: 15000 });
     await mobilePreview.getByText('Model Y - Orlando').waitFor({ timeout: 15000 });
     await mobilePreview.getByText('Model 3 - Tampa').waitFor({ timeout: 15000 });
     await mobilePreview.getByText('18 trips').waitFor({ timeout: 15000 });

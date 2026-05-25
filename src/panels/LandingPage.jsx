@@ -404,7 +404,7 @@ function MobileHeroPreview() {
       name: 'Model Y - Orlando',
       trips: 18,
       miles: '1,284',
-      earnings: '$2.4k',
+      revenue: '$2.4k',
       health: 96,
       tone: 'bg-emerald-400',
     },
@@ -412,7 +412,7 @@ function MobileHeroPreview() {
       name: 'Model 3 - Tampa',
       trips: 11,
       miles: '842',
-      earnings: '$1.6k',
+      revenue: '$1.6k',
       health: 91,
       tone: 'bg-sky-400',
     },
@@ -420,7 +420,7 @@ function MobileHeroPreview() {
       name: 'Cybercab - Future',
       trips: 0,
       miles: '0',
-      earnings: 'Watch',
+      revenue: 'Watch',
       health: 100,
       tone: 'bg-amber-400',
     },
@@ -443,7 +443,7 @@ function MobileHeroPreview() {
 
       <div className="mt-4 grid grid-cols-3 gap-2">
         {[
-          ['Earnings', '$287', 'Today'],
+          ['Revenue', '$287', 'Today'],
           ['Utilization', '82%', 'Next 7d'],
           ['Vehicles', '3', 'Tracked'],
         ].map(([label, value, detail]) => (
@@ -466,7 +466,7 @@ function MobileHeroPreview() {
               <div className="mt-2 grid grid-cols-3 gap-2 text-[10px] font-bold uppercase tracking-[0.08em] text-slate-500">
                 <span>{vehicle.trips} trips</span>
                 <span>{vehicle.miles} mi</span>
-                <span>{vehicle.earnings}</span>
+                <span>{vehicle.revenue}</span>
               </div>
             </div>
             <div className="text-right">
