@@ -24,7 +24,7 @@ const emptyRegister = {
 function Field({ label, children }) {
   return (
     <label className="block">
-      <span className="mb-2 block text-xs font-bold uppercase tracking-[0.18em] text-slate-400">{label}</span>
+      <span className="mb-2 block text-xs font-black uppercase tracking-[0.18em] text-slate-500">{label}</span>
       {children}
     </label>
   );
@@ -34,7 +34,7 @@ function Input(props) {
   return (
     <input
       {...props}
-      className="w-full rounded-lg border border-white/10 bg-slate-950/70 px-4 py-3 text-sm font-semibold text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-sky-400/50 focus:ring-2 focus:ring-sky-400/10"
+      className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-sky-400 focus:ring-4 focus:ring-sky-100"
     />
   );
 }
@@ -42,12 +42,12 @@ function Input(props) {
 function Step({ number, title, detail }) {
   return (
     <div className="flex gap-3">
-      <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-sky-300/30 bg-sky-300/10 text-sm font-black text-sky-200">
+      <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-sky-200 bg-sky-50 text-sm font-black text-sky-800">
         {number}
       </span>
       <div>
-        <p className="font-black text-slate-100">{title}</p>
-        <p className="mt-1 text-sm leading-6 text-slate-400">{detail}</p>
+        <p className="font-black text-slate-950">{title}</p>
+        <p className="mt-1 text-sm font-semibold leading-6 text-slate-600">{detail}</p>
       </div>
     </div>
   );
@@ -66,9 +66,9 @@ function Metric({ label, value, detail }) {
 function Divider() {
   return (
     <div className="flex items-center gap-4">
-      <span className="h-px flex-1 bg-white/10" />
-      <span className="text-xs font-bold uppercase tracking-[0.2em] text-slate-600">or</span>
-      <span className="h-px flex-1 bg-white/10" />
+      <span className="h-px flex-1 bg-slate-200" />
+      <span className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">or</span>
+      <span className="h-px flex-1 bg-slate-200" />
     </div>
   );
 }
@@ -105,20 +105,20 @@ function TeslaConsentModal({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-black/80 px-4 py-6 backdrop-blur-sm">
-      <section className="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-xl border border-white/10 bg-[#0b0b0b] p-6 shadow-2xl shadow-black">
+    <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/45 px-4 py-6 backdrop-blur-sm">
+      <section className="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-slate-200 bg-white p-6 text-slate-950 shadow-2xl shadow-slate-900/20">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-300">Tesla OAuth Consent</p>
-            <h2 className="mt-3 text-2xl font-black text-white">RoboAgent wants to connect to your Tesla Account</h2>
-            <p className="mt-3 text-sm leading-6 text-slate-400">
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-slate-500">Tesla OAuth Consent</p>
+            <h2 className="mt-3 text-2xl font-black text-slate-950">RoboAgent wants to connect to your Tesla Account</h2>
+            <p className="mt-3 text-sm font-semibold leading-6 text-slate-600">
               This lets the RoboAgent AI Agent optimize earnings, plan maintenance, manage charging, and run your Tesla rental or robotaxi fleet more efficiently.
             </p>
           </div>
           <button
             type="button"
             onClick={onCancel}
-            className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-sm font-black text-slate-300 transition hover:bg-white/10"
+            className="rounded-full border border-slate-300 bg-white px-3 py-1 text-sm font-black text-slate-600 transition hover:bg-slate-50"
             aria-label="Cancel Tesla access"
           >
             X
@@ -126,9 +126,9 @@ function TeslaConsentModal({
         </div>
 
         <div className="mt-6 grid gap-4 lg:grid-cols-2">
-          <div className="rounded-lg border border-white/10 bg-white/[0.03] p-4">
-            <h3 className="font-black text-white">This will allow RoboAgent to</h3>
-            <ul className="mt-3 space-y-3 text-sm leading-5 text-slate-300">
+          <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+            <h3 className="font-black text-slate-950">This will allow RoboAgent to</h3>
+            <ul className="mt-3 space-y-3 text-sm font-semibold leading-5 text-slate-600">
               {dataRows.map((row) => (
                 <li key={row} className="flex gap-2">
                   <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-sky-300" />
@@ -138,9 +138,9 @@ function TeslaConsentModal({
             </ul>
           </div>
 
-          <div className="rounded-lg border border-emerald-300/15 bg-emerald-300/5 p-4">
-            <h3 className="font-black text-white">Important details</h3>
-            <ul className="mt-3 space-y-3 text-sm leading-5 text-slate-300">
+          <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
+            <h3 className="font-black text-slate-950">Important details</h3>
+            <ul className="mt-3 space-y-3 text-sm font-semibold leading-5 text-slate-600">
               {trustRows.map((row) => (
                 <li key={row} className="flex gap-2">
                   <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-300" />
@@ -151,15 +151,15 @@ function TeslaConsentModal({
           </div>
         </div>
 
-        <div className="mt-5 rounded-lg border border-sky-300/15 bg-sky-300/5 p-4">
-          <h3 className="font-black text-white">Why does RoboAgent need this?</h3>
-          <p className="mt-2 text-sm leading-6 text-slate-300">
+        <div className="mt-5 rounded-lg border border-sky-200 bg-sky-50 p-4">
+          <h3 className="font-black text-slate-950">Why does RoboAgent need this?</h3>
+          <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">
             To power the AI Agent that helps you optimize earnings, plan maintenance, manage charging, and run your Tesla rental or robotaxi fleet more efficiently.
           </p>
         </div>
 
         <div className="mt-5 space-y-3">
-          <label className="flex gap-3 rounded-lg border border-white/10 bg-white/[0.03] p-4 text-sm leading-5 text-slate-200">
+          <label className="flex gap-3 rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm font-semibold leading-5 text-slate-700">
             <input
               type="checkbox"
               checked={checks.independent}
@@ -168,7 +168,7 @@ function TeslaConsentModal({
             />
             <span>I understand that RoboAgent is a third-party app and is not affiliated with Tesla.</span>
           </label>
-          <label className="flex gap-3 rounded-lg border border-white/10 bg-white/[0.03] p-4 text-sm leading-5 text-slate-200">
+          <label className="flex gap-3 rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm font-semibold leading-5 text-slate-700">
             <input
               type="checkbox"
               checked={checks.legal}
@@ -177,11 +177,11 @@ function TeslaConsentModal({
             />
             <span>
               I have read and agree to the{' '}
-              <button type="button" onClick={() => onNavigate?.('privacy')} className="font-bold text-sky-300 hover:text-sky-200">
+              <button type="button" onClick={() => onNavigate?.('privacy')} className="font-bold text-sky-700 hover:text-sky-900">
                 Privacy Policy
               </button>{' '}
               and{' '}
-              <button type="button" onClick={() => onNavigate?.('terms')} className="font-bold text-sky-300 hover:text-sky-200">
+              <button type="button" onClick={() => onNavigate?.('terms')} className="font-bold text-sky-700 hover:text-sky-900">
                 Terms of Service
               </button>
               .
@@ -193,7 +193,7 @@ function TeslaConsentModal({
           <button
             type="button"
             onClick={onCancel}
-            className="rounded-lg border border-white/10 bg-white/5 px-5 py-4 text-sm font-black text-slate-200 transition hover:bg-white/10"
+            className="rounded-lg border border-slate-300 bg-white px-5 py-4 text-sm font-black text-slate-700 shadow-sm transition hover:bg-slate-50"
           >
             Cancel
           </button>
@@ -201,7 +201,7 @@ function TeslaConsentModal({
             type="button"
             disabled={!canAllow}
             onClick={onConfirm}
-            className="rounded-lg bg-white px-5 py-4 text-sm font-black text-black transition hover:bg-slate-200 disabled:cursor-not-allowed disabled:opacity-40"
+            className="rounded-lg bg-sky-300 px-5 py-4 text-sm font-black text-slate-950 transition hover:bg-sky-200 disabled:cursor-not-allowed disabled:opacity-40"
           >
             Allow Access
           </button>
@@ -306,19 +306,19 @@ export default function AccountPanel({ onNavigate }) {
 
   if (!hasRealAccount) {
     return (
-      <div className="grid min-h-[calc(100vh-6rem)] place-items-center px-4 py-10">
-        <section className="w-full max-w-md rounded-xl border border-white/10 bg-[#090909] p-8 shadow-2xl shadow-black/50">
+      <div className="grid min-h-screen place-items-center bg-[radial-gradient(circle_at_12%_8%,rgba(14,165,233,0.13),transparent_30%),linear-gradient(180deg,#f5f7fb_0%,#eaf2f7_48%,#ffffff_100%)] px-4 py-10 text-slate-950">
+        <section className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-xl shadow-slate-300/40">
           <div className="text-center">
             <button
               type="button"
               onClick={() => onNavigate?.('landing')}
-              className="mx-auto mb-6 flex items-center gap-2 text-xs font-black uppercase tracking-[0.26em] text-sky-200"
+              className="mx-auto mb-6 flex items-center gap-2 text-xs font-black uppercase tracking-[0.26em] text-slate-900"
             >
-              <span className="h-2 w-2 rounded-full bg-sky-300" />
+              <span className="h-2 w-2 rounded-full bg-sky-500 shadow-lg shadow-sky-300/50" />
               RoboAgent
             </button>
-            <h1 className="text-2xl font-black text-white">Sign in to RoboAgent</h1>
-            <p className="mt-3 text-sm leading-6 text-slate-400">
+            <h1 className="text-2xl font-black text-slate-950">Sign in to RoboAgent</h1>
+            <p className="mt-3 text-sm font-semibold leading-6 text-slate-600">
               Create or sign in to your RoboAgent account first. Then connect Tesla with OAuth so vehicle access is encrypted per user.
             </p>
           </div>
@@ -327,8 +327,8 @@ export default function AccountPanel({ onNavigate }) {
             <div
               className={`mt-6 rounded-lg border p-4 text-sm font-semibold ${
                 error
-                  ? 'border-red-400/25 bg-red-400/10 text-red-100'
-                  : 'border-emerald-400/25 bg-emerald-400/10 text-emerald-100'
+                  ? 'border-red-200 bg-red-50 text-red-800'
+                  : 'border-emerald-200 bg-emerald-50 text-emerald-800'
               }`}
             >
               {error || message}
@@ -341,7 +341,7 @@ export default function AccountPanel({ onNavigate }) {
                 <SignUpButton mode="modal">
                   <button
                     type="button"
-                    className="w-full rounded-lg bg-white px-5 py-4 text-base font-black text-black transition hover:bg-slate-200"
+                    className="w-full rounded-lg bg-sky-300 px-5 py-4 text-base font-black text-slate-950 transition hover:bg-sky-200"
                   >
                     Create RoboAgent Account
                   </button>
@@ -349,7 +349,7 @@ export default function AccountPanel({ onNavigate }) {
                 <SignInButton mode="modal">
                   <button
                     type="button"
-                    className="w-full rounded-lg border border-white/10 bg-white/[0.04] px-5 py-4 text-base font-black text-slate-100 transition hover:bg-white/10"
+                    className="w-full rounded-lg border border-slate-300 bg-white px-5 py-4 text-base font-black text-slate-700 shadow-sm transition hover:bg-slate-50"
                   >
                     Sign In to RoboAgent
                   </button>
@@ -359,12 +359,12 @@ export default function AccountPanel({ onNavigate }) {
             <button
               type="button"
               onClick={() => setShowTeslaConsent(true)}
-              className="flex w-full items-center justify-center gap-3 rounded-lg border border-sky-300/25 bg-sky-300/10 px-5 py-4 text-base font-black text-sky-100 transition hover:bg-sky-300/20"
+              className="flex w-full items-center justify-center gap-3 rounded-lg border border-sky-200 bg-sky-50 px-5 py-4 text-base font-black text-sky-800 transition hover:bg-sky-100"
             >
               <TeslaMark />
               Preview Tesla Data Permissions
             </button>
-            <p className="text-center text-xs leading-5 text-slate-500">
+            <p className="text-center text-xs font-semibold leading-5 text-slate-500">
               Tesla connection comes after RoboAgent sign-in. RoboAgent never sees your Tesla password.
             </p>
           </div>
@@ -372,20 +372,20 @@ export default function AccountPanel({ onNavigate }) {
           {clerkReady ? (
             <div className="mt-7 space-y-4">
               <Divider />
-              <p className="text-center text-sm leading-6 text-slate-500">
+              <p className="text-center text-sm font-semibold leading-6 text-slate-600">
                 After sign-in, return to onboarding to review consent and connect Tesla securely.
               </p>
             </div>
           ) : (
             <div className="mt-7 space-y-5">
-              <div className="flex rounded-lg border border-white/10 bg-black p-1">
+              <div className="flex rounded-lg border border-slate-200 bg-slate-100 p-1">
                 <button
                   type="button"
                   onClick={() => setAuthMode('signin')}
                   className={`flex-1 rounded-md px-4 py-2 text-sm font-black transition ${
                     activeForm === 'signin'
-                      ? 'bg-white text-black'
-                      : 'text-slate-400 hover:bg-white/5 hover:text-slate-100'
+                      ? 'bg-white text-slate-950 shadow-sm'
+                      : 'text-slate-500 hover:bg-white hover:text-slate-900'
                   }`}
                 >
                   Sign In
@@ -395,8 +395,8 @@ export default function AccountPanel({ onNavigate }) {
                   onClick={() => setAuthMode('create')}
                   className={`flex-1 rounded-md px-4 py-2 text-sm font-black transition ${
                     activeForm === 'create'
-                      ? 'bg-white text-black'
-                      : 'text-slate-400 hover:bg-white/5 hover:text-slate-100'
+                      ? 'bg-white text-slate-950 shadow-sm'
+                      : 'text-slate-500 hover:bg-white hover:text-slate-900'
                   }`}
                 >
                   Create
@@ -430,7 +430,7 @@ export default function AccountPanel({ onNavigate }) {
                         'Signed in successfully.',
                       )
                     }
-                    className="w-full rounded-lg bg-white px-5 py-4 text-base font-black text-black transition hover:bg-slate-200 disabled:cursor-wait disabled:opacity-60"
+                    className="w-full rounded-lg bg-sky-300 px-5 py-4 text-base font-black text-slate-950 transition hover:bg-sky-200 disabled:cursor-wait disabled:opacity-60"
                   >
                     Sign In
                   </button>
@@ -476,7 +476,7 @@ export default function AccountPanel({ onNavigate }) {
                         'Account created. This browser is now signed in.',
                       )
                     }
-                    className="w-full rounded-lg bg-white px-5 py-4 text-base font-black text-black transition hover:bg-slate-200 disabled:cursor-wait disabled:opacity-60"
+                    className="w-full rounded-lg bg-sky-300 px-5 py-4 text-base font-black text-slate-950 transition hover:bg-sky-200 disabled:cursor-wait disabled:opacity-60"
                   >
                     Create RoboAgent Account
                   </button>
@@ -487,10 +487,10 @@ export default function AccountPanel({ onNavigate }) {
 
           <div className="mt-7 text-center">
             <details className="text-left">
-              <summary className="cursor-pointer text-center text-sm font-semibold text-slate-500 hover:text-slate-300">
+              <summary className="cursor-pointer text-center text-sm font-black text-slate-600 hover:text-slate-950">
                 What happens after sign-in?
               </summary>
-              <div className="mt-4 space-y-3 rounded-lg border border-white/10 bg-white/[0.03] p-4">
+              <div className="mt-4 space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-4">
                 <Step
                   number="1"
                   title="Review data consent"
@@ -508,7 +508,7 @@ export default function AccountPanel({ onNavigate }) {
                 />
               </div>
             </details>
-            <p className="mt-5 text-xs leading-5 text-slate-600">
+            <p className="mt-5 text-xs font-semibold leading-5 text-slate-500">
               By signing in, you agree to the RoboAgent beta terms and privacy notice.
             </p>
           </div>

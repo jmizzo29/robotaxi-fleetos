@@ -709,7 +709,7 @@ export default function App() {
 
   if (isPublicAccountRoute) {
     return (
-      <div className="min-h-screen bg-[#111111] text-slate-100">
+      <div className="min-h-screen bg-[radial-gradient(circle_at_12%_8%,rgba(14,165,233,0.13),transparent_30%),linear-gradient(180deg,#f5f7fb_0%,#eaf2f7_48%,#ffffff_100%)] text-slate-950">
         <main>
           <AccountPanel onNavigate={navigate} />
         </main>
