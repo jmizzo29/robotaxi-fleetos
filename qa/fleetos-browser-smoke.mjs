@@ -94,10 +94,11 @@ async function testLanding(browser, profile) {
   } else {
     await page.getByRole('button', { name: 'Get Started' }).first().waitFor({ timeout: 15000 });
     await page.getByRole('button', { name: 'See More' }).waitFor({ timeout: 15000 });
-    await page.getByText('Secure Tesla Login').waitFor({ timeout: 15000 });
-    await page.getByText('First Tesla free').first().waitFor({ timeout: 15000 });
-    await page.getByText('$12 extra Tesla').waitFor({ timeout: 15000 });
-    await page.getByText('Not Tesla affiliated').waitFor({ timeout: 15000 });
+    const mobileTrust = page.locator('[data-testid="mobile-trust-bar"]');
+    await mobileTrust.getByText('Secure Tesla Login').waitFor({ timeout: 15000 });
+    await mobileTrust.getByText('First Tesla free').waitFor({ timeout: 15000 });
+    await mobileTrust.getByText('$12 extra Tesla').waitFor({ timeout: 15000 });
+    await mobileTrust.getByText('Not Tesla affiliated').waitFor({ timeout: 15000 });
     if (await page.locator('#hero-agent-input:visible').count()) {
       throw new Error('Mobile AI demo should be hidden before tapping See More.');
     }
