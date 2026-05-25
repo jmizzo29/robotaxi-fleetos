@@ -75,7 +75,7 @@ async function testLanding(browser, profile) {
   const { page, context } = telemetry;
   await page.goto(routeUrl('?qa=browser'), { waitUntil: 'networkidle' });
   await page.getByText('RoboAgent', { exact: true }).first().waitFor({ timeout: 15000 });
-  await page.getByText('Turo today, robotaxi tomorrow: your Tesla AI agent').waitFor({ timeout: 15000 });
+  await page.getByText('Your AI Agent for Tesla Rentals & Robotaxis').waitFor({ timeout: 15000 });
   if (profile === 'desktop') {
     await page.getByText('No signup needed', { exact: true }).waitFor({ timeout: 15000 });
     await page.locator('#hero-agent-input').waitFor({ timeout: 15000 });

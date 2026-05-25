@@ -540,7 +540,7 @@ export default function LandingPage({ onNavigate }) {
         <section className="mx-auto grid max-w-7xl grid-cols-1 gap-5 px-5 pb-7 pt-2 sm:gap-8 sm:pt-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-12 lg:pb-14 lg:pt-10">
           <div className="max-w-2xl">
             <h1 className="text-[2.85rem] font-black leading-[0.94] tracking-tight text-white sm:text-6xl sm:leading-[0.98] lg:text-[4.65rem]">
-              Turo today, robotaxi tomorrow: your Tesla AI agent
+              Your AI Agent for Tesla Rentals & Robotaxis
             </h1>
             <div className="md:hidden">
               <MobileHeroCta

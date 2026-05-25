@@ -126,7 +126,7 @@ async function testStaleCopy() {
 async function testExpectedLandingCopy() {
   const { bundle } = await getIndexAndBundle();
   const expected = [
-    'Turo today, robotaxi tomorrow: your Tesla AI agent',
+    'Your AI Agent for Tesla Rentals & Robotaxis',
     'No signup needed',
     'Maximize my earnings this weekend with 3 Teslas',
     'How many miles did my last rental drive?',
