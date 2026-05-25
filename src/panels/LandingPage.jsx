@@ -458,20 +458,27 @@ function MobileHeroPreview() {
 function MobileHeroCta({ onNavigate, onSeeMore, isMoreOpen }) {
   return (
     <div className="mt-5 space-y-3 md:hidden">
-      <div className="grid grid-cols-2 gap-3">
+      <div className="flex flex-wrap gap-2">
+        {['First Tesla Free', 'Secure Tesla Login'].map((label) => (
+          <span key={label} className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-emerald-200">
+            {label}
+          </span>
+        ))}
+      </div>
+      <div className="grid grid-cols-[1.1fr_0.9fr] gap-3">
         <button
           type="button"
           onClick={() => onNavigate('onboarding')}
           className="flex h-14 items-center justify-center rounded-lg bg-white px-4 text-base font-black text-black transition hover:bg-slate-200"
         >
-          Get Started
+          Get Started Free
         </button>
         <button
           type="button"
           onClick={onSeeMore}
           className="flex h-14 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] px-4 text-base font-black text-slate-100 transition hover:bg-white/10"
         >
-          {isMoreOpen ? 'Hide' : 'Show Me'}
+          {isMoreOpen ? 'Hide' : 'Try AI Agent'}
         </button>
       </div>
     </div>
@@ -549,6 +556,9 @@ export default function LandingPage({ onNavigate }) {
             <h1 className="text-[2.85rem] font-black leading-[0.94] tracking-tight text-white sm:text-6xl sm:leading-[0.98] lg:text-[4.65rem]">
               Your AI Agent for Tesla Rentals & Robotaxis
             </h1>
+            <p className="mt-3 max-w-md text-base font-semibold leading-6 text-slate-300 md:hidden">
+              Give it goals. Get smart plans for pricing, charging, maintenance and earnings.
+            </p>
             <div className="md:hidden">
               <MobileHeroCta
                 onNavigate={onNavigate}
