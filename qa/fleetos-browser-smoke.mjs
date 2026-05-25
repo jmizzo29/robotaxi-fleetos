@@ -104,8 +104,11 @@ async function testLanding(browser, profile) {
     await mobilePreview.getByText("Today's Fleet Plan").waitFor({ timeout: 15000 });
     await mobilePreview.getByText('AI Ready').waitFor({ timeout: 15000 });
     await mobilePreview.getByText('Earnings').waitFor({ timeout: 15000 });
-    await mobilePreview.getByText('Pricing Opportunity').waitFor({ timeout: 15000 });
-    await mobilePreview.getByText('Fleet Health').waitFor({ timeout: 15000 });
+    await mobilePreview.getByText('Model Y - Orlando').waitFor({ timeout: 15000 });
+    await mobilePreview.getByText('Model 3 - Tampa').waitFor({ timeout: 15000 });
+    await mobilePreview.getByText('18 trips').waitFor({ timeout: 15000 });
+    await mobilePreview.getByText('1,284 mi').waitFor({ timeout: 15000 });
+    await mobilePreview.getByText('$2.4k').waitFor({ timeout: 15000 });
     await mobilePreview.getByText('AI Brief').waitFor({ timeout: 15000 });
     const ctaBox = await page.getByRole('button', { name: 'Get Started Free' }).first().boundingBox();
     const previewBox = await mobilePreview.boundingBox();

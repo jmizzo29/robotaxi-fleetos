@@ -399,27 +399,30 @@ function HeroAgentDemo({ onNavigate, inputId = 'hero-agent-input', testId = 'her
 }
 
 function MobileHeroPreview() {
-  const dashboardRows = [
+  const vehicleRows = [
     {
-      label: 'Pricing Opportunity',
-      value: '+18%',
-      detail: 'Weekend demand',
-      tone: 'bg-sky-400',
-      bars: [30, 44, 66, 82, 72],
-    },
-    {
-      label: 'Fleet Health',
-      value: '94',
-      detail: 'Ready for rentals',
+      name: 'Model Y - Orlando',
+      trips: 18,
+      miles: '1,284',
+      earnings: '$2.4k',
+      health: 96,
       tone: 'bg-emerald-400',
-      bars: [72, 78, 84, 88, 94],
     },
     {
-      label: 'Maintenance Watch',
-      value: '1',
-      detail: 'Tire check soon',
+      name: 'Model 3 - Tampa',
+      trips: 11,
+      miles: '842',
+      earnings: '$1.6k',
+      health: 91,
+      tone: 'bg-sky-400',
+    },
+    {
+      name: 'Cybercab - Future',
+      trips: 0,
+      miles: '0',
+      earnings: 'Watch',
+      health: 100,
       tone: 'bg-amber-400',
-      bars: [22, 28, 36, 44, 52],
     },
   ];
 
@@ -453,26 +456,22 @@ function MobileHeroPreview() {
       </div>
 
       <div className="mt-3 divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white">
-        {dashboardRows.map((row) => (
-          <div key={row.label} className="grid grid-cols-[1fr_auto] gap-3 p-3">
+        {vehicleRows.map((vehicle) => (
+          <div key={vehicle.name} className="grid grid-cols-[1fr_auto] gap-3 p-3">
             <div className="min-w-0">
               <div className="flex items-center gap-2">
-                <span className={`h-2 w-2 rounded-full ${row.tone}`} />
-                <p className="truncate text-sm font-black text-slate-950">{row.label}</p>
+                <span className={`h-2 w-2 rounded-full ${vehicle.tone}`} />
+                <p className="truncate text-sm font-black text-slate-950">{vehicle.name}</p>
               </div>
-              <p className="mt-1 text-xs font-semibold text-slate-500">{row.detail}</p>
+              <div className="mt-2 grid grid-cols-3 gap-2 text-[10px] font-bold uppercase tracking-[0.08em] text-slate-500">
+                <span>{vehicle.trips} trips</span>
+                <span>{vehicle.miles} mi</span>
+                <span>{vehicle.earnings}</span>
+              </div>
             </div>
-            <div className="flex items-end gap-3">
-              <p className="text-lg font-black text-slate-950">{row.value}</p>
-              <div className="flex h-8 items-end gap-1">
-                {row.bars.map((height, index) => (
-                  <span
-                    key={`${row.label}-${height}-${index}`}
-                    className={`w-1.5 rounded-full ${row.tone}`}
-                    style={{ height: `${height}%` }}
-                  />
-                ))}
-              </div>
+            <div className="text-right">
+              <p className="text-[9px] font-black uppercase tracking-[0.12em] text-slate-400">Health</p>
+              <p className="mt-1 text-lg font-black text-slate-950">{vehicle.health}</p>
             </div>
           </div>
         ))}
@@ -481,7 +480,7 @@ function MobileHeroPreview() {
       <div className="mt-3 rounded-xl border border-sky-200 bg-sky-50 p-3">
         <p className="text-[10px] font-black uppercase tracking-[0.16em] text-sky-700">AI Brief</p>
         <p className="mt-2 text-sm font-bold leading-6 text-slate-800">
-          Raise weekend price, charge tonight, and check one tire before the next rental.
+          Model Y has the best return this week. Raise weekend pricing and check Tampa tires before the next trip.
         </p>
       </div>
     </aside>
