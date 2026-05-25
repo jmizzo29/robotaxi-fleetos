@@ -76,7 +76,7 @@ async function testLanding(browser, profile) {
   await page.goto(routeUrl('?qa=browser'), { waitUntil: 'networkidle' });
   await page.getByText('RoboAgent', { exact: true }).first().waitFor({ timeout: 15000 });
   await page.getByText('Your personal AI agent for 1-10 Teslas').waitFor({ timeout: 15000 });
-  await page.getByText('Run your Turo business today and get ready for robotaxis tomorrow').waitFor({ timeout: 15000 });
+  await page.getByText('Run Turo today. Prepare for robotaxis tomorrow.').waitFor({ timeout: 15000 });
   if (profile === 'desktop') {
     await page.getByText('No signup needed', { exact: true }).waitFor({ timeout: 15000 });
     await page.locator('#hero-agent-input').waitFor({ timeout: 15000 });
@@ -101,7 +101,9 @@ async function testLanding(browser, profile) {
     await mobilePreview.waitFor({ timeout: 15000 });
     await mobilePreview.getByText('Your Tesla Fleet').waitFor({ timeout: 15000 });
     await mobilePreview.getByText('Owner Plan').waitFor({ timeout: 15000 });
-    await mobilePreview.getByText('Model Y').waitFor({ timeout: 15000 });
+    await mobilePreview.getByText('Model 3').waitFor({ timeout: 15000 });
+    await mobilePreview.getByText('Cybertruck').waitFor({ timeout: 15000 });
+    await mobilePreview.getByRole('img', { name: 'Tesla Model 3 on the road' }).waitFor({ timeout: 15000 });
     const ctaBox = await page.getByRole('button', { name: 'Get Started' }).first().boundingBox();
     const previewBox = await mobilePreview.boundingBox();
     if (!ctaBox || !previewBox || ctaBox.y >= previewBox.y) {

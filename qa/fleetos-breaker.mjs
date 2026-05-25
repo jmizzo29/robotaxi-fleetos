@@ -127,7 +127,7 @@ async function testExpectedLandingCopy() {
   const { bundle } = await getIndexAndBundle();
   const expected = [
     'Your personal AI agent for 1-10 Teslas',
-    'Run your Turo business today and get ready for robotaxis tomorrow',
+    'Run Turo today. Prepare for robotaxis tomorrow.',
     'No signup needed',
     'Maximize my earnings this weekend with 3 Teslas',
     'How many miles did my last rental drive?',

@@ -399,10 +399,9 @@ function HeroAgentDemo({ onNavigate, inputId = 'hero-agent-input', testId = 'her
 }
 
 function MobileHeroPreview() {
-  const vehicles = [
-    ['Model Y', 'Ready', 'bg-white'],
-    ['Model 3', 'Charging', 'bg-slate-300'],
-    ['Cybertruck', 'Booked', 'bg-zinc-400'],
+  const vehiclePhotos = [
+    ['/images/tesla-model-3-road-mobile.jpg', 'Tesla Model 3 on the road', 'Model 3', 'Turo ready'],
+    ['/images/tesla-cybertruck-road-mobile.jpg', 'Tesla Cybertruck on the road', 'Cybertruck', 'Future robotaxi asset'],
   ];
 
   return (
@@ -420,22 +419,21 @@ function MobileHeroPreview() {
         </span>
       </div>
 
-      <div className="mt-4 space-y-2">
-        {vehicles.map(([model, status, color], index) => (
-          <div key={model} className="flex items-center gap-3 rounded-xl border border-white/[0.12] bg-white/[0.05] p-3">
-            <div className="relative h-9 w-20 shrink-0">
-              <div className={`absolute left-1 top-2 h-5 w-16 rounded-[55%_45%_40%_40%] ${color} shadow-lg shadow-black/20`} />
-              <div className="absolute left-4 top-0 h-5 w-9 rounded-t-full bg-slate-700/90" />
-              <div className="absolute bottom-0 left-3 h-3 w-3 rounded-full bg-slate-950 ring-2 ring-slate-500" />
-              <div className="absolute bottom-0 right-4 h-3 w-3 rounded-full bg-slate-950 ring-2 ring-slate-500" />
+      <div className="mt-4 grid grid-cols-2 gap-2">
+        {vehiclePhotos.map(([src, alt, model, status]) => (
+          <div key={model} className="overflow-hidden rounded-xl border border-white/[0.12] bg-white/[0.05]">
+            <div className="h-28 overflow-hidden bg-slate-900">
+              <img
+                src={src}
+                alt={alt}
+                className="h-full w-full object-cover"
+                loading="eager"
+              />
             </div>
-            <div className="min-w-0 flex-1">
+            <div className="p-3">
               <p className="truncate text-sm font-black text-white">{model}</p>
-              <p className="text-xs font-semibold text-slate-300">{status}</p>
+              <p className="mt-1 text-xs font-semibold text-slate-300">{status}</p>
             </div>
-            <span className="rounded-full border border-white/10 bg-slate-950/50 px-2 py-1 text-[10px] font-black text-slate-200">
-              #{index + 1}
-            </span>
           </div>
         ))}
       </div>
@@ -545,7 +543,7 @@ export default function LandingPage({ onNavigate }) {
               Your personal AI agent for 1-10 Teslas
             </h1>
             <p className="mt-3 max-w-2xl text-lg font-semibold leading-7 text-slate-200 sm:mt-6 sm:text-lg sm:font-normal sm:leading-8">
-              Run your Turo business today and get ready for robotaxis tomorrow with help for pricing, charging, maintenance, and earnings.
+              Run Turo today. Prepare for robotaxis tomorrow. Pricing, charging, maintenance, and earnings in one place.
             </p>
             <div className="md:hidden">
               <MobileHeroCta
