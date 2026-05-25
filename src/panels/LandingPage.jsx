@@ -414,21 +414,6 @@ function MobileHeroCta({ onNavigate, onSeeMore, isMoreOpen }) {
           {isMoreOpen ? 'Hide' : 'See More'}
         </button>
       </div>
-      <p className="text-center text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
-        Create account first, then connect Tesla
-      </p>
-      <div className="space-y-2 text-center" data-testid="mobile-trust-bar">
-        <div className="rounded-lg border border-emerald-300/20 bg-emerald-400/10 px-3 py-3 text-[11px] font-black uppercase leading-4 tracking-[0.12em] text-emerald-200">
-          Secure Tesla Login
-        </div>
-        <div className="grid grid-cols-3 gap-2">
-          {['First Tesla free', '$12 extra Tesla', 'Not Tesla affiliated'].map((item) => (
-            <div key={item} className="rounded-lg border border-white/10 bg-white/[0.04] px-2 py-3 text-[9px] font-black uppercase leading-4 tracking-[0.08em] text-slate-300">
-              {item}
-            </div>
-          ))}
-        </div>
-      </div>
     </div>
   );
 }

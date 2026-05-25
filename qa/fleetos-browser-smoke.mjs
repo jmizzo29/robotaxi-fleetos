@@ -94,11 +94,12 @@ async function testLanding(browser, profile) {
   } else {
     await page.getByRole('button', { name: 'Get Started' }).first().waitFor({ timeout: 15000 });
     await page.getByRole('button', { name: 'See More' }).waitFor({ timeout: 15000 });
-    const mobileTrust = page.locator('[data-testid="mobile-trust-bar"]');
-    await mobileTrust.getByText('Secure Tesla Login').waitFor({ timeout: 15000 });
-    await mobileTrust.getByText('First Tesla free').waitFor({ timeout: 15000 });
-    await mobileTrust.getByText('$12 extra Tesla').waitFor({ timeout: 15000 });
-    await mobileTrust.getByText('Not Tesla affiliated').waitFor({ timeout: 15000 });
+    if (await page.locator('[data-testid="mobile-trust-bar"]').count()) {
+      throw new Error('Mobile trust snippet should not be visible under the primary CTA buttons.');
+    }
+    if (await page.getByText('Create account first, then connect Tesla').count()) {
+      throw new Error('Old mobile helper text should not be visible under the CTA buttons.');
+    }
     if (await page.locator('#hero-agent-input:visible').count()) {
       throw new Error('Mobile AI demo should be hidden before tapping See More.');
     }
