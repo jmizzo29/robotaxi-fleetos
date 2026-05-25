@@ -95,8 +95,9 @@ async function testLanding(browser, profile) {
     await page.getByRole('button', { name: 'Get Started' }).first().waitFor({ timeout: 15000 });
     await page.getByRole('button', { name: 'See More' }).waitFor({ timeout: 15000 });
     await page.getByText('Secure Tesla Login').waitFor({ timeout: 15000 });
-    await page.getByText('Data Encrypted').waitFor({ timeout: 15000 });
-    await page.getByText('Revoke Anytime').waitFor({ timeout: 15000 });
+    await page.getByText('First Tesla free').first().waitFor({ timeout: 15000 });
+    await page.getByText('$12 extra Tesla').waitFor({ timeout: 15000 });
+    await page.getByText('Not Tesla affiliated').waitFor({ timeout: 15000 });
     if (await page.locator('#hero-agent-input:visible').count()) {
       throw new Error('Mobile AI demo should be hidden before tapping See More.');
     }
@@ -115,6 +116,12 @@ async function testLanding(browser, profile) {
   }
   await page.getByText('Join Early Access').count().then((count) => {
     if (count > 0) throw new Error('Old Join Early Access form is visible.');
+  });
+  await page.getByText('AI Agent for Tesla Owners').count().then((count) => {
+    if (count > 0) throw new Error('Removed hero eyebrow is still visible.');
+  });
+  await page.getByText('Secure Tesla OAuth').count().then((count) => {
+    if (count > 0) throw new Error('Removed Secure Tesla OAuth badge is still visible.');
   });
   await context.close();
   return assertNoRuntimeErrors(`landing browser smoke (${profile})`, telemetry);

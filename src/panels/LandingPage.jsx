@@ -417,12 +417,17 @@ function MobileHeroCta({ onNavigate, onSeeMore, isMoreOpen }) {
       <p className="text-center text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
         Create account first, then connect Tesla
       </p>
-      <div className="grid grid-cols-3 gap-2 text-center" data-testid="mobile-trust-bar">
-        {['Secure Tesla Login', 'Data Encrypted', 'Revoke Anytime'].map((item) => (
-          <div key={item} className="rounded-lg border border-emerald-300/15 bg-emerald-400/[0.06] px-2 py-3 text-[10px] font-black uppercase leading-4 tracking-[0.08em] text-emerald-200">
-            {item}
-          </div>
-        ))}
+      <div className="space-y-2 text-center" data-testid="mobile-trust-bar">
+        <div className="rounded-lg border border-emerald-300/20 bg-emerald-400/10 px-3 py-3 text-[11px] font-black uppercase leading-4 tracking-[0.12em] text-emerald-200">
+          Secure Tesla Login
+        </div>
+        <div className="grid grid-cols-3 gap-2">
+          {['First Tesla free', '$12 extra Tesla', 'Not Tesla affiliated'].map((item) => (
+            <div key={item} className="rounded-lg border border-white/10 bg-white/[0.04] px-2 py-3 text-[9px] font-black uppercase leading-4 tracking-[0.08em] text-slate-300">
+              {item}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -496,17 +501,14 @@ export default function LandingPage({ onNavigate }) {
       <main>
         <section className="mx-auto grid max-w-7xl grid-cols-1 gap-5 px-5 pb-7 pt-2 sm:gap-8 sm:pt-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-12 lg:pb-14 lg:pt-10">
           <div className="max-w-2xl">
-            <p className="mb-3 text-xs font-black uppercase tracking-[0.22em] text-emerald-300 sm:mb-4 sm:tracking-[0.28em]">
-              AI Agent for Tesla Owners
-            </p>
             <h1 className="text-4xl font-black leading-[1.02] tracking-tight text-white sm:text-6xl sm:leading-[0.98] lg:text-[4.65rem]">
               RoboAgent - Your AI Agent for Tesla Rentals & Robotaxis
             </h1>
             <p className="mt-3 max-w-2xl text-base leading-6 text-slate-300 sm:mt-6 sm:text-lg sm:leading-8">
               RoboAgent is your AI Agent that helps you maximize earnings from your Tesla vehicles - whether running them on Turo today or in Tesla's Robotaxi network tomorrow.
             </p>
-            <div className="mt-4 grid grid-cols-2 gap-2 sm:mt-5 sm:flex sm:flex-wrap">
-              {['First Tesla free', '$12 per extra Tesla', 'Secure Tesla OAuth', 'Not affiliated with Tesla'].map((label) => (
+            <div className="mt-4 hidden gap-2 sm:mt-5 sm:flex sm:flex-wrap">
+              {['First Tesla free', '$12 per extra Tesla', 'Not affiliated with Tesla'].map((label) => (
                 <span key={label} className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-emerald-200">
                   {label}
                 </span>
