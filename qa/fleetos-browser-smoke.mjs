@@ -101,6 +101,7 @@ async function testLanding(browser, profile) {
     const mobilePreview = page.locator('[data-testid="mobile-hero-preview"]');
     await mobilePreview.waitFor({ timeout: 15000 });
     await mobilePreview.getByText('Your Tesla Fleet').waitFor({ timeout: 15000 });
+    await mobilePreview.getByText('Live Plan').waitFor({ timeout: 15000 });
     await mobilePreview.getByText('Owner Plan').waitFor({ timeout: 15000 });
     await mobilePreview.getByText('Model 3').waitFor({ timeout: 15000 });
     await mobilePreview.getByText('Cybercab').waitFor({ timeout: 15000 });
@@ -122,6 +123,9 @@ async function testLanding(browser, profile) {
     }
     if (await page.getByText('Your Tesla login stays with Tesla.').count()) {
       throw new Error('Mobile details should be hidden before tapping See More.');
+    }
+    if (await page.getByText('1-10 Cars').count()) {
+      throw new Error('Old 1-10 Cars badge should not be visible on mobile.');
     }
     await page.getByRole('button', { name: 'Try AI Agent' }).click();
     const mobileDemo = page.locator('[data-testid="mobile-hero-agent-demo"]');

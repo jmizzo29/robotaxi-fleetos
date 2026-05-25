@@ -412,7 +412,7 @@ function MobileHeroPreview() {
 
   return (
     <aside
-      className="mt-5 rounded-2xl border border-white/10 bg-[linear-gradient(145deg,rgba(30,41,59,0.88),rgba(15,23,42,0.96))] p-4 shadow-2xl shadow-black/25 md:hidden"
+      className="mt-4 rounded-2xl border border-sky-200/10 bg-[linear-gradient(145deg,rgba(51,65,85,0.88),rgba(15,23,42,0.92))] p-4 shadow-2xl shadow-sky-950/30 md:hidden"
       data-testid="mobile-hero-preview"
     >
       <div className="flex items-center justify-between gap-3">
@@ -420,15 +420,15 @@ function MobileHeroPreview() {
           <p className="text-[10px] font-black uppercase tracking-[0.22em] text-sky-300">RoboAgent</p>
           <h2 className="mt-1 text-xl font-black tracking-tight text-white">Your Tesla Fleet</h2>
         </div>
-        <span className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-[10px] font-black uppercase text-emerald-200">
-          1-10 Cars
+        <span className="rounded-full border border-sky-300/20 bg-sky-300/10 px-3 py-1 text-[10px] font-black uppercase text-sky-100">
+          Live Plan
         </span>
       </div>
 
       <div className="mt-4 grid grid-cols-2 gap-2">
         {vehiclePhotos.map(([src, alt, model, status, credit]) => (
-          <div key={model} className="overflow-hidden rounded-xl border border-white/[0.12] bg-white/[0.05]">
-            <div className="h-28 overflow-hidden bg-slate-900">
+          <div key={model} className="overflow-hidden rounded-xl border border-white/[0.14] bg-white/[0.07]">
+            <div className="h-32 overflow-hidden bg-slate-900">
               <img
                 src={src}
                 alt={alt}
@@ -445,7 +445,7 @@ function MobileHeroPreview() {
         ))}
       </div>
 
-      <div className="mt-3 rounded-xl border border-emerald-300/20 bg-[linear-gradient(145deg,rgba(16,185,129,0.10),rgba(30,41,59,0.42))] p-3">
+      <div className="mt-3 rounded-xl border border-emerald-300/25 bg-[linear-gradient(145deg,rgba(16,185,129,0.14),rgba(14,165,233,0.08))] p-3">
         <p className="text-[10px] font-black uppercase tracking-[0.16em] text-emerald-300">Owner Plan</p>
         <p className="mt-2 text-sm font-bold leading-6 text-slate-100">
           Turo today. Robotaxis tomorrow. Keep each car earning, charged, clean, and ready.
@@ -469,7 +469,7 @@ function MobileHeroCta({ onNavigate, onSeeMore, isMoreOpen }) {
         <button
           type="button"
           onClick={() => onNavigate('onboarding')}
-          className="flex h-14 items-center justify-center rounded-lg bg-white px-4 text-base font-black text-black transition hover:bg-slate-200"
+          className="flex h-14 items-center justify-center rounded-lg bg-sky-300 px-4 text-base font-black text-slate-950 shadow-lg shadow-sky-500/20 transition hover:bg-sky-200"
         >
           Get Started Free
         </button>
@@ -512,7 +512,7 @@ export default function LandingPage({ onNavigate }) {
   );
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-slate-100">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_right,rgba(14,165,233,0.18),transparent_32%),linear-gradient(180deg,#172033_0%,#0f172a_54%,#111827_100%)] text-slate-100 md:bg-[#0f172a]">
       <header className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5">
         <button type="button" onClick={() => onNavigate('landing')} className="flex items-center gap-3">
           <span className="h-2.5 w-2.5 rounded-full bg-sky-300 shadow-lg shadow-sky-300/50" />
@@ -553,7 +553,7 @@ export default function LandingPage({ onNavigate }) {
       <main>
         <section className="mx-auto grid max-w-7xl grid-cols-1 gap-5 px-5 pb-7 pt-2 sm:gap-8 sm:pt-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-12 lg:pb-14 lg:pt-10">
           <div className="max-w-2xl">
-            <h1 className="text-[2.85rem] font-black leading-[0.94] tracking-tight text-white sm:text-6xl sm:leading-[0.98] lg:text-[4.65rem]">
+            <h1 className="text-[2.65rem] font-black leading-[0.96] tracking-tight text-white sm:text-6xl sm:leading-[0.98] lg:text-[4.65rem]">
               Your AI Agent for Tesla Rentals & Robotaxis
             </h1>
             <p className="mt-3 max-w-md text-base font-semibold leading-6 text-slate-300 md:hidden">
