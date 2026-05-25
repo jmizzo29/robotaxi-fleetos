@@ -1,11 +1,11 @@
 {
   "baseUrl": "https://robotaxi-fleetos.vercel.app",
-  "generatedAt": "2026-05-25T16:36:10.502Z",
+  "generatedAt": "2026-05-25T16:39:21.931Z",
   "summary": {
     "total": 16,
-    "pass": 15,
+    "pass": 16,
     "warn": 0,
-    "fail": 1
+    "fail": 0
   },
   "results": [
     {
@@ -57,12 +57,10 @@
       "evidence": {}
     },
     {
-      "status": "fail",
+      "status": "pass",
       "name": "landing browser smoke (mobile)",
-      "detail": "locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-testid=\"mobile-hero-agent-demo\"]').getByText('1-4 comparable rentals') to be visible\u001b[22m\n\u001b[2m    33 × locator resolved to hidden <div class=\"rounded-lg border border-sky-300/15 bg-sky-300/[0.07] px-3 py-2 text-xs font-black text-sky-100\">Lakeland Model X: 1-4 comparable rentals</div>\u001b[22m\n",
-      "evidence": {
-        "stack": "locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('[data-testid=\"mobile-hero-agent-demo\"]').getByText('1-4 comparable rentals') to be visible\u001b[22m\n\u001b[2m    33 × locator resolved to hidden <div class=\"rounded-lg border border-sky-300/15 bg-sky-300/[0.07] px-3 py-2 text-xs font-black text-sky-100\">Lakeland Model X: 1-4 comparable rentals</div>\u001b[22m\n\n    at testLanding (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:145:58)\n    at async runTest (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:26:12)\n    at async file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:323:16"
-      }
+      "detail": "No serious browser runtime errors detected.",
+      "evidence": {}
     },
     {
       "status": "pass",
