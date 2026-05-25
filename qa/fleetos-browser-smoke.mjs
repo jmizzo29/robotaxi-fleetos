@@ -94,12 +94,17 @@ async function testLanding(browser, profile) {
     await page.getByText('No credit card required').waitFor({ timeout: 15000 });
     await page.getByText('Tesla password never shared').first().waitFor({ timeout: 15000 });
   } else {
+    await page.getByRole('button', { name: 'Get Started' }).first().waitFor({ timeout: 15000 });
+    await page.getByRole('button', { name: 'See More' }).waitFor({ timeout: 15000 });
     const mobilePreview = page.locator('[data-testid="mobile-hero-preview"]');
     await mobilePreview.waitFor({ timeout: 15000 });
     await mobilePreview.getByText('Owner Dashboard Preview').waitFor({ timeout: 15000 });
     await mobilePreview.getByText('Agent Plan').waitFor({ timeout: 15000 });
-    await page.getByRole('button', { name: 'Get Started' }).first().waitFor({ timeout: 15000 });
-    await page.getByRole('button', { name: 'See More' }).waitFor({ timeout: 15000 });
+    const ctaBox = await page.getByRole('button', { name: 'Get Started' }).first().boundingBox();
+    const previewBox = await mobilePreview.boundingBox();
+    if (!ctaBox || !previewBox || ctaBox.y >= previewBox.y) {
+      throw new Error('Mobile Get Started CTA should appear above the preview card.');
+    }
     if (await page.locator('[data-testid="mobile-trust-bar"]').count()) {
       throw new Error('Mobile trust snippet should not be visible under the primary CTA buttons.');
     }

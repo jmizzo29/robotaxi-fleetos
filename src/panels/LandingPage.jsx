@@ -442,18 +442,18 @@ function MobileHeroPreview() {
 function MobileHeroCta({ onNavigate, onSeeMore, isMoreOpen }) {
   return (
     <div className="mt-5 space-y-3 md:hidden">
-      <div className="grid grid-cols-2 gap-3">
+      <div className="flex items-center gap-3">
         <button
           type="button"
           onClick={() => onNavigate('onboarding')}
-          className="rounded-lg bg-white px-5 py-4 text-base font-black text-black transition hover:bg-slate-200"
+          className="flex-1 rounded-lg bg-white px-5 py-4 text-base font-black text-black transition hover:bg-slate-200"
         >
           Get Started
         </button>
         <button
           type="button"
           onClick={onSeeMore}
-          className="rounded-lg border border-sky-300/30 bg-sky-300/10 px-5 py-4 text-base font-black text-sky-100 transition hover:bg-sky-300/20"
+          className="rounded-lg border border-white/10 bg-white/[0.04] px-4 py-3 text-xs font-black uppercase tracking-[0.12em] text-slate-200 transition hover:bg-white/10"
         >
           {isMoreOpen ? 'Hide' : 'See More'}
         </button>
@@ -530,12 +530,19 @@ export default function LandingPage({ onNavigate }) {
       <main>
         <section className="mx-auto grid max-w-7xl grid-cols-1 gap-5 px-5 pb-7 pt-2 sm:gap-8 sm:pt-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-12 lg:pb-14 lg:pt-10">
           <div className="max-w-2xl">
-            <h1 className="text-4xl font-black leading-[1.02] tracking-tight text-white sm:text-6xl sm:leading-[0.98] lg:text-[4.65rem]">
+            <h1 className="text-[2.85rem] font-black leading-[0.94] tracking-tight text-white sm:text-6xl sm:leading-[0.98] lg:text-[4.65rem]">
               RoboAgent helps Tesla owners earn more from their cars
             </h1>
-            <p className="mt-3 max-w-2xl text-base leading-6 text-slate-200 sm:mt-6 sm:text-lg sm:leading-8">
-              A practical assistant for Tesla Turo hosts and future robotaxi operators: track vehicles, plan charging and maintenance, import rental earnings, and spot pricing opportunities.
+            <p className="mt-3 max-w-2xl text-lg font-semibold leading-7 text-slate-200 sm:mt-6 sm:text-lg sm:font-normal sm:leading-8">
+              A practical assistant for Tesla Turo hosts: track cars, plan upkeep, import earnings, and spot pricing opportunities.
             </p>
+            <div className="md:hidden">
+              <MobileHeroCta
+                onNavigate={onNavigate}
+                onSeeMore={() => setShowMobileMore((current) => !current)}
+                isMoreOpen={showMobileMore}
+              />
+            </div>
             <div className="mt-4 hidden gap-2 sm:mt-5 sm:flex sm:flex-wrap">
               {['Built by a Tesla owner for Tesla owners', 'First Tesla free', 'No credit card required', 'Not affiliated with Tesla'].map((label) => (
                 <span key={label} className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-emerald-200">
@@ -597,11 +604,6 @@ export default function LandingPage({ onNavigate }) {
             <div className="md:hidden">
               {showMobileMore ? <HeroAgentDemo onNavigate={onNavigate} inputId="mobile-hero-agent-input" testId="mobile-hero-agent-demo" /> : <MobileHeroPreview />}
             </div>
-            <MobileHeroCta
-              onNavigate={onNavigate}
-              onSeeMore={() => setShowMobileMore((current) => !current)}
-              isMoreOpen={showMobileMore}
-            />
           </div>
         </section>
 
