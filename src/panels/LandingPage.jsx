@@ -455,14 +455,14 @@ function MobileHeroCta({ onNavigate, onSeeMore, isMoreOpen }) {
         <button
           type="button"
           onClick={() => onNavigate('onboarding')}
-          className="rounded-lg bg-white px-4 py-4 text-base font-black text-black transition hover:bg-slate-200"
+          className="flex h-14 items-center justify-center rounded-lg bg-white px-4 text-base font-black text-black transition hover:bg-slate-200"
         >
           Get Started
         </button>
         <button
           type="button"
           onClick={onSeeMore}
-          className="rounded-lg border border-white/10 bg-white/[0.04] px-4 py-4 text-base font-black text-slate-100 transition hover:bg-white/10"
+          className="flex h-14 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] px-4 text-base font-black text-slate-100 transition hover:bg-white/10"
         >
           {isMoreOpen ? 'Hide' : 'Show Me'}
         </button>
@@ -540,11 +540,8 @@ export default function LandingPage({ onNavigate }) {
         <section className="mx-auto grid max-w-7xl grid-cols-1 gap-5 px-5 pb-7 pt-2 sm:gap-8 sm:pt-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-12 lg:pb-14 lg:pt-10">
           <div className="max-w-2xl">
             <h1 className="text-[2.85rem] font-black leading-[0.94] tracking-tight text-white sm:text-6xl sm:leading-[0.98] lg:text-[4.65rem]">
-              Your personal AI agent for 1-10 Teslas
+              Turo today, robotaxi tomorrow: your Tesla AI agent
             </h1>
-            <p className="mt-3 max-w-2xl text-lg font-semibold leading-7 text-slate-200 sm:mt-6 sm:text-lg sm:font-normal sm:leading-8">
-              Run Turo today. Prepare for robotaxis tomorrow. Pricing, charging, maintenance, and earnings in one place.
-            </p>
             <div className="md:hidden">
               <MobileHeroCta
                 onNavigate={onNavigate}
