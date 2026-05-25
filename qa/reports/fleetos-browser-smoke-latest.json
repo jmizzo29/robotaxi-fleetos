@@ -1,11 +1,11 @@
 {
   "baseUrl": "https://robotaxi-fleetos.vercel.app",
-  "generatedAt": "2026-05-25T14:00:32.050Z",
+  "generatedAt": "2026-05-25T14:03:30.861Z",
   "summary": {
     "total": 16,
-    "pass": 15,
+    "pass": 16,
     "warn": 0,
-    "fail": 1
+    "fail": 0
   },
   "results": [
     {
@@ -57,12 +57,10 @@
       "evidence": {}
     },
     {
-      "status": "fail",
+      "status": "pass",
       "name": "landing browser smoke (mobile)",
-      "detail": "locator.waitFor: Error: strict mode violation: getByText('No signup needed', { exact: true }) resolved to 2 elements:\n    1) <span class=\"w-fit rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-xs font-black text-emerald-200\">No signup needed</span> aka getByText('No signup needed').first()\n    2) <span class=\"w-fit rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-xs font-black text-emerald-200\">No signup needed</span> aka getByRole('complementary').getByText('No signup needed')\n\nCall log:\n\u001b[2m  - waiting for getByText('No signup needed', { exact: true }) to be visible\u001b[22m\n",
-      "evidence": {
-        "stack": "locator.waitFor: Error: strict mode violation: getByText('No signup needed', { exact: true }) resolved to 2 elements:\n    1) <span class=\"w-fit rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-xs font-black text-emerald-200\">No signup needed</span> aka getByText('No signup needed').first()\n    2) <span class=\"w-fit rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-xs font-black text-emerald-200\">No signup needed</span> aka getByRole('complementary').getByText('No signup needed')\n\nCall log:\n\u001b[2m  - waiting for getByText('No signup needed', { exact: true }) to be visible\u001b[22m\n\n    at testLanding (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:114:63)\n    at async runTest (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:26:12)\n    at async file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:294:16"
-      }
+      "detail": "No serious browser runtime errors detected.",
+      "evidence": {}
     },
     {
       "status": "pass",
