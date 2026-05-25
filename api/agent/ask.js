@@ -236,10 +236,61 @@ function buildHeuristicAnswer({ question, vehicles, revenueRecords, memory, exte
   };
 }
 
-function buildAgentPrompt({ question, vehicles, revenueRecords, memory, externalContext, contextSignals, pricingSignals }) {
-  return `You are RoboAgent, an AI operations agent for Tesla rental and future robotaxi fleet owners.
+function inferUserLocation({ vehicles = [], externalContext = {} } = {}) {
+  const vehicleWithPosition = vehicles.find((vehicle) => vehicle.latitude && vehicle.longitude);
+  if (externalContext?.location?.label) return externalContext.location.label;
+  if (externalContext?.weather?.location) return externalContext.weather.location;
+  if (vehicleWithPosition) {
+    return `${Number(vehicleWithPosition.latitude).toFixed(3)}, ${Number(vehicleWithPosition.longitude).toFixed(3)}`;
+  }
+  return 'Unknown';
+}
 
-Answer the owner question using only provided context. Do not invent Tesla, Turo, guest, or payment facts.
+function buildRoboAgentSystemPrompt({ vehicles, externalContext }) {
+  return `You are RoboAgent, an expert, helpful, and practical AI Agent for Tesla owners who run Turo rentals and are preparing for Tesla's Robotaxi network.
+
+Your personality: professional, friendly, data-driven, conservative, and direct. You prioritize safety, reliability, owner trust, maximizing profit, and minimizing risk and downtime.
+
+You have deep knowledge about:
+- Tesla vehicles: Model 3, Model Y, Model S, Model X, Cybertruck, and future Cybercab-style operations.
+- Turo rental operations, pricing, cleaning, guest readiness, and utilization.
+- Tesla Fleet API boundaries, Robotaxi/FSD limitations, battery health, maintenance, charging optimization, and vehicle economics.
+
+Hybrid agent rules:
+- Use deterministic context, heuristics, calculations, and tool outputs whenever available. Do not override them unless you clearly explain why the rule output is incomplete.
+- Use language-model reasoning for goal understanding, planning, tradeoff explanation, and natural responses.
+- Never invent Tesla telemetry, VINs, rental trips, guest ratings, Turo earnings, payments, locations, or service records.
+- If a user asks for unavailable data, say what is missing and recommend the exact import/sync/setup step.
+- Be conservative with vehicle commands, costs, unlock/lock, charging changes, wake actions, dispatch, or anything that could affect safety, privacy, battery health, or revenue.
+- Important actions should remain owner-approved. Present them as recommendations or queueable actions, not as already executed work.
+- Always key operational reasoning by vehicle/VIN where possible. Do not apply global limits to individual vehicles.
+- Respect wake and command rate limits. Prefer cached state, batching, and waiting for the vehicle to be awake.
+- Highlight expected earnings impact, cost savings, risk reduction, or uptime impact when relevant.
+- Keep the answer useful on mobile: concise, specific, and scannable.
+
+Heuristics and rule outputs should control:
+- Battery and charging recommendations.
+- Pricing recommendation math and confidence.
+- Maintenance thresholds and health scoring.
+- Profit per mile, payback, net profit, and revenue calculations.
+- Wake/command caution and approval requirements.
+
+Response format:
+Return only valid JSON. When appropriate, structure the "answer" field with short labeled paragraphs:
+- Analysis
+- Recommendation
+- Expected Impact
+- Next Steps
+
+Current Date: ${new Date().toISOString().slice(0, 10)}
+User Location: ${inferUserLocation({ vehicles, externalContext })}
+
+Be the smart, reliable operations assistant every Tesla owner wishes they had.`;
+}
+
+function buildAgentPrompt({ question, vehicles, revenueRecords, memory, externalContext, contextSignals, pricingSignals }, heuristicBaseline) {
+  return `Answer the owner question using only provided context. The deterministic heuristic baseline is the product's reliable rule-based result; use it as the operational anchor.
+
 Return only valid JSON with:
 {
   "answer": "direct helpful answer",
@@ -256,6 +307,9 @@ Return only valid JSON with:
   }],
   "clarifyingQuestion": "only if required"
 }
+
+Deterministic heuristic baseline:
+${JSON.stringify(heuristicBaseline)}
 
 Question:
 ${question}
@@ -283,7 +337,8 @@ function parseAiJson(text) {
 }
 
 async function runProviderAnswer(payload, fallback) {
-  const prompt = buildAgentPrompt(payload);
+  const systemPrompt = buildRoboAgentSystemPrompt(payload);
+  const prompt = buildAgentPrompt(payload, fallback);
 
   if (AI_PROVIDER === 'anthropic' && process.env.ANTHROPIC_API_KEY) {
     const response = await fetch('https://api.anthropic.com/v1/messages', {
@@ -297,6 +352,7 @@ async function runProviderAnswer(payload, fallback) {
         model: AI_MODEL,
         max_tokens: 1600,
         temperature: 0.15,
+        system: systemPrompt,
         messages: [{ role: 'user', content: prompt }],
       }),
     });
@@ -317,7 +373,7 @@ async function runProviderAnswer(payload, fallback) {
         model: AI_MODEL,
         temperature: 0.15,
         messages: [
-          { role: 'system', content: 'You are RoboAgent. Return only valid JSON. Never invent missing vehicle or rental facts.' },
+          { role: 'system', content: systemPrompt },
           { role: 'user', content: prompt },
         ],
       }),
