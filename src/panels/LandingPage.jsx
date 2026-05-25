@@ -395,20 +395,29 @@ function HeroAgentDemo({ onNavigate }) {
   );
 }
 
-function MobileHeroCta({ onNavigate }) {
+function MobileHeroCta({ onNavigate, onSeeMore, isMoreOpen }) {
   return (
     <div className="mt-5 space-y-3 md:hidden">
-      <button
-        type="button"
-        onClick={() => onNavigate('onboarding')}
-        className="w-full rounded-lg bg-white px-5 py-4 text-base font-black text-black transition hover:bg-slate-200"
-      >
-        Start Free
-      </button>
+      <div className="grid grid-cols-2 gap-3">
+        <button
+          type="button"
+          onClick={() => onNavigate('onboarding')}
+          className="rounded-lg bg-white px-5 py-4 text-base font-black text-black transition hover:bg-slate-200"
+        >
+          Get Started
+        </button>
+        <button
+          type="button"
+          onClick={onSeeMore}
+          className="rounded-lg border border-sky-300/30 bg-sky-300/10 px-5 py-4 text-base font-black text-sky-100 transition hover:bg-sky-300/20"
+        >
+          {isMoreOpen ? 'Hide' : 'See More'}
+        </button>
+      </div>
       <p className="text-center text-xs font-bold uppercase tracking-[0.16em] text-slate-500">
         Create account first, then connect Tesla
       </p>
-      <div className="grid grid-cols-3 gap-2 text-center">
+      <div className="grid grid-cols-3 gap-2 text-center" data-testid="mobile-trust-bar">
         {['Secure Tesla Login', 'Data Encrypted', 'Revoke Anytime'].map((item) => (
           <div key={item} className="rounded-lg border border-emerald-300/15 bg-emerald-400/[0.06] px-2 py-3 text-[10px] font-black uppercase leading-4 tracking-[0.08em] text-emerald-200">
             {item}
@@ -421,6 +430,7 @@ function MobileHeroCta({ onNavigate }) {
 
 export default function LandingPage({ onNavigate }) {
   const { isSignedIn } = useFleetAuthStatus();
+  const [showMobileMore, setShowMobileMore] = useState(false);
   const enterApp = (route = 'overview') => {
     onNavigate(isSignedIn ? route : 'onboarding');
   };
@@ -551,7 +561,11 @@ export default function LandingPage({ onNavigate }) {
 
           <div>
             <HeroAgentDemo onNavigate={onNavigate} />
-            <MobileHeroCta onNavigate={onNavigate} />
+            <MobileHeroCta
+              onNavigate={onNavigate}
+              onSeeMore={() => setShowMobileMore((current) => !current)}
+              isMoreOpen={showMobileMore}
+            />
           </div>
         </section>
 
@@ -573,7 +587,7 @@ export default function LandingPage({ onNavigate }) {
 
         <PricingSection onStart={() => onNavigate('onboarding')} />
 
-        <MobileTrustSection />
+        {showMobileMore && <MobileTrustSection />}
 
         <section className="hidden border-y border-white/10 bg-slate-950/80 md:block">
           <div className="mx-auto grid max-w-7xl grid-cols-1 gap-4 px-5 py-8 md:grid-cols-4">
@@ -587,7 +601,7 @@ export default function LandingPage({ onNavigate }) {
         </section>
 
       </main>
-      <footer className="mx-auto flex max-w-7xl flex-col gap-3 border-t border-white/10 px-5 py-8 text-sm text-slate-500 sm:flex-row sm:items-center sm:justify-between">
+      <footer className={`mx-auto max-w-7xl flex-col gap-3 border-t border-white/10 px-5 py-8 text-sm text-slate-500 sm:flex sm:flex-row sm:items-center sm:justify-between ${showMobileMore ? 'flex' : 'hidden sm:flex'}`}>
         <p>RoboAgent beta. Not affiliated with or endorsed by Tesla.</p>
         <div className="flex gap-4">
           <button type="button" onClick={() => onNavigate('privacy')} className="hover:text-sky-300">Privacy</button>
