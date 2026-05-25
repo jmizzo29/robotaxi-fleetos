@@ -282,9 +282,14 @@ function saveDemoPlan(goal, response) {
   }));
 }
 
-function HeroAgentDemo({ onNavigate, inputId = 'hero-agent-input', testId = 'hero-agent-demo' }) {
-  const [goal, setGoal] = useState(demoPrompts[0]);
-  const [response, setResponse] = useState(() => buildDemoResponse(demoPrompts[0]));
+function HeroAgentDemo({
+  onNavigate,
+  inputId = 'hero-agent-input',
+  testId = 'hero-agent-demo',
+  defaultGoal = demoPrompts[0],
+}) {
+  const [goal, setGoal] = useState(defaultGoal);
+  const [response, setResponse] = useState(() => buildDemoResponse(defaultGoal));
   const [isThinking, setIsThinking] = useState(false);
 
   const runDemo = () => {
@@ -317,7 +322,7 @@ function HeroAgentDemo({ onNavigate, inputId = 'hero-agent-input', testId = 'her
 
       <div className="mt-5 rounded-xl border border-white/[0.12] bg-[linear-gradient(145deg,rgba(51,65,85,0.56),rgba(24,24,27,0.80))] p-4 lg:p-5">
         <label htmlFor={inputId} className="text-xs font-black uppercase tracking-[0.18em] text-sky-300">
-          Give RoboAgent a goal
+          Ask RoboAgent anything
         </label>
         <textarea
           id={inputId}
@@ -325,7 +330,7 @@ function HeroAgentDemo({ onNavigate, inputId = 'hero-agent-input', testId = 'her
           onChange={(event) => setGoal(event.target.value)}
           rows={3}
           className="mt-3 w-full resize-none rounded-lg border border-white/[0.12] bg-[#111111] px-3 py-3 text-sm font-semibold leading-6 text-white outline-none transition placeholder:text-slate-500 focus:border-sky-300/50"
-          placeholder="Tell RoboAgent what you want your fleet to do..."
+          placeholder="Ask about revenue, trips, pricing, market demand, charging, or maintenance..."
         />
         <button
           type="button"
@@ -333,7 +338,7 @@ function HeroAgentDemo({ onNavigate, inputId = 'hero-agent-input', testId = 'her
           disabled={isThinking}
           className="mt-3 w-full rounded-md bg-sky-300 px-5 py-4 text-sm font-black text-slate-950 transition hover:bg-sky-200 disabled:cursor-wait disabled:opacity-70"
         >
-          {isThinking ? 'Agent Planning...' : 'Run Agent'}
+          {isThinking ? 'Agent Thinking...' : 'Ask Agent'}
         </button>
       </div>
 
@@ -658,7 +663,14 @@ export default function LandingPage({ onNavigate }) {
               <HeroAgentDemo onNavigate={onNavigate} />
             </div>
             <div className="md:hidden">
-              {showMobileMore ? <HeroAgentDemo onNavigate={onNavigate} inputId="mobile-hero-agent-input" testId="mobile-hero-agent-demo" /> : <MobileHeroPreview />}
+              {showMobileMore ? (
+                <HeroAgentDemo
+                  onNavigate={onNavigate}
+                  inputId="mobile-hero-agent-input"
+                  testId="mobile-hero-agent-demo"
+                  defaultGoal="How many Model X rentals are available in Lakeland?"
+                />
+              ) : <MobileHeroPreview />}
             </div>
           </div>
         </section>
