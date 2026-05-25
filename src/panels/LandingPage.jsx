@@ -71,25 +71,25 @@ function PricingSection({ onStart }) {
           {pricing.map((plan) => (
             <article
               key={plan.plan}
-              className={`relative rounded-lg border p-5 ${
+              className={`relative rounded-xl border p-5 shadow-sm ${
                 plan.popular
-                  ? 'border-sky-200 bg-sky-50 shadow-xl shadow-sky-100/60'
-                  : 'border-slate-200 bg-white'
+                  ? 'border-sky-300 bg-[linear-gradient(180deg,#f0f9ff_0%,#ffffff_100%)] shadow-xl shadow-sky-100/70'
+                  : 'border-slate-200 bg-white shadow-slate-200/60'
               }`}
             >
               {plan.popular && (
-                <span className="absolute right-4 top-4 rounded-full border border-sky-200 bg-white px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-sky-800">
+                <span className="absolute right-4 top-4 rounded-full border border-sky-300 bg-sky-100 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-sky-900">
                   Popular
                 </span>
               )}
-              <p className="text-sm font-black text-slate-950">{plan.plan}</p>
-              <p className="mt-3 text-3xl font-black text-sky-300">{plan.price}</p>
+              <p className="pr-24 text-sm font-black text-slate-950">{plan.plan}</p>
+              <p className={`mt-3 text-3xl font-black ${plan.popular ? 'text-sky-700' : 'text-slate-950'}`}>{plan.price}</p>
               <p className="mt-3 text-xs font-black uppercase tracking-[0.16em] text-slate-500">Best For</p>
               <p className="mt-1 text-sm font-bold leading-6 text-slate-700">{plan.bestFor}</p>
               <div className="mt-5 hidden space-y-2 md:block">
                 {plan.features.map((feature) => (
                   <div key={feature} className="flex gap-3 text-sm font-semibold leading-6 text-slate-600">
-                    <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-emerald-300" />
+                    <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-emerald-500" />
                     <span>{feature}</span>
                   </div>
                 ))}
