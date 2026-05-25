@@ -301,7 +301,7 @@ function HeroAgentDemo({ onNavigate }) {
   };
 
   return (
-    <aside className="rounded-2xl border border-sky-300/25 bg-slate-950/90 p-4 shadow-2xl shadow-black/40 sm:p-5 lg:p-6">
+    <aside className="rounded-2xl border border-sky-300/25 bg-[linear-gradient(145deg,rgba(30,41,59,0.92),rgba(17,17,17,0.94))] p-4 shadow-2xl shadow-black/30 sm:p-5 lg:p-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-300">Live AI Demo</p>
@@ -312,7 +312,7 @@ function HeroAgentDemo({ onNavigate }) {
         </span>
       </div>
 
-      <div className="mt-5 rounded-xl border border-white/10 bg-slate-900/80 p-4 lg:p-5">
+      <div className="mt-5 rounded-xl border border-white/[0.12] bg-[linear-gradient(145deg,rgba(51,65,85,0.56),rgba(24,24,27,0.80))] p-4 lg:p-5">
         <label htmlFor="hero-agent-input" className="text-xs font-black uppercase tracking-[0.18em] text-sky-300">
           Give RoboAgent a goal
         </label>
@@ -321,7 +321,7 @@ function HeroAgentDemo({ onNavigate }) {
           value={goal}
           onChange={(event) => setGoal(event.target.value)}
           rows={3}
-          className="mt-3 w-full resize-none rounded-lg border border-white/10 bg-slate-950 px-3 py-3 text-sm font-semibold leading-6 text-white outline-none transition focus:border-sky-300/50"
+          className="mt-3 w-full resize-none rounded-lg border border-white/[0.12] bg-[#111111] px-3 py-3 text-sm font-semibold leading-6 text-white outline-none transition placeholder:text-slate-500 focus:border-sky-300/50"
           placeholder="Tell RoboAgent what you want your fleet to do..."
         />
         <button
@@ -334,7 +334,7 @@ function HeroAgentDemo({ onNavigate }) {
         </button>
       </div>
 
-      <div className="mt-4 rounded-xl border border-emerald-300/20 bg-emerald-400/[0.06] p-4 lg:p-5">
+      <div className="mt-4 rounded-xl border border-emerald-300/20 bg-[linear-gradient(145deg,rgba(16,185,129,0.10),rgba(30,41,59,0.52))] p-4 lg:p-5">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-300">
@@ -346,7 +346,7 @@ function HeroAgentDemo({ onNavigate }) {
             {response.confidence}% confidence
           </span>
         </div>
-        <p className="mt-3 text-sm leading-6 text-slate-300">{response.summary}</p>
+        <p className="mt-3 text-sm leading-6 text-slate-200">{response.summary}</p>
         {response.metrics?.length > 0 && (
           <div className="mt-4 hidden grid-cols-1 gap-2 sm:grid sm:grid-cols-3">
             {response.metrics.map((metric) => (
@@ -358,15 +358,15 @@ function HeroAgentDemo({ onNavigate }) {
         )}
         <div className="mt-4 hidden space-y-3 sm:block">
           {response.steps.slice(0, 3).map((step, index) => (
-            <div key={step} className="flex gap-3 rounded-lg border border-white/10 bg-slate-950/70 px-3 py-3">
+            <div key={step} className="flex gap-3 rounded-lg border border-white/10 bg-[#111111]/80 px-3 py-3">
               <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-sky-300 text-xs font-black text-slate-950">
                 {index + 1}
               </span>
-              <p className="text-sm leading-6 text-slate-300">{step}</p>
+              <p className="text-sm leading-6 text-slate-200">{step}</p>
             </div>
           ))}
         </div>
-        <p className="mt-4 hidden rounded-lg border border-white/10 bg-slate-950/70 px-3 py-3 text-sm font-bold text-emerald-200 sm:block">
+        <p className="mt-4 hidden rounded-lg border border-white/10 bg-[#111111]/80 px-3 py-3 text-sm font-bold text-emerald-200 sm:block">
           Expected impact: {response.impact}
         </p>
       </div>
@@ -460,7 +460,7 @@ export default function LandingPage({ onNavigate }) {
   );
 
   return (
-    <div className="min-h-screen bg-[#0b1120] text-slate-100">
+    <div className="min-h-screen bg-[#111111] text-slate-100">
       <header className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5">
         <button type="button" onClick={() => onNavigate('landing')} className="flex items-center gap-3">
           <span className="h-2.5 w-2.5 rounded-full bg-sky-300 shadow-lg shadow-sky-300/50" />
@@ -504,7 +504,7 @@ export default function LandingPage({ onNavigate }) {
             <h1 className="text-4xl font-black leading-[1.02] tracking-tight text-white sm:text-6xl sm:leading-[0.98] lg:text-[4.65rem]">
               RoboAgent - Your AI Agent for Tesla Rentals & Robotaxis
             </h1>
-            <p className="mt-3 max-w-2xl text-base leading-6 text-slate-300 sm:mt-6 sm:text-lg sm:leading-8">
+            <p className="mt-3 max-w-2xl text-base leading-6 text-slate-200 sm:mt-6 sm:text-lg sm:leading-8">
               RoboAgent is your AI Agent that helps you maximize earnings from your Tesla vehicles - whether running them on Turo today or in Tesla's Robotaxi network tomorrow.
             </p>
             <div className="mt-4 hidden gap-2 sm:mt-5 sm:flex sm:flex-wrap">
@@ -556,7 +556,7 @@ export default function LandingPage({ onNavigate }) {
                 </button>
               )}
             </div>
-            <p className="mt-5 hidden text-sm leading-6 text-slate-500 sm:block">
+            <p className="mt-5 hidden text-sm leading-6 text-slate-400 sm:block">
               RoboAgent plans and optimizes operations. Tesla controls actual autonomous driving availability and execution.
             </p>
           </div>
@@ -573,7 +573,7 @@ export default function LandingPage({ onNavigate }) {
           </div>
         </section>
 
-        <section className="hidden border-y border-white/10 bg-slate-950/80 md:block">
+        <section className="hidden border-y border-white/10 bg-[linear-gradient(180deg,rgba(30,41,59,0.58),rgba(17,17,17,0.92))] md:block">
           <div className="mx-auto grid max-w-7xl grid-cols-1 gap-4 px-5 py-8 md:grid-cols-4">
             {[
               ['Why RoboAgent', 'It turns telemetry, rental economics, charging, and health signals into owner-approved actions.'],
@@ -581,9 +581,9 @@ export default function LandingPage({ onNavigate }) {
               ['Secure by Design', 'Tesla OAuth, encrypted tokens, explicit consent, and revoke-anytime controls.'],
               ['Tesla Boundary', 'RoboAgent is not affiliated with Tesla. Tesla controls autonomous availability and execution.'],
             ].map(([title, detail]) => (
-              <article key={title} className="rounded-lg border border-white/10 bg-slate-900/70 p-4">
+              <article key={title} className="rounded-lg border border-white/[0.12] bg-[linear-gradient(145deg,rgba(30,41,59,0.78),rgba(17,17,17,0.78))] p-4 shadow-lg shadow-black/10">
                 <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-300">{title}</p>
-                <p className="mt-3 text-sm leading-6 text-slate-300">{detail}</p>
+                <p className="mt-3 text-sm leading-6 text-slate-200">{detail}</p>
               </article>
             ))}
           </div>
@@ -593,12 +593,12 @@ export default function LandingPage({ onNavigate }) {
 
         {showMobileMore && <MobileTrustSection />}
 
-        <section className="hidden border-y border-white/10 bg-slate-950/80 md:block">
+        <section className="hidden border-y border-white/10 bg-[linear-gradient(180deg,rgba(17,17,17,0.92),rgba(30,41,59,0.42))] md:block">
           <div className="mx-auto grid max-w-7xl grid-cols-1 gap-4 px-5 py-8 md:grid-cols-4">
             {trustPoints.map(([title, detail]) => (
-              <article key={title} className="rounded-lg border border-emerald-300/15 bg-emerald-400/[0.06] p-4">
+              <article key={title} className="rounded-lg border border-emerald-300/20 bg-[linear-gradient(145deg,rgba(16,185,129,0.10),rgba(30,41,59,0.52))] p-4 shadow-lg shadow-black/10">
                 <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-300">{title}</p>
-                <p className="mt-3 text-sm leading-6 text-slate-300">{detail}</p>
+                <p className="mt-3 text-sm leading-6 text-slate-200">{detail}</p>
               </article>
             ))}
           </div>

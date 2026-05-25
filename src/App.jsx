@@ -709,7 +709,7 @@ export default function App() {
 
   if (isPublicAccountRoute) {
     return (
-      <div className="min-h-screen bg-black text-slate-100">
+      <div className="min-h-screen bg-[#111111] text-slate-100">
         <main>
           <AccountPanel onNavigate={navigate} />
         </main>
@@ -718,7 +718,7 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0f172a] text-slate-100 flex">
+    <div className="min-h-screen bg-[#111111] text-slate-100 flex">
       <Sidebar
         replayMode={replayMode}
         setReplayMode={setReplayMode}
@@ -728,7 +728,7 @@ export default function App() {
         onNavigate={navigate}
       />
 
-      <main className="flex-1 overflow-y-auto bg-[radial-gradient(circle_at_top_left,rgba(14,165,233,0.08),transparent_34%),linear-gradient(180deg,#111827_0%,#0f172a_100%)] p-4 pb-28 sm:p-6 sm:pb-28 lg:p-8">
+      <main className="flex-1 overflow-y-auto bg-[radial-gradient(circle_at_top_left,rgba(14,165,233,0.10),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(16,185,129,0.06),transparent_34%),linear-gradient(180deg,#171717_0%,#111111_100%)] p-4 pb-28 sm:p-6 sm:pb-28 lg:p-8">
         <div className="mx-auto max-w-[1900px]">
           {pages[route] || pages.overview}
         </div>

@@ -33,7 +33,7 @@ export default function Sidebar({
 
   return (
 
-    <aside className="hidden lg:flex w-[320px] border-r border-white/10 bg-slate-950/80 flex-col p-6 overflow-y-auto">
+    <aside className="hidden lg:flex w-[320px] border-r border-white/10 bg-[linear-gradient(180deg,rgba(24,24,27,0.96),rgba(17,17,17,0.96))] flex-col p-6 overflow-y-auto">
 
       <div className="mb-10">
 
@@ -65,7 +65,7 @@ export default function Sidebar({
             className={`w-full rounded-lg px-4 py-3 text-left text-sm font-bold transition ${
               route === id
                 ? 'bg-sky-400/15 text-sky-200'
-                : 'text-slate-400 hover:bg-white/5 hover:text-slate-100'
+                : 'text-slate-300 hover:bg-white/[0.07] hover:text-slate-100'
             }`}
           >
             {label}
@@ -98,7 +98,7 @@ export default function Sidebar({
 
             <div
               key={index}
-              className="bg-slate-900/80 border border-white/10 rounded-lg p-4"
+              className="bg-[linear-gradient(145deg,rgba(30,41,59,0.72),rgba(17,17,17,0.78))] border border-white/[0.12] rounded-lg p-4"
             >
 
               <div className="flex items-center justify-between mb-2">
@@ -118,7 +118,7 @@ export default function Sidebar({
 
               </div>
 
-              <p className="text-sm text-slate-300">
+              <p className="text-sm text-slate-200">
                 {cmd.command}
               </p>
 
@@ -130,7 +130,7 @@ export default function Sidebar({
 
       </div>
 
-      <div className="bg-slate-900/80 border border-white/10 rounded-lg p-5">
+      <div className="bg-[linear-gradient(145deg,rgba(30,41,59,0.72),rgba(17,17,17,0.78))] border border-white/[0.12] rounded-lg p-5">
 
         <p className="uppercase tracking-[0.22em] text-sky-300 text-xs mb-4">
           Regional Performance
@@ -152,7 +152,7 @@ export default function Sidebar({
 
               </div>
 
-              <div className="h-2 bg-black/40 rounded-full overflow-hidden">
+              <div className="h-2 bg-white/10 rounded-full overflow-hidden">
 
                 <div
                   className="h-full rounded-full"

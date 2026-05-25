@@ -67,7 +67,7 @@ export default function MobileBottomNav({ route, onNavigate }) {
   return (
     <>
       {isOpen && (
-        <div className="fixed inset-x-4 bottom-24 z-50 max-h-[68vh] overflow-hidden rounded-2xl border border-white/10 bg-slate-950/96 shadow-2xl shadow-black/50 backdrop-blur lg:hidden">
+        <div className="fixed inset-x-4 bottom-24 z-50 max-h-[68vh] overflow-hidden rounded-2xl border border-white/[0.12] bg-[linear-gradient(145deg,rgba(30,41,59,0.96),rgba(17,17,17,0.96))] shadow-2xl shadow-black/40 backdrop-blur lg:hidden">
           <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-sky-300">RoboAgent</p>
@@ -92,18 +92,18 @@ export default function MobileBottomNav({ route, onNavigate }) {
                 className={`rounded-xl border p-3 text-left transition ${
                   route === id
                     ? 'border-sky-400/30 bg-sky-400/10 text-sky-100'
-                    : 'border-white/10 bg-white/5 text-slate-200 hover:border-white/20 hover:bg-white/10'
+                    : 'border-white/10 bg-white/[0.07] text-slate-100 hover:border-white/20 hover:bg-white/[0.12]'
                 }`}
               >
                 <span className="block text-sm font-black">{label}</span>
-                <span className="mt-1 block text-xs leading-5 text-slate-400">{detail}</span>
+                <span className="mt-1 block text-xs leading-5 text-slate-300">{detail}</span>
               </button>
             ))}
           </div>
         </div>
       )}
 
-      <nav className="fixed inset-x-4 bottom-4 z-50 rounded-2xl border border-white/10 bg-slate-950/92 p-2 shadow-2xl shadow-black/40 backdrop-blur lg:hidden">
+      <nav className="fixed inset-x-4 bottom-4 z-50 rounded-2xl border border-white/[0.12] bg-[linear-gradient(145deg,rgba(30,41,59,0.94),rgba(17,17,17,0.94))] p-2 shadow-2xl shadow-black/35 backdrop-blur lg:hidden">
         <div className="grid grid-cols-5 gap-1">
           {items.map(([id, icon, label]) => {
             const active = id === 'more' ? isMoreActive || isOpen : route === id;
@@ -114,7 +114,7 @@ export default function MobileBottomNav({ route, onNavigate }) {
                 type="button"
                 onClick={() => navigateMobile(id)}
                 className={`flex flex-col items-center gap-1 rounded-xl px-2 py-2 text-[11px] font-semibold transition ${
-                  active ? 'bg-sky-400/10 text-sky-300' : 'text-slate-400 hover:bg-white/5 hover:text-sky-300'
+                  active ? 'bg-sky-400/10 text-sky-300' : 'text-slate-300 hover:bg-white/[0.07] hover:text-sky-300'
                 }`}
               >
                 <NavIcon type={icon} />

@@ -14,7 +14,7 @@ export default function PageHeader({ eyebrow = 'fleetos', title, description, ac
             {title}
           </h1>
           {description && (
-            <p className="max-w-3xl text-sm text-slate-400 sm:text-lg">
+            <p className="max-w-3xl text-sm leading-6 text-slate-300 sm:text-lg sm:leading-8">
               {description}
             </p>
           )}
