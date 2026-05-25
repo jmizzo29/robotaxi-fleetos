@@ -1,11 +1,11 @@
 {
   "baseUrl": "https://robotaxi-fleetos.vercel.app",
-  "generatedAt": "2026-05-25T13:53:15.022Z",
+  "generatedAt": "2026-05-25T13:57:16.387Z",
   "summary": {
     "total": 16,
-    "pass": 16,
+    "pass": 14,
     "warn": 0,
-    "fail": 0
+    "fail": 2
   },
   "results": [
     {
@@ -57,10 +57,12 @@
       "evidence": {}
     },
     {
-      "status": "pass",
+      "status": "fail",
       "name": "landing browser smoke (mobile)",
-      "detail": "No serious browser runtime errors detected.",
-      "evidence": {}
+      "detail": "locator.waitFor: Error: strict mode violation: getByText('Agent Plan') resolved to 2 elements:\n    1) <p class=\"mt-5 hidden text-sm leading-6 text-slate-400 sm:block\">RoboAgent plans and optimizes operations. Tesla c…</p> aka getByText('RoboAgent plans and optimizes')\n    2) <p class=\"text-[10px] font-black uppercase tracking-[0.16em] text-emerald-300\">Agent Plan</p> aka getByTestId('mobile-hero-preview').getByText('Agent Plan')\n\nCall log:\n\u001b[2m  - waiting for getByText('Agent Plan') to be visible\u001b[22m\n",
+      "evidence": {
+        "stack": "locator.waitFor: Error: strict mode violation: getByText('Agent Plan') resolved to 2 elements:\n    1) <p class=\"mt-5 hidden text-sm leading-6 text-slate-400 sm:block\">RoboAgent plans and optimizes operations. Tesla c…</p> aka getByText('RoboAgent plans and optimizes')\n    2) <p class=\"text-[10px] font-black uppercase tracking-[0.16em] text-emerald-300\">Agent Plan</p> aka getByTestId('mobile-hero-preview').getByText('Agent Plan')\n\nCall log:\n\u001b[2m  - waiting for getByText('Agent Plan') to be visible\u001b[22m\n\n    at testLanding (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:97:40)\n    at async runTest (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:26:12)\n    at async file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:292:16"
+      }
     },
     {
       "status": "pass",
@@ -87,10 +89,12 @@
       "evidence": {}
     },
     {
-      "status": "pass",
+      "status": "fail",
       "name": "landing CTA to onboarding (mobile)",
-      "detail": "No serious browser runtime errors detected.",
-      "evidence": {}
+      "detail": "locator.waitFor: Error: strict mode violation: locator('#hero-agent-input') resolved to 2 elements:\n    1) <textarea rows=\"3\" id=\"hero-agent-input\" placeholder=\"Tell RoboAgent what you want your fleet to do...\" class=\"mt-3 w-full resize-none rounded-lg border border-white/[0.12] bg-[#111111] px-3 py-3 text-sm font-semibold leading-6 text-white outline-none transition placeholder:text-slate-500 focus:border-sky-300/50\">Maximize my earnings this weekend with 3 Teslas</textarea> aka getByLabel('Give RoboAgent a goal')\n    2) <textarea rows=\"3\" id=\"hero-agent-input\" placeholder=\"Tell RoboAgent what you want your fleet to do...\" class=\"mt-3 w-full resize-none rounded-lg border border-white/[0.12] bg-[#111111] px-3 py-3 text-sm font-semibold leading-6 text-white outline-none transition placeholder:text-slate-500 focus:border-sky-300/50\">Maximize my earnings this weekend with 3 Teslas</textarea> aka getByRole('textbox', { name: 'Tell RoboAgent what you want' })\n\nCall log:\n\u001b[2m  - waiting for locator('#hero-agent-input') to be visible\u001b[22m\n",
+      "evidence": {
+        "stack": "locator.waitFor: Error: strict mode violation: locator('#hero-agent-input') resolved to 2 elements:\n    1) <textarea rows=\"3\" id=\"hero-agent-input\" placeholder=\"Tell RoboAgent what you want your fleet to do...\" class=\"mt-3 w-full resize-none rounded-lg border border-white/[0.12] bg-[#111111] px-3 py-3 text-sm font-semibold leading-6 text-white outline-none transition placeholder:text-slate-500 focus:border-sky-300/50\">Maximize my earnings this weekend with 3 Teslas</textarea> aka getByLabel('Give RoboAgent a goal')\n    2) <textarea rows=\"3\" id=\"hero-agent-input\" placeholder=\"Tell RoboAgent what you want your fleet to do...\" class=\"mt-3 w-full resize-none rounded-lg border border-white/[0.12] bg-[#111111] px-3 py-3 text-sm font-semibold leading-6 text-white outline-none transition placeholder:text-slate-500 focus:border-sky-300/50\">Maximize my earnings this weekend with 3 Teslas</textarea> aka getByRole('textbox', { name: 'Tell RoboAgent what you want' })\n\nCall log:\n\u001b[2m  - waiting for locator('#hero-agent-input') to be visible\u001b[22m\n\n    at testLandingCtas (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:206:45)\n    at async runTest (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:26:12)\n    at async file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:292:16"
+      }
     },
     {
       "status": "pass",

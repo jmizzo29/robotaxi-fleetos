@@ -92,9 +92,10 @@ async function testLanding(browser, profile) {
     await page.getByRole('button', { name: 'Start Free (First Tesla Free)' }).waitFor({ timeout: 15000 });
     await page.getByText('Tesla password never shared').first().waitFor({ timeout: 15000 });
   } else {
-    await page.locator('[data-testid="mobile-hero-preview"]').waitFor({ timeout: 15000 });
-    await page.getByText('Live Operations Preview').waitFor({ timeout: 15000 });
-    await page.getByText('Agent Plan').waitFor({ timeout: 15000 });
+    const mobilePreview = page.locator('[data-testid="mobile-hero-preview"]');
+    await mobilePreview.waitFor({ timeout: 15000 });
+    await mobilePreview.getByText('Live Operations Preview').waitFor({ timeout: 15000 });
+    await mobilePreview.getByText('Agent Plan').waitFor({ timeout: 15000 });
     await page.getByRole('button', { name: 'Get Started' }).first().waitFor({ timeout: 15000 });
     await page.getByRole('button', { name: 'See More' }).waitFor({ timeout: 15000 });
     if (await page.locator('[data-testid="mobile-trust-bar"]').count()) {
@@ -111,8 +112,8 @@ async function testLanding(browser, profile) {
     }
     await page.getByRole('button', { name: 'See More' }).click();
     await page.getByText('No signup needed', { exact: true }).waitFor({ timeout: 15000 });
-    await page.locator('#hero-agent-input').waitFor({ timeout: 15000 });
-    const heroGoal = await page.locator('#hero-agent-input').inputValue();
+    await page.locator('#mobile-hero-agent-input').waitFor({ timeout: 15000 });
+    const heroGoal = await page.locator('#mobile-hero-agent-input').inputValue();
     if (heroGoal !== 'Maximize my earnings this weekend with 3 Teslas') {
       throw new Error(`Unexpected hero agent prompt after See More: ${heroGoal}`);
     }
@@ -203,12 +204,13 @@ async function testLandingCtas(browser, profile) {
     await page.getByRole('button', { name: 'Try the AI Agent Live' }).click();
   } else {
     await page.getByRole('button', { name: 'See More' }).click();
-    await page.locator('#hero-agent-input').waitFor({ timeout: 15000 });
+    await page.locator('#mobile-hero-agent-input').waitFor({ timeout: 15000 });
   }
-  await page.locator('#hero-agent-input').fill('Should I raise price this weekend in Tampa?');
+  const heroInput = page.locator(profile === 'desktop' ? '#hero-agent-input' : '#mobile-hero-agent-input');
+  await heroInput.fill('Should I raise price this weekend in Tampa?');
   await page.getByRole('button', { name: 'Run Agent' }).click();
   await page.getByText('Turo revenue plan').first().waitFor({ timeout: 15000 });
-  await page.locator('#hero-agent-input').fill('What are the top rented Teslas in Orlando?');
+  await heroInput.fill('What are the top rented Teslas in Orlando?');
   await page.getByRole('button', { name: 'Run Agent' }).click();
   await page.getByText('Top rented Teslas in Orlando').first().waitFor({ timeout: 15000 });
   if (profile === 'desktop') {

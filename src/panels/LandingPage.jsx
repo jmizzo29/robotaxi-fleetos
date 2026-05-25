@@ -282,7 +282,7 @@ function saveDemoPlan(goal, response) {
   }));
 }
 
-function HeroAgentDemo({ onNavigate }) {
+function HeroAgentDemo({ onNavigate, inputId = 'hero-agent-input' }) {
   const [goal, setGoal] = useState(demoPrompts[0]);
   const [response, setResponse] = useState(() => buildDemoResponse(demoPrompts[0]));
   const [isThinking, setIsThinking] = useState(false);
@@ -313,11 +313,11 @@ function HeroAgentDemo({ onNavigate }) {
       </div>
 
       <div className="mt-5 rounded-xl border border-white/[0.12] bg-[linear-gradient(145deg,rgba(51,65,85,0.56),rgba(24,24,27,0.80))] p-4 lg:p-5">
-        <label htmlFor="hero-agent-input" className="text-xs font-black uppercase tracking-[0.18em] text-sky-300">
+        <label htmlFor={inputId} className="text-xs font-black uppercase tracking-[0.18em] text-sky-300">
           Give RoboAgent a goal
         </label>
         <textarea
-          id="hero-agent-input"
+          id={inputId}
           value={goal}
           onChange={(event) => setGoal(event.target.value)}
           rows={3}
@@ -592,7 +592,7 @@ export default function LandingPage({ onNavigate }) {
               <HeroAgentDemo onNavigate={onNavigate} />
             </div>
             <div className="md:hidden">
-              {showMobileMore ? <HeroAgentDemo onNavigate={onNavigate} /> : <MobileHeroPreview />}
+              {showMobileMore ? <HeroAgentDemo onNavigate={onNavigate} inputId="mobile-hero-agent-input" /> : <MobileHeroPreview />}
             </div>
             <MobileHeroCta
               onNavigate={onNavigate}
