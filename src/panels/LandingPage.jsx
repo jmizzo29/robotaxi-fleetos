@@ -307,8 +307,8 @@ function HeroAgentDemo({ onNavigate, inputId = 'hero-agent-input', testId = 'her
     >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-300">Live AI Demo</p>
-          <h2 className="mt-2 text-2xl font-black tracking-tight text-white sm:text-3xl lg:text-4xl">Try the agent now.</h2>
+          <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-300">Planning Demo</p>
+          <h2 className="mt-2 text-2xl font-black tracking-tight text-white sm:text-3xl lg:text-4xl">Ask about your Tesla business.</h2>
         </div>
         <span className="w-fit rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-xs font-black text-emerald-200">
           No signup needed
@@ -413,10 +413,10 @@ function MobileHeroPreview() {
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="text-[10px] font-black uppercase tracking-[0.22em] text-sky-300">RoboAgent</p>
-          <h2 className="mt-1 text-xl font-black tracking-tight text-white">Live Operations Preview</h2>
+          <h2 className="mt-1 text-xl font-black tracking-tight text-white">Owner Dashboard Preview</h2>
         </div>
         <span className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-[10px] font-black uppercase text-emerald-200">
-          AI Ready
+          Beta Ready
         </span>
       </div>
 
@@ -489,7 +489,7 @@ export default function LandingPage({ onNavigate }) {
   );
 
   return (
-    <div className="min-h-screen bg-[#111111] text-slate-100">
+    <div className="min-h-screen bg-[#0f172a] text-slate-100">
       <header className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5">
         <button type="button" onClick={() => onNavigate('landing')} className="flex items-center gap-3">
           <span className="h-2.5 w-2.5 rounded-full bg-sky-300 shadow-lg shadow-sky-300/50" />
@@ -531,13 +531,13 @@ export default function LandingPage({ onNavigate }) {
         <section className="mx-auto grid max-w-7xl grid-cols-1 gap-5 px-5 pb-7 pt-2 sm:gap-8 sm:pt-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-12 lg:pb-14 lg:pt-10">
           <div className="max-w-2xl">
             <h1 className="text-4xl font-black leading-[1.02] tracking-tight text-white sm:text-6xl sm:leading-[0.98] lg:text-[4.65rem]">
-              RoboAgent - Your AI Agent for Tesla Rentals & Robotaxis
+              RoboAgent helps Tesla owners earn more from their cars
             </h1>
             <p className="mt-3 max-w-2xl text-base leading-6 text-slate-200 sm:mt-6 sm:text-lg sm:leading-8">
-              RoboAgent is your AI Agent that helps you maximize earnings from your Tesla vehicles - whether running them on Turo today or in Tesla's Robotaxi network tomorrow.
+              A practical assistant for Tesla Turo hosts and future robotaxi operators: track vehicles, plan charging and maintenance, import rental earnings, and spot pricing opportunities.
             </p>
             <div className="mt-4 hidden gap-2 sm:mt-5 sm:flex sm:flex-wrap">
-              {['First Tesla free', '$12 per extra Tesla', 'Not affiliated with Tesla'].map((label) => (
+              {['Built by John in Florida', 'First Tesla free', 'No credit card required', 'Not affiliated with Tesla'].map((label) => (
                 <span key={label} className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-emerald-200">
                   {label}
                 </span>
@@ -549,14 +549,14 @@ export default function LandingPage({ onNavigate }) {
                 onClick={scrollToDemo}
                 className="rounded-md bg-sky-300 px-5 py-4 text-sm font-black text-slate-950 transition hover:bg-sky-200"
               >
-                Try the AI Agent Live
+                Try the planning demo
               </button>
               <button
                 type="button"
                 onClick={() => onNavigate('onboarding')}
                 className="rounded-md border border-sky-300/30 bg-sky-300/10 px-5 py-4 text-sm font-black text-sky-100 transition hover:bg-sky-300/20"
               >
-                Start Free (First Tesla Free)
+                Start free
               </button>
               {isSignedIn ? (
                 <button
@@ -586,7 +586,7 @@ export default function LandingPage({ onNavigate }) {
               )}
             </div>
             <p className="mt-5 hidden text-sm leading-6 text-slate-400 sm:block">
-              RoboAgent plans and optimizes operations. Tesla controls actual autonomous driving availability and execution.
+              Built by a Tesla owner in Florida. Tesla controls autonomous driving availability and execution.
             </p>
           </div>
 
@@ -608,7 +608,7 @@ export default function LandingPage({ onNavigate }) {
         <section className="hidden border-y border-white/10 bg-[linear-gradient(180deg,rgba(30,41,59,0.58),rgba(17,17,17,0.92))] md:block">
           <div className="mx-auto grid max-w-7xl grid-cols-1 gap-4 px-5 py-8 md:grid-cols-4">
             {[
-              ['Why RoboAgent', 'It turns telemetry, rental economics, charging, and health signals into owner-approved actions.'],
+              ['Why RoboAgent', 'It turns Tesla data, rental economics, charging, and health signals into practical owner decisions.'],
               ['Simple Pricing', 'First Tesla is free during beta. Add vehicles at $12 per Tesla per month.'],
               ['Secure by Design', 'Tesla OAuth, encrypted tokens, explicit consent, and revoke-anytime controls.'],
               ['Tesla Boundary', 'RoboAgent is not affiliated with Tesla. Tesla controls autonomous availability and execution.'],

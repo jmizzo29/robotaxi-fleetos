@@ -75,7 +75,7 @@ async function testLanding(browser, profile) {
   const { page, context } = telemetry;
   await page.goto(routeUrl('?qa=browser'), { waitUntil: 'networkidle' });
   await page.getByText('RoboAgent', { exact: true }).first().waitFor({ timeout: 15000 });
-  await page.getByText('RoboAgent - Your AI Agent for Tesla Rentals & Robotaxis').waitFor({ timeout: 15000 });
+  await page.getByText('RoboAgent helps Tesla owners earn more from their cars').waitFor({ timeout: 15000 });
   if (profile === 'desktop') {
     await page.getByText('No signup needed', { exact: true }).waitFor({ timeout: 15000 });
     await page.locator('#hero-agent-input').waitFor({ timeout: 15000 });
@@ -88,13 +88,15 @@ async function testLanding(browser, profile) {
     await page.getByText('Owner-controlled data').waitFor({ timeout: 15000 });
   }
   if (profile === 'desktop') {
-    await page.getByRole('button', { name: 'Try the AI Agent Live' }).waitFor({ timeout: 15000 });
-    await page.getByRole('button', { name: 'Start Free (First Tesla Free)' }).waitFor({ timeout: 15000 });
+    await page.getByRole('button', { name: 'Try the planning demo' }).waitFor({ timeout: 15000 });
+    await page.getByRole('button', { name: 'Start free' }).waitFor({ timeout: 15000 });
+    await page.getByText('Built by John in Florida').waitFor({ timeout: 15000 });
+    await page.getByText('No credit card required').waitFor({ timeout: 15000 });
     await page.getByText('Tesla password never shared').first().waitFor({ timeout: 15000 });
   } else {
     const mobilePreview = page.locator('[data-testid="mobile-hero-preview"]');
     await mobilePreview.waitFor({ timeout: 15000 });
-    await mobilePreview.getByText('Live Operations Preview').waitFor({ timeout: 15000 });
+    await mobilePreview.getByText('Owner Dashboard Preview').waitFor({ timeout: 15000 });
     await mobilePreview.getByText('Agent Plan').waitFor({ timeout: 15000 });
     await page.getByRole('button', { name: 'Get Started' }).first().waitFor({ timeout: 15000 });
     await page.getByRole('button', { name: 'See More' }).waitFor({ timeout: 15000 });
@@ -202,7 +204,7 @@ async function testLandingCtas(browser, profile) {
   const { page, context } = telemetry;
   await page.goto(routeUrl('/'), { waitUntil: 'networkidle' });
   if (profile === 'desktop') {
-    await page.getByRole('button', { name: 'Try the AI Agent Live' }).click();
+    await page.getByRole('button', { name: 'Try the planning demo' }).click();
   } else {
     await page.getByRole('button', { name: 'See More' }).click();
     await page.locator('#mobile-hero-agent-input').waitFor({ timeout: 15000 });
@@ -215,7 +217,7 @@ async function testLandingCtas(browser, profile) {
   await page.getByRole('button', { name: 'Run Agent' }).click();
   await page.getByText('Top rented Teslas in Orlando').first().waitFor({ timeout: 15000 });
   if (profile === 'desktop') {
-    await page.getByRole('button', { name: 'Start Free (First Tesla Free)' }).click();
+    await page.getByRole('button', { name: 'Start free' }).click();
     await page.waitForURL('**/#/onboarding', { timeout: 10000 });
     await page.getByText('Connect Your First Tesla').waitFor({ timeout: 15000 });
   } else {

@@ -126,7 +126,7 @@ async function testStaleCopy() {
 async function testExpectedLandingCopy() {
   const { bundle } = await getIndexAndBundle();
   const expected = [
-    'RoboAgent - Your AI Agent for Tesla Rentals & Robotaxis',
+    'RoboAgent helps Tesla owners earn more from their cars',
     'No signup needed',
     'Maximize my earnings this weekend with 3 Teslas',
     'How many miles did my last rental drive?',
@@ -137,8 +137,9 @@ async function testExpectedLandingCopy() {
     'My Tesla Vehicle Map',
     'Demand and pricing zones',
     'Health on the map',
-    'Try the AI Agent Live',
-    'Start Free (First Tesla Free)',
+    'Try the planning demo',
+    'Start free',
+    'Built by John in Florida',
     'Simple, fair pricing.',
     'Secure by Design',
     'Tesla password never shared',
