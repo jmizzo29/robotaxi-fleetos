@@ -19,28 +19,34 @@ function StepShell({ number, title, detail, status, children }) {
   const active = status === 'active';
 
   return (
-    <section className={`rounded-lg border p-5 ${
+    <section className={`rounded-3xl border p-4 shadow-sm transition sm:p-5 ${
       complete
-        ? 'border-emerald-400/20 bg-emerald-400/10'
+        ? 'border-emerald-200 bg-emerald-50'
         : active
-          ? 'border-sky-400/30 bg-sky-400/10'
-          : 'border-white/10 bg-slate-900/70'
+          ? 'border-sky-200 bg-white'
+          : 'border-slate-200 bg-white/70'
     }`}
     >
-      <div className="flex items-start gap-4">
-        <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-md text-sm font-black ${
-          complete ? 'bg-emerald-300 text-slate-950' : active ? 'bg-sky-300 text-slate-950' : 'bg-white/10 text-slate-300'
+      <div className="flex items-start gap-3 sm:gap-4">
+        <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl text-xs font-black ${
+          complete ? 'bg-emerald-500 text-white' : active ? 'bg-sky-500 text-white' : 'bg-slate-100 text-slate-500'
         }`}
         >
-          {complete ? 'OK' : number}
+          {complete ? '✓' : number}
         </span>
         <div className="min-w-0 flex-1">
           <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
             <div>
-              <h2 className="text-xl font-black text-slate-100">{title}</h2>
-              <p className="mt-2 text-sm leading-6 text-slate-400">{detail}</p>
+              <h2 className="text-lg font-black text-slate-950 sm:text-xl">{title}</h2>
+              <p className="mt-1 text-sm leading-6 text-slate-600">{detail}</p>
             </div>
-            <span className="shrink-0 rounded-full border border-white/10 bg-slate-950/60 px-3 py-1 text-xs font-black uppercase text-slate-300">
+            <span className={`w-fit shrink-0 rounded-full border px-3 py-1 text-[11px] font-black uppercase ${
+              complete
+                ? 'border-emerald-200 bg-white text-emerald-700'
+                : active
+                  ? 'border-sky-200 bg-sky-50 text-sky-700'
+                  : 'border-slate-200 bg-white text-slate-500'
+            }`}>
               {complete ? 'Complete' : active ? 'Current' : 'Next'}
             </span>
           </div>
@@ -55,8 +61,40 @@ function TextInput(props) {
   return (
     <input
       {...props}
-      className="w-full rounded-lg border border-white/10 bg-slate-950/70 px-4 py-3 text-sm font-semibold text-slate-100 outline-none transition placeholder:text-slate-600 focus:border-sky-400/50 focus:ring-2 focus:ring-sky-400/10"
+      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
     />
+  );
+}
+
+function SetupRail({ steps }) {
+  return (
+    <div className="grid gap-2 sm:grid-cols-5">
+      {steps.map((step) => (
+        <div
+          key={step.number}
+          className={`rounded-2xl border p-3 ${
+            step.status === 'complete'
+              ? 'border-emerald-200 bg-emerald-50'
+              : step.status === 'active'
+                ? 'border-sky-200 bg-sky-50'
+                : 'border-slate-200 bg-white/70'
+          }`}
+        >
+          <div className="flex items-center gap-2">
+            <span className={`flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-black ${
+              step.status === 'complete'
+                ? 'bg-emerald-500 text-white'
+                : step.status === 'active'
+                  ? 'bg-sky-500 text-white'
+                  : 'bg-slate-100 text-slate-500'
+            }`}>
+              {step.status === 'complete' ? '✓' : step.number}
+            </span>
+            <span className="text-xs font-black text-slate-800">{step.short}</span>
+          </div>
+        </div>
+      ))}
+    </div>
   );
 }
 
@@ -166,13 +204,40 @@ export default function OnboardingPanel({
     return 'pending';
   };
 
+  const setupSteps = [
+    { number: '1', short: 'Account', status: statusFor(1) },
+    { number: '2', short: 'Consent', status: statusFor(2) },
+    { number: '3', short: 'Tesla', status: statusFor(3) },
+    { number: '4', short: 'Sync', status: statusFor(4) },
+    { number: '5', short: 'Dashboard', status: statusFor(5) },
+  ];
+
   return (
-    <div className="space-y-5">
+    <div className="space-y-4 sm:space-y-5">
+      <section className="rounded-[2rem] border border-white bg-white/85 p-5 shadow-xl shadow-slate-200/60 backdrop-blur sm:p-7">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
+          <div className="max-w-2xl">
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-600">Tesla Owner Setup</p>
+            <h1 className="mt-3 text-4xl font-black tracking-tight text-slate-950 sm:text-5xl">Connect Your First Tesla</h1>
+            <p className="mt-3 text-base leading-7 text-slate-600">
+              Sign in, approve consent, connect Tesla, sync once, and land in your owner dashboard.
+            </p>
+          </div>
+          <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
+            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Current Step</p>
+            <p className="mt-1 text-2xl font-black text-slate-950">{currentStep} of 5</p>
+          </div>
+        </div>
+        <div className="mt-5">
+          <SetupRail steps={setupSteps} />
+        </div>
+      </section>
+
       {(message || error) && (
-        <div className={`rounded-lg border p-4 text-sm font-semibold ${
+        <div className={`rounded-2xl border p-4 text-sm font-semibold ${
           error
-            ? 'border-red-400/25 bg-red-400/10 text-red-100'
-            : 'border-emerald-400/25 bg-emerald-400/10 text-emerald-100'
+            ? 'border-red-200 bg-red-50 text-red-800'
+            : 'border-emerald-200 bg-emerald-50 text-emerald-800'
         }`}
         >
           {error || message}
@@ -180,14 +245,14 @@ export default function OnboardingPanel({
       )}
 
       {savedPlan && (
-        <article className="rounded-lg border border-sky-300/25 bg-sky-300/10 p-5">
-          <p className="text-xs font-black uppercase tracking-[0.22em] text-sky-300">Saved AI Plan</p>
-          <h2 className="mt-2 text-2xl font-black text-white">{savedPlan.response?.title || 'Fleet plan saved'}</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-300">
-            Goal: <span className="font-bold text-white">{savedPlan.goal}</span>
+        <article className="rounded-3xl border border-sky-200 bg-sky-50 p-5 shadow-sm">
+          <p className="text-xs font-black uppercase tracking-[0.22em] text-sky-700">Saved AI Plan</p>
+          <h2 className="mt-2 text-2xl font-black text-slate-950">{savedPlan.response?.title || 'Fleet plan saved'}</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            Goal: <span className="font-bold text-slate-950">{savedPlan.goal}</span>
           </p>
           {savedPlan.response?.impact && (
-            <p className="mt-3 rounded-lg border border-white/10 bg-slate-950/60 p-3 text-sm font-bold text-emerald-200">
+            <p className="mt-3 rounded-2xl border border-emerald-200 bg-white p-3 text-sm font-bold text-emerald-800">
               Expected impact: {savedPlan.response.impact}
             </p>
           )}
@@ -195,17 +260,16 @@ export default function OnboardingPanel({
       )}
 
       {!hasAccount && (
-        <div className="rounded-lg border border-sky-300/30 bg-sky-300/10 p-5">
-          <p className="text-xs font-black uppercase tracking-[0.22em] text-sky-300">Start Here</p>
-          <h2 className="mt-2 text-2xl font-black text-white">Sign in to RoboAgent before connecting Tesla</h2>
-          <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-300">
-            Tesla OAuth attaches vehicle access to your private RoboAgent account. The clean order is:
-            create or sign in to RoboAgent, review data consent, then connect Tesla.
+        <div className="rounded-3xl border border-sky-200 bg-white p-5 shadow-sm">
+          <p className="text-xs font-black uppercase tracking-[0.22em] text-sky-700">Start Here</p>
+          <h2 className="mt-2 text-2xl font-black text-slate-950">Sign in to RoboAgent before connecting Tesla</h2>
+          <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">
+            Tesla access is attached to your private RoboAgent account. Sign in first, then connect Tesla securely.
           </p>
           <button
             type="button"
             onClick={() => onNavigate?.('account')}
-            className="mt-5 rounded-lg bg-sky-300 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-sky-200"
+            className="mt-5 w-full rounded-xl bg-sky-500 px-5 py-3 text-sm font-black text-white shadow-sm shadow-sky-200 transition hover:bg-sky-600 sm:w-auto"
           >
             Sign In / Create Account
           </button>
@@ -250,13 +314,13 @@ export default function OnboardingPanel({
               type="button"
               disabled={busy}
               onClick={createAccount}
-              className="rounded-lg bg-sky-300 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-sky-200 disabled:cursor-wait disabled:opacity-60 sm:col-span-2"
+              className="rounded-xl bg-sky-500 px-5 py-3 text-sm font-black text-white shadow-sm shadow-sky-200 transition hover:bg-sky-600 disabled:cursor-wait disabled:opacity-60 sm:col-span-2"
             >
               Create Free Account
             </button>
           </div>
         ) : (
-          <p className="rounded-lg border border-emerald-400/20 bg-emerald-400/10 p-4 text-sm font-semibold text-emerald-100">
+          <p className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-800">
             Signed in as {session.user.email}. First Tesla free is active for this account.
           </p>
         )}
@@ -269,14 +333,14 @@ export default function OnboardingPanel({
         status={statusFor(2)}
       >
         {consentReady ? (
-          <p className="rounded-lg border border-emerald-400/20 bg-emerald-400/10 p-4 text-sm font-semibold text-emerald-100">
+          <p className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-800">
             Consent accepted on this device.
           </p>
         ) : (
-          <BetaConsentPanel compact onAccepted={() => setComplianceRevision((current) => current + 1)} />
+          <BetaConsentPanel compact tone="light" onAccepted={() => setComplianceRevision((current) => current + 1)} />
         )}
         {!betaReady && hasAccount && (
-          <p className="mt-3 text-xs font-semibold text-amber-200">
+          <p className="mt-3 text-xs font-semibold text-amber-700">
             Use the same invite code from account creation to unlock beta consent on this device.
           </p>
         )}
@@ -289,16 +353,16 @@ export default function OnboardingPanel({
         status={statusFor(3)}
       >
         {teslaConnected ? (
-          <p className="rounded-lg border border-emerald-400/20 bg-emerald-400/10 p-4 text-sm font-semibold text-emerald-100">
+          <p className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-800">
             Tesla is connected for this RoboAgent account.
           </p>
         ) : (
           <a
             href={getTeslaLoginUrl('onboarding')}
-            className={`block rounded-lg px-5 py-3 text-center text-sm font-black transition ${
+            className={`block rounded-xl px-5 py-3 text-center text-sm font-black transition ${
               consentReady
-                ? 'border border-emerald-400/30 bg-emerald-400/10 text-emerald-100 hover:bg-emerald-400/20'
-                : 'pointer-events-none border border-white/10 bg-white/5 text-slate-500'
+                ? 'border border-emerald-200 bg-emerald-500 text-white shadow-sm shadow-emerald-200 hover:bg-emerald-600'
+                : 'pointer-events-none border border-slate-200 bg-slate-100 text-slate-400'
             }`}
           >
             Connect Tesla Account
@@ -313,7 +377,7 @@ export default function OnboardingPanel({
         status={statusFor(4)}
       >
         {syncedVehicle ? (
-          <p className="rounded-lg border border-emerald-400/20 bg-emerald-400/10 p-4 text-sm font-semibold text-emerald-100">
+          <p className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-800">
             {realVehicleCount} live Tesla vehicle{realVehicleCount === 1 ? '' : 's'} synced.
           </p>
         ) : (
@@ -321,7 +385,7 @@ export default function OnboardingPanel({
             type="button"
             disabled={!teslaConnected || !consentReady || isLoading || busy}
             onClick={syncFirstVehicle}
-            className="w-full rounded-lg border border-sky-400/30 bg-sky-400/10 px-5 py-3 text-sm font-black text-sky-100 transition hover:bg-sky-400/20 disabled:pointer-events-none disabled:border-white/10 disabled:bg-white/5 disabled:text-slate-500"
+            className="w-full rounded-xl bg-sky-500 px-5 py-3 text-sm font-black text-white shadow-sm shadow-sky-200 transition hover:bg-sky-600 disabled:pointer-events-none disabled:bg-slate-100 disabled:text-slate-400 disabled:shadow-none"
           >
             {isLoading || busy ? 'Syncing...' : 'Sync My First Tesla'}
           </button>
@@ -335,7 +399,7 @@ export default function OnboardingPanel({
         status={statusFor(5)}
       >
         {!syncedVehicle && (
-          <p className="mb-3 rounded-lg border border-amber-300/20 bg-amber-400/10 p-4 text-sm font-semibold text-amber-100">
+          <p className="mb-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-800">
             Finish Tesla connection and first telemetry sync before opening the RoboAgent dashboard.
           </p>
         )}
@@ -344,7 +408,7 @@ export default function OnboardingPanel({
             type="button"
             disabled={!syncedVehicle}
             onClick={() => onNavigate?.('overview')}
-            className="rounded-lg bg-sky-300 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-sky-200 disabled:pointer-events-none disabled:bg-white/10 disabled:text-slate-500"
+            className="rounded-xl bg-sky-500 px-5 py-3 text-sm font-black text-white shadow-sm shadow-sky-200 transition hover:bg-sky-600 disabled:pointer-events-none disabled:bg-slate-100 disabled:text-slate-400 disabled:shadow-none"
           >
             Open Dashboard
           </button>
@@ -352,7 +416,7 @@ export default function OnboardingPanel({
             type="button"
             disabled={!syncedVehicle}
             onClick={() => onNavigate?.('map')}
-            className="rounded-lg border border-white/10 bg-white/10 px-5 py-3 text-sm font-black text-slate-100 transition hover:bg-white/15 disabled:pointer-events-none disabled:text-slate-500"
+            className="rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-800 shadow-sm transition hover:border-slate-300 disabled:pointer-events-none disabled:bg-slate-100 disabled:text-slate-400"
           >
             View Live Map
           </button>

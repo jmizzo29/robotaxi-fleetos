@@ -56,7 +56,7 @@ export function ClerkOnboardingAuthStep({ onAuthChange }) {
 
   if (isSignedIn) {
     return (
-      <p className="rounded-lg border border-emerald-400/20 bg-emerald-400/10 p-4 text-sm font-semibold text-emerald-100">
+      <p className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-800">
         Signed in securely as {user?.primaryEmailAddress?.emailAddress || user?.fullName || 'RoboAgent owner'}.
       </p>
     );
@@ -65,12 +65,12 @@ export function ClerkOnboardingAuthStep({ onAuthChange }) {
   return (
     <div className="grid gap-3 sm:grid-cols-2">
       <SignUpButton mode="modal">
-        <button type="button" className="rounded-lg bg-sky-300 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-sky-200">
+        <button type="button" className="rounded-xl bg-sky-500 px-5 py-3 text-sm font-black text-white shadow-sm shadow-sky-200 transition hover:bg-sky-600">
           Create Secure Account
         </button>
       </SignUpButton>
       <SignInButton mode="modal">
-        <button type="button" className="rounded-lg border border-white/10 bg-white/10 px-5 py-3 text-sm font-black text-slate-100 transition hover:bg-white/15">
+        <button type="button" className="rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-800 shadow-sm transition hover:border-slate-300">
           Sign In
         </button>
       </SignInButton>

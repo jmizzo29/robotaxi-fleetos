@@ -7,39 +7,49 @@ const dataRows = [
   ['Fleet Telemetry', 'Available telemetry fields from connected vehicles', 'AI agent intelligence, charging plans, pricing context, and operational memory', 'Streaming if enabled, otherwise cached syncs'],
 ];
 
-export default function TeslaDataAccessDisclosure({ compact = false }) {
+export default function TeslaDataAccessDisclosure({ compact = false, tone = 'dark' }) {
+  const light = tone === 'light';
+
   return (
-    <section className={`rounded-lg border border-white/10 bg-slate-900/80 ${compact ? 'p-4' : 'p-5 shadow-lg shadow-black/10'}`}>
+    <section className={`rounded-xl border ${
+      light ? 'border-slate-200 bg-white' : 'border-white/10 bg-slate-900/80'
+    } ${compact ? 'p-4' : 'p-5 shadow-lg shadow-black/10'}`}>
       <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.22em] text-sky-300">
+          <p className={`text-xs font-black uppercase tracking-[0.22em] ${light ? 'text-sky-700' : 'text-sky-300'}`}>
             What Data Does RoboAgent Access?
           </p>
-          <h2 className={`${compact ? 'mt-2 text-xl' : 'mt-3 text-3xl'} font-black tracking-tight text-white`}>
+          <h2 className={`${compact ? 'mt-2 text-xl' : 'mt-3 text-3xl'} font-black tracking-tight ${light ? 'text-slate-950' : 'text-white'}`}>
             Minimum data for useful AI fleet operations.
           </h2>
-          <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-400">
+          <p className={`mt-3 max-w-3xl text-sm leading-6 ${light ? 'text-slate-600' : 'text-slate-400'}`}>
             RoboAgent only requests data needed for AI agent features, fleet monitoring, predictive maintenance, charging advice, location intelligence, and earnings optimization.
           </p>
         </div>
-        <span className="shrink-0 rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-xs font-black uppercase text-emerald-200">
+        <span className={`shrink-0 rounded-full border px-3 py-1 text-xs font-black uppercase ${
+          light ? 'border-emerald-200 bg-emerald-50 text-emerald-700' : 'border-emerald-300/20 bg-emerald-400/10 text-emerald-200'
+        }`}>
           Owner controlled
         </span>
       </div>
 
-      <div className="mt-5 overflow-hidden rounded-lg border border-white/10">
-        <div className="hidden grid-cols-[0.8fr_1.2fr_1.2fr_0.8fr] bg-slate-950/80 text-[11px] font-black uppercase tracking-[0.14em] text-slate-500 md:grid">
+      <div className={`mt-5 overflow-hidden rounded-xl border ${light ? 'border-slate-200' : 'border-white/10'}`}>
+        <div className={`hidden grid-cols-[0.8fr_1.2fr_1.2fr_0.8fr] text-[11px] font-black uppercase tracking-[0.14em] md:grid ${
+          light ? 'bg-slate-50 text-slate-500' : 'bg-slate-950/80 text-slate-500'
+        }`}>
           <div className="p-3">Category</div>
           <div className="p-3">Details</div>
           <div className="p-3">Why We Need It</div>
           <div className="p-3">Frequency</div>
         </div>
         {dataRows.map(([category, details, reason, frequency]) => (
-          <article key={category} className="grid gap-2 border-t border-white/10 bg-slate-950/45 p-3 text-sm md:grid-cols-[0.8fr_1.2fr_1.2fr_0.8fr] md:gap-0">
-            <p className="font-black text-white">{category}</p>
-            <p className="leading-6 text-slate-400">{details}</p>
-            <p className="leading-6 text-slate-400">{reason}</p>
-            <p className="font-semibold leading-6 text-slate-300">{frequency}</p>
+          <article key={category} className={`grid gap-2 border-t p-3 text-sm md:grid-cols-[0.8fr_1.2fr_1.2fr_0.8fr] md:gap-0 ${
+            light ? 'border-slate-200 bg-white' : 'border-white/10 bg-slate-950/45'
+          }`}>
+            <p className={`font-black ${light ? 'text-slate-950' : 'text-white'}`}>{category}</p>
+            <p className={`leading-6 ${light ? 'text-slate-600' : 'text-slate-400'}`}>{details}</p>
+            <p className={`leading-6 ${light ? 'text-slate-600' : 'text-slate-400'}`}>{reason}</p>
+            <p className={`font-semibold leading-6 ${light ? 'text-slate-700' : 'text-slate-300'}`}>{frequency}</p>
           </article>
         ))}
       </div>
@@ -51,7 +61,9 @@ export default function TeslaDataAccessDisclosure({ compact = false }) {
           'Sensitive tokens are encrypted server-side.',
           'RoboAgent does not sell Tesla telemetry.',
         ].map((note) => (
-          <div key={note} className="rounded-md border border-emerald-300/15 bg-emerald-400/[0.06] px-3 py-2 text-xs font-bold leading-5 text-emerald-100">
+          <div key={note} className={`rounded-xl border px-3 py-2 text-xs font-bold leading-5 ${
+            light ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-emerald-300/15 bg-emerald-400/[0.06] text-emerald-100'
+          }`}>
             {note}
           </div>
         ))}
