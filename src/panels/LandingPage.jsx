@@ -537,14 +537,14 @@ export default function LandingPage({ onNavigate }) {
       onClick={() => {
         if (!clerkReady) onNavigate('account');
       }}
-      className="rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-50"
+      className="rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-black text-slate-800 shadow-sm transition hover:border-slate-400 hover:bg-slate-50"
     >
       Sign In
     </button>
   );
 
   return (
-    <div className="min-h-screen bg-[linear-gradient(180deg,#f8fafc_0%,#eef6fb_52%,#ffffff_100%)] text-slate-950">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_12%_8%,rgba(14,165,233,0.13),transparent_30%),linear-gradient(180deg,#f5f7fb_0%,#eaf2f7_48%,#ffffff_100%)] text-slate-950">
       <header className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5">
         <button type="button" onClick={() => onNavigate('landing')} className="flex items-center gap-3">
           <span className="h-2.5 w-2.5 rounded-full bg-sky-500 shadow-lg shadow-sky-300/50" />
@@ -561,14 +561,14 @@ export default function LandingPage({ onNavigate }) {
           <button
             type="button"
             onClick={() => onNavigate('onboarding')}
-            className="rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-50"
+            className="rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-black text-slate-800 shadow-sm transition hover:border-slate-400 hover:bg-slate-50"
           >
             Get Started
           </button>
           <button
             type="button"
             onClick={scrollToPricing}
-            className="hidden rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-bold text-slate-700 shadow-sm transition hover:bg-slate-50 sm:block"
+            className="hidden rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-black text-slate-800 shadow-sm transition hover:border-slate-400 hover:bg-slate-50 sm:block"
           >
             Pricing
           </button>
@@ -583,12 +583,13 @@ export default function LandingPage({ onNavigate }) {
       </header>
 
       <main>
-        <section className="mx-auto grid max-w-7xl grid-cols-1 gap-5 px-5 pb-7 pt-2 sm:gap-8 sm:pt-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-12 lg:pb-14 lg:pt-10">
-          <div className="max-w-2xl">
+        <section className="relative isolate mx-auto grid max-w-7xl grid-cols-1 gap-5 px-5 pb-7 pt-2 sm:gap-8 sm:pt-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-12 lg:pb-14 lg:pt-10">
+          <div className="absolute inset-x-5 top-2 z-0 hidden rounded-[2rem] border border-white/70 bg-white/60 shadow-xl shadow-slate-300/20 backdrop-blur sm:block lg:bottom-12" aria-hidden="true" />
+          <div className="relative z-10 max-w-2xl">
             <h1 className="text-[2.65rem] font-black leading-[0.96] tracking-tight text-slate-950 sm:text-6xl sm:leading-[0.98] lg:text-[4.65rem]">
               Your AI Agent for Tesla Rentals & Robotaxis
             </h1>
-            <p className="mt-3 max-w-md text-base font-semibold leading-6 text-slate-600 md:hidden">
+            <p className="mt-3 max-w-md text-base font-bold leading-6 text-slate-700 md:hidden">
               Give it goals. Get smart plans for pricing, charging, maintenance and earnings.
             </p>
             <div className="md:hidden">
@@ -600,7 +601,7 @@ export default function LandingPage({ onNavigate }) {
             </div>
             <div className="mt-4 hidden gap-2 sm:mt-5 sm:flex sm:flex-wrap">
               {['Built by a Tesla owner for Tesla owners', 'First Tesla free', 'No credit card required', 'Not affiliated with Tesla'].map((label) => (
-                <span key={label} className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-emerald-200">
+                <span key={label} className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-emerald-800">
                   {label}
                 </span>
               ))}
@@ -647,12 +648,12 @@ export default function LandingPage({ onNavigate }) {
                 </button>
               )}
             </div>
-            <p className="mt-5 hidden text-sm leading-6 text-slate-600 sm:block">
+            <p className="mt-5 hidden text-sm font-semibold leading-6 text-slate-700 sm:block">
               Built by a Tesla owner in Florida for other Tesla owners. Tesla controls autonomous driving availability and execution.
             </p>
           </div>
 
-          <div>
+          <div className="relative z-10">
             <div className="hidden md:block">
               <HeroAgentDemo onNavigate={onNavigate} />
             </div>
