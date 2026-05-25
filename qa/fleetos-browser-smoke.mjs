@@ -100,13 +100,13 @@ async function testLanding(browser, profile) {
     await page.getByText('Secure Tesla Login').waitFor({ timeout: 15000 });
     const mobilePreview = page.locator('[data-testid="mobile-hero-preview"]');
     await mobilePreview.waitFor({ timeout: 15000 });
-    await mobilePreview.getByText('Your Tesla Fleet').waitFor({ timeout: 15000 });
-    await mobilePreview.getByText('Live Plan').waitFor({ timeout: 15000 });
-    await mobilePreview.getByText('Owner Plan').waitFor({ timeout: 15000 });
-    await mobilePreview.getByText('Model 3').waitFor({ timeout: 15000 });
-    await mobilePreview.getByText('Cybercab').waitFor({ timeout: 15000 });
-    await mobilePreview.getByRole('img', { name: 'Tesla Model 3 on the road' }).waitFor({ timeout: 15000 });
-    await mobilePreview.getByRole('img', { name: 'Tesla Cybercab concept on display' }).waitFor({ timeout: 15000 });
+    await mobilePreview.getByText('Owner Dashboard').waitFor({ timeout: 15000 });
+    await mobilePreview.getByText("Today's Fleet Plan").waitFor({ timeout: 15000 });
+    await mobilePreview.getByText('AI Ready').waitFor({ timeout: 15000 });
+    await mobilePreview.getByText('Earnings').waitFor({ timeout: 15000 });
+    await mobilePreview.getByText('Pricing Opportunity').waitFor({ timeout: 15000 });
+    await mobilePreview.getByText('Fleet Health').waitFor({ timeout: 15000 });
+    await mobilePreview.getByText('AI Brief').waitFor({ timeout: 15000 });
     const ctaBox = await page.getByRole('button', { name: 'Get Started Free' }).first().boundingBox();
     const previewBox = await mobilePreview.boundingBox();
     if (!ctaBox || !previewBox || ctaBox.y >= previewBox.y) {
@@ -126,6 +126,9 @@ async function testLanding(browser, profile) {
     }
     if (await page.getByText('1-10 Cars').count()) {
       throw new Error('Old 1-10 Cars badge should not be visible on mobile.');
+    }
+    if (await mobilePreview.getByText('Cybercab').count()) {
+      throw new Error('Mobile first preview should show the owner dashboard, not vehicle photo cards.');
     }
     await page.getByRole('button', { name: 'Try AI Agent' }).click();
     const mobileDemo = page.locator('[data-testid="mobile-hero-agent-demo"]');

@@ -399,56 +399,89 @@ function HeroAgentDemo({ onNavigate, inputId = 'hero-agent-input', testId = 'her
 }
 
 function MobileHeroPreview() {
-  const vehiclePhotos = [
-    ['/images/tesla-model-3-road-mobile.jpg', 'Tesla Model 3 on the road', 'Model 3', 'Turo ready'],
-    [
-      '/images/tesla-cybercab-mobile.jpg',
-      'Tesla Cybercab concept on display',
-      'Cybercab',
-      'Future robotaxi asset',
-      'Photo: Dllu / CC BY-SA 4.0',
-    ],
+  const dashboardRows = [
+    {
+      label: 'Pricing Opportunity',
+      value: '+18%',
+      detail: 'Weekend demand',
+      tone: 'bg-sky-400',
+      bars: [30, 44, 66, 82, 72],
+    },
+    {
+      label: 'Fleet Health',
+      value: '94',
+      detail: 'Ready for rentals',
+      tone: 'bg-emerald-400',
+      bars: [72, 78, 84, 88, 94],
+    },
+    {
+      label: 'Maintenance Watch',
+      value: '1',
+      detail: 'Tire check soon',
+      tone: 'bg-amber-400',
+      bars: [22, 28, 36, 44, 52],
+    },
   ];
 
   return (
     <aside
-      className="mt-4 rounded-2xl border border-sky-200/10 bg-[linear-gradient(145deg,rgba(51,65,85,0.88),rgba(15,23,42,0.92))] p-4 shadow-2xl shadow-sky-950/30 md:hidden"
+      className="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-white p-4 shadow-xl shadow-slate-300/40 md:hidden"
       data-testid="mobile-hero-preview"
     >
       <div className="flex items-center justify-between gap-3">
         <div>
-          <p className="text-[10px] font-black uppercase tracking-[0.22em] text-sky-300">RoboAgent</p>
-          <h2 className="mt-1 text-xl font-black tracking-tight text-white">Your Tesla Fleet</h2>
+          <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Owner Dashboard</p>
+          <h2 className="mt-1 text-xl font-black tracking-tight text-slate-950">Today&apos;s Fleet Plan</h2>
         </div>
-        <span className="rounded-full border border-sky-300/20 bg-sky-300/10 px-3 py-1 text-[10px] font-black uppercase text-sky-100">
-          Live Plan
+        <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[10px] font-black uppercase text-emerald-700">
+          AI Ready
         </span>
       </div>
 
-      <div className="mt-4 grid grid-cols-2 gap-2">
-        {vehiclePhotos.map(([src, alt, model, status, credit]) => (
-          <div key={model} className="overflow-hidden rounded-xl border border-white/[0.14] bg-white/[0.07]">
-            <div className="h-32 overflow-hidden bg-slate-900">
-              <img
-                src={src}
-                alt={alt}
-                className="h-full w-full object-cover"
-                loading="eager"
-              />
+      <div className="mt-4 grid grid-cols-3 gap-2">
+        {[
+          ['Earnings', '$287', 'Today'],
+          ['Utilization', '82%', 'Next 7d'],
+          ['Vehicles', '3', 'Tracked'],
+        ].map(([label, value, detail]) => (
+          <div key={label} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+            <p className="text-[9px] font-black uppercase tracking-[0.16em] text-slate-500">{label}</p>
+            <p className="mt-2 text-xl font-black tracking-tight text-slate-950">{value}</p>
+            <p className="mt-1 text-[10px] font-bold text-slate-500">{detail}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-3 divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white">
+        {dashboardRows.map((row) => (
+          <div key={row.label} className="grid grid-cols-[1fr_auto] gap-3 p-3">
+            <div className="min-w-0">
+              <div className="flex items-center gap-2">
+                <span className={`h-2 w-2 rounded-full ${row.tone}`} />
+                <p className="truncate text-sm font-black text-slate-950">{row.label}</p>
+              </div>
+              <p className="mt-1 text-xs font-semibold text-slate-500">{row.detail}</p>
             </div>
-            <div className="p-3">
-              <p className="truncate text-sm font-black text-white">{model}</p>
-              <p className="mt-1 text-xs font-semibold text-slate-300">{status}</p>
-              {credit ? <p className="mt-1 text-[9px] font-semibold uppercase tracking-[0.08em] text-slate-500">{credit}</p> : null}
+            <div className="flex items-end gap-3">
+              <p className="text-lg font-black text-slate-950">{row.value}</p>
+              <div className="flex h-8 items-end gap-1">
+                {row.bars.map((height, index) => (
+                  <span
+                    key={`${row.label}-${height}-${index}`}
+                    className={`w-1.5 rounded-full ${row.tone}`}
+                    style={{ height: `${height}%` }}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         ))}
       </div>
 
-      <div className="mt-3 rounded-xl border border-emerald-300/25 bg-[linear-gradient(145deg,rgba(16,185,129,0.14),rgba(14,165,233,0.08))] p-3">
-        <p className="text-[10px] font-black uppercase tracking-[0.16em] text-emerald-300">Owner Plan</p>
-        <p className="mt-2 text-sm font-bold leading-6 text-slate-100">
-          Turo today. Robotaxis tomorrow. Keep each car earning, charged, clean, and ready.
+      <div className="mt-3 rounded-xl border border-sky-200 bg-sky-50 p-3">
+        <p className="text-[10px] font-black uppercase tracking-[0.16em] text-sky-700">AI Brief</p>
+        <p className="mt-2 text-sm font-bold leading-6 text-slate-800">
+          Raise weekend price, charge tonight, and check one tire before the next rental.
         </p>
       </div>
     </aside>
@@ -460,7 +493,7 @@ function MobileHeroCta({ onNavigate, onSeeMore, isMoreOpen }) {
     <div className="mt-5 space-y-3 md:hidden">
       <div className="flex flex-wrap gap-2">
         {['First Tesla Free', 'Secure Tesla Login'].map((label) => (
-          <span key={label} className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-emerald-200">
+          <span key={label} className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-emerald-700">
             {label}
           </span>
         ))}
@@ -476,7 +509,7 @@ function MobileHeroCta({ onNavigate, onSeeMore, isMoreOpen }) {
         <button
           type="button"
           onClick={onSeeMore}
-          className="flex h-14 items-center justify-center rounded-lg border border-white/10 bg-white/[0.04] px-4 text-base font-black text-slate-100 transition hover:bg-white/10"
+          className="flex h-14 items-center justify-center rounded-lg border border-slate-300 bg-white px-4 text-base font-black text-slate-700 shadow-sm transition hover:bg-slate-50"
         >
           {isMoreOpen ? 'Hide' : 'Try AI Agent'}
         </button>
