@@ -507,7 +507,7 @@ function MobileHeroCta({ onNavigate, onSeeMore, isMoreOpen }) {
           onClick={() => onNavigate('onboarding')}
           className="flex h-14 items-center justify-center rounded-lg bg-sky-300 px-4 text-base font-black text-slate-950 shadow-lg shadow-sky-500/20 transition hover:bg-sky-200"
         >
-          Get Started Free
+          Start Free
         </button>
         <button
           type="button"
@@ -567,7 +567,7 @@ export default function LandingPage({ onNavigate }) {
             onClick={() => onNavigate('onboarding')}
             className="rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-black text-slate-800 shadow-sm transition hover:border-slate-400 hover:bg-slate-50"
           >
-            Get Started
+            Start Free
           </button>
           <button
             type="button"
@@ -622,7 +622,7 @@ export default function LandingPage({ onNavigate }) {
                 onClick={() => onNavigate('onboarding')}
                 className="rounded-md border border-sky-200 bg-sky-50 px-5 py-4 text-sm font-black text-sky-800 transition hover:bg-sky-100"
               >
-                Start free
+                Start Free
               </button>
               {isSignedIn ? (
                 <button

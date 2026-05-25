@@ -89,12 +89,12 @@ async function testLanding(browser, profile) {
   }
   if (profile === 'desktop') {
     await page.getByRole('button', { name: 'Try the planning demo' }).waitFor({ timeout: 15000 });
-    await page.getByRole('button', { name: 'Start free', exact: true }).waitFor({ timeout: 15000 });
+    await page.getByRole('button', { name: 'Start Free', exact: true }).first().waitFor({ timeout: 15000 });
     await page.getByText('Built by a Tesla owner for Tesla owners').waitFor({ timeout: 15000 });
     await page.getByText('No credit card required').waitFor({ timeout: 15000 });
     await page.getByText('Tesla password never shared').first().waitFor({ timeout: 15000 });
   } else {
-    await page.getByRole('button', { name: 'Get Started Free' }).first().waitFor({ timeout: 15000 });
+    await page.getByRole('button', { name: 'Start Free' }).first().waitFor({ timeout: 15000 });
     await page.getByRole('button', { name: 'Try AI Agent' }).waitFor({ timeout: 15000 });
     await page.getByText('Give it goals. Get smart plans for pricing, charging, maintenance and earnings.').waitFor({ timeout: 15000 });
     await page.getByText('Secure Tesla Login').waitFor({ timeout: 15000 });
@@ -110,10 +110,10 @@ async function testLanding(browser, profile) {
     await mobilePreview.getByText('1,284 mi').waitFor({ timeout: 15000 });
     await mobilePreview.getByText('$2.4k').waitFor({ timeout: 15000 });
     await mobilePreview.getByText('AI Brief').waitFor({ timeout: 15000 });
-    const ctaBox = await page.getByRole('button', { name: 'Get Started Free' }).first().boundingBox();
+    const ctaBox = await page.getByRole('button', { name: 'Start Free' }).first().boundingBox();
     const previewBox = await mobilePreview.boundingBox();
     if (!ctaBox || !previewBox || ctaBox.y >= previewBox.y) {
-      throw new Error('Mobile Get Started CTA should appear above the preview card.');
+      throw new Error('Mobile Start Free CTA should appear above the preview card.');
     }
     if (await page.locator('[data-testid="mobile-trust-bar"]').count()) {
       throw new Error('Mobile trust snippet should not be visible under the primary CTA buttons.');
@@ -243,11 +243,11 @@ async function testLandingCtas(browser, profile) {
   await page.getByRole('button', { name: 'Ask Agent' }).click();
   await page.getByText('Model X rental availability in Orlando').first().waitFor({ timeout: 15000 });
   if (profile === 'desktop') {
-    await page.getByRole('button', { name: 'Start free', exact: true }).click();
+    await page.getByRole('button', { name: 'Start Free', exact: true }).first().click();
     await page.waitForURL('**/#/onboarding', { timeout: 10000 });
     await page.getByText('Connect Your First Tesla').waitFor({ timeout: 15000 });
   } else {
-    await page.getByRole('button', { name: 'Get Started Free' }).first().click();
+    await page.getByRole('button', { name: 'Start Free' }).first().click();
     await page.waitForURL('**/#/onboarding', { timeout: 10000 });
     await page.getByText('Sign in to RoboAgent before connecting Tesla').waitFor({ timeout: 15000 });
   }
