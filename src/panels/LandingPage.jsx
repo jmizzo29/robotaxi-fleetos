@@ -282,7 +282,7 @@ function saveDemoPlan(goal, response) {
   }));
 }
 
-function HeroAgentDemo({ onNavigate, inputId = 'hero-agent-input' }) {
+function HeroAgentDemo({ onNavigate, inputId = 'hero-agent-input', testId = 'hero-agent-demo' }) {
   const [goal, setGoal] = useState(demoPrompts[0]);
   const [response, setResponse] = useState(() => buildDemoResponse(demoPrompts[0]));
   const [isThinking, setIsThinking] = useState(false);
@@ -301,7 +301,10 @@ function HeroAgentDemo({ onNavigate, inputId = 'hero-agent-input' }) {
   };
 
   return (
-    <aside className="rounded-2xl border border-sky-300/25 bg-[linear-gradient(145deg,rgba(30,41,59,0.92),rgba(17,17,17,0.94))] p-4 shadow-2xl shadow-black/30 sm:p-5 lg:p-6">
+    <aside
+      className="rounded-2xl border border-sky-300/25 bg-[linear-gradient(145deg,rgba(30,41,59,0.92),rgba(17,17,17,0.94))] p-4 shadow-2xl shadow-black/30 sm:p-5 lg:p-6"
+      data-testid={testId}
+    >
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-300">Live AI Demo</p>
@@ -592,7 +595,7 @@ export default function LandingPage({ onNavigate }) {
               <HeroAgentDemo onNavigate={onNavigate} />
             </div>
             <div className="md:hidden">
-              {showMobileMore ? <HeroAgentDemo onNavigate={onNavigate} inputId="mobile-hero-agent-input" /> : <MobileHeroPreview />}
+              {showMobileMore ? <HeroAgentDemo onNavigate={onNavigate} inputId="mobile-hero-agent-input" testId="mobile-hero-agent-demo" /> : <MobileHeroPreview />}
             </div>
             <MobileHeroCta
               onNavigate={onNavigate}

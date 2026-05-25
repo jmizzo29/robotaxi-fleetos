@@ -111,7 +111,8 @@ async function testLanding(browser, profile) {
       throw new Error('Mobile details should be hidden before tapping See More.');
     }
     await page.getByRole('button', { name: 'See More' }).click();
-    await page.getByText('No signup needed', { exact: true }).waitFor({ timeout: 15000 });
+    const mobileDemo = page.locator('[data-testid="mobile-hero-agent-demo"]');
+    await mobileDemo.getByText('No signup needed', { exact: true }).waitFor({ timeout: 15000 });
     await page.locator('#mobile-hero-agent-input').waitFor({ timeout: 15000 });
     const heroGoal = await page.locator('#mobile-hero-agent-input').inputValue();
     if (heroGoal !== 'Maximize my earnings this weekend with 3 Teslas') {
