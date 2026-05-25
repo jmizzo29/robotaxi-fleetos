@@ -138,11 +138,11 @@ async function testLanding(browser, profile) {
     await mobileDemo.getByText('No signup needed', { exact: true }).waitFor({ timeout: 15000 });
     await page.locator('#mobile-hero-agent-input').waitFor({ timeout: 15000 });
     const heroGoal = await page.locator('#mobile-hero-agent-input').inputValue();
-    if (heroGoal !== 'How many Model X rentals are available in Lakeland?') {
+    if (heroGoal !== 'How many Model X rentals are available in Orlando?') {
       throw new Error(`Unexpected hero agent prompt after See More: ${heroGoal}`);
     }
-    await mobileDemo.getByText('Model X rental availability in Lakeland').waitFor({ timeout: 15000 });
-    await mobileDemo.getByText('1-4 comparable rentals').waitFor({ timeout: 15000 });
+    await mobileDemo.getByText('Model X rental availability in Orlando').waitFor({ timeout: 15000 });
+    await mobileDemo.getByText('8-16 comparable rentals').waitFor({ timeout: 15000 });
     await page.getByRole('button', { name: 'Ask Agent' }).waitFor({ timeout: 15000 });
     await page.getByText('Your Tesla login stays with Tesla.').waitFor({ timeout: 15000 });
   }
@@ -239,9 +239,9 @@ async function testLandingCtas(browser, profile) {
   await heroInput.fill('What are the top rented Teslas in Orlando?');
   await page.getByRole('button', { name: 'Ask Agent' }).click();
   await page.getByText('Top rented Teslas in Orlando').first().waitFor({ timeout: 15000 });
-  await heroInput.fill('How many Model X rentals are available in Lakeland?');
+  await heroInput.fill('How many Model X rentals are available in Orlando?');
   await page.getByRole('button', { name: 'Ask Agent' }).click();
-  await page.getByText('Model X rental availability in Lakeland').first().waitFor({ timeout: 15000 });
+  await page.getByText('Model X rental availability in Orlando').first().waitFor({ timeout: 15000 });
   if (profile === 'desktop') {
     await page.getByRole('button', { name: 'Start free', exact: true }).click();
     await page.waitForURL('**/#/onboarding', { timeout: 10000 });

@@ -668,7 +668,7 @@ export default function LandingPage({ onNavigate }) {
                   onNavigate={onNavigate}
                   inputId="mobile-hero-agent-input"
                   testId="mobile-hero-agent-demo"
-                  defaultGoal="How many Model X rentals are available in Lakeland?"
+                  defaultGoal="How many Model X rentals are available in Orlando?"
                 />
               ) : <MobileHeroPreview />}
             </div>
