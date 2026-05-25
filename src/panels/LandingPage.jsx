@@ -395,6 +395,47 @@ function HeroAgentDemo({ onNavigate }) {
   );
 }
 
+function MobileHeroPreview() {
+  const metrics = [
+    ['Health', '94%'],
+    ['Impact', '+$380'],
+    ['Ready', '2/3'],
+  ];
+
+  return (
+    <aside
+      className="mt-5 rounded-2xl border border-sky-300/25 bg-[linear-gradient(145deg,rgba(30,41,59,0.92),rgba(17,17,17,0.94))] p-4 shadow-2xl shadow-black/30 md:hidden"
+      data-testid="mobile-hero-preview"
+    >
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <p className="text-[10px] font-black uppercase tracking-[0.22em] text-sky-300">RoboAgent</p>
+          <h2 className="mt-1 text-xl font-black tracking-tight text-white">Live Operations Preview</h2>
+        </div>
+        <span className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-[10px] font-black uppercase text-emerald-200">
+          AI Ready
+        </span>
+      </div>
+
+      <div className="mt-4 grid grid-cols-3 gap-2">
+        {metrics.map(([label, value]) => (
+          <div key={label} className="rounded-lg border border-white/[0.12] bg-white/[0.05] px-3 py-3">
+            <p className="text-[9px] font-black uppercase tracking-[0.12em] text-slate-400">{label}</p>
+            <p className="mt-1 text-xl font-black text-white">{value}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-3 rounded-xl border border-emerald-300/20 bg-[linear-gradient(145deg,rgba(16,185,129,0.10),rgba(30,41,59,0.42))] p-3">
+        <p className="text-[10px] font-black uppercase tracking-[0.16em] text-emerald-300">Agent Plan</p>
+        <p className="mt-2 text-sm font-bold leading-6 text-slate-100">
+          Charge tonight, prep cleaning tomorrow, and review weekend rental pricing.
+        </p>
+      </div>
+    </aside>
+  );
+}
+
 function MobileHeroCta({ onNavigate, onSeeMore, isMoreOpen }) {
   return (
     <div className="mt-5 space-y-3 md:hidden">
@@ -547,8 +588,11 @@ export default function LandingPage({ onNavigate }) {
           </div>
 
           <div>
-            <div className={showMobileMore ? 'block' : 'hidden md:block'}>
+            <div className="hidden md:block">
               <HeroAgentDemo onNavigate={onNavigate} />
+            </div>
+            <div className="md:hidden">
+              {showMobileMore ? <HeroAgentDemo onNavigate={onNavigate} /> : <MobileHeroPreview />}
             </div>
             <MobileHeroCta
               onNavigate={onNavigate}
