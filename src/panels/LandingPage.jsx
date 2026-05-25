@@ -537,7 +537,7 @@ export default function LandingPage({ onNavigate }) {
               A practical assistant for Tesla Turo hosts and future robotaxi operators: track vehicles, plan charging and maintenance, import rental earnings, and spot pricing opportunities.
             </p>
             <div className="mt-4 hidden gap-2 sm:mt-5 sm:flex sm:flex-wrap">
-              {['Built by John in Florida', 'First Tesla free', 'No credit card required', 'Not affiliated with Tesla'].map((label) => (
+              {['Built by a Tesla owner for Tesla owners', 'First Tesla free', 'No credit card required', 'Not affiliated with Tesla'].map((label) => (
                 <span key={label} className="rounded-full border border-emerald-300/20 bg-emerald-400/10 px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-emerald-200">
                   {label}
                 </span>
@@ -586,7 +586,7 @@ export default function LandingPage({ onNavigate }) {
               )}
             </div>
             <p className="mt-5 hidden text-sm leading-6 text-slate-400 sm:block">
-              Built by a Tesla owner in Florida. Tesla controls autonomous driving availability and execution.
+              Built by a Tesla owner in Florida for other Tesla owners. Tesla controls autonomous driving availability and execution.
             </p>
           </div>
 

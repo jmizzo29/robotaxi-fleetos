@@ -139,7 +139,7 @@ async function testExpectedLandingCopy() {
     'Health on the map',
     'Try the planning demo',
     'Start free',
-    'Built by John in Florida',
+    'Built by a Tesla owner for Tesla owners',
     'Simple, fair pricing.',
     'Secure by Design',
     'Tesla password never shared',

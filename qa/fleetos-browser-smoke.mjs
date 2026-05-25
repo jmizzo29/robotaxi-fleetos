@@ -90,7 +90,7 @@ async function testLanding(browser, profile) {
   if (profile === 'desktop') {
     await page.getByRole('button', { name: 'Try the planning demo' }).waitFor({ timeout: 15000 });
     await page.getByRole('button', { name: 'Start free', exact: true }).waitFor({ timeout: 15000 });
-    await page.getByText('Built by John in Florida').waitFor({ timeout: 15000 });
+    await page.getByText('Built by a Tesla owner for Tesla owners').waitFor({ timeout: 15000 });
     await page.getByText('No credit card required').waitFor({ timeout: 15000 });
     await page.getByText('Tesla password never shared').first().waitFor({ timeout: 15000 });
   } else {
