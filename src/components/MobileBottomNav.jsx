@@ -17,7 +17,7 @@ function NavIcon({ type }) {
 }
 
 const items = [
-  ['overview', 'home', 'Home'],
+  ['overview', 'home', 'Command'],
   ['map', 'map', 'Map'],
   ['fleet', 'fleet', 'Fleet'],
   ['dispatch', 'ai', 'Plan'],
@@ -25,7 +25,7 @@ const items = [
 ];
 
 const menuItems = [
-  ['overview', 'Overview', 'Live operations dashboard'],
+  ['overview', 'Command Center', 'Main owner dashboard'],
   ['onboarding', 'Onboarding', 'Signup and Tesla connection'],
   ['map', 'Fleet Map', 'Your vehicles, status, battery, and health'],
   ['fleet', 'Fleet', 'Vehicle registry'],

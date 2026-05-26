@@ -130,6 +130,9 @@ async function testExpectedLandingCopy() {
     'Maximize earnings with intelligent daily plans for pricing, charging, maintenance & more.',
     'Get Started Free',
     'Try AI Agent',
+    'Ask RoboAgent anything.',
+    'Agent Chat',
+    'public-agent-question',
     'PREDICTIVE MAINTENANCE',
     'RoboAgent Command Center',
     'The AI agent is the product.',
@@ -278,7 +281,7 @@ async function testHealthBurst() {
 }
 
 async function testPublicRouteSmoke() {
-  const routes = ['/', '/#/about', '/#/onboarding', '/#/account', '/#/privacy', '/#/terms'];
+  const routes = ['/', '/#/agent', '/#/about', '/#/onboarding', '/#/account', '/#/privacy', '/#/terms'];
   const results = await Promise.all(routes.map((route) => request(route)));
   const bad = results.filter((result) => result.status !== 200 || !result.text.includes('<div id="root"></div>'));
   if (bad.length > 0) {

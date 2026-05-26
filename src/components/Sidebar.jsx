@@ -7,7 +7,7 @@ export default function Sidebar({
   onNavigate = () => {},
 }) {
   const navItems = [
-    ['overview', 'Overview'],
+    ['overview', 'Command Center'],
     ['onboarding', 'Onboarding'],
     ['map', 'Fleet Map'],
     ['fleet', 'Fleet'],

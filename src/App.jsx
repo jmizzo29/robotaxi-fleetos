@@ -23,7 +23,7 @@ import ForecastPanel from './panels/ForecastPanel';
 import FleetListPanel from './panels/FleetListPanel';
 import IntelligentAlertCenter from './panels/IntelligentAlertCenter';
 import IntegrationsPanel from './panels/IntegrationsPanel';
-import LandingPage, { AgentAboutPage } from './panels/LandingPage';
+import LandingPage, { AgentAboutPage, AgentChatPage } from './panels/LandingPage';
 import LegalPage from './panels/LegalPage';
 import MemoryEventsPanel from './panels/MemoryEventsPanel';
 import MobileCommandDashboard from './panels/MobileCommandDashboard';
@@ -136,6 +136,7 @@ export default function App() {
   const [, setComplianceRevision] = useState(0);
   const [route, navigate] = useHashRoute();
   const isPublicRoute = route === 'landing';
+  const isPublicAgentRoute = route === 'agent';
   const isPublicAboutRoute = route === 'about';
   const isPublicLegalRoute = route === 'privacy' || route === 'terms';
   const isPublicOnboardingRoute = route === 'onboarding';
@@ -280,9 +281,15 @@ export default function App() {
         <div className="hidden md:block">
           <PageHeader
             eyebrow="Live Operations"
-            title={<><span>RoboAgent</span><span className="block text-sky-300">Operations Console</span></>}
-            description="A fleet operating system for live Tesla telemetry, dispatch simulation, charging intelligence, and operational risk monitoring."
+            title={<><span>RoboAgent</span><span className="block text-sky-300">Command Center</span></>}
+            description="The main owner dashboard after sign-in: AI plans, Tesla telemetry, pricing, charging, maintenance, and profitability."
             action={operationsStatus}
+          />
+          <CommandCenter
+            replayMode={replayMode}
+            setReplayMode={setReplayMode}
+            fleet={fleet}
+            enqueueCommand={requestCommand}
           />
           <KPIGrid
             totalRevenue={totalRevenue}
@@ -652,6 +659,10 @@ export default function App() {
 
   if (isPublicRoute) {
     return <LandingPage onNavigate={navigate} />;
+  }
+
+  if (isPublicAgentRoute) {
+    return <AgentChatPage onNavigate={navigate} />;
   }
 
   if (isPublicAboutRoute) {

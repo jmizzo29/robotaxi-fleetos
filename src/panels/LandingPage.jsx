@@ -534,11 +534,136 @@ export default function LandingPage({ onNavigate }) {
 
         <button
           type="button"
-          onClick={() => onNavigate('about')}
+          onClick={() => onNavigate('agent')}
           className="w-full rounded-2xl border border-gray-600 bg-black/10 py-4 text-lg font-medium text-white backdrop-blur-sm transition hover:border-gray-400 hover:bg-white/10"
         >
           Try AI Agent
         </button>
+      </main>
+    </div>
+  );
+}
+
+export function AgentChatPage({ onNavigate }) {
+  const [goal, setGoal] = useState('Maximize my earnings this weekend with 3 Teslas');
+  const [response, setResponse] = useState(() => buildDemoResponse('Maximize my earnings this weekend with 3 Teslas'));
+  const [isThinking, setIsThinking] = useState(false);
+
+  const askAgent = () => {
+    setIsThinking(true);
+    window.setTimeout(() => {
+      setResponse(buildDemoResponse(goal));
+      setIsThinking(false);
+    }, 260);
+  };
+
+  const prompts = [
+    'Maximize my earnings this weekend with 3 Teslas',
+    'Should I raise price this weekend in Tampa?',
+    'How many Model X rentals are available in Orlando?',
+    'What maintenance risks need attention tomorrow?',
+  ];
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-slate-950 to-black px-4 py-5 text-white">
+      <header className="mx-auto mb-5 flex max-w-3xl items-center justify-between">
+        <button type="button" onClick={() => onNavigate('landing')} className="text-sm font-black uppercase tracking-[0.22em] text-teal-300">
+          RoboAgent
+        </button>
+        <button
+          type="button"
+          onClick={() => onNavigate('landing')}
+          className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-slate-200"
+        >
+          Back
+        </button>
+      </header>
+
+      <main className="mx-auto flex min-h-[calc(100vh-92px)] max-w-3xl flex-col">
+        <div className="mb-5">
+          <p className="text-sm font-medium uppercase tracking-wide text-teal-400">Agent Chat</p>
+          <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">Ask RoboAgent anything.</h1>
+          <p className="mt-2 text-sm leading-6 text-slate-400">
+            Try pricing, charging, maintenance, cleaning, profitability, or local rental-market questions before signing up.
+          </p>
+        </div>
+
+        <section className="flex-1 rounded-3xl border border-zinc-800 bg-zinc-950/90 p-4 shadow-2xl shadow-black/40 sm:p-5">
+          <label htmlFor="public-agent-question" className="text-xs font-black uppercase tracking-[0.18em] text-slate-400">
+            Your question
+          </label>
+          <textarea
+            id="public-agent-question"
+            value={goal}
+            onChange={(event) => setGoal(event.target.value)}
+            rows={4}
+            className="mt-3 w-full resize-none rounded-2xl border border-zinc-700 bg-black/60 px-4 py-4 text-base font-semibold leading-7 text-white outline-none transition placeholder:text-slate-600 focus:border-teal-400"
+            placeholder="Ask about pricing, charging, maintenance, local market demand, or profit..."
+          />
+
+          <button
+            type="button"
+            onClick={askAgent}
+            disabled={isThinking}
+            className="mt-3 w-full rounded-2xl bg-teal-500 py-4 text-lg font-semibold text-white transition hover:bg-teal-600 disabled:cursor-wait disabled:opacity-70"
+          >
+            {isThinking ? 'RoboAgent thinking...' : 'Ask RoboAgent'}
+          </button>
+
+          <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
+            {prompts.map((prompt) => (
+              <button
+                key={prompt}
+                type="button"
+                onClick={() => {
+                  setGoal(prompt);
+                  setResponse(buildDemoResponse(prompt));
+                }}
+                className="shrink-0 rounded-full border border-white/10 bg-white/[0.06] px-3 py-2 text-xs font-bold text-slate-200"
+              >
+                {prompt}
+              </button>
+            ))}
+          </div>
+
+          <article className="mt-5 rounded-3xl border border-teal-400/20 bg-teal-400/[0.06] p-5">
+            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-teal-300">Agent response</p>
+                <h2 className="mt-2 text-2xl font-black text-white">{response.title}</h2>
+              </div>
+              <span className="w-fit rounded-full border border-teal-300/20 bg-teal-300/10 px-3 py-1 text-xs font-black text-teal-200">
+                {response.confidence}% confidence
+              </span>
+            </div>
+            <p className="mt-3 text-sm font-semibold leading-6 text-slate-200">{response.summary}</p>
+            <div className="mt-4 grid gap-2 sm:grid-cols-3">
+              {(response.metrics || []).map((metric) => (
+                <div key={metric} className="rounded-2xl border border-white/10 bg-black/25 px-3 py-3 text-xs font-black text-teal-100">
+                  {metric}
+                </div>
+              ))}
+            </div>
+            <div className="mt-4 space-y-2">
+              {(response.steps || []).slice(0, 3).map((step, index) => (
+                <div key={step} className="flex gap-3 rounded-2xl border border-white/10 bg-black/25 p-3">
+                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-teal-500 text-sm font-black text-white">
+                    {index + 1}
+                  </span>
+                  <p className="text-sm font-semibold leading-6 text-slate-200">{step}</p>
+                </div>
+              ))}
+            </div>
+          </article>
+
+          <button
+            type="button"
+            onClick={() => onNavigate('onboarding')}
+            className="mt-5 w-full rounded-2xl border border-white/10 bg-white py-4 text-lg font-black text-black"
+          >
+            Get Started Free
+          </button>
+        </section>
       </main>
     </div>
   );

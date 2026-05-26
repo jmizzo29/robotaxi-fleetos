@@ -136,6 +136,25 @@ async function testAboutAgent(browser, profile) {
   return assertNoRuntimeErrors(`about agent smoke (${profile})`, telemetry);
 }
 
+async function testAgentChat(browser, profile) {
+  const telemetry = await makePage(browser, profile);
+  const { page, context } = telemetry;
+  await page.goto(routeUrl('#/agent'), { waitUntil: 'networkidle' });
+  await page.getByRole('heading', { name: 'Ask RoboAgent anything.' }).waitFor({ timeout: 15000 });
+  await page.locator('#public-agent-question').waitFor({ timeout: 15000 });
+  await page.getByRole('button', { name: 'Ask RoboAgent' }).waitFor({ timeout: 15000 });
+  await page.getByText('Weekend earnings command').waitFor({ timeout: 15000 });
+  await page.locator('#public-agent-question').fill('Should I raise price this weekend in Tampa?');
+  await page.getByRole('button', { name: 'Ask RoboAgent' }).click();
+  await page.getByText('Turo revenue plan').waitFor({ timeout: 15000 });
+  await page.locator('#public-agent-question').fill('How many Model X rentals are available in Orlando?');
+  await page.getByRole('button', { name: 'Ask RoboAgent' }).click();
+  await page.getByText('Model X rental availability in Orlando').waitFor({ timeout: 15000 });
+  await page.getByRole('button', { name: 'Get Started Free' }).waitFor({ timeout: 15000 });
+  await context.close();
+  return assertNoRuntimeErrors(`agent chat smoke (${profile})`, telemetry);
+}
+
 async function testOnboardingStandalone(browser, profile) {
   const telemetry = await makePage(browser, profile);
   const { page, context } = telemetry;
@@ -209,26 +228,25 @@ async function testLandingCtas(browser, profile) {
   await page.goto(routeUrl('/'), { waitUntil: 'networkidle' });
   if (profile === 'desktop') {
     await page.getByRole('button', { name: 'Try AI Agent' }).click();
-    await page.waitForURL('**/#/about', { timeout: 10000 });
-    await page.locator('[data-testid="agent-command-center"]').waitFor({ timeout: 15000 });
+    await page.waitForURL('**/#/agent', { timeout: 10000 });
+    await page.locator('#public-agent-question').waitFor({ timeout: 15000 });
     await page.goto(routeUrl('/'), { waitUntil: 'networkidle' });
     await page.getByRole('button', { name: 'Get Started Free', exact: true }).first().click();
     await page.waitForURL('**/#/onboarding', { timeout: 10000 });
     await page.getByText('Connect Your First Tesla').waitFor({ timeout: 15000 });
   } else {
     await page.getByRole('button', { name: 'Try AI Agent' }).click();
-    await page.waitForURL('**/#/about', { timeout: 10000 });
-    await page.getByRole('button', { name: 'Try AI Agent' }).click();
-    await page.locator('#mobile-hero-agent-input').waitFor({ timeout: 15000 });
-    const heroInput = page.locator('#mobile-hero-agent-input');
+    await page.waitForURL('**/#/agent', { timeout: 10000 });
+    await page.locator('#public-agent-question').waitFor({ timeout: 15000 });
+    const heroInput = page.locator('#public-agent-question');
     await heroInput.fill('Should I raise price this weekend in Tampa?');
-    await page.locator('[data-testid="mobile-hero-agent-demo"]').getByRole('button', { name: 'Ask Agent' }).click();
+    await page.getByRole('button', { name: 'Ask RoboAgent' }).click();
     await page.getByText('Turo revenue plan').first().waitFor({ timeout: 15000 });
     await heroInput.fill('What are the top rented Teslas in Orlando?');
-    await page.locator('[data-testid="mobile-hero-agent-demo"]').getByRole('button', { name: 'Ask Agent' }).click();
+    await page.getByRole('button', { name: 'Ask RoboAgent' }).click();
     await page.getByText('Top rented Teslas in Orlando').first().waitFor({ timeout: 15000 });
     await heroInput.fill('How many Model X rentals are available in Orlando?');
-    await page.locator('[data-testid="mobile-hero-agent-demo"]').getByRole('button', { name: 'Ask Agent' }).click();
+    await page.getByRole('button', { name: 'Ask RoboAgent' }).click();
     await page.getByText('Model X rental availability in Orlando').first().waitFor({ timeout: 15000 });
     await page.goto(routeUrl('/'), { waitUntil: 'networkidle' });
     await page.getByRole('button', { name: 'Get Started Free' }).first().click();
@@ -293,6 +311,7 @@ const tests = [];
 for (const profile of ['desktop', 'mobile']) {
   tests.push(
     [`landing browser smoke (${profile})`, () => testLanding(browser, profile)],
+    [`agent chat smoke (${profile})`, () => testAgentChat(browser, profile)],
     [`about agent smoke (${profile})`, () => testAboutAgent(browser, profile)],
     [`onboarding standalone (${profile})`, () => testOnboardingStandalone(browser, profile)],
     [`account standalone (${profile})`, () => testAccountStandalone(browser, profile)],
