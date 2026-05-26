@@ -692,29 +692,12 @@ export default function App() {
 
   if (isPublicOnboardingRoute) {
     return (
-      <div className="min-h-screen bg-[radial-gradient(circle_at_10%_0%,rgba(14,165,233,0.14),transparent_28%),linear-gradient(180deg,#f6f9fc_0%,#eaf2f7_52%,#ffffff_100%)] px-4 py-5 text-slate-950 sm:px-5 sm:py-6">
-        <header className="mx-auto mb-5 flex max-w-5xl items-center justify-between sm:mb-8">
-          <button type="button" onClick={() => navigate('landing')} className="flex items-center gap-3">
-            <span className="h-2.5 w-2.5 rounded-full bg-sky-500 shadow-lg shadow-sky-200" />
-            <span className="text-sm font-black uppercase tracking-[0.28em] text-slate-950">RoboAgent</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate('landing')}
-            className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-bold text-slate-700 shadow-sm transition hover:border-slate-300"
-          >
-            Back to Home
-          </button>
-        </header>
-        <main className="mx-auto max-w-5xl pb-10">
-          <OnboardingPanel
-            realVehicleCount={realVehicles.length}
-            isLoading={isLoadingReal}
-            onSync={refreshRealTesla}
-            onNavigate={navigate}
-          />
-        </main>
-      </div>
+      <OnboardingPanel
+        realVehicleCount={realVehicles.length}
+        isLoading={isLoadingReal}
+        onSync={refreshRealTesla}
+        onNavigate={navigate}
+      />
     );
   }
 

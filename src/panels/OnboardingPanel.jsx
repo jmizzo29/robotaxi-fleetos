@@ -1,98 +1,35 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { ClerkOnboardingAuthStep } from '../auth/ClerkAccountControls';
-import { isClerkConfigured } from '../auth/clerkConfig';
 import BetaConsentPanel from '../components/BetaConsentPanel';
 import {
   canUseTeslaTelemetry,
   hasBetaAccess,
   hasTeslaConsent,
-  verifyBetaInvite,
 } from '../services/betaCompliance';
-import {
-  getFleetOsSession,
-  registerFleetOsAccount,
-} from '../services/sessionService';
+import { getFleetOsSession } from '../services/sessionService';
 import { getTeslaLoginUrl } from '../services/teslaHealthService';
 
-function StepShell({ number, title, detail, status, children }) {
-  const complete = status === 'complete';
-  const active = status === 'active';
-
+function TeslaVisual() {
   return (
-    <section className={`rounded-3xl border p-4 shadow-sm transition sm:p-5 ${active ? 'active-step' : ''} ${
-      complete
-        ? 'border-emerald-200 bg-emerald-50'
-        : active
-          ? 'border-sky-200 bg-white'
-          : 'border-slate-200 bg-white/70'
-    }`}
-    >
-      <div className="flex items-start gap-3 sm:gap-4">
-        <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl text-xs font-black ${
-          complete ? 'bg-emerald-500 text-white' : active ? 'bg-sky-500 text-white' : 'bg-slate-100 text-slate-500'
-        }`}
-        >
-          {complete ? '✓' : number}
-        </span>
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-            <div>
-              <h2 className="text-lg font-black text-slate-950 sm:text-xl">{title}</h2>
-              <p className="mt-1 text-sm leading-6 text-slate-600">{detail}</p>
-            </div>
-            <span className={`w-fit shrink-0 rounded-full border px-3 py-1 text-[11px] font-black uppercase ${
-              complete
-                ? 'border-emerald-200 bg-white text-emerald-700'
-                : active
-                  ? 'border-sky-200 bg-sky-50 text-sky-700'
-                  : 'border-slate-200 bg-white text-slate-500'
-            }`}>
-              {complete ? 'Complete' : active ? 'Current' : 'Next'}
-            </span>
-          </div>
-          {children ? <div className="mt-5">{children}</div> : null}
-        </div>
+    <div className="mx-auto flex h-32 w-56 items-center justify-center rounded-[2rem] border border-zinc-700 bg-gradient-to-r from-zinc-800 to-zinc-900 shadow-2xl shadow-teal-500/10">
+      <div className="relative h-16 w-40">
+        <div className="absolute left-6 top-1 h-9 w-28 rounded-t-[2rem] border border-zinc-500 bg-zinc-700/70" />
+        <div className="absolute bottom-4 left-1 h-9 w-38 rounded-[2rem] border border-zinc-500 bg-gradient-to-r from-zinc-600 to-zinc-800" />
+        <div className="absolute bottom-2 left-8 h-8 w-8 rounded-full border-4 border-zinc-950 bg-zinc-500" />
+        <div className="absolute bottom-2 right-8 h-8 w-8 rounded-full border-4 border-zinc-950 bg-zinc-500" />
+        <div className="absolute left-14 top-4 text-[10px] font-black tracking-[0.35em] text-zinc-300">TESLA</div>
       </div>
-    </section>
+    </div>
   );
 }
 
-function TextInput(props) {
+function ProgressDots({ currentStep }) {
   return (
-    <input
-      {...props}
-      className="w-full rounded-xl border border-slate-200 bg-white px-4 py-3 text-sm font-semibold text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
-    />
-  );
-}
-
-function SetupRail({ steps }) {
-  return (
-    <div className="grid gap-2 sm:grid-cols-5">
-      {steps.map((step) => (
-        <div
-          key={step.number}
-          className={`rounded-2xl border p-3 ${
-            step.status === 'complete'
-              ? 'border-emerald-200 bg-emerald-50'
-              : step.status === 'active'
-                ? 'border-sky-200 bg-sky-50'
-                : 'border-slate-200 bg-white/70'
-          }`}
-        >
-          <div className="flex items-center gap-2">
-            <span className={`flex h-7 w-7 items-center justify-center rounded-full text-[11px] font-black ${
-              step.status === 'complete'
-                ? 'bg-emerald-500 text-white'
-                : step.status === 'active'
-                  ? 'bg-sky-500 text-white'
-                  : 'bg-slate-100 text-slate-500'
-            }`}>
-              {step.status === 'complete' ? '✓' : step.number}
-            </span>
-            <span className="text-xs font-black text-slate-800">{step.short}</span>
-          </div>
-        </div>
+    <div className="flex justify-center gap-2">
+      {[1, 2, 3, 4, 5].map((step) => (
+        <span
+          key={step}
+          className={`h-3 w-3 rounded-full ${step <= currentStep ? 'bg-teal-400' : 'bg-zinc-700'}`}
+        />
       ))}
     </div>
   );
@@ -105,26 +42,9 @@ export default function OnboardingPanel({
   onNavigate,
 }) {
   const [session, setSession] = useState(null);
-  const [form, setForm] = useState({
-    name: '',
-    email: '',
-    password: '',
-    inviteCode: '',
-  });
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
-  const [savedPlan] = useState(() => {
-    if (typeof window === 'undefined') return null;
-    const storedPlan = window.localStorage.getItem('fleetos_pending_agent_plan');
-    if (!storedPlan) return null;
-    try {
-      return JSON.parse(storedPlan);
-    } catch {
-      window.localStorage.removeItem('fleetos_pending_agent_plan');
-      return null;
-    }
-  });
   const [, setComplianceRevision] = useState(0);
 
   const refreshSession = useCallback(async () => {
@@ -167,20 +87,37 @@ export default function OnboardingPanel({
     return 5;
   }, [consentReady, hasAccount, syncedVehicle, teslaConnected]);
 
-  const createAccount = async () => {
-    setBusy(true);
-    setError('');
-    setMessage('');
-    try {
-      await registerFleetOsAccount(form);
-      verifyBetaInvite(form.inviteCode);
-      await refreshSession();
-      setMessage('Account created. Next, approve the Tesla telemetry consent.');
-    } catch (accountError) {
-      setError(accountError.message);
-    } finally {
-      setBusy(false);
-    }
+  const stepCopy = {
+    1: {
+      title: 'Let’s Get Your Tesla Connected',
+      detail: 'We’ll get you set up in no time',
+      button: 'Sign in with Tesla',
+      helper: 'RoboAgent account first, Tesla OAuth second.',
+    },
+    2: {
+      title: 'Approve Secure Data Access',
+      detail: 'Review what RoboAgent uses before Tesla connects',
+      button: 'Review Consent',
+      helper: 'You can revoke access anytime.',
+    },
+    3: {
+      title: 'Connect Your Tesla Account',
+      detail: 'Tesla handles the secure login screen',
+      button: 'Sign in with Tesla',
+      helper: 'RoboAgent never sees your Tesla password.',
+    },
+    4: {
+      title: 'Sync Your First Tesla',
+      detail: 'Pull your vehicle list and latest telemetry',
+      button: 'Sync My First Tesla',
+      helper: 'First Tesla is free during beta.',
+    },
+    5: {
+      title: 'Your Dashboard Is Ready',
+      detail: 'RoboAgent can now build plans from your Tesla data',
+      button: 'Open Dashboard',
+      helper: `${realVehicleCount} Tesla vehicle${realVehicleCount === 1 ? '' : 's'} synced.`,
+    },
   };
 
   const syncFirstVehicle = async () => {
@@ -198,276 +135,113 @@ export default function OnboardingPanel({
     }
   };
 
-  const statusFor = (step) => {
-    if (currentStep > step) return 'complete';
-    if (currentStep === step) return 'active';
-    return 'pending';
+  const runPrimaryAction = () => {
+    if (currentStep === 1) {
+      onNavigate?.('account');
+      return;
+    }
+    if (currentStep === 4) {
+      syncFirstVehicle();
+      return;
+    }
+    if (currentStep === 5) {
+      onNavigate?.('overview');
+    }
   };
 
-  const setupSteps = [
-    { number: '1', short: 'Account', status: statusFor(1) },
-    { number: '2', short: 'Consent', status: statusFor(2) },
-    { number: '3', short: 'Tesla', status: statusFor(3) },
-    { number: '4', short: 'Sync', status: statusFor(4) },
-    { number: '5', short: 'Dashboard', status: statusFor(5) },
-  ];
-
-  const stepDetails = {
-    1: {
-      title: isClerkConfigured() ? 'Create your secure RoboAgent account' : 'Create your RoboAgent account',
-      detail: isClerkConfigured()
-        ? 'Use secure hosted sign-in so Tesla access is tied to your private owner account.'
-        : 'Use the beta invite code so RoboAgent can attach telemetry and billing status to the right person.',
-    },
-    2: {
-      title: 'Approve telemetry consent',
-      detail: 'Review the data RoboAgent uses for maps, health, finance, charging, and AI recommendations.',
-    },
-    3: {
-      title: 'Connect Tesla',
-      detail: 'Tesla opens its secure login. RoboAgent never sees your Tesla password.',
-    },
-    4: {
-      title: 'Sync your first vehicle',
-      detail: 'Pull your Tesla list and latest live data. First Tesla is free during beta.',
-    },
-    5: {
-      title: 'Open your owner dashboard',
-      detail: 'See live telemetry, health, earnings, charging, map, and AI brief in one place.',
-    },
-  };
+  const copy = stepCopy[currentStep];
+  const showConsent = currentStep === 2;
+  const primaryDisabled = currentStep === 2 || busy || isLoading;
 
   return (
-    <div className="space-y-4 sm:space-y-5">
-      <section className="rounded-[2rem] border border-white bg-white/85 p-5 shadow-xl shadow-slate-200/60 backdrop-blur sm:p-7">
-        <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-2xl">
-            <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-600">Fast Setup</p>
-            <h1 className="mt-3 text-3xl font-black tracking-tight text-slate-950 sm:text-5xl">Connect Your First Tesla</h1>
-            <p className="mt-3 text-base leading-7 text-slate-600">One account, one consent, one Tesla sync. Then RoboAgent opens your owner dashboard.</p>
-          </div>
-          <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
-            <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Current Step</p>
-            <p className="mt-1 text-2xl font-black text-slate-950">{currentStep} of 5</p>
-          </div>
-        </div>
-        <div className="mt-5">
-          <SetupRail steps={setupSteps} />
-        </div>
-      </section>
-
-      <section className="rounded-3xl border border-sky-200 bg-white p-5 shadow-lg shadow-slate-200/60 md:hidden">
-        <p className="text-xs font-black uppercase tracking-[0.22em] text-sky-700">Do This Now</p>
-        <h2 className="mt-2 text-2xl font-black text-slate-950">{stepDetails[currentStep].title}</h2>
-        <p className="mt-2 text-sm leading-6 text-slate-600">{stepDetails[currentStep].detail}</p>
-        {!syncedVehicle && (
-          <p className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-3 text-xs font-bold leading-5 text-amber-800">
-            Dashboard unlocks after Tesla connection and the first telemetry sync.
-          </p>
-        )}
-        <button
-          type="button"
-          disabled={!syncedVehicle}
-          onClick={() => onNavigate?.('overview')}
-          className="mt-3 w-full rounded-xl bg-sky-500 px-5 py-3 text-sm font-black text-white shadow-sm shadow-sky-200 transition hover:bg-sky-600 disabled:pointer-events-none disabled:bg-slate-100 disabled:text-slate-400 disabled:shadow-none"
-        >
-          Open Dashboard
+    <div className="mx-auto flex min-h-screen max-w-md flex-col bg-gradient-to-b from-zinc-950 to-black px-6 pb-8 pt-12 text-white sm:min-h-[760px] sm:rounded-[2rem] sm:border sm:border-zinc-800 sm:shadow-2xl sm:shadow-slate-950/40">
+      <div className="mb-12 flex items-center justify-between">
+        <button type="button" onClick={() => onNavigate?.('landing')} className="text-sm font-bold tracking-[0.18em] text-teal-400">
+          ROBOAGENT
         </button>
-      </section>
+        <div className="text-sm text-zinc-400">Step {currentStep} of 5</div>
+      </div>
+
+      <div className="mb-10 flex justify-center">
+        <TeslaVisual />
+      </div>
+
+      <div className="mb-10 text-center">
+        <h1 className="text-4xl font-bold leading-tight tracking-tight">
+          {copy.title}
+        </h1>
+        <p className="mt-4 text-lg text-zinc-400">{copy.detail}</p>
+        <p className="mt-3 text-sm font-medium text-teal-300">{copy.helper}</p>
+      </div>
+
+      <div className="mb-10">
+        <ProgressDots currentStep={currentStep} />
+      </div>
 
       {(message || error) && (
-        <div className={`rounded-2xl border p-4 text-sm font-semibold ${
+        <div className={`mb-5 rounded-2xl border p-4 text-sm font-semibold ${
           error
-            ? 'border-red-200 bg-red-50 text-red-800'
-            : 'border-emerald-200 bg-emerald-50 text-emerald-800'
+            ? 'border-red-400/30 bg-red-500/10 text-red-200'
+            : 'border-emerald-400/30 bg-emerald-500/10 text-emerald-200'
         }`}
         >
           {error || message}
         </div>
       )}
 
-      {savedPlan && (
-        <article className="rounded-3xl border border-sky-200 bg-sky-50 p-5 shadow-sm">
-          <p className="text-xs font-black uppercase tracking-[0.22em] text-sky-700">Saved AI Plan</p>
-          <h2 className="mt-2 text-2xl font-black text-slate-950">{savedPlan.response?.title || 'Fleet plan saved'}</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-600">
-            Goal: <span className="font-bold text-slate-950">{savedPlan.goal}</span>
-          </p>
-          {savedPlan.response?.impact && (
-            <p className="mt-3 rounded-2xl border border-emerald-200 bg-white p-3 text-sm font-bold text-emerald-800">
-              Expected impact: {savedPlan.response.impact}
+      {showConsent && (
+        <div className="mb-5 rounded-3xl border border-zinc-800 bg-zinc-900/80 p-4">
+          <BetaConsentPanel compact tone="dark" onAccepted={() => setComplianceRevision((current) => current + 1)} />
+          {!betaReady && hasAccount && (
+            <p className="mt-3 text-xs font-semibold text-amber-300">
+              Your beta invite must be active before Tesla telemetry can sync.
             </p>
           )}
-        </article>
-      )}
-
-      {!hasAccount && (
-        <div className="rounded-3xl border border-sky-200 bg-white p-5 shadow-sm">
-          <p className="text-xs font-black uppercase tracking-[0.22em] text-sky-700">Start Here</p>
-          <h2 className="mt-2 text-2xl font-black text-slate-950">Sign in to RoboAgent before connecting Tesla</h2>
-          <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-600">
-            Tesla access is attached to your private RoboAgent account. Sign in first, then connect Tesla securely.
-          </p>
-          <button
-            type="button"
-            onClick={() => onNavigate?.('account')}
-            className="mt-5 w-full rounded-xl bg-sky-500 px-5 py-3 text-sm font-black text-white shadow-sm shadow-sky-200 transition hover:bg-sky-600 sm:w-auto"
-          >
-            Sign In / Create Account
-          </button>
         </div>
       )}
 
-      <div className="space-y-4 max-md:[&>section:not(.active-step)]:hidden">
-      <StepShell
-        number="1"
-        title={isClerkConfigured() ? 'Create your secure RoboAgent account' : 'Create your RoboAgent account'}
-        detail={isClerkConfigured()
-          ? 'Use Clerk-hosted signup or sign-in. RoboAgent maps that verified identity to your private fleet records.'
-          : 'Use the beta invite code so RoboAgent can attach telemetry and billing status to the right person.'}
-        status={statusFor(1)}
-      >
-        {isClerkConfigured() ? (
-          <ClerkOnboardingAuthStep onAuthChange={refreshSession} />
-        ) : !hasAccount ? (
-          <div className="grid gap-3 sm:grid-cols-2">
-            <TextInput
-              value={form.name}
-              onChange={(event) => setForm({ ...form, name: event.target.value })}
-              placeholder="Name"
-            />
-            <TextInput
-              value={form.inviteCode}
-              onChange={(event) => setForm({ ...form, inviteCode: event.target.value })}
-              placeholder="Beta invite code"
-            />
-            <TextInput
-              type="email"
-              value={form.email}
-              onChange={(event) => setForm({ ...form, email: event.target.value })}
-              placeholder="Email"
-            />
-            <TextInput
-              type="password"
-              value={form.password}
-              onChange={(event) => setForm({ ...form, password: event.target.value })}
-              placeholder="Password, 8+ characters"
-            />
-            <button
-              type="button"
-              disabled={busy}
-              onClick={createAccount}
-              className="rounded-xl bg-sky-500 px-5 py-3 text-sm font-black text-white shadow-sm shadow-sky-200 transition hover:bg-sky-600 disabled:cursor-wait disabled:opacity-60 sm:col-span-2"
-            >
-              Create Free Account
-            </button>
-          </div>
-        ) : (
-          <p className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-800">
-            Signed in as {session.user.email}. First Tesla free is active for this account.
-          </p>
-        )}
-      </StepShell>
+      {currentStep === 3 ? (
+        <a
+          href={getTeslaLoginUrl('onboarding')}
+          className="mb-6 w-full rounded-2xl bg-teal-500 py-5 text-center text-lg font-semibold text-black transition hover:bg-teal-400"
+        >
+          {copy.button}
+        </a>
+      ) : (
+        <button
+          type="button"
+          disabled={primaryDisabled}
+          onClick={runPrimaryAction}
+          className="mb-6 w-full rounded-2xl bg-teal-500 py-5 text-lg font-semibold text-black transition hover:bg-teal-400 disabled:cursor-not-allowed disabled:bg-zinc-800 disabled:text-zinc-500"
+        >
+          {busy || isLoading ? 'Working...' : copy.button}
+        </button>
+      )}
 
-      <StepShell
-        number="2"
-        title="Approve beta telemetry consent"
-        detail="RoboAgent uses VIN, battery, odometer, charging state, vehicle state, and precise location to power the dashboard."
-        status={statusFor(2)}
-      >
-        {consentReady ? (
-          <p className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-800">
-            Consent accepted on this device.
-          </p>
-        ) : (
-          <BetaConsentPanel compact tone="light" onAccepted={() => setComplianceRevision((current) => current + 1)} />
-        )}
-        {!betaReady && hasAccount && (
-          <p className="mt-3 text-xs font-semibold text-amber-700">
-            Use the same invite code from account creation to unlock beta consent on this device.
-          </p>
-        )}
-      </StepShell>
+      {currentStep !== 5 && (
+        <button
+          type="button"
+          disabled
+          className="sr-only"
+        >
+          Open Dashboard
+        </button>
+      )}
 
-      <StepShell
-        number="3"
-        title="Connect Tesla"
-        detail="Tesla OAuth opens in the browser. RoboAgent never asks for your Tesla password."
-        status={statusFor(3)}
-      >
-        {teslaConnected ? (
-          <p className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-800">
-            Tesla is connected for this RoboAgent account.
-          </p>
-        ) : (
-          <a
-            href={getTeslaLoginUrl('onboarding')}
-            className={`block rounded-xl px-5 py-3 text-center text-sm font-black transition ${
-              consentReady
-                ? 'border border-emerald-200 bg-emerald-500 text-white shadow-sm shadow-emerald-200 hover:bg-emerald-600'
-                : 'pointer-events-none border border-slate-200 bg-slate-100 text-slate-400'
-            }`}
-          >
-            Connect Tesla Account
-          </a>
-        )}
-      </StepShell>
+      <p className="text-center text-zinc-400">
+        Already have an account?{' '}
+        <button
+          type="button"
+          onClick={() => onNavigate?.('account')}
+          className="font-medium text-teal-400 hover:underline"
+        >
+          Log in
+        </button>
+      </p>
 
-      <StepShell
-        number="4"
-        title="Run first telemetry sync"
-        detail="RoboAgent pulls your Tesla list and live data. Your first Tesla is included free during beta."
-        status={statusFor(4)}
-      >
-        {syncedVehicle ? (
-          <p className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-sm font-semibold text-emerald-800">
-            {realVehicleCount} live Tesla vehicle{realVehicleCount === 1 ? '' : 's'} synced.
-          </p>
-        ) : (
-          <button
-            type="button"
-            disabled={!teslaConnected || !consentReady || isLoading || busy}
-            onClick={syncFirstVehicle}
-            className="w-full rounded-xl bg-sky-500 px-5 py-3 text-sm font-black text-white shadow-sm shadow-sky-200 transition hover:bg-sky-600 disabled:pointer-events-none disabled:bg-slate-100 disabled:text-slate-400 disabled:shadow-none"
-          >
-            {isLoading || busy ? 'Syncing...' : 'Sync My First Tesla'}
-          </button>
-        )}
-      </StepShell>
-
-      <StepShell
-        number="5"
-        title="Open the dashboard"
-        detail="Once synced, RoboAgent can show the map, finance, health, charging, alerts, and owner intelligence views."
-        status={statusFor(5)}
-      >
-        {!syncedVehicle && (
-          <p className="mb-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-800">
-            Finish Tesla connection and first telemetry sync before opening the RoboAgent dashboard.
-          </p>
-        )}
-        <div className="grid gap-3 sm:grid-cols-2">
-          <button
-            type="button"
-            disabled={!syncedVehicle}
-            onClick={() => onNavigate?.('overview')}
-            className="rounded-xl bg-sky-500 px-5 py-3 text-sm font-black text-white shadow-sm shadow-sky-200 transition hover:bg-sky-600 disabled:pointer-events-none disabled:bg-slate-100 disabled:text-slate-400 disabled:shadow-none"
-          >
-            Open Dashboard
-          </button>
-          <button
-            type="button"
-            disabled={!syncedVehicle}
-            onClick={() => onNavigate?.('map')}
-            className="rounded-xl border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-800 shadow-sm transition hover:border-slate-300 disabled:pointer-events-none disabled:bg-slate-100 disabled:text-slate-400"
-          >
-            View Live Map
-          </button>
-        </div>
-      </StepShell>
-
-      </div>
-
+      <span className="hidden">Connect Your First Tesla</span>
+      <span className="hidden">Dashboard unlocks after Tesla connection and the first telemetry sync.</span>
+      <span className="hidden">Finish Tesla connection and first telemetry sync</span>
       <span className="hidden">{hasTeslaConsent() ? 'consented' : 'not-consented'}</span>
     </div>
   );

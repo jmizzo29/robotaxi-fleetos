@@ -162,16 +162,12 @@ async function testOnboardingStandalone(browser, profile) {
   const telemetry = await makePage(browser, profile);
   const { page, context } = telemetry;
   await page.goto(routeUrl('#/onboarding'), { waitUntil: 'networkidle' });
-  await page.getByText('Connect Your First Tesla').waitFor({ timeout: 15000 });
+  await page.getByText('Let’s Get Your Tesla Connected').waitFor({ timeout: 15000 });
+  await page.getByText('Step 1 of 5').waitFor({ timeout: 15000 });
+  await page.getByRole('button', { name: 'Sign in with Tesla' }).waitFor({ timeout: 15000 });
+  await page.getByRole('button', { name: 'Log in' }).waitFor({ timeout: 15000 });
   const sideMenuVisible = await page.getByRole('button', { name: 'Fleet', exact: true }).count();
   if (sideMenuVisible > 0) throw new Error('App navigation is visible on onboarding.');
-  if (profile === 'mobile') {
-    await page.getByText('Dashboard unlocks after Tesla connection and the first telemetry sync.').waitFor({ timeout: 15000 });
-  } else {
-    await page.getByText('Finish Tesla connection and first telemetry sync').waitFor({ timeout: 15000 });
-  }
-  const dashboard = page.getByRole('button', { name: 'Open Dashboard' });
-  if (!(await dashboard.isDisabled())) throw new Error('Open Dashboard should be disabled before first sync.');
   await context.close();
   return assertNoRuntimeErrors(`onboarding standalone (${profile})`, telemetry);
 }
@@ -236,7 +232,7 @@ async function testLandingCtas(browser, profile) {
     await page.goto(routeUrl('/'), { waitUntil: 'networkidle' });
     await page.getByRole('button', { name: 'Get Started Free', exact: true }).first().click();
     await page.waitForURL('**/#/onboarding', { timeout: 10000 });
-    await page.getByText('Connect Your First Tesla').waitFor({ timeout: 15000 });
+    await page.getByText('Let’s Get Your Tesla Connected').waitFor({ timeout: 15000 });
   } else {
     await page.getByRole('button', { name: 'Try AI Agent' }).click();
     await page.waitForURL('**/#/agent', { timeout: 10000 });
@@ -254,7 +250,7 @@ async function testLandingCtas(browser, profile) {
     await page.goto(routeUrl('/'), { waitUntil: 'networkidle' });
     await page.getByRole('button', { name: 'Get Started Free' }).first().click();
     await page.waitForURL('**/#/onboarding', { timeout: 10000 });
-    await page.getByText('Sign in to RoboAgent before connecting Tesla').waitFor({ timeout: 15000 });
+    await page.getByText('Let’s Get Your Tesla Connected').waitFor({ timeout: 15000 });
   }
   await context.close();
   return assertNoRuntimeErrors(`landing CTA to onboarding (${profile})`, telemetry);
