@@ -262,7 +262,7 @@ export default function OnboardingPanel({
         <p className="mt-2 text-sm leading-6 text-slate-600">{stepDetails[currentStep].detail}</p>
         {!syncedVehicle && (
           <p className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-3 text-xs font-bold leading-5 text-amber-800">
-            Finish Tesla connection and first telemetry sync before opening the RoboAgent dashboard.
+            Dashboard unlocks after Tesla connection and the first telemetry sync.
           </p>
         )}
         <button
