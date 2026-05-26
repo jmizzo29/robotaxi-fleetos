@@ -410,7 +410,21 @@ function OwnerOutcomePanel() {
   ];
 
   return (
-    <aside className="rounded-3xl border border-slate-200 bg-white p-5 shadow-xl shadow-slate-300/40 lg:p-6">
+    <aside className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-300/40">
+      <div className="relative aspect-[16/9] overflow-hidden bg-slate-100">
+        <img
+          src="/images/roboagent-tesla-rental-hero.png"
+          alt="White electric vehicle in a Florida driveway with a RoboAgent-style dashboard preview"
+          className="h-full w-full object-cover"
+          loading="eager"
+        />
+        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/70 via-slate-950/20 to-transparent p-4">
+          <div className="w-fit rounded-full border border-white/20 bg-white/90 px-3 py-1 text-xs font-black uppercase text-slate-900 shadow-sm">
+            Real owner workflow
+          </div>
+        </div>
+      </div>
+      <div className="p-5 lg:p-6">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-700">Owner Command Brief</p>
@@ -461,6 +475,7 @@ function OwnerOutcomePanel() {
         <p className="mt-2 text-sm font-bold leading-6 text-slate-800">
           Raise the Orlando Model Y weekend price 18%, charge after 11 PM, and fix Tampa tire pressure before the next guest.
         </p>
+      </div>
       </div>
     </aside>
   );
@@ -657,13 +672,13 @@ export default function LandingPage({ onNavigate }) {
               Built by a Tesla owner for Tesla owners
             </p>
             <h1 className="text-[2.65rem] font-black leading-[0.96] tracking-tight text-slate-950 sm:text-6xl sm:leading-[0.98] lg:text-[4.65rem]">
-              Stop guessing. Run a smarter Tesla rental.
+              Your Tesla rental, planned every morning.
             </h1>
             <p className="mt-5 hidden max-w-xl text-xl font-bold leading-8 text-slate-700 md:block">
-              RoboAgent gives owners a daily profit plan for pricing, charging, maintenance, and readiness, so every Tesla has a clearer path to earning more.
+              RoboAgent checks your Tesla, pricing, charging, maintenance, and bookings, then gives you one clear plan to make more money with less stress.
             </p>
             <p className="mt-3 max-w-md text-base font-bold leading-6 text-slate-700 md:hidden">
-              Get a daily profit plan for pricing, charging, maintenance and readiness.
+              One clear daily plan for pricing, charging, maintenance and earnings.
             </p>
             <div className="md:hidden">
               <MobileHeroCta

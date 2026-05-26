@@ -75,9 +75,10 @@ async function testLanding(browser, profile) {
   const { page, context } = telemetry;
   await page.goto(routeUrl('?qa=browser'), { waitUntil: 'networkidle' });
   await page.getByText('RoboAgent', { exact: true }).first().waitFor({ timeout: 15000 });
-  await page.getByText('Stop guessing. Run a smarter Tesla rental.').waitFor({ timeout: 15000 });
+  await page.getByText('Your Tesla rental, planned every morning.').waitFor({ timeout: 15000 });
   if (profile === 'desktop') {
     await page.getByText('Today\'s money and readiness plan').waitFor({ timeout: 15000 });
+    await page.getByRole('img', { name: 'White electric vehicle in a Florida driveway with a RoboAgent-style dashboard preview' }).waitFor({ timeout: 15000 });
   }
   if (profile === 'desktop') {
     await page.locator('#hero-agent-input').waitFor({ timeout: 15000 });
@@ -99,7 +100,7 @@ async function testLanding(browser, profile) {
   } else {
     await page.getByRole('button', { name: 'Start Free' }).first().waitFor({ timeout: 15000 });
     await page.getByRole('button', { name: 'Try AI Agent' }).waitFor({ timeout: 15000 });
-    await page.getByText('Get a daily profit plan for pricing, charging, maintenance and readiness.').waitFor({ timeout: 15000 });
+    await page.getByText('One clear daily plan for pricing, charging, maintenance and earnings.').waitFor({ timeout: 15000 });
     await page.getByText('Secure Tesla Login').waitFor({ timeout: 15000 });
     const mobilePreview = page.locator('[data-testid="mobile-hero-preview"]');
     await mobilePreview.waitFor({ timeout: 15000 });
