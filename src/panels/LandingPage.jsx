@@ -309,6 +309,13 @@ function OwnerOutcomePanel() {
     ['Model 3 - Tampa', 'Watch', '81/100', '$188', 'Check tire pressure before pickup'],
     ['Cybercab - Future', 'Planning', '98/100', 'Future', 'Track Robotaxi readiness'],
   ];
+  const agentCapabilities = [
+    ['Dynamic pricing', '+18% Orlando weekend'],
+    ['Daily AI plan', '3 owner actions ready'],
+    ['Predictive maintenance', 'Tampa tire watch'],
+    ['Charging + cleaning', '11 PM charge window'],
+    ['Profitability insight', '+$284 projected'],
+  ];
 
   return (
     <aside className="grid overflow-hidden bg-white/0 lg:grid-cols-[0.95fr_1.05fr] lg:items-stretch">
@@ -328,20 +335,29 @@ function OwnerOutcomePanel() {
       <div className="flex flex-col justify-center bg-white px-0 py-6 lg:rounded-r-[2rem] lg:px-8 lg:py-10 lg:shadow-2xl lg:shadow-slate-300/40">
       <div className="flex items-start justify-between gap-4">
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-700">Owner Command Brief</p>
-          <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950">Today&apos;s money and readiness plan</h2>
+          <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-700">RoboAgent Command Center</p>
+          <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950">The AI agent is the product.</h2>
         </div>
         <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">
-          Tesla owner-built
+          Agent active
         </span>
+      </div>
+
+      <div className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-5">
+        {agentCapabilities.map(([label, value]) => (
+          <div key={label} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+            <p className="text-[9px] font-black uppercase tracking-[0.14em] text-slate-500">{label}</p>
+            <p className="mt-2 text-sm font-black leading-5 text-slate-950">{value}</p>
+          </div>
+        ))}
       </div>
 
       <div className="mt-5 rounded-2xl border border-sky-200 bg-[linear-gradient(135deg,#eef8ff_0%,#ffffff_56%,#ecfdf5_100%)] p-4 shadow-sm">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-sky-700">7:04 AM Morning Brief</p>
+            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-sky-700">7:04 AM AI plan ready</p>
             <p className="mt-2 text-lg font-black leading-6 text-slate-950">
-              Orlando Model Y can earn more this weekend. Tampa Model 3 needs tire pressure checked before handoff.
+              Raise Orlando pricing, charge after 11 PM, clean before pickup, and fix the Tampa tire-pressure risk.
             </p>
           </div>
           <div className="grid grid-cols-2 gap-2 md:w-52">
@@ -360,7 +376,7 @@ function OwnerOutcomePanel() {
             Approve Plan
           </button>
           <button type="button" className="rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-black text-slate-700">
-            Review Details
+            Ask Follow-up
           </button>
         </div>
       </div>
@@ -392,6 +408,12 @@ function OwnerOutcomePanel() {
 }
 
 function MobileHeroPreview() {
+  const agentCards = [
+    ['Pricing', '+18% weekend'],
+    ['Maintenance', 'Tire watch'],
+    ['Charging', '11 PM window'],
+    ['Profit', '+$284'],
+  ];
   const vehicleRows = [
     {
       name: 'Model Y - Orlando',
@@ -426,24 +448,19 @@ function MobileHeroPreview() {
     >
       <div className="flex items-center justify-between gap-3">
         <div>
-          <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">Owner Dashboard</p>
-          <h2 className="mt-1 text-xl font-black tracking-tight text-slate-950">Today&apos;s Fleet Plan</h2>
+          <p className="text-[10px] font-black uppercase tracking-[0.22em] text-slate-500">AI Agent</p>
+          <h2 className="mt-1 text-xl font-black tracking-tight text-slate-950">Today&apos;s Plan</h2>
         </div>
         <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[10px] font-black uppercase text-emerald-700">
-          AI Ready
+          Active
         </span>
       </div>
 
-      <div className="mt-4 grid grid-cols-3 gap-2">
-        {[
-          ['Revenue', '$287', 'Today'],
-          ['Utilization', '82%', 'Next 7d'],
-          ['Vehicles', '3', 'Tracked'],
-        ].map(([label, value, detail]) => (
+      <div className="mt-4 grid grid-cols-2 gap-2">
+        {agentCards.map(([label, value]) => (
           <div key={label} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
             <p className="text-[9px] font-black uppercase tracking-[0.16em] text-slate-500">{label}</p>
-            <p className="mt-2 text-xl font-black tracking-tight text-slate-950">{value}</p>
-            <p className="mt-1 text-[10px] font-bold text-slate-500">{detail}</p>
+            <p className="mt-2 text-lg font-black tracking-tight text-slate-950">{value}</p>
           </div>
         ))}
       </div>
@@ -453,7 +470,7 @@ function MobileHeroPreview() {
           <div className="flex items-start gap-3">
             <div className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-sky-400 shadow-lg shadow-sky-300" />
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-sky-700">7:04 AM Brief Ready</p>
+              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-sky-700">7:04 AM AI Plan</p>
               <p className="mt-1 text-sm font-black leading-5 text-slate-950">
                 Raise Orlando pricing, charge after 11 PM, and check Tampa tires before pickup.
               </p>
@@ -485,7 +502,7 @@ function MobileHeroPreview() {
       <div className="mt-3 rounded-xl border border-sky-200 bg-sky-50 p-3">
         <p className="text-[10px] font-black uppercase tracking-[0.16em] text-sky-700">AI Brief</p>
         <p className="mt-2 text-sm font-bold leading-6 text-slate-800">
-          Model Y has the best return this week. Raise weekend pricing and check Tampa tires before the next trip.
+          Dynamic pricing, maintenance, charging, cleaning, and profitability, all in one owner action list.
         </p>
       </div>
     </aside>
@@ -574,13 +591,13 @@ export default function LandingPage({ onNavigate }) {
               Built by a Tesla owner for Tesla owners
             </p>
             <h1 className="text-[2.65rem] font-black leading-[0.96] tracking-tight text-slate-950 sm:text-6xl sm:leading-[0.98] lg:text-[4.65rem]">
-              Your Tesla rental, planned every morning.
+              Your AI agent for Tesla rental profit.
             </h1>
             <p className="mt-5 hidden max-w-xl text-xl font-bold leading-8 text-slate-700 md:block">
-              RoboAgent checks your Tesla, pricing, charging, maintenance, and bookings, then gives you one clear plan to make more money with less stress.
+              RoboAgent plans dynamic Turo pricing, maintenance, charging, cleaning, and profitability before the day starts.
             </p>
             <p className="mt-3 max-w-md text-base font-bold leading-6 text-slate-700 md:hidden">
-              One clear daily plan for pricing, charging, maintenance and earnings.
+              Daily AI plans for pricing, maintenance, charging, cleaning and profit.
             </p>
             <div className="md:hidden">
               <MobileHeroCta
@@ -590,7 +607,7 @@ export default function LandingPage({ onNavigate }) {
               />
             </div>
             <div className="mt-4 hidden gap-2 sm:mt-5 sm:flex sm:flex-wrap">
-              {['Daily profit plan', 'More booked days', 'Fewer surprise issues', 'First Tesla free'].map((label) => (
+              {['Dynamic Turo pricing', 'Predictive maintenance', 'Smart charging', 'Profit insights'].map((label) => (
                 <span key={label} className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-emerald-800">
                   {label}
                 </span>

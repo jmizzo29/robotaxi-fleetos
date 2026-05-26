@@ -75,15 +75,19 @@ async function testLanding(browser, profile) {
   const { page, context } = telemetry;
   await page.goto(routeUrl('?qa=browser'), { waitUntil: 'networkidle' });
   await page.getByText('RoboAgent', { exact: true }).first().waitFor({ timeout: 15000 });
-  await page.getByText('Your Tesla rental, planned every morning.').waitFor({ timeout: 15000 });
+  await page.getByText('Your AI agent for Tesla rental profit.').waitFor({ timeout: 15000 });
   if (profile === 'desktop') {
-    await page.getByText('Today\'s money and readiness plan').waitFor({ timeout: 15000 });
+    await page.getByText('The AI agent is the product.').waitFor({ timeout: 15000 });
     await page.getByRole('img', { name: 'White electric vehicle in a Florida driveway with a RoboAgent-style dashboard preview' }).waitFor({ timeout: 15000 });
-    await page.getByText('7:04 AM Morning Brief').waitFor({ timeout: 15000 });
+    await page.getByText('Dynamic pricing').waitFor({ timeout: 15000 });
+    await page.getByText('Predictive maintenance').waitFor({ timeout: 15000 });
+    await page.getByText('Profitability insight').waitFor({ timeout: 15000 });
+    await page.getByText('7:04 AM AI plan ready').waitFor({ timeout: 15000 });
     await page.getByRole('button', { name: 'Approve Plan' }).waitFor({ timeout: 15000 });
+    await page.getByRole('button', { name: 'Ask Follow-up' }).waitFor({ timeout: 15000 });
     await page.getByRole('button', { name: 'Start Free', exact: true }).first().waitFor({ timeout: 15000 });
     await page.getByText('Built by a Tesla owner for Tesla owners').waitFor({ timeout: 15000 });
-    await page.getByText('Daily profit plan', { exact: true }).waitFor({ timeout: 15000 });
+    await page.getByText('Dynamic Turo pricing', { exact: true }).waitFor({ timeout: 15000 });
     if (await page.locator('#hero-agent-input').count()) {
       throw new Error('Desktop landing should not show the old stacked AI demo input.');
     }
@@ -93,14 +97,17 @@ async function testLanding(browser, profile) {
   } else {
     await page.getByRole('button', { name: 'Start Free' }).first().waitFor({ timeout: 15000 });
     await page.getByRole('button', { name: 'Try AI Agent' }).waitFor({ timeout: 15000 });
-    await page.getByText('One clear daily plan for pricing, charging, maintenance and earnings.').waitFor({ timeout: 15000 });
+    await page.getByText('Daily AI plans for pricing, maintenance, charging, cleaning and profit.').waitFor({ timeout: 15000 });
     await page.getByText('Secure Tesla Login').waitFor({ timeout: 15000 });
     const mobilePreview = page.locator('[data-testid="mobile-hero-preview"]');
     await mobilePreview.waitFor({ timeout: 15000 });
-    await mobilePreview.getByText('Owner Dashboard').waitFor({ timeout: 15000 });
-    await mobilePreview.getByText("Today's Fleet Plan").waitFor({ timeout: 15000 });
-    await mobilePreview.getByText('AI Ready').waitFor({ timeout: 15000 });
-    await mobilePreview.getByText('Revenue').waitFor({ timeout: 15000 });
+    await mobilePreview.getByText('AI Agent').waitFor({ timeout: 15000 });
+    await mobilePreview.getByText("Today's Plan").waitFor({ timeout: 15000 });
+    await mobilePreview.getByText('Active').waitFor({ timeout: 15000 });
+    await mobilePreview.getByText('Pricing').waitFor({ timeout: 15000 });
+    await mobilePreview.getByText('Maintenance').waitFor({ timeout: 15000 });
+    await mobilePreview.getByText('Charging').waitFor({ timeout: 15000 });
+    await mobilePreview.getByText('Profit').waitFor({ timeout: 15000 });
     await mobilePreview.getByText('Model Y - Orlando').waitFor({ timeout: 15000 });
     await mobilePreview.getByText('Model 3 - Tampa').waitFor({ timeout: 15000 });
     await mobilePreview.getByText('18 trips').waitFor({ timeout: 15000 });
