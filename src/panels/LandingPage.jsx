@@ -574,7 +574,10 @@ export function AgentChatPage({ onNavigate }) {
           </div>
           <div>
             <p className="font-semibold text-white">RoboAgent</p>
-            <p className="flex items-center gap-1 text-xs text-teal-400">● Online</p>
+            <p data-testid="agent-online-status" className="flex items-center gap-1 text-xs text-teal-400">
+              <span aria-hidden="true">●</span>
+              <span>Online</span>
+            </p>
           </div>
         </div>
         <button type="button" onClick={() => onNavigate('landing')} className="text-xl text-zinc-400 hover:text-white" aria-label="Back home">

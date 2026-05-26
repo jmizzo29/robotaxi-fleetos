@@ -140,7 +140,7 @@ async function testAgentChat(browser, profile) {
   const telemetry = await makePage(browser, profile);
   const { page, context } = telemetry;
   await page.goto(routeUrl('#/agent'), { waitUntil: 'networkidle' });
-  await page.getByText('● Online').waitFor({ timeout: 15000 });
+  await page.locator('[data-testid="agent-online-status"]').getByText('Online').waitFor({ timeout: 15000 });
   await page.getByText('Good morning. I\'ve analyzed your fleet.').waitFor({ timeout: 15000 });
   await page.locator('#public-agent-question').waitFor({ timeout: 15000 });
   await page.getByRole('button', { name: 'Ask RoboAgent' }).waitFor({ timeout: 15000 });
