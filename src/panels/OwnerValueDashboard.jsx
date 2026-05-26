@@ -22,6 +22,124 @@ function Metric({ label, value, helper, tone = 'text-white' }) {
   );
 }
 
+function formatTelemetryValue(value) {
+  if (value === null || value === undefined || value === '') return 'Unavailable';
+  if (typeof value === 'boolean') return value ? 'Yes' : 'No';
+  if (typeof value === 'number') {
+    if (!Number.isFinite(value)) return 'Unavailable';
+    return Math.abs(value) > 999 ? Math.round(value).toLocaleString() : String(Math.round(value * 100) / 100);
+  }
+  return String(value);
+}
+
+function labelFromKey(key) {
+  return key
+    .replace(/\./g, ' ')
+    .replace(/_/g, ' ')
+    .replace(/([a-z])([A-Z])/g, '$1 $2')
+    .replace(/\b\w/g, (char) => char.toUpperCase());
+}
+
+function flattenTelemetry(input, prefix = '', rows = []) {
+  if (!input || typeof input !== 'object') return rows;
+  Object.entries(input).forEach(([key, value]) => {
+    if (['ownership', 'route', 'history', 'events'].includes(key)) return;
+    const path = prefix ? `${prefix}.${key}` : key;
+    if (value === null || value === undefined) {
+      rows.push([path, value]);
+      return;
+    }
+    if (Array.isArray(value)) {
+      rows.push([path, `${value.length} item${value.length === 1 ? '' : 's'}`]);
+      return;
+    }
+    if (typeof value === 'object') {
+      flattenTelemetry(value, path, rows);
+      return;
+    }
+    rows.push([path, value]);
+  });
+  return rows;
+}
+
+function buildTelemetryRows(vehicle) {
+  if (!vehicle) return [];
+  const priority = [
+    ['Name', vehicleLabel(vehicle)],
+    ['VIN', vehicle.vin],
+    ['Status', vehicle.status || vehicle.state],
+    ['Battery', vehicle.battery !== undefined ? `${Math.round(Number(vehicle.battery) || 0)}%` : undefined],
+    ['Charging State', vehicle.chargingState],
+    ['Odometer', vehicle.odometer ? `${Math.round(vehicle.odometer).toLocaleString()} mi` : undefined],
+    ['Speed', vehicle.speed !== undefined ? `${Math.round(Number(vehicle.speed) || 0)} mph` : undefined],
+    ['Locked', vehicle.locked],
+    ['Service Mode', vehicle.serviceMode],
+    ['Software', vehicle.softwareVersion],
+    ['Latitude', vehicle.latitude],
+    ['Longitude', vehicle.longitude],
+    ['Heading', vehicle.heading],
+    ['GPS As Of', vehicle.gpsAsOf],
+    ['Synced At', vehicle.syncedAt],
+  ];
+
+  const seen = new Set(priority.map(([label]) => label.toLowerCase()));
+  const rest = flattenTelemetry(vehicle)
+    .map(([key, value]) => [labelFromKey(key), value])
+    .filter(([label]) => {
+      const normalized = label.toLowerCase();
+      if (seen.has(normalized)) return false;
+      seen.add(normalized);
+      return true;
+    });
+
+  return [...priority, ...rest].filter(([, value]) => value !== undefined);
+}
+
+function TelemetrySnapshot({ fleet }) {
+  const vehicle = fleet.find((item) => item.isReal) || fleet[0];
+  const rows = buildTelemetryRows(vehicle);
+
+  return (
+    <article className="rounded-xl border border-sky-300/20 bg-slate-900/90 p-5 shadow-xl shadow-black/20">
+      <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-300">Live Tesla Telemetry</p>
+          <h2 className="mt-2 text-2xl font-black tracking-tight text-white">Owner dashboard data snapshot</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-400">
+            All available primitive telemetry fields for {vehicle ? vehicleLabel(vehicle) : 'your first synced Tesla'} appear here after sync.
+          </p>
+        </div>
+        <span className="w-fit rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-black uppercase text-slate-300">
+          {rows.length || 0} fields
+        </span>
+      </div>
+
+      {vehicle ? (
+        <div className="mt-5 grid gap-3 lg:grid-cols-[0.85fr_1.15fr]">
+          <div className="grid grid-cols-2 gap-3">
+            <Metric label="Battery" value={vehicle.battery !== undefined ? `${Math.round(Number(vehicle.battery) || 0)}%` : '--'} tone="text-emerald-300" />
+            <Metric label="Status" value={formatTelemetryValue(vehicle.status || vehicle.state)} tone="text-sky-300" />
+            <Metric label="Odometer" value={vehicle.odometer ? `${Math.round(vehicle.odometer).toLocaleString()} mi` : '--'} tone="text-amber-300" />
+            <Metric label="Charging" value={formatTelemetryValue(vehicle.chargingState)} tone="text-violet-300" />
+          </div>
+          <div className="max-h-80 overflow-auto rounded-lg border border-white/10">
+            {rows.map(([label, value]) => (
+              <div key={`${label}-${String(value)}`} className="grid grid-cols-[0.95fr_1.05fr] gap-3 border-b border-white/10 bg-slate-950/35 px-3 py-2 text-sm last:border-b-0">
+                <p className="font-bold text-slate-400">{label}</p>
+                <p className="break-words text-right font-black text-slate-100">{formatTelemetryValue(value)}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      ) : (
+        <p className="mt-5 rounded-lg border border-white/10 bg-slate-950/45 p-4 text-sm font-semibold text-slate-400">
+          Sync Tesla telemetry to populate battery, GPS, odometer, charging, locks, software, service mode, and raw vehicle fields.
+        </p>
+      )}
+    </article>
+  );
+}
+
 function ActionCard({ eyebrow, title, detail, value, tone = 'sky', onQueue, buttonLabel = 'Queue Action' }) {
   const tones = {
     sky: 'border-sky-300/20 bg-sky-300/[0.07] text-sky-100',
@@ -225,6 +343,8 @@ export default function OwnerValueDashboard({ fleet = [], onQueueCommand }) {
           onQueue={() => onQueueCommand?.('Generate monthly RoboAgent earnings impact report', 'NORMAL')}
         />
       </div>
+
+      <TelemetrySnapshot fleet={fleet} />
     </section>
   );
 }

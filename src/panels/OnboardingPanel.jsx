@@ -19,7 +19,7 @@ function StepShell({ number, title, detail, status, children }) {
   const active = status === 'active';
 
   return (
-    <section className={`rounded-3xl border p-4 shadow-sm transition sm:p-5 ${
+    <section className={`rounded-3xl border p-4 shadow-sm transition sm:p-5 ${active ? 'active-step' : ''} ${
       complete
         ? 'border-emerald-200 bg-emerald-50'
         : active
@@ -212,16 +212,39 @@ export default function OnboardingPanel({
     { number: '5', short: 'Dashboard', status: statusFor(5) },
   ];
 
+  const stepDetails = {
+    1: {
+      title: isClerkConfigured() ? 'Create your secure RoboAgent account' : 'Create your RoboAgent account',
+      detail: isClerkConfigured()
+        ? 'Use secure hosted sign-in so Tesla access is tied to your private owner account.'
+        : 'Use the beta invite code so RoboAgent can attach telemetry and billing status to the right person.',
+    },
+    2: {
+      title: 'Approve telemetry consent',
+      detail: 'Review the data RoboAgent uses for maps, health, finance, charging, and AI recommendations.',
+    },
+    3: {
+      title: 'Connect Tesla',
+      detail: 'Tesla opens its secure login. RoboAgent never sees your Tesla password.',
+    },
+    4: {
+      title: 'Sync your first vehicle',
+      detail: 'Pull your Tesla list and latest live data. First Tesla is free during beta.',
+    },
+    5: {
+      title: 'Open your owner dashboard',
+      detail: 'See live telemetry, health, earnings, charging, map, and AI brief in one place.',
+    },
+  };
+
   return (
     <div className="space-y-4 sm:space-y-5">
       <section className="rounded-[2rem] border border-white bg-white/85 p-5 shadow-xl shadow-slate-200/60 backdrop-blur sm:p-7">
         <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
           <div className="max-w-2xl">
-            <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-600">Tesla Owner Setup</p>
-            <h1 className="mt-3 text-4xl font-black tracking-tight text-slate-950 sm:text-5xl">Connect Your First Tesla</h1>
-            <p className="mt-3 text-base leading-7 text-slate-600">
-              Sign in, approve consent, connect Tesla, sync once, and land in your owner dashboard.
-            </p>
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-600">Fast Setup</p>
+            <h1 className="mt-3 text-3xl font-black tracking-tight text-slate-950 sm:text-5xl">Connect Your First Tesla</h1>
+            <p className="mt-3 text-base leading-7 text-slate-600">One account, one consent, one Tesla sync. Then RoboAgent opens your owner dashboard.</p>
           </div>
           <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3">
             <p className="text-[11px] font-black uppercase tracking-[0.2em] text-slate-500">Current Step</p>
@@ -231,6 +254,25 @@ export default function OnboardingPanel({
         <div className="mt-5">
           <SetupRail steps={setupSteps} />
         </div>
+      </section>
+
+      <section className="rounded-3xl border border-sky-200 bg-white p-5 shadow-lg shadow-slate-200/60 md:hidden">
+        <p className="text-xs font-black uppercase tracking-[0.22em] text-sky-700">Do This Now</p>
+        <h2 className="mt-2 text-2xl font-black text-slate-950">{stepDetails[currentStep].title}</h2>
+        <p className="mt-2 text-sm leading-6 text-slate-600">{stepDetails[currentStep].detail}</p>
+        {!syncedVehicle && (
+          <p className="mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-3 text-xs font-bold leading-5 text-amber-800">
+            Finish Tesla connection and first telemetry sync before opening the RoboAgent dashboard.
+          </p>
+        )}
+        <button
+          type="button"
+          disabled={!syncedVehicle}
+          onClick={() => onNavigate?.('overview')}
+          className="mt-3 w-full rounded-xl bg-sky-500 px-5 py-3 text-sm font-black text-white shadow-sm shadow-sky-200 transition hover:bg-sky-600 disabled:pointer-events-none disabled:bg-slate-100 disabled:text-slate-400 disabled:shadow-none"
+        >
+          Open Dashboard
+        </button>
       </section>
 
       {(message || error) && (
@@ -276,6 +318,7 @@ export default function OnboardingPanel({
         </div>
       )}
 
+      <div className="space-y-4 max-md:[&>section:not(.active-step)]:hidden">
       <StepShell
         number="1"
         title={isClerkConfigured() ? 'Create your secure RoboAgent account' : 'Create your RoboAgent account'}
@@ -422,6 +465,8 @@ export default function OnboardingPanel({
           </button>
         </div>
       </StepShell>
+
+      </div>
 
       <span className="hidden">{hasTeslaConsent() ? 'consented' : 'not-consented'}</span>
     </div>
