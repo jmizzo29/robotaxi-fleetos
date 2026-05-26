@@ -318,25 +318,11 @@ function OwnerOutcomePanel() {
   ];
 
   return (
-    <aside className="grid overflow-hidden bg-white/0 lg:grid-cols-[0.95fr_1.05fr] lg:items-stretch" data-testid="agent-command-center">
-      <div className="relative min-h-[320px] overflow-hidden rounded-[2rem] bg-slate-100 shadow-2xl shadow-slate-300/50 lg:min-h-[560px] lg:rounded-r-none">
-        <img
-          src="/images/roboagent-tesla-rental-hero.png"
-          alt="White electric vehicle in a Florida driveway with a RoboAgent-style dashboard preview"
-          className="h-full w-full object-cover"
-          loading="eager"
-        />
-        <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-slate-950/70 via-slate-950/20 to-transparent p-4">
-          <div className="w-fit rounded-full border border-white/20 bg-white/90 px-3 py-1 text-xs font-black uppercase text-slate-900 shadow-sm">
-            Real owner workflow
-          </div>
-        </div>
-      </div>
-      <div className="flex flex-col justify-center bg-white px-0 py-6 lg:rounded-r-[2rem] lg:px-8 lg:py-10 lg:shadow-2xl lg:shadow-slate-300/40">
+    <aside className="overflow-hidden rounded-[2rem] bg-white p-5 shadow-2xl shadow-slate-300/40 lg:p-8" data-testid="agent-command-center">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-700">RoboAgent Command Center</p>
-          <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950">The AI agent is the product.</h2>
+          <h2 className="mt-2 text-3xl font-black tracking-tight text-slate-950 lg:text-5xl">The AI agent is the product.</h2>
         </div>
         <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">
           Agent active
@@ -345,29 +331,29 @@ function OwnerOutcomePanel() {
 
       <div className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-5">
         {agentCapabilities.map(([label, value]) => (
-          <div key={label} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+          <div key={label} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
             <p className="text-[9px] font-black uppercase tracking-[0.14em] text-slate-500">{label}</p>
-            <p className="mt-2 text-sm font-black leading-5 text-slate-950">{value}</p>
+            <p className="mt-2 text-base font-black leading-5 text-slate-950">{value}</p>
           </div>
         ))}
       </div>
 
-      <div className="mt-5 rounded-2xl border border-sky-200 bg-[linear-gradient(135deg,#eef8ff_0%,#ffffff_56%,#ecfdf5_100%)] p-4 shadow-sm">
+      <div className="mt-5 rounded-2xl border border-sky-200 bg-[linear-gradient(135deg,#eef8ff_0%,#ffffff_56%,#ecfdf5_100%)] p-5 shadow-sm lg:p-6">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <p className="text-[10px] font-black uppercase tracking-[0.18em] text-sky-700">7:04 AM AI plan ready</p>
-            <p className="mt-2 text-lg font-black leading-6 text-slate-950">
+            <p className="mt-2 max-w-4xl text-xl font-black leading-7 text-slate-950 lg:text-3xl lg:leading-10">
               Raise Orlando pricing, charge after 11 PM, clean before pickup, and fix the Tampa tire-pressure risk.
             </p>
           </div>
-          <div className="grid grid-cols-2 gap-2 md:w-52">
+          <div className="grid grid-cols-2 gap-2 md:w-64">
             <div className="rounded-xl border border-white bg-white/80 p-3">
               <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Impact</p>
-              <p className="mt-1 text-2xl font-black text-emerald-700">+$284</p>
+              <p className="mt-1 text-3xl font-black text-emerald-700">+$284</p>
             </div>
             <div className="rounded-xl border border-white bg-white/80 p-3">
               <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Tasks</p>
-              <p className="mt-1 text-2xl font-black text-slate-950">3</p>
+              <p className="mt-1 text-3xl font-black text-slate-950">3</p>
             </div>
           </div>
         </div>
@@ -383,7 +369,7 @@ function OwnerOutcomePanel() {
 
       <div className="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-white">
         {vehicles.map(([name, status, score, revenue, action]) => (
-          <div key={name} className="grid gap-3 border-b border-slate-100 p-4 last:border-b-0 md:grid-cols-[1fr_auto_auto] md:items-center">
+          <div key={name} className="grid gap-3 border-b border-slate-100 p-4 last:border-b-0 md:grid-cols-[1fr_auto_auto] md:items-center lg:p-5">
             <div>
               <div className="flex items-center gap-2">
                 <span className={`h-2.5 w-2.5 rounded-full ${status === 'Ready' ? 'bg-emerald-500' : status === 'Watch' ? 'bg-amber-500' : 'bg-sky-500'}`} />
@@ -401,7 +387,6 @@ function OwnerOutcomePanel() {
             </div>
           </div>
         ))}
-      </div>
       </div>
     </aside>
   );

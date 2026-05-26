@@ -78,13 +78,15 @@ async function testLanding(browser, profile) {
   if (profile === 'desktop') {
     const commandCenter = page.locator('[data-testid="agent-command-center"]');
     await commandCenter.getByText('The AI agent is the product.').waitFor({ timeout: 15000 });
-    await commandCenter.getByRole('img', { name: 'White electric vehicle in a Florida driveway with a RoboAgent-style dashboard preview' }).waitFor({ timeout: 15000 });
     await commandCenter.getByText('Dynamic pricing', { exact: true }).waitFor({ timeout: 15000 });
     await commandCenter.getByText('Predictive maintenance', { exact: true }).waitFor({ timeout: 15000 });
     await commandCenter.getByText('Profitability insight', { exact: true }).waitFor({ timeout: 15000 });
     await commandCenter.getByText('7:04 AM AI plan ready').waitFor({ timeout: 15000 });
     await commandCenter.getByRole('button', { name: 'Approve Plan' }).waitFor({ timeout: 15000 });
     await commandCenter.getByRole('button', { name: 'Ask Follow-up' }).waitFor({ timeout: 15000 });
+    if (await commandCenter.getByRole('img').count()) {
+      throw new Error('Desktop command center should focus on the agent UI, not the old vehicle photo.');
+    }
     await page.getByRole('button', { name: 'Start Free', exact: true }).first().waitFor({ timeout: 15000 });
     if (await page.locator('#hero-agent-input').count()) {
       throw new Error('Desktop landing should not show the old stacked AI demo input.');
