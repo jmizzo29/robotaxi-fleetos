@@ -228,26 +228,22 @@ async function testLandingCtas(browser, profile) {
   const { page, context } = telemetry;
   await page.goto(routeUrl('/'), { waitUntil: 'networkidle' });
   if (profile === 'desktop') {
-    await page.getByRole('main').getByRole('button', { name: 'Try Demo' }).click();
-  } else {
-    await page.getByRole('button', { name: 'Try AI Agent' }).click();
-    await page.locator('#mobile-hero-agent-input').waitFor({ timeout: 15000 });
-  }
-  const heroInput = page.locator(profile === 'desktop' ? '#hero-agent-input' : '#mobile-hero-agent-input');
-  await heroInput.fill('Should I raise price this weekend in Tampa?');
-  await page.locator(profile === 'desktop' ? '[data-testid="hero-agent-demo"]' : '[data-testid="mobile-hero-agent-demo"]').getByRole('button', { name: 'Ask Agent' }).click();
-  await page.getByText('Turo revenue plan').first().waitFor({ timeout: 15000 });
-  await heroInput.fill('What are the top rented Teslas in Orlando?');
-  await page.locator(profile === 'desktop' ? '[data-testid="hero-agent-demo"]' : '[data-testid="mobile-hero-agent-demo"]').getByRole('button', { name: 'Ask Agent' }).click();
-  await page.getByText('Top rented Teslas in Orlando').first().waitFor({ timeout: 15000 });
-  await heroInput.fill('How many Model X rentals are available in Orlando?');
-  await page.locator(profile === 'desktop' ? '[data-testid="hero-agent-demo"]' : '[data-testid="mobile-hero-agent-demo"]').getByRole('button', { name: 'Ask Agent' }).click();
-  await page.getByText('Model X rental availability in Orlando').first().waitFor({ timeout: 15000 });
-  if (profile === 'desktop') {
     await page.getByRole('button', { name: 'Start Free', exact: true }).first().click();
     await page.waitForURL('**/#/onboarding', { timeout: 10000 });
     await page.getByText('Connect Your First Tesla').waitFor({ timeout: 15000 });
   } else {
+    await page.getByRole('button', { name: 'Try AI Agent' }).click();
+    await page.locator('#mobile-hero-agent-input').waitFor({ timeout: 15000 });
+    const heroInput = page.locator('#mobile-hero-agent-input');
+    await heroInput.fill('Should I raise price this weekend in Tampa?');
+    await page.locator('[data-testid="mobile-hero-agent-demo"]').getByRole('button', { name: 'Ask Agent' }).click();
+    await page.getByText('Turo revenue plan').first().waitFor({ timeout: 15000 });
+    await heroInput.fill('What are the top rented Teslas in Orlando?');
+    await page.locator('[data-testid="mobile-hero-agent-demo"]').getByRole('button', { name: 'Ask Agent' }).click();
+    await page.getByText('Top rented Teslas in Orlando').first().waitFor({ timeout: 15000 });
+    await heroInput.fill('How many Model X rentals are available in Orlando?');
+    await page.locator('[data-testid="mobile-hero-agent-demo"]').getByRole('button', { name: 'Ask Agent' }).click();
+    await page.getByText('Model X rental availability in Orlando').first().waitFor({ timeout: 15000 });
     await page.getByRole('button', { name: 'Start Free' }).first().click();
     await page.waitForURL('**/#/onboarding', { timeout: 10000 });
     await page.getByText('Sign in to RoboAgent before connecting Tesla').waitFor({ timeout: 15000 });
