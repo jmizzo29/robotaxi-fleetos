@@ -643,7 +643,7 @@ export default function LandingPage({ onNavigate }) {
           <button
             type="button"
             onClick={scrollToDemo}
-            className="hidden rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-sm font-bold text-sky-800 shadow-sm transition hover:bg-sky-100 sm:block"
+            className="hidden rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-sm font-bold text-sky-800 shadow-sm transition hover:bg-sky-100 md:block"
           >
             Try Demo
           </button>
@@ -730,7 +730,7 @@ export default function LandingPage({ onNavigate }) {
             <div className="hidden md:block">
               <OwnerOutcomePanel />
             </div>
-            <div className="sr-only md:block">
+            <div className="hidden md:block">
               <HeroAgentDemo onNavigate={onNavigate} />
             </div>
             <div className="md:hidden">

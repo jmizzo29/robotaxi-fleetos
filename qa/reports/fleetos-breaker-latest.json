@@ -1,21 +1,21 @@
 {
   "baseUrl": "https://robotaxi-fleetos.vercel.app",
-  "generatedAt": "2026-05-26T21:31:49.630Z",
-  "durationMs": 3972,
+  "generatedAt": "2026-05-26T21:36:32.580Z",
+  "durationMs": 3312,
   "summary": {
     "total": 13,
-    "pass": 12,
+    "pass": 13,
     "warn": 0,
-    "fail": 1
+    "fail": 0
   },
   "results": [
     {
       "name": "public shell loads",
       "status": "pass",
-      "detail": "Homepage and bundle loaded in 860ms.",
+      "detail": "Homepage and bundle loaded in 523ms.",
       "evidence": {
-        "asset": "index-Byo3qIpl.js",
-        "bundleBytes": 716159
+        "asset": "index-DVdVnojL.js",
+        "bundleBytes": 716170
       }
     },
     {
@@ -26,13 +26,9 @@
     },
     {
       "name": "current landing copy present",
-      "status": "fail",
-      "detail": "Expected current landing copy is missing from the deployed bundle.",
-      "evidence": {
-        "missing": [
-          "Today\\x26apos;s money and readiness plan"
-        ]
-      }
+      "status": "pass",
+      "detail": "Current homepage trust and product-preview copy is present.",
+      "evidence": {}
     },
     {
       "name": "public route smoke",
@@ -110,8 +106,8 @@
       "status": "pass",
       "detail": "20 concurrent health requests passed in 882ms.",
       "evidence": {
-        "maxMs": 853,
-        "minMs": 83
+        "maxMs": 880,
+        "minMs": 71
       }
     }
   ]

@@ -94,7 +94,7 @@ async function testLanding(browser, profile) {
     await page.getByRole('main').getByRole('button', { name: 'Try Demo' }).waitFor({ timeout: 15000 });
     await page.getByRole('button', { name: 'Start Free', exact: true }).first().waitFor({ timeout: 15000 });
     await page.getByText('Built by a Tesla owner for Tesla owners').waitFor({ timeout: 15000 });
-    await page.getByText('No credit card required').waitFor({ timeout: 15000 });
+    await page.getByText('More booked days').waitFor({ timeout: 15000 });
     await page.getByText('Tesla password never shared').first().waitFor({ timeout: 15000 });
   } else {
     await page.getByRole('button', { name: 'Start Free' }).first().waitFor({ timeout: 15000 });
@@ -146,7 +146,7 @@ async function testLanding(browser, profile) {
     }
     await mobileDemo.getByText('Model X rental availability in Orlando').waitFor({ timeout: 15000 });
     await mobileDemo.getByText('8-16 comparable rentals').waitFor({ timeout: 15000 });
-    await page.getByRole('button', { name: 'Ask Agent' }).waitFor({ timeout: 15000 });
+    await mobileDemo.getByRole('button', { name: 'Ask Agent' }).waitFor({ timeout: 15000 });
     await page.getByText('Your Tesla login stays with Tesla.').waitFor({ timeout: 15000 });
   }
   await page.getByText('Join Early Access').count().then((count) => {
