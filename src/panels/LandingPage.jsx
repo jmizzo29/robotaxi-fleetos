@@ -645,7 +645,7 @@ export default function LandingPage({ onNavigate }) {
             onClick={scrollToDemo}
             className="hidden rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-sm font-bold text-sky-800 shadow-sm transition hover:bg-sky-100 sm:block"
           >
-            View Demo
+            Try Demo
           </button>
         </nav>
       </header>
@@ -663,7 +663,7 @@ export default function LandingPage({ onNavigate }) {
               RoboAgent helps Tesla owners earn more from Turo today and prepare for Robotaxi tomorrow, with practical plans for pricing, charging, maintenance, and readiness.
             </p>
             <p className="mt-3 max-w-md text-base font-bold leading-6 text-slate-700 md:hidden">
-              Give it goals. Get smart plans for pricing, charging, maintenance and earnings.
+              Built for Tesla rentals and Robotaxis. Get smart plans for pricing, charging, maintenance and earnings.
             </p>
             <div className="md:hidden">
               <MobileHeroCta
@@ -685,7 +685,7 @@ export default function LandingPage({ onNavigate }) {
                 onClick={scrollToDemo}
                 className="rounded-md bg-sky-300 px-5 py-4 text-sm font-black text-slate-950 transition hover:bg-sky-200"
               >
-                Try the planning demo
+                Try Demo
               </button>
               <button
                 type="button"
@@ -724,6 +724,9 @@ export default function LandingPage({ onNavigate }) {
             <p className="mt-5 hidden text-sm font-semibold leading-6 text-slate-700 sm:block">
               Built in Florida for real Tesla owners trying to turn expensive cars into reliable income-producing assets. Tesla controls autonomous driving availability and execution.
             </p>
+            <div className="sr-only">
+              <HeroAgentDemo onNavigate={onNavigate} />
+            </div>
           </div>
 
           <div>

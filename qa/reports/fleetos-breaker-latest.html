@@ -25,22 +25,22 @@
   <body>
     <main>
       <h1>RoboAgent Breaker Report</h1>
-      <p class="meta">Target: https://robotaxi-fleetos.vercel.app · Generated: 2026-05-26T21:18:25.904Z</p>
+      <p class="meta">Target: https://robotaxi-fleetos.vercel.app · Generated: 2026-05-26T21:27:04.150Z</p>
       <section class="summary">
         <div class="card">Total<strong>13</strong></div>
-        <div class="card">Pass<strong>13</strong></div>
+        <div class="card">Pass<strong>12</strong></div>
         <div class="card">Warn<strong>0</strong></div>
-        <div class="card">Fail<strong>0</strong></div>
+        <div class="card">Fail<strong>1</strong></div>
       </section>
       <section class="tests">
         
           <article class="test pass">
             <div class="status">pass</div>
             <h2>public shell loads</h2>
-            <p>Homepage and bundle loaded in 451ms.</p>
+            <p>Homepage and bundle loaded in 475ms.</p>
             <pre>{
-  &quot;asset&quot;: &quot;index-BxdsWdpX.js&quot;,
-  &quot;bundleBytes&quot;: 712690
+  &quot;asset&quot;: &quot;index-BlYlGacJ.js&quot;,
+  &quot;bundleBytes&quot;: 716066
 }</pre>
           </article>
         
@@ -51,11 +51,16 @@
             
           </article>
         
-          <article class="test pass">
-            <div class="status">pass</div>
+          <article class="test fail">
+            <div class="status">fail</div>
             <h2>current landing copy present</h2>
-            <p>Current homepage trust and product-preview copy is present.</p>
-            
+            <p>Expected current landing copy is missing from the deployed bundle.</p>
+            <pre>{
+  &quot;missing&quot;: [
+    &quot;Your AI Agent for Tesla Rentals &amp; Robotaxis&quot;,
+    &quot;Today\\u0026apos;s money and readiness plan&quot;
+  ]
+}</pre>
           </article>
         
           <article class="test pass">
@@ -141,10 +146,10 @@
           <article class="test pass">
             <div class="status">pass</div>
             <h2>health burst</h2>
-            <p>20 concurrent health requests passed in 878ms.</p>
+            <p>20 concurrent health requests passed in 796ms.</p>
             <pre>{
-  &quot;maxMs&quot;: 870,
-  &quot;minMs&quot;: 74
+  &quot;maxMs&quot;: 787,
+  &quot;minMs&quot;: 61
 }</pre>
           </article>
         

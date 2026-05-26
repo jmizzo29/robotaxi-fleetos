@@ -1,18 +1,20 @@
 {
   "baseUrl": "https://robotaxi-fleetos.vercel.app",
-  "generatedAt": "2026-05-26T21:18:22.002Z",
+  "generatedAt": "2026-05-26T21:26:59.805Z",
   "summary": {
     "total": 16,
-    "pass": 16,
+    "pass": 13,
     "warn": 0,
-    "fail": 0
+    "fail": 3
   },
   "results": [
     {
-      "status": "pass",
+      "status": "fail",
       "name": "landing browser smoke (desktop)",
-      "detail": "No serious browser runtime errors detected.",
-      "evidence": {}
+      "detail": "locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByText('No signup needed', { exact: true }) to be visible\u001b[22m\n",
+      "evidence": {
+        "stack": "locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByText('No signup needed', { exact: true }) to be visible\u001b[22m\n\n    at testLanding (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:85:63)\n    at async runTest (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:26:12)\n    at async file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:335:16"
+      }
     },
     {
       "status": "pass",
@@ -39,10 +41,12 @@
       "evidence": {}
     },
     {
-      "status": "pass",
+      "status": "fail",
       "name": "landing CTA to onboarding (desktop)",
-      "detail": "No serious browser runtime errors detected.",
-      "evidence": {}
+      "detail": "locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#hero-agent-input')\u001b[22m\n",
+      "evidence": {
+        "stack": "locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#hero-agent-input')\u001b[22m\n\n    at testLandingCtas (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:246:19)\n    at async runTest (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:26:12)\n    at async file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:335:16"
+      }
     },
     {
       "status": "pass",
@@ -57,10 +61,12 @@
       "evidence": {}
     },
     {
-      "status": "pass",
+      "status": "fail",
       "name": "landing browser smoke (mobile)",
-      "detail": "No serious browser runtime errors detected.",
-      "evidence": {}
+      "detail": "locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByText('Your AI Agent for Tesla Rentals & Robotaxis') to be visible\u001b[22m\n",
+      "evidence": {
+        "stack": "locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByText('Your AI Agent for Tesla Rentals & Robotaxis') to be visible\u001b[22m\n\n    at testLanding (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:79:73)\n    at async runTest (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:26:12)\n    at async file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:335:16"
+      }
     },
     {
       "status": "pass",
