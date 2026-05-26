@@ -304,83 +304,66 @@ function OwnerOutcomePanel() {
   const vehicles = [
     ['Model Y - Orlando', 'Ready', '94/100', '$312', 'Charge to 88% tonight'],
     ['Model 3 - Tampa', 'Watch', '81/100', '$188', 'Check tire pressure before pickup'],
-    ['Cybercab - Future', 'Planning', '98/100', 'Future', 'Track Robotaxi readiness'],
   ];
   const agentCapabilities = [
-    ['Dynamic pricing', '+18% Orlando weekend'],
-    ['Daily AI plan', '3 owner actions ready'],
-    ['Predictive maintenance', 'Tampa tire watch'],
-    ['Charging + cleaning', '11 PM charge window'],
-    ['Profitability insight', '+$284 projected'],
+    ['DYNAMIC PRICING', '+18% Orlando weekend'],
+    ['DAILY AI PLAN', '3 owner actions ready'],
+    ['PREDICTIVE MAINTENANCE', 'Tampa tire watch'],
+    ['CHARGING + CLEANING', '11 PM charge window'],
+    ['PROFITABILITY INSIGHT', '+$284 projected'],
   ];
 
   return (
-    <aside className="overflow-hidden rounded-[2rem] bg-white p-5 shadow-2xl shadow-slate-300/40 lg:p-8" data-testid="agent-command-center">
-      <div className="flex items-start justify-between gap-4">
+    <aside className="min-h-screen bg-gradient-to-b from-slate-950 to-black p-4 pb-20 text-white md:min-h-0 md:rounded-[2rem] md:p-6 lg:p-8" data-testid="agent-command-center">
+      <div className="mb-6 flex items-start justify-between gap-4">
         <div>
-          <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-700">RoboAgent Command Center</p>
-          <h2 className="mt-2 text-3xl font-black tracking-tight text-slate-950 lg:text-5xl">The AI agent is the product.</h2>
+          <p className="text-sm font-medium uppercase tracking-wide text-teal-400">RoboAgent Command Center</p>
+          <h2 className="mt-1 text-3xl font-bold tracking-tight text-white">The AI agent is the product.</h2>
         </div>
-        <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">
+        <span className="shrink-0 rounded-full bg-green-500/20 px-3 py-1 text-xs font-medium text-green-400">
           Agent active
         </span>
       </div>
 
-      <div className="mt-5 grid grid-cols-1 gap-2 sm:grid-cols-5">
+      <div className="mb-8 grid grid-cols-2 gap-3 md:grid-cols-5">
         {agentCapabilities.map(([label, value]) => (
-          <div key={label} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-            <p className="text-[9px] font-black uppercase tracking-[0.14em] text-slate-500">{label}</p>
-            <p className="mt-2 text-base font-black leading-5 text-slate-950">{value}</p>
+          <div key={label} className="rounded-2xl bg-zinc-900 p-4">
+            <p className="text-xs text-gray-400">{label}</p>
+            <p className={`mt-1 text-lg font-semibold ${label === 'PROFITABILITY INSIGHT' ? 'text-emerald-400' : 'text-white'}`}>{value}</p>
           </div>
         ))}
       </div>
 
-      <div className="mt-5 rounded-2xl border border-sky-200 bg-[linear-gradient(135deg,#eef8ff_0%,#ffffff_56%,#ecfdf5_100%)] p-5 shadow-sm lg:p-6">
-        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-sky-700">7:04 AM AI plan ready</p>
-            <p className="mt-2 max-w-4xl text-xl font-black leading-7 text-slate-950 lg:text-3xl lg:leading-10">
-              Raise Orlando pricing, charge after 11 PM, clean before pickup, and fix the Tampa tire-pressure risk.
-            </p>
-          </div>
-          <div className="grid grid-cols-2 gap-2 md:w-64">
-            <div className="rounded-xl border border-white bg-white/80 p-3">
-              <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Impact</p>
-              <p className="mt-1 text-3xl font-black text-emerald-700">+$284</p>
-            </div>
-            <div className="rounded-xl border border-white bg-white/80 p-3">
-              <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Tasks</p>
-              <p className="mt-1 text-3xl font-black text-slate-950">3</p>
-            </div>
-          </div>
-        </div>
-        <div className="mt-4 grid gap-2 sm:grid-cols-2">
-          <button type="button" className="rounded-lg bg-slate-950 px-4 py-3 text-sm font-black text-white">
+      <div className="mb-8 rounded-3xl border border-zinc-700 bg-gradient-to-br from-zinc-900 to-zinc-950 p-6">
+        <p className="mb-3 text-sm font-medium uppercase tracking-wide text-teal-400">7:04 AM AI Plan Ready</p>
+        <h2 className="mb-6 text-2xl font-bold leading-tight text-white">
+          Raise Orlando pricing, charge after 11 PM, clean before pickup, and fix the Tampa tire-pressure risk.
+        </h2>
+
+        <div className="flex gap-4">
+          <button type="button" className="flex-1 rounded-2xl bg-white py-4 text-lg font-semibold text-black">
             Approve Plan
           </button>
-          <button type="button" className="rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-black text-slate-700">
+          <button type="button" className="flex-1 rounded-2xl border border-zinc-600 py-4 text-lg font-medium text-white">
             Ask Follow-up
           </button>
         </div>
       </div>
 
-      <div className="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-white">
+      <div className="space-y-4">
         {vehicles.map(([name, status, score, revenue, action]) => (
-          <div key={name} className="grid gap-3 border-b border-slate-100 p-4 last:border-b-0 md:grid-cols-[1fr_auto_auto] md:items-center lg:p-5">
+          <div key={name} className="flex items-center justify-between rounded-2xl bg-zinc-900 p-5">
             <div>
               <div className="flex items-center gap-2">
-                <span className={`h-2.5 w-2.5 rounded-full ${status === 'Ready' ? 'bg-emerald-500' : status === 'Watch' ? 'bg-amber-500' : 'bg-sky-500'}`} />
-                <p className="font-black text-slate-950">{name}</p>
+                <span className={`h-3 w-3 rounded-full ${status === 'Ready' ? 'bg-green-500' : 'bg-yellow-500'}`} />
+                <p className="font-medium text-white">{name}</p>
               </div>
-              <p className="mt-1 text-sm font-semibold text-slate-600">{action}</p>
+              <p className="mt-1 text-sm text-gray-400">{action}</p>
             </div>
-            <div className="text-left md:text-right">
-              <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">Readiness</p>
-              <p className="mt-1 text-lg font-black text-slate-950">{score}</p>
-            </div>
-            <div className="text-left md:text-right">
-              <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">Est. Value</p>
-              <p className="mt-1 text-lg font-black text-emerald-700">{revenue}</p>
+            <div className="text-right">
+              <p className={`font-semibold ${status === 'Ready' ? 'text-emerald-400' : 'text-yellow-400'}`}>{score}</p>
+              <p className="text-xs text-gray-500">Readiness</p>
+              <p className="mt-1 font-bold text-emerald-400">{revenue}</p>
             </div>
           </div>
         ))}

@@ -111,10 +111,10 @@ async function testAboutAgent(browser, profile) {
   if (profile === 'desktop') {
     const commandCenter = page.locator('[data-testid="agent-command-center"]');
     await commandCenter.getByText('The AI agent is the product.').waitFor({ timeout: 15000 });
-    await commandCenter.getByText('Dynamic pricing', { exact: true }).waitFor({ timeout: 15000 });
-    await commandCenter.getByText('Predictive maintenance', { exact: true }).waitFor({ timeout: 15000 });
-    await commandCenter.getByText('Profitability insight', { exact: true }).waitFor({ timeout: 15000 });
-    await commandCenter.getByText('7:04 AM AI plan ready').waitFor({ timeout: 15000 });
+    await commandCenter.getByText('DYNAMIC PRICING', { exact: true }).waitFor({ timeout: 15000 });
+    await commandCenter.getByText('PREDICTIVE MAINTENANCE', { exact: true }).waitFor({ timeout: 15000 });
+    await commandCenter.getByText('PROFITABILITY INSIGHT', { exact: true }).waitFor({ timeout: 15000 });
+    await commandCenter.getByText('7:04 AM AI Plan Ready').waitFor({ timeout: 15000 });
     await commandCenter.getByRole('button', { name: 'Approve Plan' }).waitFor({ timeout: 15000 });
     await commandCenter.getByRole('button', { name: 'Ask Follow-up' }).waitFor({ timeout: 15000 });
   } else {
