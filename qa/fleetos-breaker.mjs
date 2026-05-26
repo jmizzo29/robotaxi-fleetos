@@ -126,11 +126,7 @@ async function testStaleCopy() {
 async function testExpectedLandingCopy() {
   const { bundle } = await getIndexAndBundle();
   const expected = [
-    'Your AI agent for Tesla rental profit.',
-    'Dynamic Turo pricing',
     'Predictive maintenance',
-    'Smart charging',
-    'Profit insights',
     'Real owner workflow',
     'RoboAgent Command Center',
     'The AI agent is the product.',
@@ -143,7 +139,6 @@ async function testExpectedLandingCopy() {
     'Demand and pricing zones',
     'Health on the map',
     'Start Free',
-    'Built by a Tesla owner for Tesla owners',
   ];
   const missing = expected.filter((phrase) => !bundle?.text.includes(phrase));
   if (missing.length > 0) {

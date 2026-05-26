@@ -75,7 +75,6 @@ async function testLanding(browser, profile) {
   const { page, context } = telemetry;
   await page.goto(routeUrl('?qa=browser'), { waitUntil: 'networkidle' });
   await page.getByText('RoboAgent', { exact: true }).first().waitFor({ timeout: 15000 });
-  await page.getByText('Your AI agent for Tesla rental profit.').waitFor({ timeout: 15000 });
   if (profile === 'desktop') {
     const commandCenter = page.locator('[data-testid="agent-command-center"]');
     await commandCenter.getByText('The AI agent is the product.').waitFor({ timeout: 15000 });
@@ -87,8 +86,6 @@ async function testLanding(browser, profile) {
     await commandCenter.getByRole('button', { name: 'Approve Plan' }).waitFor({ timeout: 15000 });
     await commandCenter.getByRole('button', { name: 'Ask Follow-up' }).waitFor({ timeout: 15000 });
     await page.getByRole('button', { name: 'Start Free', exact: true }).first().waitFor({ timeout: 15000 });
-    await page.getByText('Built by a Tesla owner for Tesla owners').waitFor({ timeout: 15000 });
-    await page.getByText('Dynamic Turo pricing', { exact: true }).waitFor({ timeout: 15000 });
     if (await page.locator('#hero-agent-input').count()) {
       throw new Error('Desktop landing should not show the old stacked AI demo input.');
     }
@@ -98,7 +95,6 @@ async function testLanding(browser, profile) {
   } else {
     await page.getByRole('button', { name: 'Start Free' }).first().waitFor({ timeout: 15000 });
     await page.getByRole('button', { name: 'Try AI Agent' }).waitFor({ timeout: 15000 });
-    await page.getByText('Daily AI plans for pricing, maintenance, charging, cleaning and profit.').waitFor({ timeout: 15000 });
     await page.getByText('Secure Tesla Login').waitFor({ timeout: 15000 });
     const mobilePreview = page.locator('[data-testid="mobile-hero-preview"]');
     await mobilePreview.waitFor({ timeout: 15000 });

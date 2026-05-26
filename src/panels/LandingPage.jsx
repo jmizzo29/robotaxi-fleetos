@@ -542,9 +542,6 @@ function MobileHeroCta({ onNavigate, onSeeMore, isMoreOpen }) {
 export default function LandingPage({ onNavigate }) {
   const { isSignedIn } = useFleetAuthStatus();
   const [showMobileMore, setShowMobileMore] = useState(false);
-  const enterApp = (route = 'overview') => {
-    onNavigate(isSignedIn ? route : 'onboarding');
-  };
   const clerkReady = isClerkConfigured();
 
   const signInControl = (
@@ -586,86 +583,26 @@ export default function LandingPage({ onNavigate }) {
 
       <main>
         <section className="relative mx-auto max-w-7xl px-5 pb-10 pt-2 sm:pt-8 lg:pb-16 lg:pt-10">
-          <div className="max-w-2xl">
-            <p className="hidden text-sm font-black uppercase tracking-[0.22em] text-emerald-700 md:block">
-              Built by a Tesla owner for Tesla owners
-            </p>
-            <h1 className="text-[2.65rem] font-black leading-[0.96] tracking-tight text-slate-950 sm:text-6xl sm:leading-[0.98] lg:text-[4.65rem]">
-              Your AI agent for Tesla rental profit.
-            </h1>
-            <p className="mt-5 hidden max-w-xl text-xl font-bold leading-8 text-slate-700 md:block">
-              RoboAgent plans dynamic Turo pricing, maintenance, charging, cleaning, and profitability before the day starts.
-            </p>
-            <p className="mt-3 max-w-md text-base font-bold leading-6 text-slate-700 md:hidden">
-              Daily AI plans for pricing, maintenance, charging, cleaning and profit.
-            </p>
+          <div className="mt-4 lg:mt-8">
+            <div className="hidden md:block">
+              <OwnerOutcomePanel />
+            </div>
             <div className="md:hidden">
               <MobileHeroCta
                 onNavigate={onNavigate}
                 onSeeMore={() => setShowMobileMore((current) => !current)}
                 isMoreOpen={showMobileMore}
               />
-            </div>
-            <div className="mt-4 hidden gap-2 sm:mt-5 sm:flex sm:flex-wrap">
-              {['Dynamic Turo pricing', 'Predictive maintenance', 'Smart charging', 'Profit insights'].map((label) => (
-                <span key={label} className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-emerald-800">
-                  {label}
-                </span>
-              ))}
-            </div>
-            <div className="mt-8 hidden flex-col gap-3 sm:flex sm:flex-row">
-              <button
-                type="button"
-                onClick={() => onNavigate('onboarding')}
-                className="rounded-md bg-sky-300 px-5 py-4 text-sm font-black text-slate-950 transition hover:bg-sky-200"
-              >
-                Start Free
-              </button>
-              {isSignedIn ? (
-                <button
-                  type="button"
-                  onClick={() => enterApp('overview')}
-                  className="rounded-md border border-slate-300 bg-white px-5 py-4 text-sm font-black text-slate-700 shadow-sm transition hover:bg-slate-50"
-                >
-                  Open Console
-                </button>
-              ) : clerkReady ? (
-                <SignInButton mode="modal">
-                  <button
-                    type="button"
-                    className="rounded-md border border-slate-300 bg-white px-5 py-4 text-sm font-black text-slate-700 shadow-sm transition hover:bg-slate-50"
-                  >
-                    Sign In
-                  </button>
-                </SignInButton>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => onNavigate('account')}
-                  className="rounded-md border border-slate-300 bg-white px-5 py-4 text-sm font-black text-slate-700 shadow-sm transition hover:bg-slate-50"
-                >
-                  Sign In
-                </button>
-              )}
-            </div>
-            <p className="mt-5 hidden text-sm font-semibold leading-6 text-slate-700 sm:block">
-              Built in Florida for Tesla owners renting cars today and preparing for Robotaxi tomorrow. Tesla controls autonomous driving availability and execution.
-            </p>
-          </div>
-
-          <div className="mt-8 lg:mt-12">
-            <div className="hidden md:block">
-              <OwnerOutcomePanel />
-            </div>
-            <div className="md:hidden">
-              {showMobileMore ? (
-                <HeroAgentDemo
-                  onNavigate={onNavigate}
-                  inputId="mobile-hero-agent-input"
-                  testId="mobile-hero-agent-demo"
-                  defaultGoal="How many Model X rentals are available in Orlando?"
-                />
-              ) : <MobileHeroPreview />}
+              <div className="mt-4">
+                {showMobileMore ? (
+                  <HeroAgentDemo
+                    onNavigate={onNavigate}
+                    inputId="mobile-hero-agent-input"
+                    testId="mobile-hero-agent-demo"
+                    defaultGoal="How many Model X rentals are available in Orlando?"
+                  />
+                ) : <MobileHeroPreview />}
+              </div>
             </div>
           </div>
         </section>
