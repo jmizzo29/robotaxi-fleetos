@@ -580,6 +580,13 @@ export function AgentChatPage({ onNavigate }) {
             </p>
           </div>
         </div>
+        <button
+          type="button"
+          onClick={() => onNavigate('onboarding')}
+          className="ml-auto mr-3 rounded-full bg-teal-500 px-4 py-2 text-xs font-black text-white hover:bg-teal-400"
+        >
+          Get Started Free
+        </button>
         <button type="button" onClick={() => onNavigate('landing')} className="text-xl text-zinc-400 hover:text-white" aria-label="Back home">
           ⋯
         </button>
