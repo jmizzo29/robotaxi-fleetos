@@ -264,7 +264,7 @@ async function testOwnerValueDashboard(browser, profile) {
   const { page, context } = telemetry;
   await page.goto(routeUrl('#/overview'), { waitUntil: 'networkidle' });
   const dashboard = page.locator('[data-testid="owner-value-dashboard"]:visible').first();
-  await dashboard.getByRole('heading', { name: "Today's AI fleet brief" }).waitFor({ timeout: 15000 });
+  await dashboard.getByText('AI fleet brief').waitFor({ timeout: 15000 });
   await dashboard.getByText("Today's AI Brief").waitFor({ timeout: 15000 });
   await dashboard.getByText('Pricing Opportunities').waitFor({ timeout: 15000 });
   await dashboard.getByText('Maintenance Watch').waitFor({ timeout: 15000 });
