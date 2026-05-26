@@ -1,9 +1,9 @@
 {
   "baseUrl": "https://robotaxi-fleetos.vercel.app",
-  "generatedAt": "2026-05-26T23:10:10.325Z",
+  "generatedAt": "2026-05-26T23:16:57.442Z",
   "summary": {
-    "total": 18,
-    "pass": 18,
+    "total": 20,
+    "pass": 20,
     "warn": 0,
     "fail": 0
   },
@@ -11,6 +11,12 @@
     {
       "status": "pass",
       "name": "landing browser smoke (desktop)",
+      "detail": "No serious browser runtime errors detected.",
+      "evidence": {}
+    },
+    {
+      "status": "pass",
+      "name": "agent chat smoke (desktop)",
       "detail": "No serious browser runtime errors detected.",
       "evidence": {}
     },
@@ -65,6 +71,12 @@
     {
       "status": "pass",
       "name": "landing browser smoke (mobile)",
+      "detail": "No serious browser runtime errors detected.",
+      "evidence": {}
+    },
+    {
+      "status": "pass",
+      "name": "agent chat smoke (mobile)",
       "detail": "No serious browser runtime errors detected.",
       "evidence": {}
     },
