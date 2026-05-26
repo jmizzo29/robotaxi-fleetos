@@ -126,7 +126,8 @@ async function testStaleCopy() {
 async function testExpectedLandingCopy() {
   const { bundle } = await getIndexAndBundle();
   const expected = [
-    'Make your Tesla pay for itself.',
+    'Stop guessing. Run a smarter Tesla rental.',
+    'daily profit plan',
     'money and readiness plan',
     'No signup needed',
     'Maximize my earnings this weekend with 3 Teslas',

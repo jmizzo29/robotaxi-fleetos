@@ -657,13 +657,13 @@ export default function LandingPage({ onNavigate }) {
               Built by a Tesla owner for Tesla owners
             </p>
             <h1 className="text-[2.65rem] font-black leading-[0.96] tracking-tight text-slate-950 sm:text-6xl sm:leading-[0.98] lg:text-[4.65rem]">
-              Make your Tesla pay for itself.
+              Stop guessing. Run a smarter Tesla rental.
             </h1>
             <p className="mt-5 hidden max-w-xl text-xl font-bold leading-8 text-slate-700 md:block">
-              RoboAgent helps Tesla owners earn more from Turo today and prepare for Robotaxi tomorrow, with practical plans for pricing, charging, maintenance, and readiness.
+              RoboAgent gives owners a daily profit plan for pricing, charging, maintenance, and readiness, so every Tesla has a clearer path to earning more.
             </p>
             <p className="mt-3 max-w-md text-base font-bold leading-6 text-slate-700 md:hidden">
-              Built for Tesla rentals and Robotaxis. Get smart plans for pricing, charging, maintenance and earnings.
+              Get a daily profit plan for pricing, charging, maintenance and readiness.
             </p>
             <div className="md:hidden">
               <MobileHeroCta
@@ -673,7 +673,7 @@ export default function LandingPage({ onNavigate }) {
               />
             </div>
             <div className="mt-4 hidden gap-2 sm:mt-5 sm:flex sm:flex-wrap">
-              {['More booked days', 'Fewer surprise issues', 'First Tesla free', 'Not affiliated with Tesla'].map((label) => (
+              {['Daily profit plan', 'More booked days', 'Fewer surprise issues', 'First Tesla free'].map((label) => (
                 <span key={label} className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-emerald-800">
                   {label}
                 </span>
@@ -722,7 +722,7 @@ export default function LandingPage({ onNavigate }) {
               )}
             </div>
             <p className="mt-5 hidden text-sm font-semibold leading-6 text-slate-700 sm:block">
-              Built in Florida for real Tesla owners trying to turn expensive cars into reliable income-producing assets. Tesla controls autonomous driving availability and execution.
+              Built in Florida for Tesla owners renting cars today and preparing for Robotaxi tomorrow. Tesla controls autonomous driving availability and execution.
             </p>
           </div>
 
