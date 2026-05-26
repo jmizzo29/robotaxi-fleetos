@@ -95,25 +95,212 @@ function buildTelemetryRows(vehicle) {
   return [...priority, ...rest].filter(([, value]) => value !== undefined);
 }
 
+function getVehicleForTelemetry(fleet = []) {
+  return fleet.find((item) => item.isReal) || fleet[0];
+}
+
+function includesText(value, pattern) {
+  return String(value || '').toLowerCase().includes(pattern);
+}
+
+function buildReadinessSignal({ label, value, status, detail, score }) {
+  return { label, value, status, detail, score };
+}
+
+function buildVehicleReadiness(vehicle) {
+  if (!vehicle) {
+    return {
+      score: 0,
+      status: 'Sync Needed',
+      tone: 'text-slate-300',
+      bg: 'from-slate-900 to-slate-950',
+      nextAction: 'Connect Tesla and run the first telemetry sync to calculate readiness.',
+      signals: [],
+    };
+  }
+
+  const battery = Number(vehicle.battery ?? vehicle.batteryLevel ?? vehicle.chargeState?.battery_level);
+  const odometer = Number(vehicle.odometer ?? vehicle.odometerMiles ?? vehicle.miles);
+  const charging = vehicle.chargingState || vehicle.charge_state?.charging_state || vehicle.charge_state?.charge_state;
+  const locked = vehicle.locked;
+  const serviceMode = Boolean(vehicle.serviceMode);
+  const software = vehicle.softwareVersion || vehicle.vehicle_state?.car_version || vehicle.car_version;
+  const latitude = Number(vehicle.latitude ?? vehicle.drive_state?.latitude);
+  const longitude = Number(vehicle.longitude ?? vehicle.drive_state?.longitude);
+  const tireWarning = [
+    vehicle.tpmsHardWarnings,
+    vehicle.tpms_soft_warning_fl,
+    vehicle.tpms_soft_warning_fr,
+    vehicle.tpms_soft_warning_rl,
+    vehicle.tpms_soft_warning_rr,
+    vehicle.tpms_hard_warning_fl,
+    vehicle.tpms_hard_warning_fr,
+    vehicle.tpms_hard_warning_rl,
+    vehicle.tpms_hard_warning_rr,
+  ].some(Boolean);
+  const updatePending = Boolean(vehicle.softwareUpdateVersion || vehicle.software_update?.version || vehicle.software_update?.status);
+  const online = ['online', 'asleep', 'offline'].includes(String(vehicle.state || '').toLowerCase())
+    ? String(vehicle.state || '').toLowerCase() === 'online'
+    : !includesText(vehicle.status, 'offline');
+
+  const signals = [
+    buildReadinessSignal({
+      label: 'Battery',
+      value: Number.isFinite(battery) ? `${Math.round(battery)}%` : 'Unknown',
+      status: Number.isFinite(battery) ? (battery >= 75 ? 'Ready' : battery >= 55 ? 'Watch' : 'Charge') : 'Unknown',
+      detail: Number.isFinite(battery)
+        ? battery >= 75
+          ? 'Enough range for most rental handoffs.'
+          : battery >= 55
+            ? 'Usable, but charge before a long booking.'
+            : 'Needs charging before dispatch.'
+        : 'Sync battery telemetry.',
+      score: Number.isFinite(battery) ? Math.min(100, Math.max(0, battery)) : 45,
+    }),
+    buildReadinessSignal({
+      label: 'Location',
+      value: Number.isFinite(latitude) && Number.isFinite(longitude) ? 'GPS live' : 'No GPS',
+      status: Number.isFinite(latitude) && Number.isFinite(longitude) ? 'Ready' : 'Missing',
+      detail: Number.isFinite(latitude) && Number.isFinite(longitude)
+        ? `${latitude.toFixed(3)}, ${longitude.toFixed(3)}`
+        : 'Location permission or telemetry is missing.',
+      score: Number.isFinite(latitude) && Number.isFinite(longitude) ? 100 : 50,
+    }),
+    buildReadinessSignal({
+      label: 'Odometer',
+      value: Number.isFinite(odometer) ? `${Math.round(odometer).toLocaleString()} mi` : 'Unknown',
+      status: Number.isFinite(odometer) ? 'Ready' : 'Missing',
+      detail: Number.isFinite(odometer) ? 'Mileage can drive service and profit-per-mile logic.' : 'Sync odometer telemetry.',
+      score: Number.isFinite(odometer) ? 100 : 55,
+    }),
+    buildReadinessSignal({
+      label: 'Charging',
+      value: formatTelemetryValue(charging),
+      status: includesText(charging, 'charging') ? 'Charging' : 'Ready',
+      detail: includesText(charging, 'charging') ? 'Currently adding energy.' : 'No blocking charge state detected.',
+      score: includesText(charging, 'charging') || Number.isFinite(battery) ? 88 : 65,
+    }),
+    buildReadinessSignal({
+      label: 'Tires & Service',
+      value: tireWarning || serviceMode ? 'Attention' : 'Clear',
+      status: tireWarning || serviceMode ? 'Review' : 'Ready',
+      detail: serviceMode ? 'Service mode is active.' : tireWarning ? 'Tire pressure warning detected.' : 'No tire/service warning found in synced fields.',
+      score: tireWarning || serviceMode ? 45 : 96,
+    }),
+    buildReadinessSignal({
+      label: 'Security',
+      value: locked === undefined ? 'Unknown' : locked ? 'Locked' : 'Unlocked',
+      status: locked === false ? 'Secure' : 'Ready',
+      detail: locked === false ? 'Lock before guest pickup or overnight parking.' : 'Security state is acceptable.',
+      score: locked === false ? 70 : 95,
+    }),
+    buildReadinessSignal({
+      label: 'Software',
+      value: updatePending ? 'Update pending' : software || 'Unknown',
+      status: updatePending ? 'Schedule' : 'Ready',
+      detail: updatePending ? 'Schedule updates away from rental windows.' : 'No software update conflict detected.',
+      score: updatePending ? 72 : 92,
+    }),
+  ];
+
+  const score = Math.round(
+    (signals.reduce((sum, signal) => sum + signal.score, 0) / Math.max(1, signals.length)) * (online ? 1 : 0.88),
+  );
+  const blocking = signals.find((signal) => ['Charge', 'Review', 'Missing'].includes(signal.status));
+  const nextAction = blocking
+    ? `${blocking.label}: ${blocking.detail}`
+    : Number.isFinite(battery) && battery < 85
+      ? `Charge ${vehicleLabel(vehicle)} to 85-90% before the next rental window.`
+      : `${vehicleLabel(vehicle)} is ready. Keep monitoring before pickup.`;
+
+  return {
+    score,
+    status: score >= 88 ? 'Rental Ready' : score >= 72 ? 'Watch' : 'Needs Action',
+    tone: score >= 88 ? 'text-emerald-300' : score >= 72 ? 'text-amber-300' : 'text-rose-300',
+    bg: score >= 88 ? 'from-emerald-950 to-slate-950' : score >= 72 ? 'from-amber-950 to-slate-950' : 'from-rose-950 to-slate-950',
+    nextAction,
+    signals,
+  };
+}
+
+function statusTone(status) {
+  if (['Ready', 'Rental Ready', 'Charging'].includes(status)) return 'border-emerald-300/20 bg-emerald-300/[0.08] text-emerald-100';
+  if (['Watch', 'Schedule', 'Secure'].includes(status)) return 'border-amber-300/20 bg-amber-300/[0.08] text-amber-100';
+  return 'border-rose-300/20 bg-rose-300/[0.08] text-rose-100';
+}
+
+function VehicleReadinessCard({ vehicle, onQueue }) {
+  const readiness = buildVehicleReadiness(vehicle);
+
+  return (
+    <article className={`rounded-xl border border-white/10 bg-gradient-to-br ${readiness.bg} p-5 shadow-xl shadow-black/20`}>
+      <div className="grid gap-5 xl:grid-cols-[0.55fr_1.45fr]">
+        <div>
+          <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-300">Vehicle Readiness</p>
+          <h2 className="mt-2 text-2xl font-black tracking-tight text-white">{vehicle ? vehicleLabel(vehicle) : 'Sync your first Tesla'}</h2>
+          <p className="mt-2 text-sm leading-6 text-slate-400">
+            RoboAgent converts Tesla telemetry into a simple rental-ready decision.
+          </p>
+          <div className="mt-5 flex items-end gap-3">
+            <span className={`text-6xl font-black tracking-tight ${readiness.tone}`}>{readiness.score}</span>
+            <div className="pb-2">
+              <p className="text-sm font-black uppercase text-white">/100</p>
+              <p className={`text-sm font-black ${readiness.tone}`}>{readiness.status}</p>
+            </div>
+          </div>
+          <p className="mt-4 rounded-lg border border-white/10 bg-slate-950/40 p-3 text-sm font-bold leading-6 text-slate-100">
+            Next action: {readiness.nextAction}
+          </p>
+          {onQueue ? (
+            <button
+              type="button"
+              onClick={() => onQueue(`Review readiness for ${vehicle ? vehicleLabel(vehicle) : 'my first Tesla'}: ${readiness.nextAction}`, readiness.score < 72 ? 'HIGH' : 'NORMAL')}
+              className="mt-4 w-full rounded-md border border-white/10 bg-white/10 px-4 py-2.5 text-sm font-black text-white transition hover:bg-white/15"
+            >
+              Ask RoboAgent to Review
+            </button>
+          ) : null}
+        </div>
+
+        <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+          {readiness.signals.map((signal) => (
+            <div key={signal.label} className={`rounded-lg border p-3 ${statusTone(signal.status)}`}>
+              <div className="flex items-start justify-between gap-2">
+                <p className="text-[10px] font-black uppercase tracking-[0.16em] opacity-70">{signal.label}</p>
+                <span className="rounded-full border border-white/10 bg-slate-950/35 px-2 py-0.5 text-[10px] font-black uppercase">
+                  {signal.status}
+                </span>
+              </div>
+              <p className="mt-2 text-lg font-black text-white">{signal.value}</p>
+              <p className="mt-1 text-xs leading-5 opacity-80">{signal.detail}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </article>
+  );
+}
+
 function TelemetrySnapshot({ fleet }) {
-  const vehicle = fleet.find((item) => item.isReal) || fleet[0];
+  const vehicle = getVehicleForTelemetry(fleet);
   const rows = buildTelemetryRows(vehicle);
 
   return (
-    <article className="rounded-xl border border-sky-300/20 bg-slate-900/90 p-5 shadow-xl shadow-black/20">
-      <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-        <div>
-          <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-300">Live Tesla Telemetry</p>
-          <h2 className="mt-2 text-2xl font-black tracking-tight text-white">Owner dashboard data snapshot</h2>
-          <p className="mt-2 text-sm leading-6 text-slate-400">
-            All available primitive telemetry fields for {vehicle ? vehicleLabel(vehicle) : 'your first synced Tesla'} appear here after sync.
-          </p>
+    <details className="rounded-xl border border-sky-300/20 bg-slate-900/90 p-5 shadow-xl shadow-black/20">
+      <summary className="cursor-pointer list-none">
+        <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-sky-300">Detailed Tesla Telemetry</p>
+            <h2 className="mt-2 text-2xl font-black tracking-tight text-white">Raw dashboard data snapshot</h2>
+            <p className="mt-2 text-sm leading-6 text-slate-400">
+              Open this when you need the underlying fields behind readiness.
+            </p>
+          </div>
+          <span className="w-fit rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-black uppercase text-slate-300">
+            {rows.length || 0} fields
+          </span>
         </div>
-        <span className="w-fit rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs font-black uppercase text-slate-300">
-          {rows.length || 0} fields
-        </span>
-      </div>
-
+      </summary>
       {vehicle ? (
         <div className="mt-5 grid gap-3 lg:grid-cols-[0.85fr_1.15fr]">
           <div className="grid grid-cols-2 gap-3">
@@ -136,7 +323,7 @@ function TelemetrySnapshot({ fleet }) {
           Sync Tesla telemetry to populate battery, GPS, odometer, charging, locks, software, service mode, and raw vehicle fields.
         </p>
       )}
-    </article>
+    </details>
   );
 }
 
@@ -276,9 +463,12 @@ export default function OwnerValueDashboard({ fleet = [], onQueueCommand }) {
   const avgHealth = Math.round(healthSummary.avgHealth || 0);
   const criticalMaintenance = maintenancePlan.filter((item) => item.priority === 'HIGH').length;
   const pricingUpsideCount = pricingRecommendations.filter((item) => item.recommendedChange > 0).length;
+  const readinessVehicle = getVehicleForTelemetry(fleet);
 
   return (
     <section className="space-y-4" data-testid="owner-value-dashboard">
+      <VehicleReadinessCard vehicle={readinessVehicle} onQueue={onQueueCommand} />
+
       <article className="rounded-xl border border-emerald-300/20 bg-slate-900/90 p-5 shadow-xl shadow-black/20">
         <div className="flex flex-col gap-5">
           <div className="max-w-4xl">
