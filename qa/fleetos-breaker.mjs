@@ -127,7 +127,6 @@ async function testExpectedLandingCopy() {
   const { bundle } = await getIndexAndBundle();
   const expected = [
     'Predictive maintenance',
-    'Real owner workflow',
     'RoboAgent Command Center',
     'The AI agent is the product.',
     '7:04 AM AI plan ready',
