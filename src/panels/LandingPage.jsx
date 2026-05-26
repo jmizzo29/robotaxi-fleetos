@@ -558,113 +558,107 @@ export function AgentChatPage({ onNavigate }) {
   };
 
   const prompts = [
-    'Maximize my earnings this weekend with 3 Teslas',
-    'Should I raise price this weekend in Tampa?',
-    'How many Model X rentals are available in Orlando?',
-    'What maintenance risks need attention tomorrow?',
+    ['Daily Plan', 'Maximize my earnings this weekend with 3 Teslas'],
+    ['Pricing Advice', 'Should I raise price this weekend in Tampa?'],
+    ['Fleet Health', 'What maintenance risks need attention tomorrow?'],
+    ['Charging Strategy', 'When should I charge tonight?'],
+    ['Maintenance', 'Check health and prepare all vehicles for tomorrow'],
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-slate-950 to-black px-4 py-5 text-white">
-      <header className="mx-auto mb-5 flex max-w-3xl items-center justify-between">
-        <button type="button" onClick={() => onNavigate('landing')} className="text-sm font-black uppercase tracking-[0.22em] text-teal-300">
-          RoboAgent
-        </button>
-        <button
-          type="button"
-          onClick={() => onNavigate('landing')}
-          className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-slate-200"
-        >
-          Back
+    <div className="flex min-h-screen flex-col bg-[#0a0a0a]">
+      <header className="sticky top-0 z-50 flex items-center justify-between border-b border-zinc-800 bg-black/80 p-4 backdrop-blur-md">
+        <div className="flex items-center gap-3">
+          <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-400 text-xl">
+            R
+          </div>
+          <div>
+            <p className="font-semibold text-white">RoboAgent</p>
+            <p className="flex items-center gap-1 text-xs text-teal-400">● Online</p>
+          </div>
+        </div>
+        <button type="button" onClick={() => onNavigate('landing')} className="text-xl text-zinc-400 hover:text-white" aria-label="Back home">
+          ⋯
         </button>
       </header>
 
-      <main className="mx-auto flex min-h-[calc(100vh-92px)] max-w-3xl flex-col">
-        <div className="mb-5">
-          <p className="text-sm font-medium uppercase tracking-wide text-teal-400">Agent Chat</p>
-          <h1 className="mt-2 text-3xl font-bold tracking-tight sm:text-4xl">Ask RoboAgent anything.</h1>
-          <p className="mt-2 text-sm leading-6 text-slate-400">
-            Try pricing, charging, maintenance, cleaning, profitability, or local rental-market questions before signing up.
-          </p>
+      <main className="flex-1 space-y-6 overflow-y-auto p-4 pb-40">
+        <div className="flex gap-3">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-400 text-sm font-black text-slate-950">
+            R
+          </div>
+          <div className="max-w-[75%] rounded-3xl rounded-tl-none bg-zinc-900 px-5 py-4">
+            <p className="text-zinc-100">
+              Good morning. I&apos;ve analyzed your fleet. Here&apos;s what I recommend for today:
+            </p>
+          </div>
         </div>
 
-        <section className="flex-1 rounded-3xl border border-zinc-800 bg-zinc-950/90 p-4 shadow-2xl shadow-black/40 sm:p-5">
-          <label htmlFor="public-agent-question" className="text-xs font-black uppercase tracking-[0.18em] text-slate-400">
-            Your question
-          </label>
-          <textarea
+        <div className="flex justify-end">
+          <div className="max-w-[70%] rounded-3xl rounded-tr-none bg-teal-600 px-5 py-4">
+            <p className="text-white">{goal || 'What is the best plan for this weekend?'}</p>
+          </div>
+        </div>
+
+        <div className="flex gap-3">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-400 text-sm font-black text-slate-950">
+            R
+          </div>
+          <div className="max-w-[75%] rounded-3xl rounded-tl-none bg-zinc-900 px-5 py-4">
+            <p className="font-medium text-emerald-400">{response.metrics?.[0] || response.title}</p>
+            <p className="mt-2 text-zinc-300">{response.summary}</p>
+            {(response.steps || []).slice(0, 2).map((step) => (
+              <p key={step} className="mt-2 text-sm text-zinc-400">{step}</p>
+            ))}
+            <p className="mt-3 text-xs text-teal-400">
+              Confidence: <span className="font-bold">{response.confidence}%</span>
+            </p>
+          </div>
+        </div>
+      </main>
+
+      <div className="border-t border-zinc-800 bg-[#0a0a0a] px-4 pb-4">
+        <div className="flex gap-2 overflow-x-auto pb-3 pt-3">
+          {prompts.map(([chip, prompt]) => (
+            <button
+              key={chip}
+              type="button"
+              onClick={() => {
+                setGoal(prompt);
+                setResponse(buildDemoResponse(prompt));
+              }}
+              className="whitespace-nowrap rounded-2xl border border-zinc-700 bg-zinc-900 px-5 py-2 text-sm text-zinc-300 hover:bg-zinc-800"
+            >
+              {chip}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="fixed bottom-0 left-0 right-0 border-t border-zinc-800 bg-zinc-950 p-4">
+        <div className="flex items-center rounded-3xl bg-zinc-900 px-5 py-2">
+          <input
             id="public-agent-question"
+            type="text"
             value={goal}
             onChange={(event) => setGoal(event.target.value)}
-            rows={4}
-            className="mt-3 w-full resize-none rounded-2xl border border-zinc-700 bg-black/60 px-4 py-4 text-base font-semibold leading-7 text-white outline-none transition placeholder:text-slate-600 focus:border-teal-400"
-            placeholder="Ask about pricing, charging, maintenance, local market demand, or profit..."
+            onKeyDown={(event) => {
+              if (event.key === 'Enter') askAgent();
+            }}
+            placeholder="Ask RoboAgent anything..."
+            className="flex-1 bg-transparent text-white outline-none placeholder:text-zinc-500"
           />
-
           <button
             type="button"
             onClick={askAgent}
             disabled={isThinking}
-            className="mt-3 w-full rounded-2xl bg-teal-500 py-4 text-lg font-semibold text-white transition hover:bg-teal-600 disabled:cursor-wait disabled:opacity-70"
+            className="ml-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-teal-500 text-xl text-white hover:bg-teal-600 disabled:cursor-wait disabled:opacity-70"
+            aria-label="Ask RoboAgent"
           >
-            {isThinking ? 'RoboAgent thinking...' : 'Ask RoboAgent'}
+            ↑
           </button>
-
-          <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
-            {prompts.map((prompt) => (
-              <button
-                key={prompt}
-                type="button"
-                onClick={() => {
-                  setGoal(prompt);
-                  setResponse(buildDemoResponse(prompt));
-                }}
-                className="shrink-0 rounded-full border border-white/10 bg-white/[0.06] px-3 py-2 text-xs font-bold text-slate-200"
-              >
-                {prompt}
-              </button>
-            ))}
-          </div>
-
-          <article className="mt-5 rounded-3xl border border-teal-400/20 bg-teal-400/[0.06] p-5">
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
-              <div>
-                <p className="text-xs font-black uppercase tracking-[0.18em] text-teal-300">Agent response</p>
-                <h2 className="mt-2 text-2xl font-black text-white">{response.title}</h2>
-              </div>
-              <span className="w-fit rounded-full border border-teal-300/20 bg-teal-300/10 px-3 py-1 text-xs font-black text-teal-200">
-                {response.confidence}% confidence
-              </span>
-            </div>
-            <p className="mt-3 text-sm font-semibold leading-6 text-slate-200">{response.summary}</p>
-            <div className="mt-4 grid gap-2 sm:grid-cols-3">
-              {(response.metrics || []).map((metric) => (
-                <div key={metric} className="rounded-2xl border border-white/10 bg-black/25 px-3 py-3 text-xs font-black text-teal-100">
-                  {metric}
-                </div>
-              ))}
-            </div>
-            <div className="mt-4 space-y-2">
-              {(response.steps || []).slice(0, 3).map((step, index) => (
-                <div key={step} className="flex gap-3 rounded-2xl border border-white/10 bg-black/25 p-3">
-                  <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-teal-500 text-sm font-black text-white">
-                    {index + 1}
-                  </span>
-                  <p className="text-sm font-semibold leading-6 text-slate-200">{step}</p>
-                </div>
-              ))}
-            </div>
-          </article>
-
-          <button
-            type="button"
-            onClick={() => onNavigate('onboarding')}
-            className="mt-5 w-full rounded-2xl border border-white/10 bg-white py-4 text-lg font-black text-black"
-          >
-            Get Started Free
-          </button>
-        </section>
-      </main>
+        </div>
+      </div>
     </div>
   );
 }
