@@ -77,14 +77,15 @@ async function testLanding(browser, profile) {
   await page.getByText('RoboAgent', { exact: true }).first().waitFor({ timeout: 15000 });
   await page.getByText('Your AI agent for Tesla rental profit.').waitFor({ timeout: 15000 });
   if (profile === 'desktop') {
-    await page.getByText('The AI agent is the product.').waitFor({ timeout: 15000 });
-    await page.getByRole('img', { name: 'White electric vehicle in a Florida driveway with a RoboAgent-style dashboard preview' }).waitFor({ timeout: 15000 });
-    await page.getByText('Dynamic pricing').waitFor({ timeout: 15000 });
-    await page.getByText('Predictive maintenance').waitFor({ timeout: 15000 });
-    await page.getByText('Profitability insight').waitFor({ timeout: 15000 });
-    await page.getByText('7:04 AM AI plan ready').waitFor({ timeout: 15000 });
-    await page.getByRole('button', { name: 'Approve Plan' }).waitFor({ timeout: 15000 });
-    await page.getByRole('button', { name: 'Ask Follow-up' }).waitFor({ timeout: 15000 });
+    const commandCenter = page.locator('[data-testid="agent-command-center"]');
+    await commandCenter.getByText('The AI agent is the product.').waitFor({ timeout: 15000 });
+    await commandCenter.getByRole('img', { name: 'White electric vehicle in a Florida driveway with a RoboAgent-style dashboard preview' }).waitFor({ timeout: 15000 });
+    await commandCenter.getByText('Dynamic pricing', { exact: true }).waitFor({ timeout: 15000 });
+    await commandCenter.getByText('Predictive maintenance', { exact: true }).waitFor({ timeout: 15000 });
+    await commandCenter.getByText('Profitability insight', { exact: true }).waitFor({ timeout: 15000 });
+    await commandCenter.getByText('7:04 AM AI plan ready').waitFor({ timeout: 15000 });
+    await commandCenter.getByRole('button', { name: 'Approve Plan' }).waitFor({ timeout: 15000 });
+    await commandCenter.getByRole('button', { name: 'Ask Follow-up' }).waitFor({ timeout: 15000 });
     await page.getByRole('button', { name: 'Start Free', exact: true }).first().waitFor({ timeout: 15000 });
     await page.getByText('Built by a Tesla owner for Tesla owners').waitFor({ timeout: 15000 });
     await page.getByText('Dynamic Turo pricing', { exact: true }).waitFor({ timeout: 15000 });
@@ -104,10 +105,10 @@ async function testLanding(browser, profile) {
     await mobilePreview.getByText('AI Agent').waitFor({ timeout: 15000 });
     await mobilePreview.getByText("Today's Plan").waitFor({ timeout: 15000 });
     await mobilePreview.getByText('Active').waitFor({ timeout: 15000 });
-    await mobilePreview.getByText('Pricing').waitFor({ timeout: 15000 });
-    await mobilePreview.getByText('Maintenance').waitFor({ timeout: 15000 });
-    await mobilePreview.getByText('Charging').waitFor({ timeout: 15000 });
-    await mobilePreview.getByText('Profit').waitFor({ timeout: 15000 });
+    await mobilePreview.getByText('Pricing', { exact: true }).waitFor({ timeout: 15000 });
+    await mobilePreview.getByText('Maintenance', { exact: true }).waitFor({ timeout: 15000 });
+    await mobilePreview.getByText('Charging', { exact: true }).waitFor({ timeout: 15000 });
+    await mobilePreview.getByText('Profit', { exact: true }).waitFor({ timeout: 15000 });
     await mobilePreview.getByText('Model Y - Orlando').waitFor({ timeout: 15000 });
     await mobilePreview.getByText('Model 3 - Tampa').waitFor({ timeout: 15000 });
     await mobilePreview.getByText('18 trips').waitFor({ timeout: 15000 });

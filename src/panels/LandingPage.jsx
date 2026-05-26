@@ -318,7 +318,7 @@ function OwnerOutcomePanel() {
   ];
 
   return (
-    <aside className="grid overflow-hidden bg-white/0 lg:grid-cols-[0.95fr_1.05fr] lg:items-stretch">
+    <aside className="grid overflow-hidden bg-white/0 lg:grid-cols-[0.95fr_1.05fr] lg:items-stretch" data-testid="agent-command-center">
       <div className="relative min-h-[320px] overflow-hidden rounded-[2rem] bg-slate-100 shadow-2xl shadow-slate-300/50 lg:min-h-[560px] lg:rounded-r-none">
         <img
           src="/images/roboagent-tesla-rental-hero.png"

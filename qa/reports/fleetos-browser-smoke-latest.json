@@ -1,18 +1,20 @@
 {
   "baseUrl": "https://robotaxi-fleetos.vercel.app",
-  "generatedAt": "2026-05-26T22:14:34.677Z",
+  "generatedAt": "2026-05-26T22:33:32.301Z",
   "summary": {
     "total": 16,
-    "pass": 16,
+    "pass": 15,
     "warn": 0,
-    "fail": 0
+    "fail": 1
   },
   "results": [
     {
-      "status": "pass",
+      "status": "fail",
       "name": "landing browser smoke (desktop)",
-      "detail": "No serious browser runtime errors detected.",
-      "evidence": {}
+      "detail": "locator.waitFor: Error: strict mode violation: getByText('Predictive maintenance', { exact: true }) resolved to 2 elements:\n    1) <span class=\"rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-emerald-800\">Predictive maintenance</span> aka locator('span').filter({ hasText: 'Predictive maintenance' })\n    2) <p class=\"text-[9px] font-black uppercase tracking-[0.14em] text-slate-500\">Predictive maintenance</p> aka getByRole('complementary').getByText('Predictive maintenance')\n\nCall log:\n\u001b[2m  - waiting for getByText('Predictive maintenance', { exact: true }) to be visible\u001b[22m\n",
+      "evidence": {
+        "stack": "locator.waitFor: Error: strict mode violation: getByText('Predictive maintenance', { exact: true }) resolved to 2 elements:\n    1) <span class=\"rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-emerald-800\">Predictive maintenance</span> aka locator('span').filter({ hasText: 'Predictive maintenance' })\n    2) <p class=\"text-[9px] font-black uppercase tracking-[0.14em] text-slate-500\">Predictive maintenance</p> aka getByRole('complementary').getByText('Predictive maintenance')\n\nCall log:\n\u001b[2m  - waiting for getByText('Predictive maintenance', { exact: true }) to be visible\u001b[22m\n\n    at testLanding (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:83:69)\n    at async runTest (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:26:12)\n    at async file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:329:16"
+      }
     },
     {
       "status": "pass",
