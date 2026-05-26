@@ -1,19 +1,19 @@
 {
   "baseUrl": "https://robotaxi-fleetos.vercel.app",
-  "generatedAt": "2026-05-26T21:26:59.805Z",
+  "generatedAt": "2026-05-26T21:31:40.128Z",
   "summary": {
     "total": 16,
-    "pass": 13,
+    "pass": 12,
     "warn": 0,
-    "fail": 3
+    "fail": 4
   },
   "results": [
     {
       "status": "fail",
       "name": "landing browser smoke (desktop)",
-      "detail": "locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByText('No signup needed', { exact: true }) to be visible\u001b[22m\n",
+      "detail": "locator.waitFor: Error: strict mode violation: getByText('Earn More') resolved to 2 elements:\n    1) <p class=\"mt-5 hidden max-w-xl text-xl font-bold leading-8 text-slate-700 md:block\">RoboAgent helps Tesla owners earn more from Turo …</p> aka getByText('RoboAgent helps Tesla owners')\n    2) <p class=\"text-xs font-black uppercase tracking-[0.18em] text-emerald-700\">Earn More</p> aka getByText('Earn More', { exact: true })\n\nCall log:\n\u001b[2m  - waiting for getByText('Earn More') to be visible\u001b[22m\n",
       "evidence": {
-        "stack": "locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByText('No signup needed', { exact: true }) to be visible\u001b[22m\n\n    at testLanding (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:85:63)\n    at async runTest (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:26:12)\n    at async file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:335:16"
+        "stack": "locator.waitFor: Error: strict mode violation: getByText('Earn More') resolved to 2 elements:\n    1) <p class=\"mt-5 hidden max-w-xl text-xl font-bold leading-8 text-slate-700 md:block\">RoboAgent helps Tesla owners earn more from Turo …</p> aka getByText('RoboAgent helps Tesla owners')\n    2) <p class=\"text-xs font-black uppercase tracking-[0.18em] text-emerald-700\">Earn More</p> aka getByText('Earn More', { exact: true })\n\nCall log:\n\u001b[2m  - waiting for getByText('Earn More') to be visible\u001b[22m\n\n    at testLanding (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:89:39)\n    at async runTest (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:26:12)\n    at async file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:332:16"
       }
     },
     {
@@ -43,9 +43,9 @@
     {
       "status": "fail",
       "name": "landing CTA to onboarding (desktop)",
-      "detail": "locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#hero-agent-input')\u001b[22m\n",
+      "detail": "locator.click: Error: strict mode violation: getByRole('button', { name: 'Try Demo' }) resolved to 2 elements:\n    1) <button type=\"button\" class=\"hidden rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-sm font-bold text-sky-800 shadow-sm transition hover:bg-sky-100 sm:block\">Try Demo</button> aka getByRole('navigation').getByRole('button', { name: 'Try Demo' })\n    2) <button type=\"button\" class=\"rounded-md bg-sky-300 px-5 py-4 text-sm font-black text-slate-950 transition hover:bg-sky-200\">Try Demo</button> aka getByRole('main').getByRole('button', { name: 'Try Demo' })\n\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Try Demo' })\u001b[22m\n",
       "evidence": {
-        "stack": "locator.fill: Timeout 30000ms exceeded.\nCall log:\n\u001b[2m  - waiting for locator('#hero-agent-input')\u001b[22m\n\n    at testLandingCtas (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:246:19)\n    at async runTest (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:26:12)\n    at async file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:335:16"
+        "stack": "locator.click: Error: strict mode violation: getByRole('button', { name: 'Try Demo' }) resolved to 2 elements:\n    1) <button type=\"button\" class=\"hidden rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-sm font-bold text-sky-800 shadow-sm transition hover:bg-sky-100 sm:block\">Try Demo</button> aka getByRole('navigation').getByRole('button', { name: 'Try Demo' })\n    2) <button type=\"button\" class=\"rounded-md bg-sky-300 px-5 py-4 text-sm font-black text-slate-950 transition hover:bg-sky-200\">Try Demo</button> aka getByRole('main').getByRole('button', { name: 'Try Demo' })\n\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Try Demo' })\u001b[22m\n\n    at testLandingCtas (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:237:58)\n    at async runTest (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:26:12)\n    at async file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:332:16"
       }
     },
     {
@@ -63,9 +63,9 @@
     {
       "status": "fail",
       "name": "landing browser smoke (mobile)",
-      "detail": "locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByText('Your AI Agent for Tesla Rentals & Robotaxis') to be visible\u001b[22m\n",
+      "detail": "Mobile AI demo should be hidden before tapping See More.",
       "evidence": {
-        "stack": "locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByText('Your AI Agent for Tesla Rentals & Robotaxis') to be visible\u001b[22m\n\n    at testLanding (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:79:73)\n    at async runTest (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:26:12)\n    at async file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:335:16"
+        "stack": "Error: Mobile AI demo should be hidden before tapping See More.\n    at testLanding (file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:128:13)\n    at async runTest (file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:26:12)\n    at async file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:332:16"
       }
     },
     {
@@ -93,10 +93,12 @@
       "evidence": {}
     },
     {
-      "status": "pass",
+      "status": "fail",
       "name": "landing CTA to onboarding (mobile)",
-      "detail": "No serious browser runtime errors detected.",
-      "evidence": {}
+      "detail": "locator.click: Error: strict mode violation: getByRole('button', { name: 'Ask Agent' }) resolved to 2 elements:\n    1) <button type=\"button\" class=\"mt-3 w-full rounded-md bg-sky-300 px-5 py-4 text-sm font-black text-slate-950 transition hover:bg-sky-200 disabled:cursor-wait disabled:opacity-70\">Ask Agent</button> aka getByTestId('hero-agent-demo').getByRole('button', { name: 'Ask Agent' })\n    2) <button type=\"button\" class=\"mt-3 w-full rounded-md bg-sky-300 px-5 py-4 text-sm font-black text-slate-950 transition hover:bg-sky-200 disabled:cursor-wait disabled:opacity-70\">Ask Agent</button> aka getByTestId('mobile-hero-agent-demo').getByRole('button', { name: 'Ask Agent' })\n\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Ask Agent' })\u001b[22m\n",
+      "evidence": {
+        "stack": "locator.click: Error: strict mode violation: getByRole('button', { name: 'Ask Agent' }) resolved to 2 elements:\n    1) <button type=\"button\" class=\"mt-3 w-full rounded-md bg-sky-300 px-5 py-4 text-sm font-black text-slate-950 transition hover:bg-sky-200 disabled:cursor-wait disabled:opacity-70\">Ask Agent</button> aka getByTestId('hero-agent-demo').getByRole('button', { name: 'Ask Agent' })\n    2) <button type=\"button\" class=\"mt-3 w-full rounded-md bg-sky-300 px-5 py-4 text-sm font-black text-slate-950 transition hover:bg-sky-200 disabled:cursor-wait disabled:opacity-70\">Ask Agent</button> aka getByTestId('mobile-hero-agent-demo').getByRole('button', { name: 'Ask Agent' })\n\nCall log:\n\u001b[2m  - waiting for getByRole('button', { name: 'Ask Agent' })\u001b[22m\n\n    at testLandingCtas (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:244:57)\n    at async runTest (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:26:12)\n    at async file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:332:16"
+      }
     },
     {
       "status": "pass",

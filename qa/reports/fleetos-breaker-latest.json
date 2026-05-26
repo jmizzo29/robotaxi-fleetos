@@ -1,7 +1,7 @@
 {
   "baseUrl": "https://robotaxi-fleetos.vercel.app",
-  "generatedAt": "2026-05-26T21:27:04.150Z",
-  "durationMs": 3134,
+  "generatedAt": "2026-05-26T21:31:49.630Z",
+  "durationMs": 3972,
   "summary": {
     "total": 13,
     "pass": 12,
@@ -12,10 +12,10 @@
     {
       "name": "public shell loads",
       "status": "pass",
-      "detail": "Homepage and bundle loaded in 475ms.",
+      "detail": "Homepage and bundle loaded in 860ms.",
       "evidence": {
-        "asset": "index-BlYlGacJ.js",
-        "bundleBytes": 716066
+        "asset": "index-Byo3qIpl.js",
+        "bundleBytes": 716159
       }
     },
     {
@@ -30,8 +30,7 @@
       "detail": "Expected current landing copy is missing from the deployed bundle.",
       "evidence": {
         "missing": [
-          "Your AI Agent for Tesla Rentals & Robotaxis",
-          "Today\\u0026apos;s money and readiness plan"
+          "Today\\x26apos;s money and readiness plan"
         ]
       }
     },
@@ -109,10 +108,10 @@
     {
       "name": "health burst",
       "status": "pass",
-      "detail": "20 concurrent health requests passed in 796ms.",
+      "detail": "20 concurrent health requests passed in 882ms.",
       "evidence": {
-        "maxMs": 787,
-        "minMs": 61
+        "maxMs": 853,
+        "minMs": 83
       }
     }
   ]

@@ -724,14 +724,14 @@ export default function LandingPage({ onNavigate }) {
             <p className="mt-5 hidden text-sm font-semibold leading-6 text-slate-700 sm:block">
               Built in Florida for real Tesla owners trying to turn expensive cars into reliable income-producing assets. Tesla controls autonomous driving availability and execution.
             </p>
-            <div className="sr-only">
-              <HeroAgentDemo onNavigate={onNavigate} />
-            </div>
           </div>
 
           <div>
             <div className="hidden md:block">
               <OwnerOutcomePanel />
+            </div>
+            <div className="sr-only md:block">
+              <HeroAgentDemo onNavigate={onNavigate} />
             </div>
             <div className="md:hidden">
               {showMobileMore ? (

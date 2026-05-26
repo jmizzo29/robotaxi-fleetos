@@ -86,12 +86,12 @@ async function testLanding(browser, profile) {
       throw new Error(`Unexpected hero agent prompt: ${heroGoal}`);
     }
     await page.getByText('Simple, fair pricing.').waitFor({ timeout: 15000 });
-    await page.getByText('Earn More').waitFor({ timeout: 15000 });
+    await page.getByText('Earn More', { exact: true }).waitFor({ timeout: 15000 });
     await page.getByText('Built for Owner-Renters').waitFor({ timeout: 15000 });
     await page.getByText('Owner-controlled data').waitFor({ timeout: 15000 });
   }
   if (profile === 'desktop') {
-    await page.getByRole('button', { name: 'Try Demo' }).waitFor({ timeout: 15000 });
+    await page.getByRole('main').getByRole('button', { name: 'Try Demo' }).waitFor({ timeout: 15000 });
     await page.getByRole('button', { name: 'Start Free', exact: true }).first().waitFor({ timeout: 15000 });
     await page.getByText('Built by a Tesla owner for Tesla owners').waitFor({ timeout: 15000 });
     await page.getByText('No credit card required').waitFor({ timeout: 15000 });
@@ -124,7 +124,7 @@ async function testLanding(browser, profile) {
     if (await page.getByText('Create account first, then connect Tesla').count()) {
       throw new Error('Old mobile helper text should not be visible under the CTA buttons.');
     }
-    if (await page.locator('#hero-agent-input:visible').count()) {
+    if (await page.locator('[data-testid="mobile-hero-agent-demo"] #mobile-hero-agent-input:visible').count()) {
       throw new Error('Mobile AI demo should be hidden before tapping See More.');
     }
     if (await page.getByText('Your Tesla login stays with Tesla.').count()) {
@@ -234,20 +234,20 @@ async function testLandingCtas(browser, profile) {
   const { page, context } = telemetry;
   await page.goto(routeUrl('/'), { waitUntil: 'networkidle' });
   if (profile === 'desktop') {
-    await page.getByRole('button', { name: 'Try Demo' }).click();
+    await page.getByRole('main').getByRole('button', { name: 'Try Demo' }).click();
   } else {
     await page.getByRole('button', { name: 'Try AI Agent' }).click();
     await page.locator('#mobile-hero-agent-input').waitFor({ timeout: 15000 });
   }
   const heroInput = page.locator(profile === 'desktop' ? '#hero-agent-input' : '#mobile-hero-agent-input');
   await heroInput.fill('Should I raise price this weekend in Tampa?');
-  await page.getByRole('button', { name: 'Ask Agent' }).click();
+  await page.locator(profile === 'desktop' ? '[data-testid="hero-agent-demo"]' : '[data-testid="mobile-hero-agent-demo"]').getByRole('button', { name: 'Ask Agent' }).click();
   await page.getByText('Turo revenue plan').first().waitFor({ timeout: 15000 });
   await heroInput.fill('What are the top rented Teslas in Orlando?');
-  await page.getByRole('button', { name: 'Ask Agent' }).click();
+  await page.locator(profile === 'desktop' ? '[data-testid="hero-agent-demo"]' : '[data-testid="mobile-hero-agent-demo"]').getByRole('button', { name: 'Ask Agent' }).click();
   await page.getByText('Top rented Teslas in Orlando').first().waitFor({ timeout: 15000 });
   await heroInput.fill('How many Model X rentals are available in Orlando?');
-  await page.getByRole('button', { name: 'Ask Agent' }).click();
+  await page.locator(profile === 'desktop' ? '[data-testid="hero-agent-demo"]' : '[data-testid="mobile-hero-agent-demo"]').getByRole('button', { name: 'Ask Agent' }).click();
   await page.getByText('Model X rental availability in Orlando').first().waitFor({ timeout: 15000 });
   if (profile === 'desktop') {
     await page.getByRole('button', { name: 'Start Free', exact: true }).first().click();
