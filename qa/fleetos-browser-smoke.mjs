@@ -75,7 +75,12 @@ async function testLanding(browser, profile) {
   const { page, context } = telemetry;
   await page.goto(routeUrl('?qa=browser'), { waitUntil: 'networkidle' });
   await page.getByText('RoboAgent', { exact: true }).first().waitFor({ timeout: 15000 });
-  await page.getByText('Your AI Agent for Tesla Rentals & Robotaxis').waitFor({ timeout: 15000 });
+  if (profile === 'mobile') {
+    await page.getByText('Your AI Agent for Tesla Rentals & Robotaxis').waitFor({ timeout: 15000 });
+  } else {
+    await page.getByText('Make your Tesla pay for itself.').waitFor({ timeout: 15000 });
+    await page.getByText('Today\'s money and readiness plan').waitFor({ timeout: 15000 });
+  }
   if (profile === 'desktop') {
     await page.getByText('No signup needed', { exact: true }).waitFor({ timeout: 15000 });
     await page.locator('#hero-agent-input').waitFor({ timeout: 15000 });
@@ -84,7 +89,8 @@ async function testLanding(browser, profile) {
       throw new Error(`Unexpected hero agent prompt: ${heroGoal}`);
     }
     await page.getByText('Simple, fair pricing.').waitFor({ timeout: 15000 });
-    await page.getByText('Secure by Design').waitFor({ timeout: 15000 });
+    await page.getByText('Earn More').waitFor({ timeout: 15000 });
+    await page.getByText('Built for Owner-Renters').waitFor({ timeout: 15000 });
     await page.getByText('Owner-controlled data').waitFor({ timeout: 15000 });
   }
   if (profile === 'desktop') {

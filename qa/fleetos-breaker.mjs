@@ -127,6 +127,8 @@ async function testExpectedLandingCopy() {
   const { bundle } = await getIndexAndBundle();
   const expected = [
     'Your AI Agent for Tesla Rentals & Robotaxis',
+    'Make your Tesla pay for itself.',
+    'Today\\u0026apos;s money and readiness plan',
     'No signup needed',
     'Maximize my earnings this weekend with 3 Teslas',
     'How many miles did my last rental drive?',
@@ -140,8 +142,9 @@ async function testExpectedLandingCopy() {
     'Try the planning demo',
     'Start free',
     'Built by a Tesla owner for Tesla owners',
+    'Built for Owner-Renters',
     'Simple, fair pricing.',
-    'Secure by Design',
+    'Earn More',
     'Tesla password never shared',
   ];
   const missing = expected.filter((phrase) => !bundle?.text.includes(phrase));

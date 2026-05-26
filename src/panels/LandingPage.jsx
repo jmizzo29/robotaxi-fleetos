@@ -402,6 +402,70 @@ function HeroAgentDemo({
   );
 }
 
+function OwnerOutcomePanel() {
+  const vehicles = [
+    ['Model Y - Orlando', 'Ready', '94/100', '$312', 'Charge to 88% tonight'],
+    ['Model 3 - Tampa', 'Watch', '81/100', '$188', 'Check tire pressure before pickup'],
+    ['Cybercab - Future', 'Planning', '98/100', 'Future', 'Track Robotaxi readiness'],
+  ];
+
+  return (
+    <aside className="rounded-3xl border border-slate-200 bg-white p-5 shadow-xl shadow-slate-300/40 lg:p-6">
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-700">Owner Command Brief</p>
+          <h2 className="mt-2 text-2xl font-black tracking-tight text-slate-950">Today&apos;s money and readiness plan</h2>
+        </div>
+        <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">
+          Tesla owner-built
+        </span>
+      </div>
+
+      <div className="mt-5 grid grid-cols-3 gap-3">
+        {[
+          ['Weekend upside', '+$284'],
+          ['Ready vehicles', '2 / 3'],
+          ['Time saved', '4.5 hrs'],
+        ].map(([label, value]) => (
+          <div key={label} className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
+            <p className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-500">{label}</p>
+            <p className="mt-2 text-2xl font-black text-slate-950">{value}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-white">
+        {vehicles.map(([name, status, score, revenue, action]) => (
+          <div key={name} className="grid gap-3 border-b border-slate-100 p-4 last:border-b-0 md:grid-cols-[1fr_auto_auto] md:items-center">
+            <div>
+              <div className="flex items-center gap-2">
+                <span className={`h-2.5 w-2.5 rounded-full ${status === 'Ready' ? 'bg-emerald-500' : status === 'Watch' ? 'bg-amber-500' : 'bg-sky-500'}`} />
+                <p className="font-black text-slate-950">{name}</p>
+              </div>
+              <p className="mt-1 text-sm font-semibold text-slate-600">{action}</p>
+            </div>
+            <div className="text-left md:text-right">
+              <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">Readiness</p>
+              <p className="mt-1 text-lg font-black text-slate-950">{score}</p>
+            </div>
+            <div className="text-left md:text-right">
+              <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-400">Est. Value</p>
+              <p className="mt-1 text-lg font-black text-emerald-700">{revenue}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="mt-4 rounded-2xl border border-sky-200 bg-sky-50 p-4">
+        <p className="text-xs font-black uppercase tracking-[0.18em] text-sky-700">Suggested owner action</p>
+        <p className="mt-2 text-sm font-bold leading-6 text-slate-800">
+          Raise the Orlando Model Y weekend price 18%, charge after 11 PM, and fix Tampa tire pressure before the next guest.
+        </p>
+      </div>
+    </aside>
+  );
+}
+
 function MobileHeroPreview() {
   const vehicleRows = [
     {
@@ -589,9 +653,15 @@ export default function LandingPage({ onNavigate }) {
       <main>
         <section className="relative mx-auto grid max-w-7xl grid-cols-1 gap-5 px-5 pb-7 pt-2 sm:gap-8 sm:pt-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-12 lg:pb-14 lg:pt-10">
           <div className="max-w-2xl">
+            <p className="hidden text-sm font-black uppercase tracking-[0.22em] text-emerald-700 md:block">
+              Built by a Tesla owner for Tesla owners
+            </p>
             <h1 className="text-[2.65rem] font-black leading-[0.96] tracking-tight text-slate-950 sm:text-6xl sm:leading-[0.98] lg:text-[4.65rem]">
-              Your AI Agent for Tesla Rentals & Robotaxis
+              Make your Tesla pay for itself.
             </h1>
+            <p className="mt-5 hidden max-w-xl text-xl font-bold leading-8 text-slate-700 md:block">
+              RoboAgent helps Tesla owners earn more from Turo today and prepare for Robotaxi tomorrow, with practical plans for pricing, charging, maintenance, and readiness.
+            </p>
             <p className="mt-3 max-w-md text-base font-bold leading-6 text-slate-700 md:hidden">
               Give it goals. Get smart plans for pricing, charging, maintenance and earnings.
             </p>
@@ -603,7 +673,7 @@ export default function LandingPage({ onNavigate }) {
               />
             </div>
             <div className="mt-4 hidden gap-2 sm:mt-5 sm:flex sm:flex-wrap">
-              {['Built by a Tesla owner for Tesla owners', 'First Tesla free', 'No credit card required', 'Not affiliated with Tesla'].map((label) => (
+              {['More booked days', 'Fewer surprise issues', 'First Tesla free', 'Not affiliated with Tesla'].map((label) => (
                 <span key={label} className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-emerald-800">
                   {label}
                 </span>
@@ -652,13 +722,13 @@ export default function LandingPage({ onNavigate }) {
               )}
             </div>
             <p className="mt-5 hidden text-sm font-semibold leading-6 text-slate-700 sm:block">
-              Built by a Tesla owner in Florida for other Tesla owners. Tesla controls autonomous driving availability and execution.
+              Built in Florida for real Tesla owners trying to turn expensive cars into reliable income-producing assets. Tesla controls autonomous driving availability and execution.
             </p>
           </div>
 
           <div>
             <div className="hidden md:block">
-              <HeroAgentDemo onNavigate={onNavigate} />
+              <OwnerOutcomePanel />
             </div>
             <div className="md:hidden">
               {showMobileMore ? (
@@ -676,9 +746,9 @@ export default function LandingPage({ onNavigate }) {
         <section className="hidden border-y border-slate-200/80 bg-white/45 md:block">
           <div className="mx-auto grid max-w-7xl grid-cols-1 divide-y divide-slate-200 px-5 py-5 md:grid-cols-4 md:divide-x md:divide-y-0">
             {[
-              ['Why RoboAgent', 'It turns Tesla data, rental economics, charging, and health signals into practical owner decisions.'],
-              ['Simple Pricing', 'First Tesla is free during beta. Add vehicles at $12 per Tesla per month.'],
-              ['Secure by Design', 'Tesla OAuth, encrypted tokens, explicit consent, and revoke-anytime controls.'],
+              ['Earn More', 'Spot pricing opportunities, downtime risk, and charging windows before they cost you bookings.'],
+              ['Built for Owner-Renters', 'Designed for Tesla owners managing Turo today and preparing for Robotaxi tomorrow.'],
+              ['First Tesla Free', 'Try the owner dashboard and readiness planning before adding paid vehicles.'],
               ['Tesla Boundary', 'RoboAgent is not affiliated with Tesla. Tesla controls autonomous availability and execution.'],
             ].map(([title, detail]) => (
               <article key={title} className="py-4 md:px-5 md:py-3">
