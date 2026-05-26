@@ -435,6 +435,35 @@ function OwnerOutcomePanel() {
         </span>
       </div>
 
+      <div className="mt-5 rounded-2xl border border-sky-200 bg-[linear-gradient(135deg,#eef8ff_0%,#ffffff_56%,#ecfdf5_100%)] p-4 shadow-sm">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[0.18em] text-sky-700">7:04 AM Morning Brief</p>
+            <p className="mt-2 text-lg font-black leading-6 text-slate-950">
+              Orlando Model Y can earn more this weekend. Tampa Model 3 needs tire pressure checked before handoff.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 gap-2 md:w-52">
+            <div className="rounded-xl border border-white bg-white/80 p-3">
+              <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Impact</p>
+              <p className="mt-1 text-2xl font-black text-emerald-700">+$284</p>
+            </div>
+            <div className="rounded-xl border border-white bg-white/80 p-3">
+              <p className="text-[10px] font-black uppercase tracking-[0.14em] text-slate-500">Tasks</p>
+              <p className="mt-1 text-2xl font-black text-slate-950">3</p>
+            </div>
+          </div>
+        </div>
+        <div className="mt-4 grid gap-2 sm:grid-cols-2">
+          <button type="button" className="rounded-lg bg-slate-950 px-4 py-3 text-sm font-black text-white">
+            Approve Plan
+          </button>
+          <button type="button" className="rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-black text-slate-700">
+            Review Details
+          </button>
+        </div>
+      </div>
+
       <div className="mt-5 grid grid-cols-3 gap-3">
         {[
           ['Weekend upside', '+$284'],
@@ -539,6 +568,18 @@ function MobileHeroPreview() {
       </div>
 
       <div className="mt-3 divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white">
+        <div className="bg-[linear-gradient(135deg,#f8fafc_0%,#eef8ff_100%)] p-3">
+          <div className="flex items-start gap-3">
+            <div className="mt-1 h-2.5 w-2.5 shrink-0 rounded-full bg-sky-400 shadow-lg shadow-sky-300" />
+            <div>
+              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-sky-700">7:04 AM Brief Ready</p>
+              <p className="mt-1 text-sm font-black leading-5 text-slate-950">
+                Raise Orlando pricing, charge after 11 PM, and check Tampa tires before pickup.
+              </p>
+              <p className="mt-2 text-xs font-bold text-emerald-700">Estimated upside: +$284 this weekend</p>
+            </div>
+          </div>
+        </div>
         {vehicleRows.map((vehicle) => (
           <div key={vehicle.name} className="grid grid-cols-[1fr_auto] gap-3 p-3">
             <div className="min-w-0">
