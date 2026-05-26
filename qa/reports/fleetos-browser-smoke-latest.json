@@ -1,11 +1,11 @@
 {
   "baseUrl": "https://robotaxi-fleetos.vercel.app",
-  "generatedAt": "2026-05-26T21:03:20.445Z",
+  "generatedAt": "2026-05-26T21:06:45.830Z",
   "summary": {
     "total": 16,
-    "pass": 14,
+    "pass": 15,
     "warn": 0,
-    "fail": 2
+    "fail": 1
   },
   "results": [
     {
@@ -15,12 +15,10 @@
       "evidence": {}
     },
     {
-      "status": "fail",
+      "status": "pass",
       "name": "onboarding standalone (desktop)",
-      "detail": "locator.waitFor: Error: strict mode violation: getByText('Finish Tesla connection and first telemetry sync') resolved to 2 elements:\n    1) <p class=\"mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-3 text-xs font-bold leading-5 text-amber-800\">Finish Tesla connection and first telemetry sync …</p> aka getByText('Finish Tesla connection and').first()\n    2) <p class=\"mb-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-800\">Finish Tesla connection and first telemetry sync …</p> aka getByRole('paragraph').filter({ hasText: 'Finish Tesla connection and' })\n\nCall log:\n\u001b[2m  - waiting for getByText('Finish Tesla connection and first telemetry sync') to be visible\u001b[22m\n",
-      "evidence": {
-        "stack": "locator.waitFor: Error: strict mode violation: getByText('Finish Tesla connection and first telemetry sync') resolved to 2 elements:\n    1) <p class=\"mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-3 text-xs font-bold leading-5 text-amber-800\">Finish Tesla connection and first telemetry sync …</p> aka getByText('Finish Tesla connection and').first()\n    2) <p class=\"mb-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-800\">Finish Tesla connection and first telemetry sync …</p> aka getByRole('paragraph').filter({ hasText: 'Finish Tesla connection and' })\n\nCall log:\n\u001b[2m  - waiting for getByText('Finish Tesla connection and first telemetry sync') to be visible\u001b[22m\n\n    at testOnboardingStandalone (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:169:76)\n    at async runTest (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:26:12)\n    at async file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:323:16"
-      }
+      "detail": "No serious browser runtime errors detected.",
+      "evidence": {}
     },
     {
       "status": "pass",
@@ -67,9 +65,9 @@
     {
       "status": "fail",
       "name": "onboarding standalone (mobile)",
-      "detail": "locator.waitFor: Error: strict mode violation: getByText('Finish Tesla connection and first telemetry sync') resolved to 2 elements:\n    1) <p class=\"mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-3 text-xs font-bold leading-5 text-amber-800\">Finish Tesla connection and first telemetry sync …</p> aka getByRole('paragraph').filter({ hasText: 'Finish Tesla connection and' })\n    2) <p class=\"mb-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-800\">Finish Tesla connection and first telemetry sync …</p> aka getByText('Finish Tesla connection and').nth(1)\n\nCall log:\n\u001b[2m  - waiting for getByText('Finish Tesla connection and first telemetry sync') to be visible\u001b[22m\n",
+      "detail": "locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByText('Finish Tesla connection and first telemetry sync') to be visible\u001b[22m\n\u001b[2m    33 × locator resolved to hidden <p class=\"mb-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-800\">Finish Tesla connection and first telemetry sync …</p>\u001b[22m\n",
       "evidence": {
-        "stack": "locator.waitFor: Error: strict mode violation: getByText('Finish Tesla connection and first telemetry sync') resolved to 2 elements:\n    1) <p class=\"mt-4 rounded-2xl border border-amber-200 bg-amber-50 p-3 text-xs font-bold leading-5 text-amber-800\">Finish Tesla connection and first telemetry sync …</p> aka getByRole('paragraph').filter({ hasText: 'Finish Tesla connection and' })\n    2) <p class=\"mb-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-800\">Finish Tesla connection and first telemetry sync …</p> aka getByText('Finish Tesla connection and').nth(1)\n\nCall log:\n\u001b[2m  - waiting for getByText('Finish Tesla connection and first telemetry sync') to be visible\u001b[22m\n\n    at testOnboardingStandalone (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:169:76)\n    at async runTest (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:26:12)\n    at async file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:323:16"
+        "stack": "locator.waitFor: Timeout 15000ms exceeded.\nCall log:\n\u001b[2m  - waiting for getByText('Finish Tesla connection and first telemetry sync') to be visible\u001b[22m\n\u001b[2m    33 × locator resolved to hidden <p class=\"mb-3 rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-800\">Finish Tesla connection and first telemetry sync …</p>\u001b[22m\n\n    at testOnboardingStandalone (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:169:76)\n    at async runTest (C:\\Users\\webby\\OneDrive\\Documents\\New project\\robotaxi-fleetos\\qa\\fleetos-browser-smoke.mjs:26:12)\n    at async file:///C:/Users/webby/OneDrive/Documents/New%20project/robotaxi-fleetos/qa/fleetos-browser-smoke.mjs:323:16"
       }
     },
     {

@@ -166,7 +166,11 @@ async function testOnboardingStandalone(browser, profile) {
   await page.getByText('Connect Your First Tesla').waitFor({ timeout: 15000 });
   const sideMenuVisible = await page.getByRole('button', { name: 'Fleet', exact: true }).count();
   if (sideMenuVisible > 0) throw new Error('App navigation is visible on onboarding.');
-  await page.getByText('Finish Tesla connection and first telemetry sync').waitFor({ timeout: 15000 });
+  if (profile === 'mobile') {
+    await page.getByText('Dashboard unlocks after Tesla connection and the first telemetry sync.').waitFor({ timeout: 15000 });
+  } else {
+    await page.getByText('Finish Tesla connection and first telemetry sync').waitFor({ timeout: 15000 });
+  }
   const dashboard = page.getByRole('button', { name: 'Open Dashboard' });
   if (!(await dashboard.isDisabled())) throw new Error('Open Dashboard should be disabled before first sync.');
   await context.close();
