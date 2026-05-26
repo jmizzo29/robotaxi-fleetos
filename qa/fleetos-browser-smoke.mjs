@@ -44,7 +44,12 @@ async function makePage(browser, profile) {
   });
   page.on('requestfailed', (request) => {
     const url = request.url();
-    if (!url.includes('api.mapbox.com') && !url.includes('events.clerk')) {
+    const failure = request.failure()?.errorText;
+    if (
+      !url.includes('api.mapbox.com') &&
+      !url.includes('events.clerk') &&
+      !(url.includes('/api/ai/analyze') && failure === 'net::ERR_ABORTED')
+    ) {
       failedRequests.push({ url, failure: request.failure()?.errorText });
     }
   });
