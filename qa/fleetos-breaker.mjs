@@ -126,6 +126,10 @@ async function testStaleCopy() {
 async function testExpectedLandingCopy() {
   const { bundle } = await getIndexAndBundle();
   const expected = [
+    'Your AI Agent for Tesla Rentals & Robotaxis',
+    'Maximize earnings with intelligent daily plans for pricing, charging, maintenance & more.',
+    'Get Started Free',
+    'Try AI Agent',
     'Predictive maintenance',
     'RoboAgent Command Center',
     'The AI agent is the product.',
@@ -137,7 +141,6 @@ async function testExpectedLandingCopy() {
     'My Tesla Vehicle Map',
     'Demand and pricing zones',
     'Health on the map',
-    'Start Free',
   ];
   const missing = expected.filter((phrase) => !bundle?.text.includes(phrase));
   if (missing.length > 0) {
@@ -275,7 +278,7 @@ async function testHealthBurst() {
 }
 
 async function testPublicRouteSmoke() {
-  const routes = ['/', '/#/onboarding', '/#/account', '/#/privacy', '/#/terms'];
+  const routes = ['/', '/#/about', '/#/onboarding', '/#/account', '/#/privacy', '/#/terms'];
   const results = await Promise.all(routes.map((route) => request(route)));
   const bad = results.filter((result) => result.status !== 200 || !result.text.includes('<div id="root"></div>'));
   if (bad.length > 0) {

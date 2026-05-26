@@ -1,7 +1,4 @@
 import { useState } from 'react';
-import { SignInButton } from '@clerk/react';
-import { useFleetAuthStatus } from '../auth/FleetAuthContext';
-import { isClerkConfigured } from '../auth/clerkConfig';
 import { buildMarketRentalAnswer, isMarketQuestion } from '../services/marketIntelligenceService';
 
 const demoPrompts = [
@@ -525,21 +522,47 @@ function MobileHeroCta({ onNavigate, onSeeMore, isMoreOpen }) {
 }
 
 export default function LandingPage({ onNavigate }) {
-  const { isSignedIn } = useFleetAuthStatus();
-  const [showMobileMore, setShowMobileMore] = useState(false);
-  const clerkReady = isClerkConfigured();
+  return (
+    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-gray-950 to-black px-6 text-center">
+      <img
+        src="/images/tesla-background.jpg"
+        className="absolute inset-0 h-full w-full object-cover opacity-20"
+        alt=""
+        aria-hidden="true"
+      />
+      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/30 to-black/75" />
 
-  const signInControl = (
-    <button
-      type="button"
-      onClick={() => {
-        if (!clerkReady) onNavigate('account');
-      }}
-      className="rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-black text-slate-800 shadow-sm transition hover:border-slate-400 hover:bg-slate-50"
-    >
-      Sign In
-    </button>
+      <main className="relative z-10 max-w-[320px]">
+        <h1 className="mb-2 text-6xl font-bold tracking-tight text-white">RoboAgent</h1>
+        <p className="mb-6 text-xl font-semibold leading-7 text-gray-200">
+          Your AI Agent for Tesla Rentals & Robotaxis
+        </p>
+        <p className="mb-10 text-[15px] font-medium leading-6 text-gray-400">
+          Maximize earnings with intelligent daily plans for pricing, charging, maintenance & more.
+        </p>
+
+        <button
+          type="button"
+          onClick={() => onNavigate('onboarding')}
+          className="mb-4 w-full rounded-2xl bg-teal-500 py-4 text-lg font-semibold text-white shadow-2xl shadow-teal-950/50 transition hover:bg-teal-600"
+        >
+          Get Started Free
+        </button>
+
+        <button
+          type="button"
+          onClick={() => onNavigate('about')}
+          className="w-full rounded-2xl border border-gray-600 bg-black/10 py-4 text-lg font-medium text-white backdrop-blur-sm transition hover:border-gray-400 hover:bg-white/10"
+        >
+          Try AI Agent
+        </button>
+      </main>
+    </div>
   );
+}
+
+export function AgentAboutPage({ onNavigate }) {
+  const [showMobileMore, setShowMobileMore] = useState(false);
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_12%_8%,rgba(14,165,233,0.13),transparent_30%),linear-gradient(180deg,#f5f7fb_0%,#eaf2f7_48%,#ffffff_100%)] text-slate-950">
@@ -548,22 +571,13 @@ export default function LandingPage({ onNavigate }) {
           <span className="h-2.5 w-2.5 rounded-full bg-sky-500 shadow-lg shadow-sky-300/50" />
           <span className="text-sm font-black uppercase tracking-[0.28em] text-slate-900">RoboAgent</span>
         </button>
-        <nav className="flex items-center gap-3">
-          {!isSignedIn && (
-            clerkReady ? (
-              <SignInButton mode="modal">
-                {signInControl}
-              </SignInButton>
-            ) : signInControl
-          )}
-          <button
-            type="button"
-            onClick={() => onNavigate('onboarding')}
-            className="rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-black text-slate-800 shadow-sm transition hover:border-slate-400 hover:bg-slate-50"
-          >
-            Start Free
-          </button>
-        </nav>
+        <button
+          type="button"
+          onClick={() => onNavigate('landing')}
+          className="rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-black text-slate-800 shadow-sm transition hover:border-slate-400 hover:bg-slate-50"
+        >
+          Back Home
+        </button>
       </header>
 
       <main>
@@ -593,8 +607,8 @@ export default function LandingPage({ onNavigate }) {
         </section>
 
         {showMobileMore && <MobileTrustSection />}
-
       </main>
+
       <footer className={`mx-auto max-w-7xl flex-col gap-3 border-t border-white/10 px-5 py-8 text-sm text-slate-500 sm:flex sm:flex-row sm:items-center sm:justify-between ${showMobileMore ? 'flex' : 'hidden sm:flex'}`}>
         <p>RoboAgent beta. Not affiliated with or endorsed by Tesla.</p>
         <div className="flex gap-4">

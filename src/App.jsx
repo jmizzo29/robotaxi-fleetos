@@ -23,7 +23,7 @@ import ForecastPanel from './panels/ForecastPanel';
 import FleetListPanel from './panels/FleetListPanel';
 import IntelligentAlertCenter from './panels/IntelligentAlertCenter';
 import IntegrationsPanel from './panels/IntegrationsPanel';
-import LandingPage from './panels/LandingPage';
+import LandingPage, { AgentAboutPage } from './panels/LandingPage';
 import LegalPage from './panels/LegalPage';
 import MemoryEventsPanel from './panels/MemoryEventsPanel';
 import MobileCommandDashboard from './panels/MobileCommandDashboard';
@@ -136,6 +136,7 @@ export default function App() {
   const [, setComplianceRevision] = useState(0);
   const [route, navigate] = useHashRoute();
   const isPublicRoute = route === 'landing';
+  const isPublicAboutRoute = route === 'about';
   const isPublicLegalRoute = route === 'privacy' || route === 'terms';
   const isPublicOnboardingRoute = route === 'onboarding';
   const isPublicAccountRoute = route === 'account';
@@ -651,6 +652,10 @@ export default function App() {
 
   if (isPublicRoute) {
     return <LandingPage onNavigate={navigate} />;
+  }
+
+  if (isPublicAboutRoute) {
+    return <AgentAboutPage onNavigate={navigate} />;
   }
 
   if (isPublicLegalRoute) {

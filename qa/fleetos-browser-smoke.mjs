@@ -75,6 +75,34 @@ async function testLanding(browser, profile) {
   const { page, context } = telemetry;
   await page.goto(routeUrl('?qa=browser'), { waitUntil: 'networkidle' });
   await page.getByText('RoboAgent', { exact: true }).first().waitFor({ timeout: 15000 });
+  await page.getByText('Your AI Agent for Tesla Rentals & Robotaxis').waitFor({ timeout: 15000 });
+  await page.getByText('Maximize earnings with intelligent daily plans for pricing, charging, maintenance & more.').waitFor({ timeout: 15000 });
+  await page.getByRole('button', { name: 'Get Started Free' }).waitFor({ timeout: 15000 });
+  await page.getByRole('button', { name: 'Try AI Agent' }).waitFor({ timeout: 15000 });
+  if (await page.locator('[data-testid="agent-command-center"]').count()) {
+    throw new Error('Agent command center should live on About, not the home page.');
+  }
+  if (await page.locator('[data-testid="mobile-hero-preview"]').count()) {
+    throw new Error('Old mobile dashboard preview should not be on the home page.');
+  }
+  await page.getByText('Join Early Access').count().then((count) => {
+    if (count > 0) throw new Error('Old Join Early Access form is visible.');
+  });
+  await page.getByText('AI Agent for Tesla Owners').count().then((count) => {
+    if (count > 0) throw new Error('Removed hero eyebrow is still visible.');
+  });
+  await page.getByText('Secure Tesla OAuth').count().then((count) => {
+    if (count > 0) throw new Error('Removed Secure Tesla OAuth badge is still visible.');
+  });
+  await context.close();
+  return assertNoRuntimeErrors(`landing browser smoke (${profile})`, telemetry);
+}
+
+async function testAboutAgent(browser, profile) {
+  const telemetry = await makePage(browser, profile);
+  const { page, context } = telemetry;
+  await page.goto(routeUrl('#/about'), { waitUntil: 'networkidle' });
+  await page.getByText('RoboAgent', { exact: true }).first().waitFor({ timeout: 15000 });
   if (profile === 'desktop') {
     const commandCenter = page.locator('[data-testid="agent-command-center"]');
     await commandCenter.getByText('The AI agent is the product.').waitFor({ timeout: 15000 });
@@ -84,58 +112,8 @@ async function testLanding(browser, profile) {
     await commandCenter.getByText('7:04 AM AI plan ready').waitFor({ timeout: 15000 });
     await commandCenter.getByRole('button', { name: 'Approve Plan' }).waitFor({ timeout: 15000 });
     await commandCenter.getByRole('button', { name: 'Ask Follow-up' }).waitFor({ timeout: 15000 });
-    if (await commandCenter.getByRole('img').count()) {
-      throw new Error('Desktop command center should focus on the agent UI, not the old vehicle photo.');
-    }
-    await page.getByRole('button', { name: 'Start Free', exact: true }).first().waitFor({ timeout: 15000 });
-    if (await page.locator('#hero-agent-input').count()) {
-      throw new Error('Desktop landing should not show the old stacked AI demo input.');
-    }
-    if (await page.getByText('Simple, fair pricing.').count()) {
-      throw new Error('Desktop landing should not show the old pricing section.');
-    }
   } else {
     await page.getByRole('button', { name: 'Start Free' }).first().waitFor({ timeout: 15000 });
-    await page.getByRole('button', { name: 'Try AI Agent' }).waitFor({ timeout: 15000 });
-    await page.getByText('Secure Tesla Login').waitFor({ timeout: 15000 });
-    const mobilePreview = page.locator('[data-testid="mobile-hero-preview"]');
-    await mobilePreview.waitFor({ timeout: 15000 });
-    await mobilePreview.getByText('AI Agent').waitFor({ timeout: 15000 });
-    await mobilePreview.getByText("Today's Plan").waitFor({ timeout: 15000 });
-    await mobilePreview.getByText('Active').waitFor({ timeout: 15000 });
-    await mobilePreview.getByText('Pricing', { exact: true }).waitFor({ timeout: 15000 });
-    await mobilePreview.getByText('Maintenance', { exact: true }).waitFor({ timeout: 15000 });
-    await mobilePreview.getByText('Charging', { exact: true }).waitFor({ timeout: 15000 });
-    await mobilePreview.getByText('Profit', { exact: true }).waitFor({ timeout: 15000 });
-    await mobilePreview.getByText('Model Y - Orlando').waitFor({ timeout: 15000 });
-    await mobilePreview.getByText('Model 3 - Tampa').waitFor({ timeout: 15000 });
-    await mobilePreview.getByText('18 trips').waitFor({ timeout: 15000 });
-    await mobilePreview.getByText('1,284 mi').waitFor({ timeout: 15000 });
-    await mobilePreview.getByText('$2.4k').waitFor({ timeout: 15000 });
-    await mobilePreview.getByText('AI Brief').waitFor({ timeout: 15000 });
-    const ctaBox = await page.getByRole('button', { name: 'Start Free' }).first().boundingBox();
-    const previewBox = await mobilePreview.boundingBox();
-    if (!ctaBox || !previewBox || ctaBox.y >= previewBox.y) {
-      throw new Error('Mobile Start Free CTA should appear above the preview card.');
-    }
-    if (await page.locator('[data-testid="mobile-trust-bar"]').count()) {
-      throw new Error('Mobile trust snippet should not be visible under the primary CTA buttons.');
-    }
-    if (await page.getByText('Create account first, then connect Tesla').count()) {
-      throw new Error('Old mobile helper text should not be visible under the CTA buttons.');
-    }
-    if (await page.locator('[data-testid="mobile-hero-agent-demo"] #mobile-hero-agent-input:visible').count()) {
-      throw new Error('Mobile AI demo should be hidden before tapping See More.');
-    }
-    if (await page.getByText('Your Tesla login stays with Tesla.').count()) {
-      throw new Error('Mobile details should be hidden before tapping See More.');
-    }
-    if (await page.getByText('1-10 Cars').count()) {
-      throw new Error('Old 1-10 Cars badge should not be visible on mobile.');
-    }
-    if (await mobilePreview.getByRole('img', { name: 'Tesla Cybercab concept on display' }).count()) {
-      throw new Error('Mobile first preview should show the owner dashboard, not vehicle photo cards.');
-    }
     await page.getByRole('button', { name: 'Try AI Agent' }).click();
     const mobileDemo = page.locator('[data-testid="mobile-hero-agent-demo"]');
     await mobileDemo.getByText('No signup needed', { exact: true }).waitFor({ timeout: 15000 });
@@ -149,17 +127,8 @@ async function testLanding(browser, profile) {
     await mobileDemo.getByRole('button', { name: 'Ask Agent' }).waitFor({ timeout: 15000 });
     await page.getByText('Your Tesla login stays with Tesla.').waitFor({ timeout: 15000 });
   }
-  await page.getByText('Join Early Access').count().then((count) => {
-    if (count > 0) throw new Error('Old Join Early Access form is visible.');
-  });
-  await page.getByText('AI Agent for Tesla Owners').count().then((count) => {
-    if (count > 0) throw new Error('Removed hero eyebrow is still visible.');
-  });
-  await page.getByText('Secure Tesla OAuth').count().then((count) => {
-    if (count > 0) throw new Error('Removed Secure Tesla OAuth badge is still visible.');
-  });
   await context.close();
-  return assertNoRuntimeErrors(`landing browser smoke (${profile})`, telemetry);
+  return assertNoRuntimeErrors(`about agent smoke (${profile})`, telemetry);
 }
 
 async function testOnboardingStandalone(browser, profile) {
@@ -234,10 +203,16 @@ async function testLandingCtas(browser, profile) {
   const { page, context } = telemetry;
   await page.goto(routeUrl('/'), { waitUntil: 'networkidle' });
   if (profile === 'desktop') {
-    await page.getByRole('button', { name: 'Start Free', exact: true }).first().click();
+    await page.getByRole('button', { name: 'Try AI Agent' }).click();
+    await page.waitForURL('**/#/about', { timeout: 10000 });
+    await page.locator('[data-testid="agent-command-center"]').waitFor({ timeout: 15000 });
+    await page.goto(routeUrl('/'), { waitUntil: 'networkidle' });
+    await page.getByRole('button', { name: 'Get Started Free', exact: true }).first().click();
     await page.waitForURL('**/#/onboarding', { timeout: 10000 });
     await page.getByText('Connect Your First Tesla').waitFor({ timeout: 15000 });
   } else {
+    await page.getByRole('button', { name: 'Try AI Agent' }).click();
+    await page.waitForURL('**/#/about', { timeout: 10000 });
     await page.getByRole('button', { name: 'Try AI Agent' }).click();
     await page.locator('#mobile-hero-agent-input').waitFor({ timeout: 15000 });
     const heroInput = page.locator('#mobile-hero-agent-input');
@@ -250,7 +225,8 @@ async function testLandingCtas(browser, profile) {
     await heroInput.fill('How many Model X rentals are available in Orlando?');
     await page.locator('[data-testid="mobile-hero-agent-demo"]').getByRole('button', { name: 'Ask Agent' }).click();
     await page.getByText('Model X rental availability in Orlando').first().waitFor({ timeout: 15000 });
-    await page.getByRole('button', { name: 'Start Free' }).first().click();
+    await page.goto(routeUrl('/'), { waitUntil: 'networkidle' });
+    await page.getByRole('button', { name: 'Get Started Free' }).first().click();
     await page.waitForURL('**/#/onboarding', { timeout: 10000 });
     await page.getByText('Sign in to RoboAgent before connecting Tesla').waitFor({ timeout: 15000 });
   }
@@ -312,6 +288,7 @@ const tests = [];
 for (const profile of ['desktop', 'mobile']) {
   tests.push(
     [`landing browser smoke (${profile})`, () => testLanding(browser, profile)],
+    [`about agent smoke (${profile})`, () => testAboutAgent(browser, profile)],
     [`onboarding standalone (${profile})`, () => testOnboardingStandalone(browser, profile)],
     [`account standalone (${profile})`, () => testAccountStandalone(browser, profile)],
     [`legal standalone (${profile})`, () => testLegalStandalone(browser, profile)],
