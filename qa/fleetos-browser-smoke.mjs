@@ -79,24 +79,17 @@ async function testLanding(browser, profile) {
   if (profile === 'desktop') {
     await page.getByText('Today\'s money and readiness plan').waitFor({ timeout: 15000 });
     await page.getByRole('img', { name: 'White electric vehicle in a Florida driveway with a RoboAgent-style dashboard preview' }).waitFor({ timeout: 15000 });
-  }
-  if (profile === 'desktop') {
-    await page.locator('#hero-agent-input').waitFor({ timeout: 15000 });
-    const heroGoal = await page.locator('#hero-agent-input').inputValue();
-    if (heroGoal !== 'Maximize my earnings this weekend with 3 Teslas') {
-      throw new Error(`Unexpected hero agent prompt: ${heroGoal}`);
-    }
-    await page.getByText('Simple, fair pricing.').waitFor({ timeout: 15000 });
-    await page.getByText('Earn More', { exact: true }).waitFor({ timeout: 15000 });
-    await page.getByText('Built for Owner-Renters').waitFor({ timeout: 15000 });
-    await page.getByText('Owner-controlled data').waitFor({ timeout: 15000 });
-  }
-  if (profile === 'desktop') {
-    await page.getByRole('main').getByRole('button', { name: 'Try Demo' }).waitFor({ timeout: 15000 });
+    await page.getByText('7:04 AM Morning Brief').waitFor({ timeout: 15000 });
+    await page.getByRole('button', { name: 'Approve Plan' }).waitFor({ timeout: 15000 });
     await page.getByRole('button', { name: 'Start Free', exact: true }).first().waitFor({ timeout: 15000 });
     await page.getByText('Built by a Tesla owner for Tesla owners').waitFor({ timeout: 15000 });
     await page.getByText('Daily profit plan', { exact: true }).waitFor({ timeout: 15000 });
-    await page.getByText('Tesla password never shared').first().waitFor({ timeout: 15000 });
+    if (await page.locator('#hero-agent-input').count()) {
+      throw new Error('Desktop landing should not show the old stacked AI demo input.');
+    }
+    if (await page.getByText('Simple, fair pricing.').count()) {
+      throw new Error('Desktop landing should not show the old pricing section.');
+    }
   } else {
     await page.getByRole('button', { name: 'Start Free' }).first().waitFor({ timeout: 15000 });
     await page.getByRole('button', { name: 'Try AI Agent' }).waitFor({ timeout: 15000 });

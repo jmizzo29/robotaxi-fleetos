@@ -4,36 +4,6 @@ import { useFleetAuthStatus } from '../auth/FleetAuthContext';
 import { isClerkConfigured } from '../auth/clerkConfig';
 import { buildMarketRentalAnswer, isMarketQuestion } from '../services/marketIntelligenceService';
 
-const trustPoints = [
-  ['Secure account login', 'RoboAgent uses managed identity with verified sessions before any Tesla connection can be attached.'],
-  ['Tesla password never shared', 'Owners authenticate directly with Tesla. RoboAgent never asks for or stores Tesla account passwords.'],
-  ['Encrypted access tokens', 'Tesla connection tokens are encrypted server-side and tied to the signed-in RoboAgent user.'],
-  ['Owner-controlled data', 'Users can disconnect Tesla, revoke consent, or request deletion of RoboAgent data.'],
-];
-
-const pricing = [
-  {
-    plan: 'Starter',
-    price: 'Free',
-    bestFor: 'Testing with 1 Tesla',
-    features: ['Live telemetry', 'AI brief', 'Basic earnings estimates', 'Health alerts'],
-    note: 'Limited to one Tesla during beta. Multi-vehicle history, cleaning scheduler, and advanced workflows require Owner Fleet.',
-  },
-  {
-    plan: 'Owner Fleet',
-    price: '$12 / Tesla / mo',
-    bestFor: 'Turo hosts & small fleets (2-10 vehicles)',
-    features: ['Multi-vehicle dashboard', 'Predictive maintenance', 'Cleaning scheduler', 'Full history'],
-    popular: true,
-  },
-  {
-    plan: 'Operator Pro',
-    price: 'Custom',
-    bestFor: 'Serious operators & growing fleets',
-    features: ['Advanced AI workflows', 'Dispatch planning', 'Team access', 'Priority support', 'API access'],
-  },
-];
-
 const demoPrompts = [
   'Maximize my earnings this weekend with 3 Teslas',
   'What are the top rented Teslas in Orlando?',
@@ -41,75 +11,6 @@ const demoPrompts = [
   'Check health and prepare all vehicles for tomorrow',
   'Give me a full fleet summary',
 ];
-
-function PricingSection({ onStart }) {
-  return (
-    <section id="pricing" className="hidden scroll-mt-8 border-y border-slate-200 bg-white/65 md:block">
-      <div className="mx-auto max-w-7xl px-5 py-8 md:py-14">
-        <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-          <div>
-            <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-700">
-              Pricing
-            </p>
-            <h2 className="mt-3 max-w-3xl text-3xl font-black tracking-tight text-slate-950 md:text-4xl">
-              Simple, fair pricing.
-            </h2>
-            <p className="mt-3 max-w-3xl text-sm font-semibold leading-6 text-slate-600 md:mt-4 md:leading-7">
-              Start free with one Tesla during beta. Add vehicles only when RoboAgent starts saving real operator time.
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={onStart}
-            className="rounded-md bg-sky-300 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-sky-200"
-          >
-            Start Free
-          </button>
-        </div>
-
-        <div className="mt-8 grid grid-cols-1 gap-4 lg:grid-cols-3">
-          {pricing.map((plan) => (
-            <article
-              key={plan.plan}
-              className={`relative rounded-xl border p-5 shadow-sm ${
-                plan.popular
-                  ? 'border-sky-300 bg-[linear-gradient(180deg,#f0f9ff_0%,#ffffff_100%)] shadow-xl shadow-sky-100/70'
-                  : 'border-slate-200 bg-white shadow-slate-200/60'
-              }`}
-            >
-              {plan.popular && (
-                <span className="absolute right-4 top-4 rounded-full border border-sky-300 bg-sky-100 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-sky-900">
-                  Popular
-                </span>
-              )}
-              <p className="pr-24 text-sm font-black text-slate-950">{plan.plan}</p>
-              <p className={`mt-3 text-3xl font-black ${plan.popular ? 'text-sky-700' : 'text-slate-950'}`}>{plan.price}</p>
-              <p className="mt-3 text-xs font-black uppercase tracking-[0.16em] text-slate-500">Best For</p>
-              <p className="mt-1 text-sm font-bold leading-6 text-slate-700">{plan.bestFor}</p>
-              <div className="mt-5 hidden space-y-2 md:block">
-                {plan.features.map((feature) => (
-                  <div key={feature} className="flex gap-3 text-sm font-semibold leading-6 text-slate-600">
-                    <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-emerald-500" />
-                    <span>{feature}</span>
-                  </div>
-                ))}
-              </div>
-              {plan.note && (
-                <p className="mt-5 hidden rounded-lg border border-amber-200 bg-amber-50 p-3 text-xs font-semibold leading-5 text-amber-800 md:block">
-                  {plan.note}
-                </p>
-              )}
-            </article>
-          ))}
-        </div>
-
-        <p className="mt-6 rounded-lg border border-emerald-200 bg-emerald-50 p-4 text-sm font-bold leading-6 text-emerald-800">
-          First Tesla is always free during beta. Billed monthly, cancel anytime. Popular choice: 3-5 vehicles on Owner Fleet.
-        </p>
-      </div>
-    </section>
-  );
-}
 
 function MobileTrustSection() {
   return (
@@ -410,8 +311,8 @@ function OwnerOutcomePanel() {
   ];
 
   return (
-    <aside className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-xl shadow-slate-300/40">
-      <div className="relative aspect-[16/9] overflow-hidden bg-slate-100">
+    <aside className="grid overflow-hidden bg-white/0 lg:grid-cols-[0.95fr_1.05fr] lg:items-stretch">
+      <div className="relative min-h-[320px] overflow-hidden rounded-[2rem] bg-slate-100 shadow-2xl shadow-slate-300/50 lg:min-h-[560px] lg:rounded-r-none">
         <img
           src="/images/roboagent-tesla-rental-hero.png"
           alt="White electric vehicle in a Florida driveway with a RoboAgent-style dashboard preview"
@@ -424,7 +325,7 @@ function OwnerOutcomePanel() {
           </div>
         </div>
       </div>
-      <div className="p-5 lg:p-6">
+      <div className="flex flex-col justify-center bg-white px-0 py-6 lg:rounded-r-[2rem] lg:px-8 lg:py-10 lg:shadow-2xl lg:shadow-slate-300/40">
       <div className="flex items-start justify-between gap-4">
         <div>
           <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-700">Owner Command Brief</p>
@@ -464,19 +365,6 @@ function OwnerOutcomePanel() {
         </div>
       </div>
 
-      <div className="mt-5 grid grid-cols-3 gap-3">
-        {[
-          ['Weekend upside', '+$284'],
-          ['Ready vehicles', '2 / 3'],
-          ['Time saved', '4.5 hrs'],
-        ].map(([label, value]) => (
-          <div key={label} className="rounded-2xl border border-slate-200 bg-slate-50 p-3">
-            <p className="text-[10px] font-black uppercase tracking-[0.16em] text-slate-500">{label}</p>
-            <p className="mt-2 text-2xl font-black text-slate-950">{value}</p>
-          </div>
-        ))}
-      </div>
-
       <div className="mt-4 overflow-hidden rounded-2xl border border-slate-200 bg-white">
         {vehicles.map(([name, status, score, revenue, action]) => (
           <div key={name} className="grid gap-3 border-b border-slate-100 p-4 last:border-b-0 md:grid-cols-[1fr_auto_auto] md:items-center">
@@ -497,13 +385,6 @@ function OwnerOutcomePanel() {
             </div>
           </div>
         ))}
-      </div>
-
-      <div className="mt-4 rounded-2xl border border-sky-200 bg-sky-50 p-4">
-        <p className="text-xs font-black uppercase tracking-[0.18em] text-sky-700">Suggested owner action</p>
-        <p className="mt-2 text-sm font-bold leading-6 text-slate-800">
-          Raise the Orlando Model Y weekend price 18%, charge after 11 PM, and fix Tampa tire pressure before the next guest.
-        </p>
       </div>
       </div>
     </aside>
@@ -647,12 +528,6 @@ export default function LandingPage({ onNavigate }) {
   const enterApp = (route = 'overview') => {
     onNavigate(isSignedIn ? route : 'onboarding');
   };
-  const scrollToDemo = () => {
-    document.getElementById('hero-agent-input')?.focus();
-  };
-  const scrollToPricing = () => {
-    document.getElementById('pricing')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
   const clerkReady = isClerkConfigured();
 
   const signInControl = (
@@ -689,25 +564,11 @@ export default function LandingPage({ onNavigate }) {
           >
             Start Free
           </button>
-          <button
-            type="button"
-            onClick={scrollToPricing}
-            className="hidden rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-black text-slate-800 shadow-sm transition hover:border-slate-400 hover:bg-slate-50 sm:block"
-          >
-            Pricing
-          </button>
-          <button
-            type="button"
-            onClick={scrollToDemo}
-            className="hidden rounded-full border border-sky-200 bg-sky-50 px-4 py-2 text-sm font-bold text-sky-800 shadow-sm transition hover:bg-sky-100 md:block"
-          >
-            Try Demo
-          </button>
         </nav>
       </header>
 
       <main>
-        <section className="relative mx-auto grid max-w-7xl grid-cols-1 gap-5 px-5 pb-7 pt-2 sm:gap-8 sm:pt-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-12 lg:pb-14 lg:pt-10">
+        <section className="relative mx-auto max-w-7xl px-5 pb-10 pt-2 sm:pt-8 lg:pb-16 lg:pt-10">
           <div className="max-w-2xl">
             <p className="hidden text-sm font-black uppercase tracking-[0.22em] text-emerald-700 md:block">
               Built by a Tesla owner for Tesla owners
@@ -738,15 +599,8 @@ export default function LandingPage({ onNavigate }) {
             <div className="mt-8 hidden flex-col gap-3 sm:flex sm:flex-row">
               <button
                 type="button"
-                onClick={scrollToDemo}
-                className="rounded-md bg-sky-300 px-5 py-4 text-sm font-black text-slate-950 transition hover:bg-sky-200"
-              >
-                Try Demo
-              </button>
-              <button
-                type="button"
                 onClick={() => onNavigate('onboarding')}
-                className="rounded-md border border-sky-200 bg-sky-50 px-5 py-4 text-sm font-black text-sky-800 transition hover:bg-sky-100"
+                className="rounded-md bg-sky-300 px-5 py-4 text-sm font-black text-slate-950 transition hover:bg-sky-200"
               >
                 Start Free
               </button>
@@ -782,12 +636,9 @@ export default function LandingPage({ onNavigate }) {
             </p>
           </div>
 
-          <div>
+          <div className="mt-8 lg:mt-12">
             <div className="hidden md:block">
               <OwnerOutcomePanel />
-            </div>
-            <div className="hidden md:block">
-              <HeroAgentDemo onNavigate={onNavigate} />
             </div>
             <div className="md:hidden">
               {showMobileMore ? (
@@ -802,36 +653,7 @@ export default function LandingPage({ onNavigate }) {
           </div>
         </section>
 
-        <section className="hidden border-y border-slate-200/80 bg-white/45 md:block">
-          <div className="mx-auto grid max-w-7xl grid-cols-1 divide-y divide-slate-200 px-5 py-5 md:grid-cols-4 md:divide-x md:divide-y-0">
-            {[
-              ['Earn More', 'Spot pricing opportunities, downtime risk, and charging windows before they cost you bookings.'],
-              ['Built for Owner-Renters', 'Designed for Tesla owners managing Turo today and preparing for Robotaxi tomorrow.'],
-              ['First Tesla Free', 'Try the owner dashboard and readiness planning before adding paid vehicles.'],
-              ['Tesla Boundary', 'RoboAgent is not affiliated with Tesla. Tesla controls autonomous availability and execution.'],
-            ].map(([title, detail]) => (
-              <article key={title} className="py-4 md:px-5 md:py-3">
-                <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-700">{title}</p>
-                <p className="mt-3 text-sm font-semibold leading-6 text-slate-600">{detail}</p>
-              </article>
-            ))}
-          </div>
-        </section>
-
-        <PricingSection onStart={() => onNavigate('onboarding')} />
-
         {showMobileMore && <MobileTrustSection />}
-
-        <section className="hidden border-y border-slate-200/80 bg-white/55 md:block">
-          <div className="mx-auto grid max-w-7xl grid-cols-1 divide-y divide-slate-200 px-5 py-5 md:grid-cols-4 md:divide-x md:divide-y-0">
-            {trustPoints.map(([title, detail]) => (
-              <article key={title} className="py-4 md:px-5 md:py-3">
-                <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-700">{title}</p>
-                <p className="mt-3 text-sm font-semibold leading-6 text-slate-600">{detail}</p>
-              </article>
-            ))}
-          </div>
-        </section>
 
       </main>
       <footer className={`mx-auto max-w-7xl flex-col gap-3 border-t border-white/10 px-5 py-8 text-sm text-slate-500 sm:flex sm:flex-row sm:items-center sm:justify-between ${showMobileMore ? 'flex' : 'hidden sm:flex'}`}>
