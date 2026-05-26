@@ -608,7 +608,10 @@ export function AgentChatPage({ onNavigate }) {
             R
           </div>
           <div className="max-w-[75%] rounded-3xl rounded-tl-none bg-zinc-900 px-5 py-4">
-            <p className="font-medium text-emerald-400">{response.metrics?.[0] || response.title}</p>
+            <p className="font-medium text-white">{response.title}</p>
+            {response.metrics?.[0] && (
+              <p className="mt-2 font-medium text-emerald-400">{response.metrics[0]}</p>
+            )}
             <p className="mt-2 text-zinc-300">{response.summary}</p>
             {(response.steps || []).slice(0, 2).map((step) => (
               <p key={step} className="mt-2 text-sm text-zinc-400">{step}</p>

@@ -132,7 +132,7 @@ async function testExpectedLandingCopy() {
     'Try AI Agent',
     'Ask RoboAgent',
     'Charging Strategy',
-    'Agent Chat',
+    'Ask RoboAgent anything',
     'public-agent-question',
     'PREDICTIVE MAINTENANCE',
     'RoboAgent Command Center',
