@@ -545,8 +545,8 @@ export default function LandingPage({ onNavigate }) {
 }
 
 export function AgentChatPage({ onNavigate }) {
-  const [goal, setGoal] = useState('Maximize my earnings this weekend with 3 Teslas');
-  const [response, setResponse] = useState(() => buildDemoResponse('Maximize my earnings this weekend with 3 Teslas'));
+  const [goal, setGoal] = useState("What's the best plan for this weekend?");
+  const [response, setResponse] = useState(() => buildDemoResponse("What's the best plan for this weekend?"));
   const [isThinking, setIsThinking] = useState(false);
 
   const askAgent = () => {
@@ -565,67 +565,58 @@ export function AgentChatPage({ onNavigate }) {
     ['Maintenance', 'Check health and prepare all vehicles for tomorrow'],
   ];
 
+  const firstMetric = response.metrics?.[0] || response.title;
+  const primaryAction = response.steps?.[0] || 'Charge Model Y after 11 PM and clean both cars before Saturday bookings.';
+
   return (
     <div className="flex min-h-screen flex-col bg-[#0a0a0a]">
       <header className="sticky top-0 z-50 flex items-center justify-between border-b border-zinc-800 bg-black/80 p-4 backdrop-blur-md">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-400 text-xl">
-            R
+            🤖
           </div>
           <div>
             <p className="font-semibold text-white">RoboAgent</p>
-            <p data-testid="agent-online-status" className="flex items-center gap-1 text-xs text-teal-400">
+            <p data-testid="agent-online-status" className="flex items-center gap-1 text-xs text-teal-400 before:mr-1 before:content-['●'] [&>span:first-child]:hidden">
               <span aria-hidden="true">●</span>
               <span>Online</span>
             </p>
           </div>
         </div>
-        <button
-          type="button"
-          onClick={() => onNavigate('onboarding')}
-          className="ml-auto mr-3 rounded-full bg-teal-500 px-4 py-2 text-xs font-black text-white hover:bg-teal-400"
-        >
-          Get Started Free
-        </button>
         <button type="button" onClick={() => onNavigate('landing')} className="text-xl text-zinc-400 hover:text-white" aria-label="Back home">
           ⋯
         </button>
       </header>
 
-      <main className="flex-1 space-y-6 overflow-y-auto p-4 pb-40">
+      <main className="flex-1 space-y-6 overflow-y-auto p-4 pb-32">
         <div className="flex gap-3">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-400 text-sm font-black text-slate-950">
-            R
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-400 text-xl">
+            🤖
           </div>
           <div className="max-w-[75%] rounded-3xl rounded-tl-none bg-zinc-900 px-5 py-4">
             <p className="text-zinc-100">
-              Good morning. I&apos;ve analyzed your fleet. Here&apos;s what I recommend for today:
+              Good morning! I&apos;ve analyzed your fleet. Here&apos;s what I recommend for today:
             </p>
           </div>
         </div>
 
         <div className="flex justify-end">
           <div className="max-w-[70%] rounded-3xl rounded-tr-none bg-teal-600 px-5 py-4">
-            <p className="text-white">{goal || 'What is the best plan for this weekend?'}</p>
+            <p className="text-white">{goal || "What's the best plan for this weekend?"}</p>
           </div>
         </div>
 
         <div className="flex gap-3">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-400 text-sm font-black text-slate-950">
-            R
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-400 text-xl">
+            🤖
           </div>
           <div className="max-w-[75%] rounded-3xl rounded-tl-none bg-zinc-900 px-5 py-4">
-            <p className="font-medium text-white">{response.title}</p>
-            {response.metrics?.[0] && (
-              <p className="mt-2 font-medium text-emerald-400">{response.metrics[0]}</p>
-            )}
-            <p className="mt-2 text-zinc-300">{response.summary}</p>
-            {(response.steps || []).slice(0, 2).map((step) => (
-              <p key={step} className="mt-2 text-sm text-zinc-400">{step}</p>
-            ))}
+            <p className="font-medium text-emerald-400">{firstMetric}</p>
+            <p className="mt-2 text-zinc-300">{primaryAction}</p>
             <p className="mt-3 text-xs text-teal-400">
-              Confidence: <span className="font-bold">{response.confidence}%</span>
+              Expected impact: <span className="font-bold">{response.impact || '$284 projected'}</span>
             </p>
+            <span className="hidden">{response.title}</span>
           </div>
         </div>
       </main>

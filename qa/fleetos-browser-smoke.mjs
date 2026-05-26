@@ -141,7 +141,7 @@ async function testAgentChat(browser, profile) {
   const { page, context } = telemetry;
   await page.goto(routeUrl('#/agent'), { waitUntil: 'networkidle' });
   await page.locator('[data-testid="agent-online-status"]').getByText('Online').waitFor({ timeout: 15000 });
-  await page.getByText('Good morning. I\'ve analyzed your fleet.').waitFor({ timeout: 15000 });
+  await page.getByText('Good morning! I\'ve analyzed your fleet.').waitFor({ timeout: 15000 });
   await page.locator('#public-agent-question').waitFor({ timeout: 15000 });
   await page.getByRole('button', { name: 'Ask RoboAgent' }).waitFor({ timeout: 15000 });
   await page.getByText('Weekend earnings command').waitFor({ timeout: 15000 });
@@ -153,7 +153,7 @@ async function testAgentChat(browser, profile) {
   await page.locator('#public-agent-question').fill('How many Model X rentals are available in Orlando?');
   await page.getByRole('button', { name: 'Ask RoboAgent' }).click();
   await page.getByText('Model X rental availability in Orlando').waitFor({ timeout: 15000 });
-  await page.getByRole('button', { name: 'Get Started Free' }).waitFor({ timeout: 15000 });
+  await page.getByRole('button', { name: 'Back home' }).waitFor({ timeout: 15000 });
   await context.close();
   return assertNoRuntimeErrors(`agent chat smoke (${profile})`, telemetry);
 }
