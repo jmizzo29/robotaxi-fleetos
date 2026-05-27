@@ -510,7 +510,7 @@ export default function LandingPage({ onNavigate }) {
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: "url('/images/roboagent-tesla-rental-hero.png')",
+          backgroundImage: "url('/images/hero-cybertruck.jpg')",
           filter: 'brightness(0.65)',
         }}
         aria-hidden="true"
