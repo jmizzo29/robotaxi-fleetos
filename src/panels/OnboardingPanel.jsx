@@ -142,6 +142,12 @@ export default function OnboardingPanel({
           <p className="mb-12 text-lg text-zinc-400">We’ll get you set up in no time</p>
           <PrimaryButton onClick={nextStep}>Sign in with Tesla</PrimaryButton>
           <p className="mt-6 text-sm text-zinc-500">RoboAgent uses your private app account first, then Tesla OAuth.</p>
+          <p className="mt-4 text-sm text-zinc-400">
+            Already have an account?{' '}
+            <button type="button" onClick={() => onNavigate?.('account')} className="font-medium text-teal-400 hover:underline">
+              Log in
+            </button>
+          </p>
         </div>
       )}
 
