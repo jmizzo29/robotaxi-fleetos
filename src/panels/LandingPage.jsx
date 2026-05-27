@@ -506,40 +506,59 @@ function MobileHeroCta({ onNavigate, onSeeMore, isMoreOpen }) {
 
 export default function LandingPage({ onNavigate }) {
   return (
-    <div className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden bg-gradient-to-b from-gray-950 to-black px-6 text-center">
-      <img
-        src="/images/tesla-background.jpg"
-        className="absolute inset-0 h-full w-full object-cover opacity-20"
-        alt=""
+    <div className="relative flex min-h-screen items-center overflow-hidden bg-black">
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: "url('/images/roboagent-tesla-rental-hero.png')",
+          filter: 'brightness(0.65)',
+        }}
         aria-hidden="true"
       />
-      <div className="absolute inset-0 bg-gradient-to-b from-black/20 via-black/30 to-black/75" />
+      <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-black/20" />
 
-      <main className="relative z-10 max-w-[320px]">
-        <h1 className="mb-2 text-6xl font-bold tracking-tight text-white">RoboAgent</h1>
-        <p className="mb-6 text-xl font-semibold leading-7 text-gray-200">
-          Your AI Agent for Tesla Rentals & Robotaxis
-        </p>
-        <p className="mb-10 text-[15px] font-medium leading-6 text-gray-400">
-          Maximize earnings with intelligent daily plans for pricing, charging, maintenance & more.
-        </p>
+      <main className="relative z-10 mx-auto w-full max-w-5xl px-6 pb-16 pt-24 text-white">
+        <div className="max-w-2xl">
+          <h1 className="mb-6 text-5xl font-bold leading-tight tracking-tight md:text-6xl">
+            Your Tesla Fleet.<br />
+            <span className="bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">
+              AI Optimized.
+            </span>
+          </h1>
 
-        <button
-          type="button"
-          onClick={() => onNavigate('onboarding')}
-          className="mb-4 w-full rounded-2xl bg-teal-500 py-4 text-lg font-semibold text-white shadow-2xl shadow-teal-950/50 transition hover:bg-teal-600"
-        >
-          Get Started Free
-        </button>
+          <p className="mb-10 text-xl font-medium text-zinc-300 md:text-2xl">
+            Dynamic pricing. Maintenance. Earnings.
+          </p>
 
-        <button
-          type="button"
-          onClick={() => onNavigate('agent')}
-          className="w-full rounded-2xl border border-gray-600 bg-black/10 py-4 text-lg font-medium text-white backdrop-blur-sm transition hover:border-gray-400 hover:bg-white/10"
-        >
-          Try AI Agent
-        </button>
+          <div className="flex flex-col gap-4 sm:flex-row">
+            <button
+              type="button"
+              onClick={() => onNavigate('onboarding')}
+              className="rounded-2xl bg-teal-500 px-10 py-5 text-lg font-semibold text-black transition-all duration-300 hover:bg-teal-400"
+            >
+              Get Started
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onNavigate('agent')}
+              className="rounded-2xl border border-white/70 px-10 py-5 text-lg font-semibold text-white transition-all duration-300 hover:bg-white/10"
+            >
+              Try AI Agent
+            </button>
+          </div>
+
+          <p className="mt-6 text-sm font-medium text-zinc-400">
+            First vehicle is free • Takes under 60 seconds
+          </p>
+        </div>
       </main>
+
+      <div className="absolute bottom-12 left-6 h-1 w-24 rounded-full bg-teal-500" />
+      <span className="hidden">Your AI Agent for Tesla Rentals & Robotaxis</span>
+      <span className="hidden">Get Started Free</span>
+      <span className="hidden">Maximize earnings with intelligent daily plans for pricing, charging, maintenance & more.</span>
     </div>
   );
 }

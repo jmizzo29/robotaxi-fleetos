@@ -79,10 +79,11 @@ async function testLanding(browser, profile) {
   const telemetry = await makePage(browser, profile);
   const { page, context } = telemetry;
   await page.goto(routeUrl('?qa=browser'), { waitUntil: 'networkidle' });
-  await page.getByText('RoboAgent', { exact: true }).first().waitFor({ timeout: 15000 });
-  await page.getByText('Your AI Agent for Tesla Rentals & Robotaxis').waitFor({ timeout: 15000 });
-  await page.getByText('Maximize earnings with intelligent daily plans for pricing, charging, maintenance & more.').waitFor({ timeout: 15000 });
-  await page.getByRole('button', { name: 'Get Started Free' }).waitFor({ timeout: 15000 });
+  await page.getByText('Your Tesla Fleet.').waitFor({ timeout: 15000 });
+  await page.getByText('AI Optimized.').waitFor({ timeout: 15000 });
+  await page.getByText('Dynamic pricing. Maintenance. Earnings.').waitFor({ timeout: 15000 });
+  await page.getByText('First vehicle is free').waitFor({ timeout: 15000 });
+  await page.getByRole('button', { name: 'Get Started' }).waitFor({ timeout: 15000 });
   await page.getByRole('button', { name: 'Try AI Agent' }).waitFor({ timeout: 15000 });
   if (await page.locator('[data-testid="agent-command-center"]').count()) {
     throw new Error('Agent command center should live on About, not the home page.');
@@ -230,7 +231,7 @@ async function testLandingCtas(browser, profile) {
     await page.waitForURL('**/#/agent', { timeout: 10000 });
     await page.locator('#public-agent-question').waitFor({ timeout: 15000 });
     await page.goto(routeUrl('/'), { waitUntil: 'networkidle' });
-    await page.getByRole('button', { name: 'Get Started Free', exact: true }).first().click();
+    await page.getByRole('button', { name: 'Get Started', exact: true }).first().click();
     await page.waitForURL('**/#/onboarding', { timeout: 10000 });
     await page.getByText('Let’s Get Your Tesla Connected').waitFor({ timeout: 15000 });
   } else {
@@ -248,7 +249,7 @@ async function testLandingCtas(browser, profile) {
     await page.getByRole('button', { name: 'Ask RoboAgent' }).click();
     await page.getByText('Orlando Model X: 8-16 comparable rentals').first().waitFor({ timeout: 15000 });
     await page.goto(routeUrl('/'), { waitUntil: 'networkidle' });
-    await page.getByRole('button', { name: 'Get Started Free' }).first().click();
+    await page.getByRole('button', { name: 'Get Started' }).first().click();
     await page.waitForURL('**/#/onboarding', { timeout: 10000 });
     await page.getByText('Let’s Get Your Tesla Connected').waitFor({ timeout: 15000 });
   }
