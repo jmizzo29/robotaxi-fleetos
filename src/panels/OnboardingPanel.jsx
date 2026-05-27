@@ -16,20 +16,6 @@ function StepBadge({ step }) {
   );
 }
 
-function VehicleArtwork() {
-  return (
-    <div className="mx-auto mb-10 flex h-36 w-56 items-center justify-center rounded-3xl border border-zinc-700 bg-zinc-800 shadow-2xl shadow-teal-500/10">
-      <div className="relative h-20 w-44">
-        <div className="absolute left-7 top-2 h-10 w-30 rounded-t-[2rem] border border-zinc-500 bg-zinc-700" />
-        <div className="absolute bottom-5 left-1 h-10 w-42 rounded-[2rem] border border-zinc-500 bg-gradient-to-r from-zinc-600 to-zinc-800" />
-        <div className="absolute bottom-2 left-8 h-9 w-9 rounded-full border-4 border-zinc-950 bg-zinc-500" />
-        <div className="absolute bottom-2 right-8 h-9 w-9 rounded-full border-4 border-zinc-950 bg-zinc-500" />
-        <div className="absolute left-15 top-6 text-[10px] font-black tracking-[0.35em] text-zinc-300">TESLA</div>
-      </div>
-    </div>
-  );
-}
-
 function PrimaryButton({ children, className = '', ...props }) {
   return (
     <button
@@ -136,18 +122,91 @@ export default function OnboardingPanel({
       )}
 
       {activeStep === 1 && (
-        <div className="flex flex-1 flex-col justify-center text-center">
-          <VehicleArtwork />
-          <h1 className="mb-4 text-4xl font-bold leading-tight">Let’s Get Your Tesla Connected</h1>
-          <p className="mb-12 text-lg text-zinc-400">We’ll get you set up in no time</p>
-          <PrimaryButton onClick={nextStep}>Sign in with Tesla</PrimaryButton>
-          <p className="mt-6 text-sm text-zinc-500">RoboAgent uses your private app account first, then Tesla OAuth.</p>
-          <p className="mt-4 text-sm text-zinc-400">
-            Already have an account?{' '}
-            <button type="button" onClick={() => onNavigate?.('account')} className="font-medium text-teal-400 hover:underline">
-              Log in
-            </button>
-          </p>
+        <div className="flex flex-1 flex-col justify-center">
+          <div className="mb-10 text-center">
+            <div className="mb-6 inline-flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-teal-400 to-cyan-400 text-4xl">
+              🤖
+            </div>
+            <h1 className="mb-4 text-4xl font-bold leading-tight md:text-5xl">
+              Create Your RoboAgent Account
+            </h1>
+            <p className="mx-auto max-w-sm text-lg text-zinc-400">
+              One account to manage all your Teslas, rentals, and future Robotaxis
+            </p>
+            <p className="mt-3 text-sm font-medium text-teal-300">
+              Let’s Get Your Tesla Connected
+            </p>
+          </div>
+
+          <div className="mx-auto w-full max-w-md space-y-5">
+            <div>
+              <label htmlFor="onboarding-full-name" className="mb-2 block text-sm text-zinc-400">Full Name</label>
+              <input
+                id="onboarding-full-name"
+                type="text"
+                placeholder="John Smith"
+                className="w-full rounded-2xl border border-zinc-700 bg-zinc-900 px-6 py-5 text-white outline-none transition placeholder:text-zinc-600 focus:border-teal-500"
+              />
+            </div>
+
+            <div>
+              <label htmlFor="onboarding-email" className="mb-2 block text-sm text-zinc-400">Email Address</label>
+              <input
+                id="onboarding-email"
+                type="email"
+                placeholder="you@email.com"
+                className="w-full rounded-2xl border border-zinc-700 bg-zinc-900 px-6 py-5 text-white outline-none transition placeholder:text-zinc-600 focus:border-teal-500"
+              />
+            </div>
+
+            <div className="pt-4">
+              <PrimaryButton onClick={() => onNavigate?.('account')}>
+                Create Free Account
+              </PrimaryButton>
+              <button
+                type="button"
+                onClick={() => onNavigate?.('account')}
+                className="mt-3 w-full rounded-2xl border border-teal-400/40 bg-teal-400/10 py-4 text-sm font-semibold text-teal-200 transition hover:bg-teal-400/15"
+              >
+                Sign in with Tesla
+              </button>
+            </div>
+
+            <div className="relative my-6">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-zinc-700" />
+              </div>
+              <div className="relative text-center">
+                <span className="bg-zinc-950 px-4 text-sm text-zinc-500">or</span>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <button
+                type="button"
+                onClick={() => onNavigate?.('account')}
+                className="flex items-center justify-center gap-3 rounded-2xl border border-zinc-700 bg-zinc-900 py-5 transition hover:bg-zinc-800"
+              >
+                <span className="text-xl">G</span>
+                <span className="font-medium">Google</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => onNavigate?.('account')}
+                className="flex items-center justify-center gap-3 rounded-2xl border border-zinc-700 bg-zinc-900 py-5 transition hover:bg-zinc-800"
+              >
+                <span className="text-xl">A</span>
+                <span className="font-medium">Apple</span>
+              </button>
+            </div>
+
+            <p className="mt-6 text-center text-sm text-zinc-500">
+              Already have an account?{' '}
+              <button type="button" onClick={() => onNavigate?.('account')} className="font-medium text-teal-400 hover:underline">
+                Log in
+              </button>
+            </p>
+          </div>
         </div>
       )}
 
@@ -213,7 +272,7 @@ export default function OnboardingPanel({
           <div className="mb-10 rounded-3xl border border-zinc-800 bg-zinc-900 p-6 text-left">
             <p className="font-medium text-teal-400">First AI Message:</p>
             <p className="mt-3">
-              “Good morning! I recommend raising weekend pricing in Orlando by 15%. Want me to create a full plan?”
+              "Good morning! I recommend raising weekend pricing in Orlando by 15%. Want me to create a full plan?"
             </p>
           </div>
           <PrimaryButton className="bg-white hover:bg-zinc-200" onClick={() => onNavigate?.('overview')}>
@@ -225,12 +284,12 @@ export default function OnboardingPanel({
       <div className="mt-8 flex justify-between text-sm">
         {activeStep > 1 ? (
           <button type="button" onClick={prevStep} className="text-zinc-400">
-            ← Back
+            Back
           </button>
         ) : <span />}
         {activeStep < 5 && (
           <button type="button" onClick={nextStep} className="text-teal-400">
-            Skip →
+            Skip
           </button>
         )}
       </div>
