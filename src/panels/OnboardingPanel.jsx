@@ -223,7 +223,7 @@ function ClerkEmailSignUpButton({ email, password, onValidate, onSignedUp }) {
       <button
         type="button"
         onClick={verificationSent ? verifyEmailCode : startSignUp}
-        disabled={isSubmitting || !isLoaded}
+        disabled={isSubmitting}
         className="w-full rounded-3xl bg-teal-500 py-6 text-xl font-semibold text-black transition hover:bg-teal-400 disabled:cursor-not-allowed disabled:bg-zinc-800 disabled:text-zinc-500"
       >
         {isSubmitting ? 'Working...' : verificationSent ? 'Verify Email' : 'Create Free Account'}
