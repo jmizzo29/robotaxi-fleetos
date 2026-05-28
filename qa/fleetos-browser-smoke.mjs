@@ -81,7 +81,8 @@ async function testLanding(browser, profile) {
   await page.goto(routeUrl('?qa=browser'), { waitUntil: 'networkidle' });
   await page.getByText('Your Tesla Fleet.').waitFor({ timeout: 15000 });
   await page.getByText('AI Optimized.').waitFor({ timeout: 15000 });
-  await page.getByText('Dynamic pricing. Maintenance. Earnings.').waitFor({ timeout: 15000 });
+  await page.getByText('RoboAgent').waitFor({ timeout: 15000 });
+  await page.getByText('Daily AI plans for pricing, charging, maintenance, and profit.').waitFor({ timeout: 15000 });
   await page.getByText('First vehicle is free').waitFor({ timeout: 15000 });
   await page.getByRole('button', { name: 'Get Started' }).waitFor({ timeout: 15000 });
   await page.getByRole('button', { name: 'Try AI Agent' }).waitFor({ timeout: 15000 });

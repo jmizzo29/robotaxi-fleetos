@@ -520,6 +520,9 @@ export default function LandingPage({ onNavigate }) {
 
       <main className="relative z-10 mx-auto w-full max-w-5xl px-6 pb-16 pt-24 text-white">
         <div className="max-w-2xl">
+          <p className="mb-5 text-sm font-black uppercase tracking-[0.28em] text-teal-300">
+            RoboAgent
+          </p>
           <h1 className="mb-6 text-5xl font-bold leading-tight tracking-tight md:text-6xl">
             Your Tesla Fleet.<br />
             <span className="bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">
@@ -528,7 +531,7 @@ export default function LandingPage({ onNavigate }) {
           </h1>
 
           <p className="mb-10 text-xl font-medium text-zinc-300 md:text-2xl">
-            Dynamic pricing. Maintenance. Earnings.
+            Daily AI plans for pricing, charging, maintenance, and profit.
           </p>
 
           <div className="flex flex-col gap-4 sm:flex-row">
