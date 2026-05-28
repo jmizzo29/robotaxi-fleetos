@@ -316,6 +316,59 @@ export default function OnboardingPanel({
       )}
 
       {activeStep === 4 && (
+        <div className="flex flex-1 flex-col justify-center">
+          <div className="mb-12 text-center">
+            <div className="mx-auto mb-8">
+              <div className="mx-auto h-20 w-20 animate-spin rounded-full border-4 border-teal-500 border-t-transparent" />
+            </div>
+
+            <h2 className="mb-4 text-4xl font-bold">
+              {syncedVehicle ? 'Vehicle Found!' : 'Finding Your Vehicles...'}
+            </h2>
+            <p className="text-lg text-zinc-400">
+              {syncedVehicle ? 'Your first Tesla is ready for RoboAgent' : 'This usually takes 10-20 seconds'}
+            </p>
+          </div>
+
+          <div className="mx-auto w-full max-w-md space-y-4">
+            <div className="flex items-center gap-4 rounded-3xl bg-zinc-900 p-6">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-zinc-800 text-3xl">
+                🚗
+              </div>
+              <div className="flex-1">
+                <p className="font-medium">{syncedVehicle ? 'Tesla Vehicle' : 'Model Y • Orlando'}</p>
+                <div className="mt-1 flex items-center gap-2 text-sm text-teal-400">
+                  <div className="h-2 w-2 animate-pulse rounded-full bg-teal-400" />
+                  {syncedVehicle ? 'Connected' : 'Connecting...'}
+                </div>
+              </div>
+              <div className="text-right text-xs text-zinc-500">
+                {syncedVehicle ? 'AI Ready' : '94% Battery'}
+              </div>
+            </div>
+
+            <div className="flex items-center gap-4 rounded-3xl bg-zinc-900 p-6 opacity-75">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-zinc-800 text-3xl">
+                🚙
+              </div>
+              <div className="flex-1">
+                <p className="font-medium">{realVehicleCount > 1 ? 'Additional Tesla' : 'Model 3 • Tampa'}</p>
+                <div className="mt-1 text-sm text-zinc-500">{realVehicleCount > 1 ? 'Queued for analysis' : 'Waiting for sync...'}</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-12 text-center text-xs text-zinc-500">
+            Pulling real-time data from Tesla Fleet API
+          </div>
+
+          <PrimaryButton disabled={!teslaConnected || busy || isLoading} onClick={syncFirstVehicle} className="mt-8">
+            {busy || isLoading ? 'Syncing...' : syncedVehicle ? 'Continue to Dashboard' : 'Sync My First Tesla'}
+          </PrimaryButton>
+        </div>
+      )}
+
+      {activeStep === 99 && (
         <div className="flex flex-1 flex-col justify-center text-center">
           <h2 className="mb-8 text-3xl font-bold">{syncedVehicle ? 'Vehicle Found!' : 'Detecting Vehicle...'}</h2>
           <div className="mb-10 rounded-3xl border border-zinc-800 bg-zinc-900 p-8">
