@@ -639,10 +639,6 @@ export default function LandingPage({ onNavigate }) {
             </button>
           </div>
 
-          <p className="mt-4 text-sm font-medium text-zinc-300">
-            See how raw data becomes daily profit plans - No signup required
-          </p>
-
           <p className="mt-6 text-sm font-medium text-zinc-400">
             First vehicle is free - Takes under 60 seconds
           </p>
