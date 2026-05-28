@@ -42,6 +42,26 @@ function getRuntimeSignUp() {
   return getRuntimeClerk()?.client?.signUp || null;
 }
 
+async function prepareEmailVerification(signUpResource) {
+  if (typeof signUpResource?.prepareEmailAddressVerification === 'function') {
+    return signUpResource.prepareEmailAddressVerification({ strategy: 'email_code' });
+  }
+  if (typeof signUpResource?.prepareVerification === 'function') {
+    return signUpResource.prepareVerification({ strategy: 'email_code' });
+  }
+  throw new Error('Email verification is not available for this Clerk signup session.');
+}
+
+async function attemptEmailVerification(signUpResource, code) {
+  if (typeof signUpResource?.attemptEmailAddressVerification === 'function') {
+    return signUpResource.attemptEmailAddressVerification({ code });
+  }
+  if (typeof signUpResource?.attemptVerification === 'function') {
+    return signUpResource.attemptVerification({ strategy: 'email_code', code });
+  }
+  throw new Error('Email code verification is not available for this Clerk signup session.');
+}
+
 function ClerkOAuthButtons() {
   const { isLoaded, signUp } = useSignUp();
   const [oauthError, setOauthError] = useState('');
@@ -140,6 +160,7 @@ function ClerkEmailSignUpButton({ email, password, onValidate, onSignedUp }) {
   const [verificationCode, setVerificationCode] = useState('');
   const [clerkError, setClerkError] = useState('');
   const [loadTimedOut, setLoadTimedOut] = useState(false);
+  const [verificationResource, setVerificationResource] = useState(null);
   const runtimeSignUp = getRuntimeSignUp();
   const clerkReady = Boolean(isLoaded || runtimeSignUp);
 
@@ -178,7 +199,8 @@ function ClerkEmailSignUpButton({ email, password, onValidate, onSignedUp }) {
         return;
       }
 
-      await activeSignUp.prepareEmailAddressVerification({ strategy: 'email_code' });
+      setVerificationResource(result || activeSignUp);
+      await prepareEmailVerification(result || activeSignUp);
       setVerificationSent(true);
     } catch (signUpError) {
       const clerkMessage = signUpError?.errors?.[0]?.longMessage || signUpError?.errors?.[0]?.message;
@@ -197,15 +219,13 @@ function ClerkEmailSignUpButton({ email, password, onValidate, onSignedUp }) {
     setIsSubmitting(true);
     setClerkError('');
     try {
-      const activeSignUp = signUp || getRuntimeSignUp();
+      const activeSignUp = verificationResource || signUp || getRuntimeSignUp();
       if (!activeSignUp) {
         setClerkError('Secure sign-up is not ready yet. Refresh the page and try again.');
         return;
       }
 
-      const result = await activeSignUp.attemptEmailAddressVerification({
-        code: verificationCode.trim(),
-      });
+      const result = await attemptEmailVerification(activeSignUp, verificationCode.trim());
 
       if (result.status === 'complete') {
         await finishSignUp(result.createdSessionId);
