@@ -272,22 +272,46 @@ export default function OnboardingPanel({
       )}
 
       {activeStep === 3 && (
-        <div className="flex flex-1 flex-col justify-center text-center">
-          <div className="mx-auto mb-8 h-16 w-16 animate-spin rounded-full border-4 border-teal-500 border-t-transparent" />
-          <h2 className="mb-3 text-3xl font-bold">Connecting to Tesla...</h2>
-          <p className="mb-10 text-zinc-400">This usually takes 5-10 seconds</p>
-          {!hasAccount ? (
-            <PrimaryButton onClick={() => onNavigate?.('account')}>Create RoboAgent Account</PrimaryButton>
-          ) : teslaConnected ? (
-            <PrimaryButton onClick={nextStep}>Continue to Vehicle Sync</PrimaryButton>
-          ) : (
-            <a
-              href={getTeslaLoginUrl('onboarding')}
-              className="block w-full rounded-3xl bg-teal-500 py-6 text-center text-xl font-semibold text-black transition hover:bg-teal-400"
-            >
-              Open Tesla Login
-            </a>
-          )}
+        <div className="flex flex-1 flex-col justify-center">
+          <div className="mb-10 text-center">
+            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-white/10 text-5xl">
+              ⚡
+            </div>
+            <h2 className="mb-4 text-4xl font-bold">Connect Your Tesla</h2>
+            <p className="mx-auto max-w-xs text-lg text-zinc-400">
+              Sign in securely with Tesla to sync your vehicles and let your AI Agent get to work
+            </p>
+          </div>
+
+          <div className="mx-auto w-full max-w-md">
+            {!hasAccount ? (
+              <PrimaryButton onClick={() => onNavigate?.('account')}>Create RoboAgent Account</PrimaryButton>
+            ) : teslaConnected ? (
+              <PrimaryButton onClick={nextStep}>Continue to Vehicle Sync</PrimaryButton>
+            ) : (
+              <a
+                href={getTeslaLoginUrl('onboarding')}
+                className="flex w-full items-center justify-center gap-3 rounded-3xl bg-white py-7 text-xl font-semibold text-black shadow-lg shadow-teal-500/20 transition-all duration-200 hover:bg-gray-100 active:bg-gray-200"
+              >
+                <span className="text-2xl">🔌</span>
+                Sign in with Tesla
+              </a>
+            )}
+
+            <div className="mt-8 rounded-3xl border border-zinc-700 bg-zinc-900/50 p-6 text-sm">
+              <p className="mb-3 font-medium text-teal-400">🔒 Secure & Private</p>
+              <ul className="space-y-3 text-sm text-zinc-400">
+                <li>• You’ll be redirected to Tesla’s official login</li>
+                <li>• RoboAgent never sees your Tesla password</li>
+                <li>• You control what data we can access</li>
+                <li>• Can be disconnected anytime</li>
+              </ul>
+            </div>
+
+            <p className="mt-8 text-center text-xs text-zinc-500">
+              First Tesla is completely free
+            </p>
+          </div>
         </div>
       )}
 
