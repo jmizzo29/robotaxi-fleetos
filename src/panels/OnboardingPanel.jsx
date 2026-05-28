@@ -249,7 +249,16 @@ export default function OnboardingPanel({
         <button type="button" onClick={() => onNavigate?.('landing')} className="text-xl font-semibold tracking-[0.08em] text-teal-300">
           ROBOAGENT
         </button>
-        <StepBadge step={activeStep} />
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={() => onNavigate?.('landing')}
+            className="rounded-full border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm font-semibold text-zinc-200 transition hover:border-teal-400 hover:text-teal-200"
+          >
+            Back Home
+          </button>
+          <StepBadge step={activeStep} />
+        </div>
       </div>
 
       {(message || error) && (

@@ -166,6 +166,7 @@ async function testOnboardingStandalone(browser, profile) {
   await page.goto(routeUrl('#/onboarding'), { waitUntil: 'networkidle' });
   await page.getByText('Create Your RoboAgent Account').waitFor({ timeout: 15000 });
   await page.getByText('Step 1 of 5').waitFor({ timeout: 15000 });
+  await page.getByRole('button', { name: 'Back Home' }).waitFor({ timeout: 15000 });
   await page.getByLabel('Email Address').waitFor({ timeout: 15000 });
   await page.getByLabel('Password').waitFor({ timeout: 15000 });
   await page.getByRole('button', { name: 'Create Free Account' }).click();
