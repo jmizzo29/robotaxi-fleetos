@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useClerk, useSignUp } from '@clerk/react';
+import { useSignUp } from '@clerk/react';
 import { isClerkConfigured } from '../auth/clerkConfig';
 import {
   acceptTeslaConsent,
@@ -121,26 +121,114 @@ function OAuthFallbackButtons() {
   );
 }
 
-function ClerkEmailSignUpButton({ email, onValidate }) {
-  const { openSignUp } = useClerk();
+function ClerkEmailSignUpButton({ email, password, onValidate, onSignedUp }) {
+  const { isLoaded, signUp, setActive } = useSignUp();
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [verificationSent, setVerificationSent] = useState(false);
+  const [verificationCode, setVerificationCode] = useState('');
+  const [clerkError, setClerkError] = useState('');
 
-  const startSignUp = () => {
+  const finishSignUp = async (createdSessionId) => {
+    if (createdSessionId && setActive) {
+      await setActive({ session: createdSessionId });
+    }
+    await onSignedUp?.();
+  };
+
+  const startSignUp = async () => {
     if (!onValidate()) return;
-    openSignUp({
-      initialValues: { emailAddress: email },
-      forceRedirectUrl: OAUTH_COMPLETE_URL,
-      fallbackRedirectUrl: OAUTH_COMPLETE_URL,
-    });
+    if (!isLoaded || !signUp) {
+      setClerkError('Secure sign-up is still loading. Please try again in a moment.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setClerkError('');
+    try {
+      const result = await signUp.create({
+        emailAddress: email,
+        password,
+      });
+
+      if (result.status === 'complete') {
+        await finishSignUp(result.createdSessionId);
+        return;
+      }
+
+      await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
+      setVerificationSent(true);
+    } catch (signUpError) {
+      const clerkMessage = signUpError?.errors?.[0]?.longMessage || signUpError?.errors?.[0]?.message;
+      setClerkError(clerkMessage || signUpError.message || 'Could not create your account.');
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const verifyEmailCode = async () => {
+    if (!verificationCode.trim()) {
+      setClerkError('Enter the verification code Clerk emailed you.');
+      return;
+    }
+
+    setIsSubmitting(true);
+    setClerkError('');
+    try {
+      const result = await signUp.attemptEmailAddressVerification({
+        code: verificationCode.trim(),
+      });
+
+      if (result.status === 'complete') {
+        await finishSignUp(result.createdSessionId);
+        return;
+      }
+
+      setClerkError('Email verification is not complete yet. Check the code and try again.');
+    } catch (verificationError) {
+      const clerkMessage = verificationError?.errors?.[0]?.longMessage || verificationError?.errors?.[0]?.message;
+      setClerkError(clerkMessage || verificationError.message || 'Could not verify your email code.');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
-    <button
-      type="button"
-      onClick={startSignUp}
-      className="w-full rounded-3xl bg-teal-500 py-6 text-xl font-semibold text-black transition hover:bg-teal-400"
-    >
-      Create Free Account
-    </button>
+    <div className="space-y-4">
+      {verificationSent && (
+        <div className="rounded-3xl border border-teal-400/30 bg-teal-500/10 p-5">
+          <label htmlFor="onboarding-email-code" className="mb-2 block text-sm font-semibold text-teal-100">
+            Enter the email verification code
+          </label>
+          <input
+            id="onboarding-email-code"
+            type="text"
+            inputMode="numeric"
+            value={verificationCode}
+            onChange={(event) => setVerificationCode(event.target.value)}
+            placeholder="6-digit code"
+            className="w-full rounded-2xl border border-zinc-700 bg-zinc-950 px-6 py-5 text-white outline-none transition placeholder:text-zinc-600 focus:border-teal-500"
+          />
+          <p className="mt-3 text-sm text-zinc-400">
+            We sent a code to {email}. This keeps signup inside RoboAgent.
+          </p>
+        </div>
+      )}
+
+      {clerkError && (
+        <div className="rounded-2xl border border-red-400/30 bg-red-500/10 p-4 text-sm font-semibold text-red-200">
+          {clerkError}
+        </div>
+      )}
+
+      <button
+        type="button"
+        onClick={verificationSent ? verifyEmailCode : startSignUp}
+        disabled={isSubmitting || !isLoaded}
+        className="w-full rounded-3xl bg-teal-500 py-6 text-xl font-semibold text-black transition hover:bg-teal-400 disabled:cursor-not-allowed disabled:bg-zinc-800 disabled:text-zinc-500"
+      >
+        {isSubmitting ? 'Working...' : verificationSent ? 'Verify Email' : 'Create Free Account'}
+      </button>
+    </div>
   );
 }
 
@@ -217,6 +305,16 @@ export default function OnboardingPanel({
 
   const createNativeAccount = () => {
     if (!validateAccountForm()) return;
+    nextStep();
+  };
+
+  const completeClerkAccount = async () => {
+    setMessage('Account created. Next, confirm data permission so RoboAgent can connect Tesla securely.');
+    try {
+      await refreshSession();
+    } catch {
+      // Clerk may need a moment to expose the new browser session to the backend bridge.
+    }
     nextStep();
   };
 
@@ -330,7 +428,12 @@ export default function OnboardingPanel({
             </div>
 
             {isClerkConfigured() ? (
-              <ClerkEmailSignUpButton email={accountForm.email.trim()} onValidate={validateAccountForm} />
+              <ClerkEmailSignUpButton
+                email={accountForm.email.trim()}
+                password={accountForm.password}
+                onValidate={validateAccountForm}
+                onSignedUp={completeClerkAccount}
+              />
             ) : (
               <PrimaryButton onClick={createNativeAccount}>
                 Create Free Account
