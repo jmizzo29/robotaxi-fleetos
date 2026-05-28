@@ -558,7 +558,6 @@ export default function LandingPage({ onNavigate }) {
         </div>
       </main>
 
-      <div className="absolute bottom-12 left-6 h-1 w-24 rounded-full bg-teal-500" />
       <span className="hidden">Your AI Agent for Tesla Rentals & Robotaxis</span>
       <span className="hidden">Get Started Free</span>
       <span className="hidden">Maximize earnings with intelligent daily plans for pricing, charging, maintenance & more.</span>
