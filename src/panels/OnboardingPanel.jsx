@@ -33,9 +33,16 @@ function PrimaryButton({ children, className = '', ...props }) {
 const OAUTH_REDIRECT_URL = '/sso-callback';
 const OAUTH_COMPLETE_URL = '/#/onboarding';
 
-function ClerkOAuthButtons({ onFallback }) {
+function ClerkOAuthButtons() {
   const { isLoaded, signUp } = useSignUp();
   const [oauthError, setOauthError] = useState('');
+  const [loadTimedOut, setLoadTimedOut] = useState(false);
+
+  useEffect(() => {
+    if (isLoaded) return undefined;
+    const timer = window.setTimeout(() => setLoadTimedOut(true), 6000);
+    return () => window.clearTimeout(timer);
+  }, [isLoaded]);
 
   const startOAuth = async (strategy) => {
     if (!isLoaded || !signUp) return;
@@ -79,30 +86,38 @@ function ClerkOAuthButtons({ onFallback }) {
       {oauthError && (
         <div className="rounded-2xl border border-red-400/30 bg-red-500/10 p-4 text-sm font-semibold text-red-200">
           {oauthError}
-          <button type="button" onClick={onFallback} className="ml-2 text-teal-200 underline">
-            Use account page
-          </button>
+        </div>
+      )}
+
+      {loadTimedOut && !isLoaded && (
+        <div className="rounded-2xl border border-amber-400/30 bg-amber-500/10 p-4 text-sm font-semibold text-amber-100">
+          Google and Apple sign-up are waiting on Clerk. Check that production Clerk keys and social providers are enabled.
         </div>
       )}
     </>
   );
 }
 
-function OAuthFallbackButtons({ onFallback }) {
+function OAuthFallbackButtons() {
   return (
-    <div className="grid grid-cols-2 gap-4">
-      {['Google', 'Apple'].map((provider) => (
-        <button
-          key={provider}
-          type="button"
-          onClick={onFallback}
-          className="flex items-center justify-center gap-3 rounded-2xl border border-zinc-700 bg-zinc-900 py-5 font-medium transition hover:bg-zinc-800"
-        >
-          <span className="text-xl">{provider === 'Google' ? 'G' : 'A'}</span>
-          {provider}
-        </button>
-      ))}
-    </div>
+    <>
+      <div className="grid grid-cols-2 gap-4">
+        {['Google', 'Apple'].map((provider) => (
+          <button
+            key={provider}
+            type="button"
+            disabled
+            className="flex cursor-not-allowed items-center justify-center gap-3 rounded-2xl border border-zinc-700 bg-zinc-900 py-5 font-medium opacity-50"
+          >
+            <span className="text-xl">{provider === 'Google' ? 'G' : 'A'}</span>
+            {provider}
+          </button>
+        ))}
+      </div>
+      <div className="rounded-2xl border border-amber-400/30 bg-amber-500/10 p-4 text-sm font-semibold text-amber-100">
+        Google and Apple OAuth require Clerk&apos;s public browser key.
+      </div>
+    </>
   );
 }
 
@@ -342,9 +357,9 @@ export default function OnboardingPanel({
             </div>
 
             {isClerkConfigured() ? (
-              <ClerkOAuthButtons onFallback={() => onNavigate?.('account')} />
+              <ClerkOAuthButtons />
             ) : (
-              <OAuthFallbackButtons onFallback={() => onNavigate?.('account')} />
+              <OAuthFallbackButtons />
             )}
 
           </div>
