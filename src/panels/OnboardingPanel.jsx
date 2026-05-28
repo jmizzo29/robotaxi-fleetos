@@ -526,11 +526,7 @@ export default function OnboardingPanel({
             Back
           </button>
         ) : <span />}
-        {activeStep < 5 && (
-          <button type="button" onClick={nextStep} className="text-teal-400">
-            Skip
-          </button>
-        )}
+        <span />
       </div>
 
       <span className="hidden">Connect Your First Tesla</span>
