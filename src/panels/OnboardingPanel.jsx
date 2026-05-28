@@ -46,16 +46,18 @@ function ClerkOAuthButtons() {
   const { isLoaded, signUp } = useSignUp();
   const [oauthError, setOauthError] = useState('');
   const [loadTimedOut, setLoadTimedOut] = useState(false);
+  const runtimeSignUp = getRuntimeSignUp();
+  const clerkReady = Boolean(isLoaded || runtimeSignUp);
 
   useEffect(() => {
-    if (isLoaded) return undefined;
+    if (clerkReady) return undefined;
     const timer = window.setTimeout(() => setLoadTimedOut(true), 6000);
     return () => window.clearTimeout(timer);
-  }, [isLoaded]);
+  }, [clerkReady]);
 
   const startOAuth = async (strategy) => {
-    const activeSignUp = signUp || getRuntimeSignUp();
-    if (!isLoaded && !activeSignUp) return;
+    const activeSignUp = signUp || runtimeSignUp || getRuntimeSignUp();
+    if (!activeSignUp) return;
     setOauthError('');
     try {
       await activeSignUp.authenticateWithRedirect({
@@ -75,7 +77,7 @@ function ClerkOAuthButtons() {
         <button
           type="button"
           onClick={() => startOAuth('oauth_google')}
-          disabled={!isLoaded}
+          disabled={!clerkReady}
           className="flex items-center justify-center gap-3 rounded-2xl border border-zinc-700 bg-zinc-900 py-5 font-medium transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <span className="text-xl">G</span>
@@ -85,7 +87,7 @@ function ClerkOAuthButtons() {
         <button
           type="button"
           onClick={() => startOAuth('oauth_apple')}
-          disabled={!isLoaded}
+          disabled={!clerkReady}
           className="flex items-center justify-center gap-3 rounded-2xl border border-zinc-700 bg-zinc-900 py-5 font-medium transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <span className="text-xl">A</span>
@@ -99,7 +101,7 @@ function ClerkOAuthButtons() {
         </div>
       )}
 
-      {loadTimedOut && !isLoaded && (
+      {loadTimedOut && !clerkReady && (
         <div className="rounded-2xl border border-amber-400/30 bg-amber-500/10 p-4 text-sm font-semibold text-amber-100">
           Google and Apple sign-up are waiting on Clerk. Check that production Clerk keys and social providers are enabled.
         </div>
@@ -246,6 +248,8 @@ function ClerkEmailSignUpButton({ email, password, onValidate, onSignedUp }) {
           {clerkError}
         </div>
       )}
+
+      <div id="clerk-captcha" className="min-h-0" />
 
       {loadTimedOut && !clerkReady && !clerkError && (
         <div className="rounded-2xl border border-amber-400/30 bg-amber-500/10 p-4 text-sm font-semibold text-amber-100">
