@@ -33,6 +33,15 @@ function PrimaryButton({ children, className = '', ...props }) {
 const OAUTH_REDIRECT_URL = '/sso-callback';
 const OAUTH_COMPLETE_URL = '/#/onboarding';
 
+function getRuntimeClerk() {
+  if (typeof window === 'undefined') return null;
+  return window.Clerk?.loaded ? window.Clerk : null;
+}
+
+function getRuntimeSignUp() {
+  return getRuntimeClerk()?.client?.signUp || null;
+}
+
 function ClerkOAuthButtons() {
   const { isLoaded, signUp } = useSignUp();
   const [oauthError, setOauthError] = useState('');
@@ -45,10 +54,11 @@ function ClerkOAuthButtons() {
   }, [isLoaded]);
 
   const startOAuth = async (strategy) => {
-    if (!isLoaded || !signUp) return;
+    const activeSignUp = signUp || getRuntimeSignUp();
+    if (!isLoaded && !activeSignUp) return;
     setOauthError('');
     try {
-      await signUp.authenticateWithRedirect({
+      await activeSignUp.authenticateWithRedirect({
         strategy,
         redirectUrl: OAUTH_REDIRECT_URL,
         redirectUrlComplete: OAUTH_COMPLETE_URL,
@@ -128,23 +138,27 @@ function ClerkEmailSignUpButton({ email, password, onValidate, onSignedUp }) {
   const [verificationCode, setVerificationCode] = useState('');
   const [clerkError, setClerkError] = useState('');
   const [loadTimedOut, setLoadTimedOut] = useState(false);
+  const runtimeSignUp = getRuntimeSignUp();
+  const clerkReady = Boolean(isLoaded || runtimeSignUp);
 
   useEffect(() => {
-    if (isLoaded) return undefined;
+    if (clerkReady) return undefined;
     const timer = window.setTimeout(() => setLoadTimedOut(true), 6000);
     return () => window.clearTimeout(timer);
-  }, [isLoaded]);
+  }, [clerkReady]);
 
   const finishSignUp = async (createdSessionId) => {
-    if (createdSessionId && setActive) {
-      await setActive({ session: createdSessionId });
+    const activateSession = setActive || getRuntimeClerk()?.setActive?.bind(getRuntimeClerk());
+    if (createdSessionId && activateSession) {
+      await activateSession({ session: createdSessionId });
     }
     await onSignedUp?.();
   };
 
   const startSignUp = async () => {
     if (!onValidate()) return;
-    if (!isLoaded || !signUp) {
+    const activeSignUp = signUp || getRuntimeSignUp();
+    if (!activeSignUp) {
       setClerkError('Secure sign-up is not ready. The live site is still using Clerk development keys or a domain Clerk has not approved. Add production Clerk keys in Vercel, confirm the production domain in Clerk, then redeploy.');
       return;
     }
@@ -152,7 +166,7 @@ function ClerkEmailSignUpButton({ email, password, onValidate, onSignedUp }) {
     setIsSubmitting(true);
     setClerkError('');
     try {
-      const result = await signUp.create({
+      const result = await activeSignUp.create({
         emailAddress: email,
         password,
       });
@@ -162,7 +176,7 @@ function ClerkEmailSignUpButton({ email, password, onValidate, onSignedUp }) {
         return;
       }
 
-      await signUp.prepareEmailAddressVerification({ strategy: 'email_code' });
+      await activeSignUp.prepareEmailAddressVerification({ strategy: 'email_code' });
       setVerificationSent(true);
     } catch (signUpError) {
       const clerkMessage = signUpError?.errors?.[0]?.longMessage || signUpError?.errors?.[0]?.message;
@@ -181,7 +195,13 @@ function ClerkEmailSignUpButton({ email, password, onValidate, onSignedUp }) {
     setIsSubmitting(true);
     setClerkError('');
     try {
-      const result = await signUp.attemptEmailAddressVerification({
+      const activeSignUp = signUp || getRuntimeSignUp();
+      if (!activeSignUp) {
+        setClerkError('Secure sign-up is not ready yet. Refresh the page and try again.');
+        return;
+      }
+
+      const result = await activeSignUp.attemptEmailAddressVerification({
         code: verificationCode.trim(),
       });
 
@@ -227,7 +247,7 @@ function ClerkEmailSignUpButton({ email, password, onValidate, onSignedUp }) {
         </div>
       )}
 
-      {loadTimedOut && !isLoaded && !clerkError && (
+      {loadTimedOut && !clerkReady && !clerkError && (
         <div className="rounded-2xl border border-amber-400/30 bg-amber-500/10 p-4 text-sm font-semibold text-amber-100">
           Secure sign-up is waiting on Clerk. If this persists on production, switch Vercel to Clerk production keys and confirm your domain in Clerk.
         </div>
