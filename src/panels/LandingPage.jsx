@@ -631,7 +631,7 @@ export default function LandingPage({ onNavigate }) {
             <button
               type="button"
               onClick={() => onNavigate('onboarding')}
-              className="rounded-2xl bg-teal-500 px-10 py-5 text-lg font-semibold text-black transition-all duration-300 hover:bg-teal-400"
+              className="inline-flex items-center justify-center rounded-2xl bg-teal-500 px-10 py-5 text-lg font-semibold text-black shadow-2xl shadow-teal-500/30 transition-all duration-300 hover:bg-teal-400 hover:scale-[1.02] active:scale-95"
             >
               Get Started
             </button>
@@ -639,7 +639,7 @@ export default function LandingPage({ onNavigate }) {
             <button
               type="button"
               onClick={() => onNavigate('how-it-works')}
-              className="group relative inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-teal-400 to-cyan-400 px-10 py-5 text-lg font-semibold text-black shadow-2xl shadow-teal-500/40 transition-all duration-300 hover:scale-[1.02] active:scale-95"
+              className="group inline-flex items-center justify-center rounded-2xl bg-teal-500 px-10 py-5 text-lg font-semibold text-black shadow-2xl shadow-teal-500/30 transition-all duration-300 hover:bg-teal-400 hover:scale-[1.02] active:scale-95"
             >
               How does it work
               <span className="ml-3 text-2xl transition-transform duration-300 group-hover:translate-x-1">
