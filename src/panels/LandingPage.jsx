@@ -505,6 +505,8 @@ function MobileHeroCta({ onNavigate, onSeeMore, isMoreOpen }) {
 }
 
 export default function LandingPage({ onNavigate }) {
+  const [showDemo, setShowDemo] = useState(false);
+
   return (
     <div className="relative flex min-h-screen items-center overflow-hidden bg-black">
       <div
@@ -545,16 +547,86 @@ export default function LandingPage({ onNavigate }) {
 
             <button
               type="button"
-              onClick={() => onNavigate('agent')}
-              className="rounded-2xl border border-white/70 px-10 py-5 text-lg font-semibold text-white transition-all duration-300 hover:bg-white/10"
+              onClick={() => setShowDemo((current) => !current)}
+              className="group relative inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-teal-400 to-cyan-400 px-10 py-5 text-lg font-semibold text-black shadow-2xl shadow-teal-500/40 transition-all duration-300 hover:scale-[1.02] active:scale-95"
             >
               Try AI Agent
+              <span className="ml-3 text-2xl transition-transform duration-300 group-hover:translate-x-1">
+                →
+              </span>
             </button>
           </div>
+
+          <p className="mt-4 text-sm font-medium text-zinc-300">
+            See how it works instantly • No sign up required
+          </p>
 
           <p className="mt-6 text-sm font-medium text-zinc-400">
             First vehicle is free • Takes under 60 seconds
           </p>
+          {showDemo && (
+            <div
+              data-testid="homepage-live-agent-demo"
+              className="mt-8 max-w-lg overflow-hidden rounded-3xl border border-zinc-700 bg-zinc-900 text-left text-white shadow-2xl shadow-black/40"
+            >
+              <div className="flex items-center justify-between border-b border-zinc-700 bg-black/60 px-6 py-4">
+                <div className="flex items-center gap-3">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-400 text-lg">
+                    🤖
+                  </div>
+                  <div>
+                    <p className="font-medium">RoboAgent</p>
+                    <p className="text-xs text-teal-400">Online • Live Demo</p>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => onNavigate('agent')}
+                  className="rounded-full border border-teal-400/40 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-teal-200 transition hover:bg-teal-400/10"
+                >
+                  Open Full Agent
+                </button>
+              </div>
+
+              <div className="max-h-96 space-y-6 overflow-y-auto p-6">
+                <div className="flex gap-3">
+                  <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-400 text-lg">
+                    🤖
+                  </div>
+                  <div className="rounded-3xl rounded-tl-none bg-zinc-800 px-5 py-4 text-zinc-100">
+                    Good morning! Should I create a weekend pricing plan for your Orlando Tesla?
+                  </div>
+                </div>
+
+                <div className="flex justify-end">
+                  <div className="max-w-[75%] rounded-3xl rounded-tr-none bg-teal-600 px-5 py-4 text-white">
+                    Yes, raise prices this weekend
+                  </div>
+                </div>
+
+                <div className="flex gap-3">
+                  <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-400 text-lg">
+                    🤖
+                  </div>
+                  <div className="rounded-3xl rounded-tl-none bg-zinc-800 px-5 py-4 text-zinc-100">
+                    Done. Projected extra earnings:{' '}
+                    <span className="font-bold text-emerald-400">+$284</span> this weekend.
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t border-zinc-700 bg-black/40 p-4">
+                <button
+                  type="button"
+                  onClick={() => onNavigate('agent')}
+                  className="flex w-full items-center justify-between rounded-2xl bg-zinc-800 px-5 py-3 text-left text-sm font-medium text-zinc-300 transition hover:bg-zinc-700"
+                >
+                  <span>Ask me anything about your Tesla fleet...</span>
+                  <span className="text-teal-300">→</span>
+                </button>
+              </div>
+            </div>
+          )}
         </div>
       </main>
 

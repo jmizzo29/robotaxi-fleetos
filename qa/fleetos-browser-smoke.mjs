@@ -229,6 +229,10 @@ async function testLandingCtas(browser, profile) {
   await page.goto(routeUrl('/'), { waitUntil: 'networkidle' });
   if (profile === 'desktop') {
     await page.getByRole('button', { name: 'Try AI Agent' }).click();
+    const liveDemo = page.locator('[data-testid="homepage-live-agent-demo"]');
+    await liveDemo.getByText('Online', { exact: false }).waitFor({ timeout: 15000 });
+    await liveDemo.getByText('Projected extra earnings:', { exact: false }).waitFor({ timeout: 15000 });
+    await liveDemo.getByRole('button', { name: 'Open Full Agent' }).click();
     await page.waitForURL('**/#/agent', { timeout: 10000 });
     await page.locator('#public-agent-question').waitFor({ timeout: 15000 });
     await page.goto(routeUrl('/'), { waitUntil: 'networkidle' });
@@ -237,6 +241,10 @@ async function testLandingCtas(browser, profile) {
     await page.getByText('Let’s Get Your Tesla Connected').waitFor({ timeout: 15000 });
   } else {
     await page.getByRole('button', { name: 'Try AI Agent' }).click();
+    const liveDemo = page.locator('[data-testid="homepage-live-agent-demo"]');
+    await liveDemo.getByText('Online', { exact: false }).waitFor({ timeout: 15000 });
+    await liveDemo.getByText('Projected extra earnings:', { exact: false }).waitFor({ timeout: 15000 });
+    await liveDemo.getByRole('button', { name: 'Open Full Agent' }).click();
     await page.waitForURL('**/#/agent', { timeout: 10000 });
     await page.locator('#public-agent-question').waitFor({ timeout: 15000 });
     const heroInput = page.locator('#public-agent-question');
