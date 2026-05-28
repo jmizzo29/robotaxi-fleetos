@@ -285,7 +285,7 @@ async function testHealthBurst() {
 }
 
 async function testPublicRouteSmoke() {
-  const routes = ['/', '/#/agent', '/#/about', '/#/onboarding', '/#/account', '/#/privacy', '/#/terms'];
+  const routes = ['/', '/#/agent', '/#/about', '/#/how-it-works', '/#/onboarding', '/#/account', '/#/privacy', '/#/terms'];
   const results = await Promise.all(routes.map((route) => request(route)));
   const bad = results.filter((result) => result.status !== 200 || !result.text.includes('<div id="root"></div>'));
   if (bad.length > 0) {

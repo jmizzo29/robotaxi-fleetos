@@ -501,10 +501,24 @@ function MobileHeroCta({ onNavigate, onSeeMore, isMoreOpen }) {
   );
 }
 
-function HowItWorks() {
+export function HowItWorksPage({ onNavigate }) {
   return (
-    <section data-testid="how-it-works" className="min-h-screen bg-zinc-950 px-6 py-12 text-white">
-      <div className="mx-auto max-w-4xl">
+    <div data-testid="how-it-works" className="min-h-screen bg-zinc-950 px-6 py-8 text-white">
+      <header className="mx-auto mb-10 flex max-w-4xl items-center justify-between">
+        <button type="button" onClick={() => onNavigate('landing')} className="flex items-center gap-3">
+          <span className="h-2.5 w-2.5 rounded-full bg-teal-300 shadow-lg shadow-teal-300/50" />
+          <span className="text-sm font-black uppercase tracking-[0.28em] text-teal-200">RoboAgent</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => onNavigate('landing')}
+          className="rounded-full border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm font-black text-zinc-200 transition hover:border-teal-400 hover:text-teal-200"
+        >
+          Back Home
+        </button>
+      </header>
+
+      <main className="mx-auto max-w-4xl">
         <div className="mb-12 text-center">
           <h2 className="mb-3 text-4xl font-bold">How RoboAgent Works</h2>
           <p className="text-lg text-zinc-400">From raw data to daily profit</p>
@@ -577,14 +591,12 @@ function HowItWorks() {
         </div>
 
         <p className="mt-16 text-center text-sm text-zinc-500">Powered by advanced AI</p>
-      </div>
-    </section>
+      </main>
+    </div>
   );
 }
 
 export default function LandingPage({ onNavigate }) {
-  const [showHowItWorks, setShowHowItWorks] = useState(false);
-
   return (
     <div className="bg-black">
       <section className="relative flex min-h-screen items-center overflow-hidden bg-black">
@@ -626,7 +638,7 @@ export default function LandingPage({ onNavigate }) {
 
             <button
               type="button"
-              onClick={() => setShowHowItWorks((current) => !current)}
+              onClick={() => onNavigate('how-it-works')}
               className="group relative inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-teal-400 to-cyan-400 px-10 py-5 text-lg font-semibold text-black shadow-2xl shadow-teal-500/40 transition-all duration-300 hover:scale-[1.02] active:scale-95"
             >
               How does it work
@@ -642,8 +654,6 @@ export default function LandingPage({ onNavigate }) {
         </div>
       </main>
       </section>
-
-      {showHowItWorks && <HowItWorks />}
 
       <span className="hidden">Your AI Agent for Tesla Rentals & Robotaxis</span>
       <span className="hidden">Get Started Free</span>

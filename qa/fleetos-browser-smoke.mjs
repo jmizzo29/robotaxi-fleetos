@@ -234,19 +234,29 @@ async function testLandingCtas(browser, profile) {
   await page.goto(routeUrl('/'), { waitUntil: 'networkidle' });
   if (profile === 'desktop') {
     await page.getByRole('button', { name: 'How does it work' }).click();
+    await page.waitForURL('**/#/how-it-works', { timeout: 10000 });
     const howItWorks = page.locator('[data-testid="how-it-works"]');
     await howItWorks.getByText('How RoboAgent Works').waitFor({ timeout: 15000 });
     await howItWorks.getByText('Tesla Telemetry').waitFor({ timeout: 15000 });
     await howItWorks.getByText('Smart Pricing').waitFor({ timeout: 15000 });
+    await howItWorks.getByRole('button', { name: 'Back Home' }).click();
+    await page.waitForURL('**/#/landing', { timeout: 10000 }).catch(async () => {
+      await page.waitForURL('**/', { timeout: 10000 });
+    });
     await page.getByRole('button', { name: 'Get Started', exact: true }).first().click();
     await page.waitForURL('**/#/onboarding', { timeout: 10000 });
     await page.getByText('Create Your RoboAgent Account').waitFor({ timeout: 15000 });
   } else {
     await page.getByRole('button', { name: 'How does it work' }).click();
+    await page.waitForURL('**/#/how-it-works', { timeout: 10000 });
     const howItWorks = page.locator('[data-testid="how-it-works"]');
     await howItWorks.getByText('How RoboAgent Works').waitFor({ timeout: 15000 });
     await howItWorks.getByText('Turo Rentals').waitFor({ timeout: 15000 });
     await howItWorks.getByText('Earnings Forecasts').waitFor({ timeout: 15000 });
+    await howItWorks.getByRole('button', { name: 'Back Home' }).click();
+    await page.waitForURL('**/#/landing', { timeout: 10000 }).catch(async () => {
+      await page.waitForURL('**/', { timeout: 10000 });
+    });
     await page.getByRole('button', { name: 'Get Started' }).first().click();
     await page.waitForURL('**/#/onboarding', { timeout: 10000 });
     await page.getByText('Create Your RoboAgent Account').waitFor({ timeout: 15000 });
