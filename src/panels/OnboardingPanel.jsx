@@ -122,33 +122,20 @@ export default function OnboardingPanel({
       )}
 
       {activeStep === 1 && (
-        <div className="flex flex-1 flex-col justify-center">
-          <div className="mb-10 text-center">
-            <div className="mb-6 inline-flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-teal-400 to-cyan-400 text-4xl">
-              🤖
+        <div className="flex flex-1 flex-col justify-center px-6 py-8">
+          <div className="mb-12 text-center">
+            <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-teal-400 to-cyan-500 shadow-xl shadow-teal-500/30">
+              <span className="text-5xl font-bold tracking-tighter text-black">R</span>
             </div>
             <h1 className="mb-4 text-4xl font-bold leading-tight md:text-5xl">
               Create Your RoboAgent Account
             </h1>
-            <p className="mx-auto max-w-sm text-lg text-zinc-400">
+            <p className="mx-auto max-w-md text-lg text-zinc-400">
               One account to manage all your Teslas, rentals, and future Robotaxis
-            </p>
-            <p className="mt-3 text-sm font-medium text-teal-300">
-              Let’s Get Your Tesla Connected
             </p>
           </div>
 
-          <div className="mx-auto w-full max-w-md space-y-5">
-            <div>
-              <label htmlFor="onboarding-full-name" className="mb-2 block text-sm text-zinc-400">Full Name</label>
-              <input
-                id="onboarding-full-name"
-                type="text"
-                placeholder="John Smith"
-                className="w-full rounded-2xl border border-zinc-700 bg-zinc-900 px-6 py-5 text-white outline-none transition placeholder:text-zinc-600 focus:border-teal-500"
-              />
-            </div>
-
+          <div className="mx-auto w-full max-w-md space-y-6">
             <div>
               <label htmlFor="onboarding-email" className="mb-2 block text-sm text-zinc-400">Email Address</label>
               <input
@@ -159,25 +146,26 @@ export default function OnboardingPanel({
               />
             </div>
 
-            <div className="pt-4">
-              <PrimaryButton onClick={() => onNavigate?.('account')}>
-                Create Free Account
-              </PrimaryButton>
-              <button
-                type="button"
-                onClick={() => onNavigate?.('account')}
-                className="mt-3 w-full rounded-2xl border border-teal-400/40 bg-teal-400/10 py-4 text-sm font-semibold text-teal-200 transition hover:bg-teal-400/15"
-              >
-                Sign in with Tesla
-              </button>
+            <div>
+              <label htmlFor="onboarding-password" className="mb-2 block text-sm text-zinc-400">Password</label>
+              <input
+                id="onboarding-password"
+                type="password"
+                placeholder="Create a password"
+                className="w-full rounded-2xl border border-zinc-700 bg-zinc-900 px-6 py-5 text-white outline-none transition placeholder:text-zinc-600 focus:border-teal-500"
+              />
             </div>
+
+            <PrimaryButton onClick={nextStep}>
+              Create Free Account
+            </PrimaryButton>
 
             <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-zinc-700" />
               </div>
               <div className="relative text-center">
-                <span className="bg-zinc-950 px-4 text-sm text-zinc-500">or</span>
+                <span className="bg-zinc-950 px-4 text-sm text-zinc-500">or continue with</span>
               </div>
             </div>
 
@@ -188,24 +176,18 @@ export default function OnboardingPanel({
                 className="flex items-center justify-center gap-3 rounded-2xl border border-zinc-700 bg-zinc-900 py-5 transition hover:bg-zinc-800"
               >
                 <span className="text-xl">G</span>
-                <span className="font-medium">Google</span>
+                Google
               </button>
               <button
                 type="button"
                 onClick={() => onNavigate?.('account')}
                 className="flex items-center justify-center gap-3 rounded-2xl border border-zinc-700 bg-zinc-900 py-5 transition hover:bg-zinc-800"
               >
-                <span className="text-xl">A</span>
-                <span className="font-medium">Apple</span>
+                <span className="text-xl"></span>
+                Apple
               </button>
             </div>
 
-            <p className="mt-6 text-center text-sm text-zinc-500">
-              Already have an account?{' '}
-              <button type="button" onClick={() => onNavigate?.('account')} className="font-medium text-teal-400 hover:underline">
-                Log in
-              </button>
-            </p>
           </div>
         </div>
       )}

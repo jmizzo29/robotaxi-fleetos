@@ -164,10 +164,13 @@ async function testOnboardingStandalone(browser, profile) {
   const telemetry = await makePage(browser, profile);
   const { page, context } = telemetry;
   await page.goto(routeUrl('#/onboarding'), { waitUntil: 'networkidle' });
-  await page.getByText('Let’s Get Your Tesla Connected').waitFor({ timeout: 15000 });
+  await page.getByText('Create Your RoboAgent Account').waitFor({ timeout: 15000 });
   await page.getByText('Step 1 of 5').waitFor({ timeout: 15000 });
-  await page.getByRole('button', { name: 'Sign in with Tesla' }).waitFor({ timeout: 15000 });
-  await page.getByRole('button', { name: 'Log in' }).waitFor({ timeout: 15000 });
+  await page.getByLabel('Email Address').waitFor({ timeout: 15000 });
+  await page.getByLabel('Password').waitFor({ timeout: 15000 });
+  await page.getByRole('button', { name: 'Create Free Account' }).waitFor({ timeout: 15000 });
+  await page.getByRole('button', { name: 'Google' }).waitFor({ timeout: 15000 });
+  await page.getByRole('button', { name: 'Apple' }).waitFor({ timeout: 15000 });
   const sideMenuVisible = await page.getByRole('button', { name: 'Fleet', exact: true }).count();
   if (sideMenuVisible > 0) throw new Error('App navigation is visible on onboarding.');
   await context.close();
@@ -238,7 +241,7 @@ async function testLandingCtas(browser, profile) {
     await page.goto(routeUrl('/'), { waitUntil: 'networkidle' });
     await page.getByRole('button', { name: 'Get Started', exact: true }).first().click();
     await page.waitForURL('**/#/onboarding', { timeout: 10000 });
-    await page.getByText('Let’s Get Your Tesla Connected').waitFor({ timeout: 15000 });
+    await page.getByText('Create Your RoboAgent Account').waitFor({ timeout: 15000 });
   } else {
     await page.getByRole('button', { name: 'Try AI Agent' }).click();
     const liveDemo = page.locator('[data-testid="homepage-live-agent-demo"]');
@@ -260,7 +263,7 @@ async function testLandingCtas(browser, profile) {
     await page.goto(routeUrl('/'), { waitUntil: 'networkidle' });
     await page.getByRole('button', { name: 'Get Started' }).first().click();
     await page.waitForURL('**/#/onboarding', { timeout: 10000 });
-    await page.getByText('Let’s Get Your Tesla Connected').waitFor({ timeout: 15000 });
+    await page.getByText('Create Your RoboAgent Account').waitFor({ timeout: 15000 });
   }
   await context.close();
   return assertNoRuntimeErrors(`landing CTA to onboarding (${profile})`, telemetry);
