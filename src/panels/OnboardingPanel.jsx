@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { SignUpButton, useSignUp } from '@clerk/react';
+import { useClerk, useSignUp } from '@clerk/react';
 import { isClerkConfigured } from '../auth/clerkConfig';
 import {
   acceptTeslaConsent,
@@ -106,6 +106,29 @@ function OAuthFallbackButtons({ onFallback }) {
   );
 }
 
+function ClerkEmailSignUpButton({ email, onValidate }) {
+  const { openSignUp } = useClerk();
+
+  const startSignUp = () => {
+    if (!onValidate()) return;
+    openSignUp({
+      initialValues: { emailAddress: email },
+      forceRedirectUrl: OAUTH_COMPLETE_URL,
+      fallbackRedirectUrl: OAUTH_COMPLETE_URL,
+    });
+  };
+
+  return (
+    <button
+      type="button"
+      onClick={startSignUp}
+      className="w-full rounded-3xl bg-teal-500 py-6 text-xl font-semibold text-black transition hover:bg-teal-400"
+    >
+      Create Free Account
+    </button>
+  );
+}
+
 export default function OnboardingPanel({
   realVehicleCount = 0,
   isLoading = false,
@@ -117,6 +140,8 @@ export default function OnboardingPanel({
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
+  const [accountForm, setAccountForm] = useState({ email: '', password: '' });
+  const [accountErrors, setAccountErrors] = useState({});
 
   const refreshSession = useCallback(async () => {
     try {
@@ -155,6 +180,30 @@ export default function OnboardingPanel({
   const activeStep = Math.max(step, realProgressStep);
   const nextStep = () => setStep((current) => Math.min(Math.max(current, realProgressStep) + 1, 5));
   const prevStep = () => setStep((current) => Math.max(Math.max(current, realProgressStep) - 1, 1));
+
+  const validateAccountForm = () => {
+    const nextErrors = {};
+    const email = accountForm.email.trim();
+    if (!email) {
+      nextErrors.email = 'Enter your email address.';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      nextErrors.email = 'Enter a valid email address.';
+    }
+
+    if (!accountForm.password) {
+      nextErrors.password = 'Create a password.';
+    } else if (accountForm.password.length < 8) {
+      nextErrors.password = 'Password must be at least 8 characters.';
+    }
+
+    setAccountErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
+  };
+
+  const createNativeAccount = () => {
+    if (!validateAccountForm()) return;
+    nextStep();
+  };
 
   const approveConsent = () => {
     verifyBetaInvite('RoboAgent-BETA');
@@ -219,9 +268,20 @@ export default function OnboardingPanel({
               <input
                 id="onboarding-email"
                 type="email"
+                value={accountForm.email}
+                onChange={(event) => {
+                  setAccountForm((current) => ({ ...current, email: event.target.value }));
+                  setAccountErrors((current) => ({ ...current, email: '' }));
+                }}
                 placeholder="you@email.com"
-                className="w-full rounded-2xl border border-zinc-700 bg-zinc-900 px-6 py-5 text-white outline-none transition placeholder:text-zinc-600 focus:border-teal-500"
+                aria-invalid={Boolean(accountErrors.email)}
+                className={`w-full rounded-2xl border bg-zinc-900 px-6 py-5 text-white outline-none transition placeholder:text-zinc-600 focus:border-teal-500 ${
+                  accountErrors.email ? 'border-red-400' : 'border-zinc-700'
+                }`}
               />
+              {accountErrors.email && (
+                <p className="mt-2 text-sm font-semibold text-red-300">{accountErrors.email}</p>
+              )}
             </div>
 
             <div>
@@ -229,22 +289,26 @@ export default function OnboardingPanel({
               <input
                 id="onboarding-password"
                 type="password"
+                value={accountForm.password}
+                onChange={(event) => {
+                  setAccountForm((current) => ({ ...current, password: event.target.value }));
+                  setAccountErrors((current) => ({ ...current, password: '' }));
+                }}
                 placeholder="Create a password"
-                className="w-full rounded-2xl border border-zinc-700 bg-zinc-900 px-6 py-5 text-white outline-none transition placeholder:text-zinc-600 focus:border-teal-500"
+                aria-invalid={Boolean(accountErrors.password)}
+                className={`w-full rounded-2xl border bg-zinc-900 px-6 py-5 text-white outline-none transition placeholder:text-zinc-600 focus:border-teal-500 ${
+                  accountErrors.password ? 'border-red-400' : 'border-zinc-700'
+                }`}
               />
+              {accountErrors.password && (
+                <p className="mt-2 text-sm font-semibold text-red-300">{accountErrors.password}</p>
+              )}
             </div>
 
             {isClerkConfigured() ? (
-              <SignUpButton mode="modal" forceRedirectUrl={OAUTH_COMPLETE_URL}>
-                <button
-                  type="button"
-                  className="w-full rounded-3xl bg-teal-500 py-6 text-xl font-semibold text-black transition hover:bg-teal-400"
-                >
-                  Create Free Account
-                </button>
-              </SignUpButton>
+              <ClerkEmailSignUpButton email={accountForm.email.trim()} onValidate={validateAccountForm} />
             ) : (
-              <PrimaryButton onClick={nextStep}>
+              <PrimaryButton onClick={createNativeAccount}>
                 Create Free Account
               </PrimaryButton>
             )}

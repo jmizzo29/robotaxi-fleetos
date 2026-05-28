@@ -168,7 +168,9 @@ async function testOnboardingStandalone(browser, profile) {
   await page.getByText('Step 1 of 5').waitFor({ timeout: 15000 });
   await page.getByLabel('Email Address').waitFor({ timeout: 15000 });
   await page.getByLabel('Password').waitFor({ timeout: 15000 });
-  await page.getByRole('button', { name: 'Create Free Account' }).waitFor({ timeout: 15000 });
+  await page.getByRole('button', { name: 'Create Free Account' }).click();
+  await page.getByText('Enter your email address.').waitFor({ timeout: 15000 });
+  await page.getByText('Create a password.').waitFor({ timeout: 15000 });
   await page.getByRole('button', { name: 'Google' }).waitFor({ timeout: 15000 });
   await page.getByRole('button', { name: 'Apple' }).waitFor({ timeout: 15000 });
   const sideMenuVisible = await page.getByRole('button', { name: 'Fleet', exact: true }).count();
