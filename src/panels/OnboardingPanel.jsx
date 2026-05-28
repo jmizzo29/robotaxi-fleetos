@@ -127,6 +127,13 @@ function ClerkEmailSignUpButton({ email, password, onValidate, onSignedUp }) {
   const [verificationSent, setVerificationSent] = useState(false);
   const [verificationCode, setVerificationCode] = useState('');
   const [clerkError, setClerkError] = useState('');
+  const [loadTimedOut, setLoadTimedOut] = useState(false);
+
+  useEffect(() => {
+    if (isLoaded) return undefined;
+    const timer = window.setTimeout(() => setLoadTimedOut(true), 6000);
+    return () => window.clearTimeout(timer);
+  }, [isLoaded]);
 
   const finishSignUp = async (createdSessionId) => {
     if (createdSessionId && setActive) {
@@ -138,7 +145,7 @@ function ClerkEmailSignUpButton({ email, password, onValidate, onSignedUp }) {
   const startSignUp = async () => {
     if (!onValidate()) return;
     if (!isLoaded || !signUp) {
-      setClerkError('Secure sign-up is still loading. Please try again in a moment.');
+      setClerkError('Secure sign-up is not ready. The live site is still using Clerk development keys or a domain Clerk has not approved. Add production Clerk keys in Vercel, confirm the production domain in Clerk, then redeploy.');
       return;
     }
 
@@ -217,6 +224,12 @@ function ClerkEmailSignUpButton({ email, password, onValidate, onSignedUp }) {
       {clerkError && (
         <div className="rounded-2xl border border-red-400/30 bg-red-500/10 p-4 text-sm font-semibold text-red-200">
           {clerkError}
+        </div>
+      )}
+
+      {loadTimedOut && !isLoaded && !clerkError && (
+        <div className="rounded-2xl border border-amber-400/30 bg-amber-500/10 p-4 text-sm font-semibold text-amber-100">
+          Secure sign-up is waiting on Clerk. If this persists on production, switch Vercel to Clerk production keys and confirm your domain in Clerk.
         </div>
       )}
 
