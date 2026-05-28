@@ -42,6 +42,30 @@ function getRuntimeSignUp() {
   return getRuntimeClerk()?.client?.signUp || null;
 }
 
+function supportsPrepareEmailVerification(signUpResource) {
+  return Boolean(
+    signUpResource
+    && (
+      typeof signUpResource.prepareEmailAddressVerification === 'function'
+      || typeof signUpResource.prepareVerification === 'function'
+    )
+  );
+}
+
+function supportsAttemptEmailVerification(signUpResource) {
+  return Boolean(
+    signUpResource
+    && (
+      typeof signUpResource.attemptEmailAddressVerification === 'function'
+      || typeof signUpResource.attemptVerification === 'function'
+    )
+  );
+}
+
+function pickEmailVerificationResource(...resources) {
+  return resources.find((resource) => supportsPrepareEmailVerification(resource) || supportsAttemptEmailVerification(resource)) || null;
+}
+
 async function prepareEmailVerification(signUpResource) {
   if (typeof signUpResource?.prepareEmailAddressVerification === 'function') {
     return signUpResource.prepareEmailAddressVerification({ strategy: 'email_code' });
@@ -199,8 +223,14 @@ function ClerkEmailSignUpButton({ email, password, onValidate, onSignedUp }) {
         return;
       }
 
-      setVerificationResource(result || activeSignUp);
-      await prepareEmailVerification(result || activeSignUp);
+      const emailVerificationResource = pickEmailVerificationResource(
+        result,
+        activeSignUp,
+        signUp,
+        getRuntimeSignUp(),
+      );
+      setVerificationResource(emailVerificationResource);
+      await prepareEmailVerification(emailVerificationResource);
       setVerificationSent(true);
     } catch (signUpError) {
       const clerkMessage = signUpError?.errors?.[0]?.longMessage || signUpError?.errors?.[0]?.message;
