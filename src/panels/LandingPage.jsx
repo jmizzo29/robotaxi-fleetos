@@ -212,9 +212,6 @@ function HeroAgentDemo({
         <div>
           <h2 className="text-2xl font-black tracking-tight text-slate-950 sm:text-3xl lg:text-4xl">Ask about your Tesla business.</h2>
         </div>
-        <span className="w-fit rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">
-          No signup needed
-        </span>
       </div>
 
       <div className="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4 lg:p-5">

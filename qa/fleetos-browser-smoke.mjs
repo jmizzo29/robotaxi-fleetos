@@ -123,7 +123,7 @@ async function testAboutAgent(browser, profile) {
     await page.getByRole('button', { name: 'Start Free' }).first().waitFor({ timeout: 15000 });
     await page.getByRole('button', { name: 'Try AI Agent' }).click();
     const mobileDemo = page.locator('[data-testid="mobile-hero-agent-demo"]');
-    await mobileDemo.getByText('No signup needed', { exact: true }).waitFor({ timeout: 15000 });
+    await mobileDemo.getByText('Ask about your Tesla business.').waitFor({ timeout: 15000 });
     await page.locator('#mobile-hero-agent-input').waitFor({ timeout: 15000 });
     const heroGoal = await page.locator('#mobile-hero-agent-input').inputValue();
     if (heroGoal !== 'How many Model X rentals are available in Orlando?') {
