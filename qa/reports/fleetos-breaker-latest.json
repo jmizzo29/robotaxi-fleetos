@@ -1,7 +1,7 @@
 {
   "baseUrl": "https://robotaxi-fleetos.vercel.app",
-  "generatedAt": "2026-05-28T15:17:05.450Z",
-  "durationMs": 3036,
+  "generatedAt": "2026-05-28T23:26:42.237Z",
+  "durationMs": 3208,
   "summary": {
     "total": 13,
     "pass": 13,
@@ -12,10 +12,10 @@
     {
       "name": "public shell loads",
       "status": "pass",
-      "detail": "Homepage and bundle loaded in 415ms.",
+      "detail": "Homepage and bundle loaded in 375ms.",
       "evidence": {
-        "asset": "index-CGOerPK9.js",
-        "bundleBytes": 727038
+        "asset": "index-C7ilmE6w.js",
+        "bundleBytes": 727908
       }
     },
     {
@@ -59,7 +59,7 @@
           "hasClerkPublishableKey": true,
           "hasClerkSecretKey": true
         },
-        "redirectUri": "https://robotaxi-fleetos.vercel.app/api/tesla/callback"
+        "redirectUri": "https://www.autofleeto.com/api/tesla/callback"
       }
     },
     {
@@ -107,9 +107,9 @@
     {
       "name": "health burst",
       "status": "pass",
-      "detail": "20 concurrent health requests passed in 887ms.",
+      "detail": "20 concurrent health requests passed in 676ms.",
       "evidence": {
-        "maxMs": 883,
+        "maxMs": 667,
         "minMs": 68
       }
     }
