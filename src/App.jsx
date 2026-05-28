@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { AuthenticateWithRedirectCallback } from '@clerk/react';
 import CommandSafetyModal from './components/CommandSafetyModal';
 import FeedbackButton from './components/FeedbackButton';
 import FleetMap from './components/FleetMap';
@@ -130,7 +131,26 @@ const initialFleet = [
   },
 ];
 
+function SsoCallbackPage() {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-zinc-950 px-6 text-white">
+      <AuthenticateWithRedirectCallback />
+      <div className="text-center">
+        <p className="text-sm font-black uppercase tracking-[0.22em] text-teal-300">RoboAgent</p>
+        <h1 className="mt-3 text-3xl font-black">Finishing secure sign in...</h1>
+        <p className="mt-3 text-sm text-zinc-400">You will return to onboarding automatically.</p>
+      </div>
+    </div>
+  );
+}
+
 export default function App() {
+  if (window.location.pathname === '/sso-callback') return <SsoCallbackPage />;
+
+  return <FleetApp />;
+}
+
+function FleetApp() {
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [pendingCommand, setPendingCommand] = useState(null);
   const [, setComplianceRevision] = useState(0);

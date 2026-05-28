@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { SignUpButton, useSignUp } from '@clerk/react';
+import { isClerkConfigured } from '../auth/clerkConfig';
 import {
   acceptTeslaConsent,
   canUseTeslaTelemetry,
@@ -25,6 +27,82 @@ function PrimaryButton({ children, className = '', ...props }) {
     >
       {children}
     </button>
+  );
+}
+
+const OAUTH_REDIRECT_URL = '/sso-callback';
+const OAUTH_COMPLETE_URL = '/#/onboarding';
+
+function ClerkOAuthButtons({ onFallback }) {
+  const { isLoaded, signUp } = useSignUp();
+  const [oauthError, setOauthError] = useState('');
+
+  const startOAuth = async (strategy) => {
+    if (!isLoaded || !signUp) return;
+    setOauthError('');
+    try {
+      await signUp.authenticateWithRedirect({
+        strategy,
+        redirectUrl: OAUTH_REDIRECT_URL,
+        redirectUrlComplete: OAUTH_COMPLETE_URL,
+      });
+    } catch (authError) {
+      const clerkMessage = authError?.errors?.[0]?.longMessage || authError?.errors?.[0]?.message;
+      setOauthError(clerkMessage || authError.message || 'Could not start secure OAuth sign up.');
+    }
+  };
+
+  return (
+    <>
+      <div className="grid grid-cols-2 gap-4">
+        <button
+          type="button"
+          onClick={() => startOAuth('oauth_google')}
+          disabled={!isLoaded}
+          className="flex items-center justify-center gap-3 rounded-2xl border border-zinc-700 bg-zinc-900 py-5 font-medium transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <span className="text-xl">G</span>
+          Google
+        </button>
+
+        <button
+          type="button"
+          onClick={() => startOAuth('oauth_apple')}
+          disabled={!isLoaded}
+          className="flex items-center justify-center gap-3 rounded-2xl border border-zinc-700 bg-zinc-900 py-5 font-medium transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <span className="text-xl">A</span>
+          Apple
+        </button>
+      </div>
+
+      {oauthError && (
+        <div className="rounded-2xl border border-red-400/30 bg-red-500/10 p-4 text-sm font-semibold text-red-200">
+          {oauthError}
+          <button type="button" onClick={onFallback} className="ml-2 text-teal-200 underline">
+            Use account page
+          </button>
+        </div>
+      )}
+    </>
+  );
+}
+
+function OAuthFallbackButtons({ onFallback }) {
+  return (
+    <div className="grid grid-cols-2 gap-4">
+      {['Google', 'Apple'].map((provider) => (
+        <button
+          key={provider}
+          type="button"
+          onClick={onFallback}
+          className="flex items-center justify-center gap-3 rounded-2xl border border-zinc-700 bg-zinc-900 py-5 font-medium transition hover:bg-zinc-800"
+        >
+          <span className="text-xl">{provider === 'Google' ? 'G' : 'A'}</span>
+          {provider}
+        </button>
+      ))}
+    </div>
   );
 }
 
@@ -156,9 +234,20 @@ export default function OnboardingPanel({
               />
             </div>
 
-            <PrimaryButton onClick={nextStep}>
-              Create Free Account
-            </PrimaryButton>
+            {isClerkConfigured() ? (
+              <SignUpButton mode="modal" forceRedirectUrl={OAUTH_COMPLETE_URL}>
+                <button
+                  type="button"
+                  className="w-full rounded-3xl bg-teal-500 py-6 text-xl font-semibold text-black transition hover:bg-teal-400"
+                >
+                  Create Free Account
+                </button>
+              </SignUpButton>
+            ) : (
+              <PrimaryButton onClick={nextStep}>
+                Create Free Account
+              </PrimaryButton>
+            )}
 
             <div className="relative my-6">
               <div className="absolute inset-0 flex items-center">
@@ -169,7 +258,7 @@ export default function OnboardingPanel({
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="hidden" aria-hidden="true">
               <button
                 type="button"
                 onClick={() => onNavigate?.('account')}
@@ -187,6 +276,12 @@ export default function OnboardingPanel({
                 Apple
               </button>
             </div>
+
+            {isClerkConfigured() ? (
+              <ClerkOAuthButtons onFallback={() => onNavigate?.('account')} />
+            ) : (
+              <OAuthFallbackButtons onFallback={() => onNavigate?.('account')} />
+            )}
 
           </div>
         </div>
