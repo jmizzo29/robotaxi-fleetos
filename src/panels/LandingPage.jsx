@@ -504,11 +504,93 @@ function MobileHeroCta({ onNavigate, onSeeMore, isMoreOpen }) {
   );
 }
 
+function HowItWorks() {
+  return (
+    <section data-testid="how-it-works" className="min-h-screen bg-zinc-950 px-6 py-12 text-white">
+      <div className="mx-auto max-w-4xl">
+        <div className="mb-12 text-center">
+          <h2 className="mb-3 text-4xl font-bold">How RoboAgent Works</h2>
+          <p className="text-lg text-zinc-400">From raw data to daily profit</p>
+        </div>
+
+        <div className="grid items-center gap-8 md:grid-cols-3">
+          <div className="space-y-6">
+            <h3 className="mb-6 text-lg font-semibold text-teal-400">INPUTS</h3>
+            <div className="space-y-6 rounded-3xl bg-zinc-900 p-6">
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-zinc-800 text-sm font-black">EV</div>
+                <div>
+                  <p className="font-medium">Tesla Telemetry</p>
+                  <p className="text-sm text-zinc-400">Battery, location, odometer, charging state</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-zinc-800 text-sm font-black">TR</div>
+                <div>
+                  <p className="font-medium">Turo Rentals</p>
+                  <p className="text-sm text-zinc-400">Bookings, pricing history, availability</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-zinc-800 text-sm font-black">WX</div>
+                <div>
+                  <p className="font-medium">Weather & Market Data</p>
+                  <p className="text-sm text-zinc-400">Open-Meteo + local demand</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex justify-center">
+            <div className="text-center">
+              <div className="mx-auto mb-6 flex h-32 w-32 items-center justify-center rounded-3xl bg-gradient-to-br from-teal-400 to-cyan-500 shadow-2xl shadow-teal-500/50">
+                <div className="text-5xl font-black text-black">AI</div>
+              </div>
+              <p className="text-xl font-semibold text-teal-400">RoboAgent AI</p>
+              <p className="mt-1 text-sm text-zinc-500">Analyzes - Reasons - Plans</p>
+            </div>
+          </div>
+
+          <div className="space-y-6">
+            <h3 className="mb-6 text-right text-lg font-semibold text-teal-400">OUTPUTS</h3>
+            <div className="space-y-6 rounded-3xl bg-zinc-900 p-6">
+              <div className="flex items-center justify-end gap-4">
+                <div className="text-right">
+                  <p className="font-medium">Smart Pricing</p>
+                  <p className="text-sm text-zinc-400">Dynamic Turo rate recommendations</p>
+                </div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-zinc-800 text-sm font-black">$</div>
+              </div>
+              <div className="flex items-center justify-end gap-4">
+                <div className="text-right">
+                  <p className="font-medium">Charging & Maintenance</p>
+                  <p className="text-sm text-zinc-400">Optimized schedules and alerts</p>
+                </div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-zinc-800 text-sm font-black">KW</div>
+              </div>
+              <div className="flex items-center justify-end gap-4">
+                <div className="text-right">
+                  <p className="font-medium">Earnings Forecasts</p>
+                  <p className="text-sm text-zinc-400">Daily & weekly profit predictions</p>
+                </div>
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-zinc-800 text-sm font-black">ROI</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p className="mt-16 text-center text-sm text-zinc-500">Powered by advanced AI</p>
+      </div>
+    </section>
+  );
+}
+
 export default function LandingPage({ onNavigate }) {
-  const [showDemo, setShowDemo] = useState(false);
+  const [showHowItWorks, setShowHowItWorks] = useState(false);
 
   return (
-    <div className="relative flex min-h-screen items-center overflow-hidden bg-black">
+    <div className="bg-black">
+      <section className="relative flex min-h-screen items-center overflow-hidden bg-black">
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
@@ -547,88 +629,28 @@ export default function LandingPage({ onNavigate }) {
 
             <button
               type="button"
-              onClick={() => setShowDemo((current) => !current)}
+              onClick={() => setShowHowItWorks((current) => !current)}
               className="group relative inline-flex items-center justify-center rounded-2xl bg-gradient-to-r from-teal-400 to-cyan-400 px-10 py-5 text-lg font-semibold text-black shadow-2xl shadow-teal-500/40 transition-all duration-300 hover:scale-[1.02] active:scale-95"
             >
-              Try AI Agent
+              How does it work
               <span className="ml-3 text-2xl transition-transform duration-300 group-hover:translate-x-1">
-                →
+                -&gt;
               </span>
             </button>
           </div>
 
           <p className="mt-4 text-sm font-medium text-zinc-300">
-            See how it works instantly • No sign up required
+            See how raw data becomes daily profit plans - No signup required
           </p>
 
           <p className="mt-6 text-sm font-medium text-zinc-400">
-            First vehicle is free • Takes under 60 seconds
+            First vehicle is free - Takes under 60 seconds
           </p>
-          {showDemo && (
-            <div
-              data-testid="homepage-live-agent-demo"
-              className="mt-8 max-w-lg overflow-hidden rounded-3xl border border-zinc-700 bg-zinc-900 text-left text-white shadow-2xl shadow-black/40"
-            >
-              <div className="flex items-center justify-between border-b border-zinc-700 bg-black/60 px-6 py-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex h-8 w-8 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-400 text-lg">
-                    🤖
-                  </div>
-                  <div>
-                    <p className="font-medium">RoboAgent</p>
-                    <p className="text-xs text-teal-400">Online • Live Demo</p>
-                  </div>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => onNavigate('agent')}
-                  className="rounded-full border border-teal-400/40 px-3 py-1 text-xs font-bold uppercase tracking-[0.18em] text-teal-200 transition hover:bg-teal-400/10"
-                >
-                  Open Full Agent
-                </button>
-              </div>
-
-              <div className="max-h-96 space-y-6 overflow-y-auto p-6">
-                <div className="flex gap-3">
-                  <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-400 text-lg">
-                    🤖
-                  </div>
-                  <div className="rounded-3xl rounded-tl-none bg-zinc-800 px-5 py-4 text-zinc-100">
-                    Good morning! Should I create a weekend pricing plan for your Orlando Tesla?
-                  </div>
-                </div>
-
-                <div className="flex justify-end">
-                  <div className="max-w-[75%] rounded-3xl rounded-tr-none bg-teal-600 px-5 py-4 text-white">
-                    Yes, raise prices this weekend
-                  </div>
-                </div>
-
-                <div className="flex gap-3">
-                  <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-400 text-lg">
-                    🤖
-                  </div>
-                  <div className="rounded-3xl rounded-tl-none bg-zinc-800 px-5 py-4 text-zinc-100">
-                    Done. Projected extra earnings:{' '}
-                    <span className="font-bold text-emerald-400">+$284</span> this weekend.
-                  </div>
-                </div>
-              </div>
-
-              <div className="border-t border-zinc-700 bg-black/40 p-4">
-                <button
-                  type="button"
-                  onClick={() => onNavigate('agent')}
-                  className="flex w-full items-center justify-between rounded-2xl bg-zinc-800 px-5 py-3 text-left text-sm font-medium text-zinc-300 transition hover:bg-zinc-700"
-                >
-                  <span>Ask me anything about your Tesla fleet...</span>
-                  <span className="text-teal-300">→</span>
-                </button>
-              </div>
-            </div>
-          )}
         </div>
       </main>
+      </section>
+
+      {showHowItWorks && <HowItWorks />}
 
       <span className="hidden">Your AI Agent for Tesla Rentals & Robotaxis</span>
       <span className="hidden">Get Started Free</span>
@@ -666,7 +688,7 @@ export function AgentChatPage({ onNavigate }) {
       <header className="sticky top-0 z-50 flex items-center justify-between border-b border-zinc-800 bg-black/80 p-4 backdrop-blur-md">
         <div className="flex items-center gap-3">
           <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-400 text-xl">
-            🤖
+            R
           </div>
           <div>
             <p className="font-semibold text-white">RoboAgent</p>
@@ -677,14 +699,14 @@ export function AgentChatPage({ onNavigate }) {
           </div>
         </div>
         <button type="button" onClick={() => onNavigate('landing')} className="text-xl text-zinc-400 hover:text-white" aria-label="Back home">
-          ⋯
+          ...
         </button>
       </header>
 
       <main className="flex-1 space-y-6 overflow-y-auto p-4 pb-32">
         <div className="flex gap-3">
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-400 text-xl">
-            🤖
+            R
           </div>
           <div className="max-w-[75%] rounded-3xl rounded-tl-none bg-zinc-900 px-5 py-4">
             <p className="text-zinc-100">
@@ -701,7 +723,7 @@ export function AgentChatPage({ onNavigate }) {
 
         <div className="flex gap-3">
           <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-400 text-xl">
-            🤖
+            R
           </div>
           <div className="max-w-[75%] rounded-3xl rounded-tl-none bg-zinc-900 px-5 py-4">
             <p className="font-medium text-emerald-400">{firstMetric}</p>
@@ -752,7 +774,7 @@ export function AgentChatPage({ onNavigate }) {
             className="ml-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-teal-500 text-xl text-white hover:bg-teal-600 disabled:cursor-wait disabled:opacity-70"
             aria-label="Ask RoboAgent"
           >
-            ↑
+            Send
           </button>
         </div>
       </div>

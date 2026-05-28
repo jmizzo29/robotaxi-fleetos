@@ -85,7 +85,7 @@ async function testLanding(browser, profile) {
   await page.getByText('Daily AI plans for pricing, charging, maintenance, and profit.').waitFor({ timeout: 15000 });
   await page.getByText('First vehicle is free').waitFor({ timeout: 15000 });
   await page.getByRole('button', { name: 'Get Started' }).waitFor({ timeout: 15000 });
-  await page.getByRole('button', { name: 'Try AI Agent' }).waitFor({ timeout: 15000 });
+  await page.getByRole('button', { name: 'How does it work' }).waitFor({ timeout: 15000 });
   if (await page.locator('[data-testid="agent-command-center"]').count()) {
     throw new Error('Agent command center should live on About, not the home page.');
   }
@@ -233,36 +233,20 @@ async function testLandingCtas(browser, profile) {
   const { page, context } = telemetry;
   await page.goto(routeUrl('/'), { waitUntil: 'networkidle' });
   if (profile === 'desktop') {
-    await page.getByRole('button', { name: 'Try AI Agent' }).click();
-    const liveDemo = page.locator('[data-testid="homepage-live-agent-demo"]');
-    await liveDemo.getByText('Online', { exact: false }).waitFor({ timeout: 15000 });
-    await liveDemo.getByText('Projected extra earnings:', { exact: false }).waitFor({ timeout: 15000 });
-    await liveDemo.getByRole('button', { name: 'Open Full Agent' }).click();
-    await page.waitForURL('**/#/agent', { timeout: 10000 });
-    await page.locator('#public-agent-question').waitFor({ timeout: 15000 });
-    await page.goto(routeUrl('/'), { waitUntil: 'networkidle' });
+    await page.getByRole('button', { name: 'How does it work' }).click();
+    const howItWorks = page.locator('[data-testid="how-it-works"]');
+    await howItWorks.getByText('How RoboAgent Works').waitFor({ timeout: 15000 });
+    await howItWorks.getByText('Tesla Telemetry').waitFor({ timeout: 15000 });
+    await howItWorks.getByText('Smart Pricing').waitFor({ timeout: 15000 });
     await page.getByRole('button', { name: 'Get Started', exact: true }).first().click();
     await page.waitForURL('**/#/onboarding', { timeout: 10000 });
     await page.getByText('Create Your RoboAgent Account').waitFor({ timeout: 15000 });
   } else {
-    await page.getByRole('button', { name: 'Try AI Agent' }).click();
-    const liveDemo = page.locator('[data-testid="homepage-live-agent-demo"]');
-    await liveDemo.getByText('Online', { exact: false }).waitFor({ timeout: 15000 });
-    await liveDemo.getByText('Projected extra earnings:', { exact: false }).waitFor({ timeout: 15000 });
-    await liveDemo.getByRole('button', { name: 'Open Full Agent' }).click();
-    await page.waitForURL('**/#/agent', { timeout: 10000 });
-    await page.locator('#public-agent-question').waitFor({ timeout: 15000 });
-    const heroInput = page.locator('#public-agent-question');
-    await heroInput.fill('Should I raise price this weekend in Tampa?');
-    await page.getByRole('button', { name: 'Ask RoboAgent' }).click();
-    await page.getByText('+$284 projected').first().waitFor({ timeout: 15000 });
-    await heroInput.fill('What are the top rented Teslas in Orlando?');
-    await page.getByRole('button', { name: 'Ask RoboAgent' }).click();
-    await page.getByText('Orlando demand: Very high').first().waitFor({ timeout: 15000 });
-    await heroInput.fill('How many Model X rentals are available in Orlando?');
-    await page.getByRole('button', { name: 'Ask RoboAgent' }).click();
-    await page.getByText('Orlando Model X: 8-16 comparable rentals').first().waitFor({ timeout: 15000 });
-    await page.goto(routeUrl('/'), { waitUntil: 'networkidle' });
+    await page.getByRole('button', { name: 'How does it work' }).click();
+    const howItWorks = page.locator('[data-testid="how-it-works"]');
+    await howItWorks.getByText('How RoboAgent Works').waitFor({ timeout: 15000 });
+    await howItWorks.getByText('Turo Rentals').waitFor({ timeout: 15000 });
+    await howItWorks.getByText('Earnings Forecasts').waitFor({ timeout: 15000 });
     await page.getByRole('button', { name: 'Get Started' }).first().click();
     await page.waitForURL('**/#/onboarding', { timeout: 10000 });
     await page.getByText('Create Your RoboAgent Account').waitFor({ timeout: 15000 });
