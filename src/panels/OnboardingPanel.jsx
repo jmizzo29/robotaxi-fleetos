@@ -385,6 +385,49 @@ export default function OnboardingPanel({
 
       {activeStep === 5 && (
         <div className="flex flex-1 flex-col justify-center text-center">
+          <div className="mb-10">
+            <div className="mb-6 text-7xl">🎉</div>
+            <h1 className="mb-3 text-5xl font-bold">Welcome to RoboAgent!</h1>
+            <p className="text-xl text-teal-400">Your AI Agent is now active</p>
+          </div>
+
+          <div className="mx-auto mb-12 w-full max-w-md rounded-3xl border border-teal-500/30 bg-gradient-to-br from-zinc-900 to-zinc-950 p-8 text-left">
+            <div className="mb-6 flex items-center gap-3">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-400 text-2xl">
+                🤖
+              </div>
+              <div>
+                <p className="font-semibold">RoboAgent</p>
+                <p className="text-xs text-teal-400">Just now</p>
+              </div>
+            </div>
+
+            <p className="text-lg leading-relaxed text-zinc-100">
+              Good morning! I&apos;ve analyzed your fleet and found some quick opportunities.
+            </p>
+
+            <div className="mt-6 rounded-2xl bg-black/40 p-5 text-sm">
+              <p className="font-medium text-teal-400">Recommended Actions:</p>
+              <ul className="mt-3 space-y-2 text-zinc-300">
+                <li>• Raise weekend pricing in Orlando by 12-18%</li>
+                <li>• Charge Model Y after 10 PM tonight</li>
+                <li>• Check tire pressure on Tampa vehicle</li>
+              </ul>
+            </div>
+          </div>
+
+          <PrimaryButton className="bg-white hover:bg-zinc-200" onClick={() => onNavigate?.('overview')}>
+            Go to Command Center
+          </PrimaryButton>
+
+          <p className="mt-6 text-center text-sm text-zinc-500">
+            You can ask your AI Agent anything at any time
+          </p>
+        </div>
+      )}
+
+      {activeStep === 99 && (
+        <div className="flex flex-1 flex-col justify-center text-center">
           <div className="mb-8 text-6xl">✓</div>
           <h1 className="mb-4 text-4xl font-bold">Welcome to RoboAgent!</h1>
           <p className="mb-10 text-lg text-zinc-400">Your AI Agent is now active and analyzing your fleet.</p>
