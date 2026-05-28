@@ -212,6 +212,48 @@ export default function OnboardingPanel({
 
       {activeStep === 2 && (
         <div className="flex flex-1 flex-col justify-center">
+          <div className="mb-10 text-center">
+            <h2 className="mb-4 text-4xl font-bold">Just a few permissions needed</h2>
+            <p className="text-lg text-zinc-400">
+              RoboAgent needs access to help you maximize earnings
+            </p>
+          </div>
+
+          <div className="mb-10 rounded-3xl border border-zinc-700 bg-zinc-900/70 p-8">
+            <h3 className="mb-6 text-lg font-semibold text-white">What RoboAgent will access:</h3>
+            <div className="space-y-6">
+              {[
+                ['📍', 'Vehicle Location & Status', 'Real-time location, lock status, and software version'],
+                ['🔋', 'Battery & Charging', 'Battery level, charging speed, and optimal charge times'],
+                ['🛠️', 'Health & Maintenance', 'Tire pressure, brake wear, service alerts'],
+                ['📊', 'Odometer & Trip Data', 'Mileage and rental usage data'],
+              ].map(([icon, title, detail]) => (
+                <div key={title} className="flex gap-4">
+                  <div className="mt-1 text-2xl text-teal-400">{icon}</div>
+                  <div>
+                    <p className="font-medium">{title}</p>
+                    <p className="text-sm text-zinc-400">{detail}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="mb-8 text-center text-sm text-zinc-400">
+            You can revoke access anytime in settings.<br />
+            Tesla controls all data access.
+          </div>
+
+          <PrimaryButton onClick={approveConsent}>Approve & Continue</PrimaryButton>
+
+          <p className="mt-6 text-center text-xs text-zinc-500">
+            This is required to use RoboAgent
+          </p>
+        </div>
+      )}
+
+      {activeStep === 99 && (
+        <div className="flex flex-1 flex-col justify-center">
           <h2 className="mb-6 text-3xl font-bold">We Need Your Permission</h2>
           <div className="mb-8 space-y-6 rounded-3xl border border-zinc-800 bg-zinc-900 p-6 text-zinc-300">
             <p>RoboAgent will access:</p>
