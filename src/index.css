@@ -45,3 +45,93 @@ body,
   color: white;
   background: rgba(51, 65, 85, 0.95);
 }
+
+/* Clerk renders outside our component tree, so keep auth modals readable with hard overrides. */
+.cl-modalBackdrop,
+.cl-modalBackdrop__modal {
+  background: rgba(0, 0, 0, 0.82) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.cl-card,
+.cl-cardBox {
+  background: #09090b !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(63, 63, 70, 0.95) !important;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.65) !important;
+}
+
+.cl-headerTitle,
+.cl-headerSubtitle,
+.cl-formFieldLabel,
+.cl-footerAction,
+.cl-identityPreviewText,
+.cl-formHeaderTitle,
+.cl-formHeaderSubtitle {
+  color: #ffffff !important;
+}
+
+.cl-headerSubtitle,
+.cl-formHeaderSubtitle,
+.cl-footerAction {
+  color: #d4d4d8 !important;
+}
+
+.cl-formFieldInput,
+.cl-input {
+  background: #18181b !important;
+  color: #ffffff !important;
+  border-color: #3f3f46 !important;
+  box-shadow: none !important;
+}
+
+.cl-formFieldInput::placeholder,
+.cl-input::placeholder {
+  color: #a1a1aa !important;
+}
+
+.cl-formButtonPrimary {
+  background: #14b8a6 !important;
+  color: #000000 !important;
+  box-shadow: none !important;
+}
+
+.cl-formButtonPrimary:hover {
+  background: #2dd4bf !important;
+}
+
+.cl-socialButtonsBlockButton {
+  background: #18181b !important;
+  color: #ffffff !important;
+  border-color: #3f3f46 !important;
+}
+
+.cl-socialButtonsBlockButton:hover {
+  background: #27272a !important;
+}
+
+.cl-socialButtonsBlockButtonText,
+.cl-dividerText,
+.cl-footerActionText,
+.cl-footerActionLink,
+.cl-formResendCodeLink {
+  color: #ffffff !important;
+}
+
+.cl-footer,
+.cl-footerPages {
+  background: #09090b !important;
+  border-color: #27272a !important;
+}
+
+.cl-internal-b3fm6y,
+.cl-internal-1dauvpw {
+  color: #a1a1aa !important;
+}
+
+button[data-provider="github"],
+button[data-provider="apple"],
+.cl-socialButtonsBlockButton__github,
+.cl-socialButtonsBlockButton__apple {
+  display: none !important;
+}
