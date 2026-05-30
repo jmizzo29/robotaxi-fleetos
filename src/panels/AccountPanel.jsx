@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { SignInButton, SignUpButton, UserButton } from '@clerk/react';
+import { SignIn, SignUp, UserButton } from '@clerk/react';
 import { isClerkConfigured } from '../auth/clerkConfig';
 import {
   getFleetOsBillingStatus,
@@ -52,6 +52,39 @@ function Metric({ label, value }) {
       <p className="text-xs font-black uppercase tracking-[0.16em] text-zinc-500">{label}</p>
       <p className="mt-2 text-2xl font-black text-white">{value}</p>
     </div>
+  );
+}
+
+function EmbeddedClerkAuth({ mode }) {
+  const sharedProps = {
+    routing: 'hash',
+    appearance: {
+      elements: {
+        rootBox: 'w-full',
+        cardBox: 'w-full border-0 bg-transparent shadow-none',
+        card: 'w-full border-0 bg-transparent shadow-none',
+      },
+    },
+  };
+
+  if (mode === 'create') {
+    return (
+      <SignUp
+        {...sharedProps}
+        signInUrl="/#/account"
+        fallbackRedirectUrl="/#/onboarding"
+        forceRedirectUrl="/#/onboarding"
+      />
+    );
+  }
+
+  return (
+    <SignIn
+      {...sharedProps}
+      signUpUrl="/#/account"
+      fallbackRedirectUrl="/#/onboarding"
+      forceRedirectUrl="/#/onboarding"
+    />
   );
 }
 
@@ -279,25 +312,31 @@ export default function AccountPanel({ onNavigate }) {
           {!hasRealAccount ? (
             <div className="space-y-5">
               {clerkReady ? (
-                <div className="space-y-4">
-                  <SignInButton mode="modal">
-                    <button
-                      type="button"
-                      className="w-full rounded-3xl bg-teal-500 px-5 py-6 text-xl font-semibold text-black transition hover:bg-teal-400"
-                    >
-                      Sign In
-                    </button>
-                  </SignInButton>
-                  <SignUpButton mode="modal">
-                    <button
-                      type="button"
-                      className="w-full rounded-3xl border border-zinc-700 bg-zinc-900 px-5 py-6 text-xl font-semibold text-white transition hover:bg-zinc-800"
-                    >
-                      Create Account
-                    </button>
-                  </SignUpButton>
+                <div className="space-y-5">
+                  <div className="flex rounded-2xl border border-zinc-800 bg-zinc-900 p-1">
+                    {[
+                      ['signin', 'Sign In'],
+                      ['create', 'Create'],
+                    ].map(([mode, label]) => (
+                      <button
+                        key={mode}
+                        type="button"
+                        onClick={() => setAuthMode(mode)}
+                        className={`flex-1 rounded-xl px-4 py-3 text-sm font-black transition ${
+                          authMode === mode ? 'bg-teal-500 text-black shadow-sm' : 'text-zinc-400 hover:bg-zinc-800 hover:text-white'
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-950">
+                    <EmbeddedClerkAuth mode={authMode === 'create' ? 'create' : 'signin'} />
+                  </div>
+
                   <p className="text-center text-sm font-semibold leading-6 text-zinc-500">
-                    Sign in or create an account, then continue onboarding to connect Tesla.
+                    Create your RoboAgent account first. Tesla OAuth comes next in onboarding.
                   </p>
                 </div>
               ) : (
