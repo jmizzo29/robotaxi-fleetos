@@ -1,5 +1,5 @@
 import { hasCoordinates } from './locationIntelligence';
-import { fetchApiJson } from './apiClient';
+import { fetchApiJson, readJsonResponse } from './apiClient';
 
 function normalizeVin(vin) {
   return String(vin || '').trim().toUpperCase();
@@ -7,10 +7,14 @@ function normalizeVin(vin) {
 
 async function fetchJson(url) {
   const response = await fetch(url, { cache: 'no-store' });
+  const data = await readJsonResponse(response, null);
   if (!response.ok) {
     throw new Error(`Request failed with ${response.status}`);
   }
-  return response.json();
+  if (!data) {
+    throw new Error('Request returned an empty response.');
+  }
+  return data;
 }
 
 export async function getWeatherContext(vehicle) {

@@ -11,6 +11,7 @@
     "qa:static": "node qa/fleetos-static-audit.mjs",
     "qa:browser": "node qa/fleetos-browser-smoke.mjs",
     "qa:all": "npm run lint && npm run build && npm run qa:static && npm run qa:break && npm run qa:browser",
+    "admin:purge-user": "node scripts/purge-user-by-email.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

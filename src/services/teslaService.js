@@ -1,6 +1,6 @@
 // src/services/teslaService.js
 import { getVehicleOwnership } from '../data/vehicleOwnership';
-import { getApiBase } from './apiClient';
+import { getApiBase, readJsonResponse } from './apiClient';
 import { getAuthToken } from './authTokenStore';
 
 const API_BASE = getApiBase();
@@ -23,12 +23,12 @@ export async function getTeslaVehicles() {
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
     if (!response.ok) {
-      const detail = await response.json().catch(() => ({}));
+      const detail = await readJsonResponse(response);
       console.warn('Backend returned an error, using simulation only:', detail.message || response.status);
       return null;
     }
 
-    const data = await response.json();
+    const data = await readJsonResponse(response, { response: [] });
     const vehicles = data.response || data;
     if (Array.isArray(vehicles)) {
       vehicles.syncMeta = {
@@ -59,7 +59,7 @@ export async function wakeTeslaVehicle(vehicle) {
     headers: token ? { Authorization: `Bearer ${token}` } : {},
   });
 
-  const data = await response.json().catch(() => ({}));
+  const data = await readJsonResponse(response);
 
   if (!response.ok) {
     const message = data.warning?.message || data.message || data.error || `Tesla wake request failed with ${response.status}`;

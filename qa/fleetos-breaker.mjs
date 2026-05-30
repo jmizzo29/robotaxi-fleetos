@@ -148,6 +148,9 @@ async function testExpectedLandingCopy() {
     'My Tesla Vehicle Map',
     'Demand and pricing zones',
     'Health on the map',
+    'Tesla Robotaxi / Cybercab Updates from X',
+    'Live Market Signal',
+    'X API Ready',
   ];
   const missing = expected.filter((phrase) => !bundle?.text.includes(phrase));
   if (missing.length > 0) {

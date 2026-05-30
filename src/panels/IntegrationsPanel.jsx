@@ -1,3 +1,6 @@
+import SocialSignalPanel from '../components/SocialSignalPanel';
+import TeslaSyncHealthPanel from './TeslaSyncHealthPanel';
+
 const integrations = [
   {
     name: 'Tesla Fleet API',
@@ -75,6 +78,8 @@ export default function IntegrationsPanel({
         ))}
       </div>
 
+      <SocialSignalPanel />
+
       <article className="rounded-lg border border-white/10 bg-slate-900/80 p-5 shadow-lg shadow-black/10">
         <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-sky-300">
           Runtime Diagnostics
@@ -98,4 +103,3 @@ export default function IntegrationsPanel({
     </section>
   );
 }
-import TeslaSyncHealthPanel from './TeslaSyncHealthPanel';

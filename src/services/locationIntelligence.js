@@ -1,3 +1,5 @@
+import { readJsonResponse } from './apiClient';
+
 const OPERATING_BASE = {
   label: 'RoboAgent Central Florida Base',
   latitude: 28.084192,
@@ -50,7 +52,7 @@ export async function reverseGeocodeLocation(vehicle) {
     throw new Error(`Reverse geocode failed with ${response.status}`);
   }
 
-  const data = await response.json();
+  const data = await readJsonResponse(response, { features: [] });
   const feature = data.features?.[0];
 
   if (!feature) return null;

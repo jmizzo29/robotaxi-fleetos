@@ -84,7 +84,12 @@ export default async function handler(req, res) {
     return;
   }
 
-  const tokenPayload = await response.json();
+  const tokenText = await response.text();
+  if (!tokenText) {
+    res.status(502).send('Tesla token exchange returned an empty response.');
+    return;
+  }
+  const tokenPayload = JSON.parse(tokenText);
   try {
     await saveTeslaConnection({ userId: session.user_id, tokenPayload });
   } catch (error) {

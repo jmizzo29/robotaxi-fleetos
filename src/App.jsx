@@ -163,6 +163,15 @@ function FleetApp() {
   const isPublicOnboardingRoute = route === 'onboarding';
   const isPublicAccountRoute = route === 'account';
   const teslaConsentReady = canUseTeslaTelemetry();
+  const shouldAutoSyncReal = !(
+    isPublicRoute ||
+    isPublicAgentRoute ||
+    isPublicAboutRoute ||
+    isPublicHowItWorksRoute ||
+    isPublicLegalRoute ||
+    isPublicOnboardingRoute ||
+    isPublicAccountRoute
+  );
 
   useEffect(() => {
     const refreshCompliance = () => setComplianceRevision((current) => current + 1);
@@ -186,7 +195,7 @@ function FleetApp() {
     initialFleet,
     chargingStations,
     replayModeInitial: false,
-    autoSyncReal: !isPublicRoute,
+    autoSyncReal: shouldAutoSyncReal,
     canSyncReal: teslaConsentReady,
   });
 

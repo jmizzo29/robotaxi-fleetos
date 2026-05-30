@@ -600,6 +600,23 @@ export default function LandingPage({ onNavigate }) {
   return (
     <div className="bg-black">
       <section className="relative flex min-h-screen items-center overflow-hidden bg-black">
+      <header className="absolute left-0 right-0 top-0 z-20 mx-auto flex max-w-6xl items-center justify-between px-6 py-5 text-white">
+        <button
+          type="button"
+          onClick={() => onNavigate('landing')}
+          className="flex items-center gap-3"
+        >
+          <span className="h-2.5 w-2.5 rounded-full bg-teal-300 shadow-lg shadow-teal-300/50" />
+          <span className="text-sm font-black uppercase tracking-[0.28em] text-teal-100">RoboAgent</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => onNavigate('account')}
+          className="rounded-full border border-white/30 bg-black/25 px-5 py-2 text-sm font-black text-white backdrop-blur transition hover:border-teal-300 hover:bg-white/10"
+        >
+          Sign In
+        </button>
+      </header>
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
@@ -647,6 +664,14 @@ export default function LandingPage({ onNavigate }) {
               </span>
             </button>
           </div>
+
+          <button
+            type="button"
+            onClick={() => onNavigate('account')}
+            className="mt-4 text-sm font-black text-zinc-300 underline decoration-white/30 underline-offset-4 transition hover:text-white sm:hidden"
+          >
+            Already have an account? Sign in
+          </button>
 
           <p className="mt-6 text-sm font-medium text-zinc-400">
             First vehicle is free - Takes under 60 seconds

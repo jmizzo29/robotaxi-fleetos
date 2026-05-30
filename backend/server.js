@@ -81,6 +81,8 @@ app.get('/api/billing/status', (req, res) => handleServerlessRoute('api/billing/
 app.post('/api/owner-context', (req, res) => handleServerlessRoute('api/owner-context.js', req, res));
 app.post('/api/ai/analyze', (req, res) => handleServerlessRoute('api/ai/analyze.js', req, res));
 app.post('/api/agent/ask', (req, res) => handleServerlessRoute('api/agent/ask.js', req, res));
+app.get('/api/social/x-updates', (req, res) => handleServerlessRoute('api/social/x-updates.js', req, res));
+app.post('/api/admin/purge-user', (req, res) => handleServerlessRoute('api/admin/purge-user.js', req, res));
 
 function updateLocalEnv(updates) {
   const current = fs.existsSync(ENV_PATH) ? fs.readFileSync(ENV_PATH, 'utf8') : '';

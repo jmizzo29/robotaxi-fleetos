@@ -28,9 +28,14 @@ export default async function handler(req, res) {
       hasClerkPublishableKey: Boolean(process.env.CLERK_PUBLISHABLE_KEY || process.env.VITE_CLERK_PUBLISHABLE_KEY),
       hasClerkSecretKey: Boolean(process.env.CLERK_SECRET_KEY),
     },
+    social: {
+      xConfigured: Boolean(process.env.X_BEARER_TOKEN || process.env.TWITTER_BEARER_TOKEN),
+      xProvider: process.env.X_BEARER_TOKEN ? 'x' : process.env.TWITTER_BEARER_TOKEN ? 'twitter-legacy-env-name' : null,
+    },
     envFingerprint: {
       clientId: fingerprint(process.env.TESLA_CLIENT_ID),
       clerkPublishableKey: fingerprint(process.env.CLERK_PUBLISHABLE_KEY || process.env.VITE_CLERK_PUBLISHABLE_KEY),
+      xBearerToken: fingerprint(process.env.X_BEARER_TOKEN || process.env.TWITTER_BEARER_TOKEN),
       refreshToken: connection?.connection ? 'stored-per-user' : null,
       clientIdLength: process.env.TESLA_CLIENT_ID?.length || 0,
       refreshTokenLength: connection?.connection?.refresh_token_enc?.length || 0,

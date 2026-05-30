@@ -18,7 +18,9 @@ async function fetchJson(url, { timeoutMs = DEFAULT_TIMEOUT_MS } = {}) {
       headers: { Accept: 'application/json' },
     });
     if (!response.ok) throw new Error(`Request failed with ${response.status}`);
-    return await response.json();
+    const text = await response.text();
+    if (!text) throw new Error('Request returned an empty response.');
+    return JSON.parse(text);
   } finally {
     clearTimeout(timer);
   }

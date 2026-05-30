@@ -367,9 +367,10 @@ export default function OnboardingPanel({
     return 5;
   }, [consentReady, hasAccount, syncedVehicle, teslaConnected]);
 
-  const activeStep = Math.max(step, realProgressStep);
-  const nextStep = () => setStep((current) => Math.min(Math.max(current, realProgressStep) + 1, 5));
-  const prevStep = () => setStep((current) => Math.max(Math.max(current, realProgressStep) - 1, 1));
+  const activeStep = step;
+  const continueExistingSetup = () => setStep(Math.max(realProgressStep, 1));
+  const nextLinearStep = () => setStep((current) => Math.min(current + 1, 5));
+  const prevStep = () => setStep((current) => Math.max(current - 1, 1));
 
   const validateAccountForm = () => {
     const nextErrors = {};
@@ -392,7 +393,7 @@ export default function OnboardingPanel({
 
   const createNativeAccount = () => {
     if (!validateAccountForm()) return;
-    nextStep();
+    nextLinearStep();
   };
 
   const completeClerkAccount = async () => {
@@ -402,14 +403,14 @@ export default function OnboardingPanel({
     } catch {
       // Clerk may need a moment to expose the new browser session to the backend bridge.
     }
-    nextStep();
+    nextLinearStep();
   };
 
   const approveConsent = () => {
     verifyBetaInvite('RoboAgent-BETA');
     acceptTeslaConsent();
     setMessage('Consent saved. Next, connect Tesla securely.');
-    nextStep();
+    nextLinearStep();
   };
 
   const syncFirstVehicle = async () => {
@@ -420,7 +421,7 @@ export default function OnboardingPanel({
       await onSync?.();
       await refreshSession();
       setMessage('Telemetry sync requested. If the car is awake and permissions are granted, it will appear in RoboAgent.');
-      nextStep();
+      nextLinearStep();
     } catch (syncError) {
       setError(syncError.message);
     } finally {
@@ -469,6 +470,23 @@ export default function OnboardingPanel({
             <p className="mx-auto max-w-md text-lg text-zinc-400">
               One account to manage all your Teslas, rentals, and future Robotaxis
             </p>
+            {realProgressStep > 1 && (
+              <div className="mx-auto mt-6 max-w-md rounded-2xl border border-teal-400/30 bg-teal-500/10 p-4 text-left">
+                <p className="text-sm font-semibold text-teal-100">
+                  Existing setup detected for this browser.
+                </p>
+                <p className="mt-1 text-sm leading-6 text-zinc-400">
+                  Continue where you left off, or use the sign-in page to switch accounts before connecting Tesla again.
+                </p>
+                <button
+                  type="button"
+                  onClick={continueExistingSetup}
+                  className="mt-4 w-full rounded-2xl border border-teal-400/40 bg-teal-400/15 px-4 py-3 text-sm font-black text-teal-100 transition hover:bg-teal-400/25"
+                >
+                  Continue Existing Setup
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="mx-auto w-full max-w-md space-y-6">
@@ -561,6 +579,14 @@ export default function OnboardingPanel({
               <OAuthFallbackButtons />
             )}
 
+            <button
+              type="button"
+              onClick={() => onNavigate?.('account')}
+              className="w-full rounded-2xl border border-zinc-700 bg-zinc-900 px-5 py-4 text-sm font-semibold text-zinc-200 transition hover:border-teal-400 hover:text-teal-200"
+            >
+              Already have an account? Sign in
+            </button>
+
           </div>
         </div>
       )}
@@ -642,7 +668,7 @@ export default function OnboardingPanel({
             {!hasAccount ? (
               <PrimaryButton onClick={() => onNavigate?.('account')}>Create RoboAgent Account</PrimaryButton>
             ) : teslaConnected ? (
-              <PrimaryButton onClick={nextStep}>Continue to Vehicle Sync</PrimaryButton>
+              <PrimaryButton onClick={nextLinearStep}>Continue to Vehicle Sync</PrimaryButton>
             ) : (
               <a
                 href={getTeslaLoginUrl('onboarding')}

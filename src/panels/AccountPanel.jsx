@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { SignInButton, SignUpButton } from '@clerk/react';
-import { ClerkAccountSummary } from '../auth/ClerkAccountControls';
+import { SignInButton, SignUpButton, UserButton } from '@clerk/react';
 import { isClerkConfigured } from '../auth/clerkConfig';
 import {
   getFleetOsBillingStatus,
@@ -8,11 +7,10 @@ import {
   loginFleetOsAccount,
   logoutFleetOsAccount,
   registerFleetOsAccount,
-  requestFleetOsMagicLink,
   updateFleetOsProfile,
 } from '../services/sessionService';
-import { getTeslaLoginUrl } from '../services/teslaHealthService';
 import { acceptTeslaConsent } from '../services/betaCompliance';
+import { getTeslaLoginUrl } from '../services/teslaHealthService';
 
 const emptyRegister = {
   name: '',
@@ -21,154 +19,100 @@ const emptyRegister = {
   inviteCode: '',
 };
 
+function TextInput(props) {
+  return (
+    <input
+      {...props}
+      className="w-full rounded-2xl border border-zinc-700 bg-zinc-900 px-6 py-5 text-sm font-semibold text-white outline-none transition placeholder:text-zinc-500 focus:border-teal-500"
+    />
+  );
+}
+
 function Field({ label, children }) {
   return (
     <label className="block">
-      <span className="mb-2 block text-xs font-black uppercase tracking-[0.18em] text-slate-500">{label}</span>
+      <span className="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-zinc-400">{label}</span>
       {children}
     </label>
   );
 }
 
-function Input(props) {
+function TrustRow({ title, detail }) {
   return (
-    <input
-      {...props}
-      className="w-full rounded-lg border border-slate-300 bg-white px-4 py-3 text-sm font-semibold text-slate-950 outline-none transition placeholder:text-slate-400 focus:border-sky-400 focus:ring-4 focus:ring-sky-100"
-    />
-  );
-}
-
-function Step({ number, title, detail }) {
-  return (
-    <div className="flex gap-3">
-      <span className="grid h-8 w-8 shrink-0 place-items-center rounded-full border border-sky-200 bg-sky-50 text-sm font-black text-sky-800">
-        {number}
-      </span>
-      <div>
-        <p className="font-black text-slate-950">{title}</p>
-        <p className="mt-1 text-sm font-semibold leading-6 text-slate-600">{detail}</p>
-      </div>
+    <div className="rounded-2xl border border-teal-500/20 bg-teal-500/10 p-4">
+      <p className="text-sm font-black text-white">{title}</p>
+      <p className="mt-1 text-sm font-semibold leading-6 text-zinc-300">{detail}</p>
     </div>
   );
 }
 
-function Metric({ label, value, detail }) {
+function Metric({ label, value }) {
   return (
-    <div className="rounded-lg border border-white/10 bg-white/[0.04] p-4">
-      <p className="text-xs font-bold uppercase tracking-[0.18em] text-slate-500">{label}</p>
-      <p className="mt-2 text-xl font-black text-slate-100">{value}</p>
-      {detail ? <p className="mt-1 text-sm text-slate-400">{detail}</p> : null}
+    <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
+      <p className="text-xs font-black uppercase tracking-[0.16em] text-zinc-500">{label}</p>
+      <p className="mt-2 text-2xl font-black text-white">{value}</p>
     </div>
   );
 }
 
-function Divider() {
-  return (
-    <div className="flex items-center gap-4">
-      <span className="h-px flex-1 bg-slate-200" />
-      <span className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">or</span>
-      <span className="h-px flex-1 bg-slate-200" />
-    </div>
-  );
-}
-
-function TeslaMark() {
-  return (
-    <span className="text-xl font-black leading-none tracking-tight" aria-hidden="true">
-      T
-    </span>
-  );
-}
-
-function TeslaConsentModal({
-  checks,
-  onCancel,
-  onConfirm,
-  onToggle,
-  onNavigate,
-}) {
+function TeslaConsentModal({ checks, onCancel, onConfirm, onNavigate, onToggle }) {
   const canAllow = checks.independent && checks.legal;
   const dataRows = [
-    'View real-time vehicle data including battery level, location, charging status, odometer, tire pressure, and alerts.',
-    'Access basic vehicle commands such as wake vehicle, lock or unlock, start or stop charging, and climate preconditioning.',
-    'Receive Fleet Telemetry for smart monitoring and AI recommendations.',
-    'View trip history and service information.',
-    'Import rental earnings data if you choose to connect Turo later.',
-  ];
-  const trustRows = [
-    'You are granting access only to the vehicles you choose.',
-    'RoboAgent will never share your data with third parties.',
-    'Tesla does not share your login credentials with RoboAgent.',
-    'You can revoke access at any time directly from your Tesla Account settings.',
-    'All sensitive tokens are encrypted and stored securely.',
+    'Real-time vehicle data such as battery, location, charging status, odometer, tire pressure, and alerts.',
+    'Owner-approved vehicle commands such as wake, lock/unlock, start/stop charging, and climate preconditioning.',
+    'Fleet telemetry used for smart monitoring, maintenance alerts, and AI recommendations.',
+    'Trip/service context and optional rental earnings imports when you connect those sources.',
   ];
 
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-slate-950/45 px-4 py-6 backdrop-blur-sm">
-      <section className="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-2xl border border-slate-200 bg-white p-6 text-slate-950 shadow-2xl shadow-slate-900/20">
+    <div className="fixed inset-0 z-50 grid place-items-center bg-black/70 px-4 py-6 backdrop-blur-sm">
+      <section className="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-3xl border border-zinc-700 bg-gradient-to-b from-zinc-950 to-black p-6 text-white shadow-2xl shadow-black/40">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-black uppercase tracking-[0.24em] text-slate-500">Tesla OAuth Consent</p>
-            <h2 className="mt-3 text-2xl font-black text-slate-950">RoboAgent wants to connect to your Tesla Account</h2>
-            <p className="mt-3 text-sm font-semibold leading-6 text-slate-600">
-              This lets the RoboAgent AI Agent optimize earnings, plan maintenance, manage charging, and run your Tesla rental or robotaxi fleet more efficiently.
+            <p className="text-xs font-black uppercase tracking-[0.24em] text-teal-400">Tesla OAuth Consent</p>
+            <h2 className="mt-3 text-2xl font-black">RoboAgent wants to connect to your Tesla Account</h2>
+            <p className="mt-3 text-sm font-semibold leading-6 text-zinc-400">
+              Tesla login happens directly with Tesla. RoboAgent never sees your Tesla password.
             </p>
           </div>
           <button
             type="button"
             onClick={onCancel}
-            className="rounded-full border border-slate-300 bg-white px-3 py-1 text-sm font-black text-slate-600 transition hover:bg-slate-50"
+            className="rounded-full border border-zinc-700 bg-zinc-900 px-3 py-1 text-sm font-black text-zinc-300 transition hover:bg-zinc-800"
             aria-label="Cancel Tesla access"
           >
             X
           </button>
         </div>
 
-        <div className="mt-6 grid gap-4 lg:grid-cols-2">
-          <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
-            <h3 className="font-black text-slate-950">This will allow RoboAgent to</h3>
-            <ul className="mt-3 space-y-3 text-sm font-semibold leading-5 text-slate-600">
-              {dataRows.map((row) => (
-                <li key={row} className="flex gap-2">
-                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-sky-300" />
-                  <span>{row}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4">
-            <h3 className="font-black text-slate-950">Important details</h3>
-            <ul className="mt-3 space-y-3 text-sm font-semibold leading-5 text-slate-600">
-              {trustRows.map((row) => (
-                <li key={row} className="flex gap-2">
-                  <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-emerald-300" />
-                  <span>{row}</span>
-                </li>
-              ))}
-            </ul>
-          </div>
+        <div className="mt-6 rounded-2xl border border-zinc-800 bg-zinc-900 p-5">
+          <h3 className="font-black">This allows RoboAgent to use:</h3>
+          <ul className="mt-4 space-y-3 text-sm font-semibold leading-6 text-zinc-300">
+            {dataRows.map((row) => (
+              <li key={row} className="flex gap-3">
+                <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-teal-400" />
+                <span>{row}</span>
+              </li>
+            ))}
+          </ul>
         </div>
 
-        <div className="mt-5 rounded-lg border border-sky-200 bg-sky-50 p-4">
-          <h3 className="font-black text-slate-950">Why does RoboAgent need this?</h3>
-          <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">
-            To power the AI Agent that helps you optimize earnings, plan maintenance, manage charging, and run your Tesla rental or robotaxi fleet more efficiently.
-          </p>
+        <div className="mt-5 grid gap-3 sm:grid-cols-2">
+          <TrustRow title="You stay in control" detail="Disconnect Tesla or delete RoboAgent data from the app." />
+          <TrustRow title="Not affiliated with Tesla" detail="RoboAgent is an independent third-party app." />
         </div>
 
         <div className="mt-5 space-y-3">
-          <label className="flex gap-3 rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm font-semibold leading-5 text-slate-700">
+          <label className="flex gap-3 rounded-2xl border border-zinc-800 bg-zinc-900 p-4 text-sm font-semibold leading-5 text-zinc-300">
             <input
               type="checkbox"
               checked={checks.independent}
               onChange={(event) => onToggle('independent', event.target.checked)}
               className="mt-1"
             />
-            <span>I understand that RoboAgent is a third-party app and is not affiliated with Tesla.</span>
+            <span>I understand RoboAgent is a third-party app and is not affiliated with Tesla.</span>
           </label>
-          <label className="flex gap-3 rounded-lg border border-slate-200 bg-slate-50 p-4 text-sm font-semibold leading-5 text-slate-700">
+          <label className="flex gap-3 rounded-2xl border border-zinc-800 bg-zinc-900 p-4 text-sm font-semibold leading-5 text-zinc-300">
             <input
               type="checkbox"
               checked={checks.legal}
@@ -177,12 +121,12 @@ function TeslaConsentModal({
             />
             <span>
               I have read and agree to the{' '}
-              <button type="button" onClick={() => onNavigate?.('privacy')} className="font-bold text-sky-700 hover:text-sky-900">
+              <button type="button" onClick={() => onNavigate?.('privacy')} className="font-black text-teal-300 hover:text-teal-200">
                 Privacy Policy
               </button>{' '}
               and{' '}
-              <button type="button" onClick={() => onNavigate?.('terms')} className="font-bold text-sky-700 hover:text-sky-900">
-                Terms of Service
+              <button type="button" onClick={() => onNavigate?.('terms')} className="font-black text-teal-300 hover:text-teal-200">
+                Terms
               </button>
               .
             </span>
@@ -193,7 +137,7 @@ function TeslaConsentModal({
           <button
             type="button"
             onClick={onCancel}
-            className="rounded-lg border border-slate-300 bg-white px-5 py-4 text-sm font-black text-slate-700 shadow-sm transition hover:bg-slate-50"
+            className="rounded-2xl border border-zinc-700 bg-zinc-900 px-5 py-4 text-sm font-black text-zinc-200 transition hover:bg-zinc-800"
           >
             Cancel
           </button>
@@ -201,7 +145,7 @@ function TeslaConsentModal({
             type="button"
             disabled={!canAllow}
             onClick={onConfirm}
-            className="rounded-lg bg-sky-300 px-5 py-4 text-sm font-black text-slate-950 transition hover:bg-sky-200 disabled:cursor-not-allowed disabled:opacity-40"
+            className="rounded-2xl bg-teal-500 px-5 py-4 text-sm font-black text-black transition hover:bg-teal-400 disabled:cursor-not-allowed disabled:opacity-40"
           >
             Allow Access
           </button>
@@ -216,20 +160,17 @@ export default function AccountPanel({ onNavigate }) {
   const [billing, setBilling] = useState(null);
   const [registerForm, setRegisterForm] = useState(emptyRegister);
   const [loginForm, setLoginForm] = useState({ email: '', password: '' });
-  const [magicEmail, setMagicEmail] = useState('');
   const [profileName, setProfileName] = useState('');
-  const [magicLink, setMagicLink] = useState('');
+  const [authMode, setAuthMode] = useState('signin');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [isBusy, setIsBusy] = useState(false);
-  const [authMode, setAuthMode] = useState('signin');
   const [showTeslaConsent, setShowTeslaConsent] = useState(false);
-  const [teslaConsentChecks, setTeslaConsentChecks] = useState({
-    independent: false,
-    legal: false,
-  });
+  const [teslaConsentChecks, setTeslaConsentChecks] = useState({ independent: false, legal: false });
 
   const clerkReady = isClerkConfigured();
+  const user = session?.user || {};
+  const hasRealAccount = Boolean(user.email);
 
   const refresh = async () => {
     const [sessionResult, billingResult] = await Promise.allSettled([
@@ -240,8 +181,6 @@ export default function AccountPanel({ onNavigate }) {
     if (sessionResult.status === 'fulfilled') {
       setSession(sessionResult.value);
       setProfileName(sessionResult.value.user?.name || '');
-    } else if (!String(sessionResult.reason?.message || '').toLowerCase().includes('sign in')) {
-      throw sessionResult.reason;
     } else {
       setSession({ authenticated: false, user: {} });
       setProfileName('');
@@ -249,8 +188,6 @@ export default function AccountPanel({ onNavigate }) {
 
     if (billingResult.status === 'fulfilled') {
       setBilling(billingResult.value.billing);
-    } else if (!String(billingResult.reason?.message || '').toLowerCase().includes('sign in')) {
-      throw billingResult.reason;
     } else {
       setBilling({
         vehicleCount: 0,
@@ -284,322 +221,187 @@ export default function AccountPanel({ onNavigate }) {
     }
   };
 
-  const user = session?.user || {};
-  const hasRealAccount = Boolean(user.email);
-  const billingRequired = Boolean(billing?.billingRequired);
-  const activeForm = authMode === 'create' ? 'create' : 'signin';
-
-  const startTeslaSignIn = () => {
-    window.location.href = getTeslaLoginUrl('onboarding');
-  };
-
   const confirmTeslaConsent = () => {
     if (!hasRealAccount) {
       setShowTeslaConsent(false);
-      setMessage('');
-      setError('Create or sign in to RoboAgent first. Then connect Tesla from onboarding.');
+      setError('Sign in to RoboAgent first. Then connect Tesla from onboarding.');
       return;
     }
     acceptTeslaConsent();
-    startTeslaSignIn();
+    window.location.href = getTeslaLoginUrl('onboarding');
   };
 
-  if (!hasRealAccount) {
-    return (
-      <div className="grid min-h-screen place-items-center bg-[radial-gradient(circle_at_12%_8%,rgba(14,165,233,0.13),transparent_30%),linear-gradient(180deg,#f5f7fb_0%,#eaf2f7_48%,#ffffff_100%)] px-4 py-10 text-slate-950">
-        <section className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-xl shadow-slate-300/40">
-          <div className="text-center">
-            <button
-              type="button"
-              onClick={() => onNavigate?.('landing')}
-              className="mx-auto mb-6 flex items-center gap-2 text-xs font-black uppercase tracking-[0.26em] text-slate-900"
-            >
-              <span className="h-2 w-2 rounded-full bg-sky-500 shadow-lg shadow-sky-300/50" />
-              RoboAgent
-            </button>
-            <h1 className="text-2xl font-black text-slate-950">Sign in to RoboAgent</h1>
-            <p className="mt-3 text-sm font-semibold leading-6 text-slate-600">
-              Create or sign in to your RoboAgent account first. Then connect Tesla with OAuth so vehicle access is encrypted per user.
-            </p>
-          </div>
-
-          {(message || error) && (
-            <div
-              className={`mt-6 rounded-lg border p-4 text-sm font-semibold ${
-                error
-                  ? 'border-red-200 bg-red-50 text-red-800'
-                  : 'border-emerald-200 bg-emerald-50 text-emerald-800'
-              }`}
-            >
-              {error || message}
-            </div>
-          )}
-
-          <div className="mt-7 space-y-4">
-            {clerkReady ? (
-              <>
-                <SignUpButton mode="modal">
-                  <button
-                    type="button"
-                    className="w-full rounded-lg bg-sky-300 px-5 py-4 text-base font-black text-slate-950 transition hover:bg-sky-200"
-                  >
-                    Create RoboAgent Account
-                  </button>
-                </SignUpButton>
-                <SignInButton mode="modal">
-                  <button
-                    type="button"
-                    className="w-full rounded-lg border border-slate-300 bg-white px-5 py-4 text-base font-black text-slate-700 shadow-sm transition hover:bg-slate-50"
-                  >
-                    Sign In to RoboAgent
-                  </button>
-                </SignInButton>
-              </>
-            ) : null}
-            <button
-              type="button"
-              onClick={() => setShowTeslaConsent(true)}
-              className="flex w-full items-center justify-center gap-3 rounded-lg border border-sky-200 bg-sky-50 px-5 py-4 text-base font-black text-sky-800 transition hover:bg-sky-100"
-            >
-              <TeslaMark />
-              Preview Tesla Data Permissions
-            </button>
-            <p className="text-center text-xs font-semibold leading-5 text-slate-500">
-              Tesla connection comes after RoboAgent sign-in. RoboAgent never sees your Tesla password.
-            </p>
-          </div>
-
-          {clerkReady ? (
-            <div className="mt-7 space-y-4">
-              <Divider />
-              <p className="text-center text-sm font-semibold leading-6 text-slate-600">
-                After sign-in, return to onboarding to review consent and connect Tesla securely.
-              </p>
-            </div>
-          ) : (
-            <div className="mt-7 space-y-5">
-              <div className="flex rounded-lg border border-slate-200 bg-slate-100 p-1">
-                <button
-                  type="button"
-                  onClick={() => setAuthMode('signin')}
-                  className={`flex-1 rounded-md px-4 py-2 text-sm font-black transition ${
-                    activeForm === 'signin'
-                      ? 'bg-white text-slate-950 shadow-sm'
-                      : 'text-slate-500 hover:bg-white hover:text-slate-900'
-                  }`}
-                >
-                  Sign In
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setAuthMode('create')}
-                  className={`flex-1 rounded-md px-4 py-2 text-sm font-black transition ${
-                    activeForm === 'create'
-                      ? 'bg-white text-slate-950 shadow-sm'
-                      : 'text-slate-500 hover:bg-white hover:text-slate-900'
-                  }`}
-                >
-                  Create
-                </button>
-              </div>
-
-              {activeForm === 'signin' ? (
-                <div className="space-y-4">
-                  <Field label="Email">
-                    <Input
-                      type="email"
-                      value={loginForm.email}
-                      onChange={(event) => setLoginForm({ ...loginForm, email: event.target.value })}
-                      placeholder="you@example.com"
-                    />
-                  </Field>
-                  <Field label="Password">
-                    <Input
-                      type="password"
-                      value={loginForm.password}
-                      onChange={(event) => setLoginForm({ ...loginForm, password: event.target.value })}
-                      placeholder="Password"
-                    />
-                  </Field>
-                  <button
-                    type="button"
-                    disabled={isBusy}
-                    onClick={() =>
-                      runAction(
-                        () => loginFleetOsAccount(loginForm),
-                        'Signed in successfully.',
-                      )
-                    }
-                    className="w-full rounded-lg bg-sky-300 px-5 py-4 text-base font-black text-slate-950 transition hover:bg-sky-200 disabled:cursor-wait disabled:opacity-60"
-                  >
-                    Sign In
-                  </button>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <Field label="Name">
-                    <Input
-                      value={registerForm.name}
-                      onChange={(event) => setRegisterForm({ ...registerForm, name: event.target.value })}
-                      placeholder="Jane Owner"
-                    />
-                  </Field>
-                  <Field label="Email">
-                    <Input
-                      type="email"
-                      value={registerForm.email}
-                      onChange={(event) => setRegisterForm({ ...registerForm, email: event.target.value })}
-                      placeholder="you@example.com"
-                    />
-                  </Field>
-                  <Field label="Password">
-                    <Input
-                      type="password"
-                      value={registerForm.password}
-                      onChange={(event) => setRegisterForm({ ...registerForm, password: event.target.value })}
-                      placeholder="8+ characters"
-                    />
-                  </Field>
-                  <Field label="Invite Code">
-                    <Input
-                      value={registerForm.inviteCode}
-                      onChange={(event) => setRegisterForm({ ...registerForm, inviteCode: event.target.value })}
-                      placeholder="Provided beta code"
-                    />
-                  </Field>
-                  <button
-                    type="button"
-                    disabled={isBusy}
-                    onClick={() =>
-                      runAction(
-                        () => registerFleetOsAccount(registerForm),
-                        'Account created. This browser is now signed in.',
-                      )
-                    }
-                    className="w-full rounded-lg bg-sky-300 px-5 py-4 text-base font-black text-slate-950 transition hover:bg-sky-200 disabled:cursor-wait disabled:opacity-60"
-                  >
-                    Create RoboAgent Account
-                  </button>
-                </div>
-              )}
-            </div>
-          )}
-
-          <div className="mt-7 text-center">
-            <details className="text-left">
-              <summary className="cursor-pointer text-center text-sm font-black text-slate-600 hover:text-slate-950">
-                What happens after sign-in?
-              </summary>
-              <div className="mt-4 space-y-3 rounded-lg border border-slate-200 bg-slate-50 p-4">
-                <Step
-                  number="1"
-                  title="Review data consent"
-                  detail="RoboAgent explains the Tesla data it uses before connection."
-                />
-                <Step
-                  number="2"
-                  title="Connect Tesla OAuth"
-                  detail="You approve access with Tesla. RoboAgent stores encrypted tokens and never gets your Tesla password."
-                />
-                <Step
-                  number="3"
-                  title="Open your dashboard"
-                  detail="Your first Tesla is free during beta."
-                />
-              </div>
-            </details>
-            <p className="mt-5 text-xs font-semibold leading-5 text-slate-500">
-              By signing in, you agree to the RoboAgent beta terms and privacy notice.
-            </p>
-          </div>
-        </section>
-        {showTeslaConsent ? (
-          <TeslaConsentModal
-            checks={teslaConsentChecks}
-            onCancel={() => setShowTeslaConsent(false)}
-            onConfirm={confirmTeslaConsent}
-            onNavigate={onNavigate}
-            onToggle={(key, value) => setTeslaConsentChecks((current) => ({ ...current, [key]: value }))}
-          />
-        ) : null}
-      </div>
-    );
-  }
-
   return (
-    <div className="mx-auto grid min-h-[70vh] w-full max-w-5xl place-items-center py-4">
-      <section className="grid w-full gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-        <aside className="rounded-xl border border-white/10 bg-slate-950/70 p-6 shadow-2xl shadow-black/20">
-          <p className="text-xs font-black uppercase tracking-[0.26em] text-sky-300">RoboAgent Account</p>
-          <h1 className="mt-4 text-3xl font-black tracking-tight text-white sm:text-4xl">Sign in to RoboAgent</h1>
-          <p className="mt-4 text-base leading-7 text-slate-300">
-            Create one secure owner account first. After that, RoboAgent guides you through data consent and Tesla OAuth.
+    <div className="min-h-screen bg-gradient-to-b from-zinc-950 to-black px-4 py-6 text-white">
+      <header className="mx-auto mb-8 flex max-w-5xl items-center justify-between">
+        <button type="button" onClick={() => onNavigate?.('landing')} className="flex items-center gap-3">
+          <span className="h-2.5 w-2.5 rounded-full bg-teal-400 shadow-lg shadow-teal-300/50" />
+          <span className="text-sm font-black uppercase tracking-[0.28em] text-sky-200">RoboAgent</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => onNavigate?.('landing')}
+          className="rounded-full border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm font-black text-zinc-200 transition hover:bg-zinc-800"
+        >
+          Back Home
+        </button>
+      </header>
+
+      <main className="mx-auto grid max-w-5xl gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+        <aside className="rounded-3xl border border-zinc-800 bg-zinc-950/80 p-7 shadow-2xl shadow-black/30">
+          <div className="mb-7 flex justify-center lg:justify-start">
+            <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-teal-400 to-cyan-500 shadow-xl shadow-teal-500/30">
+              <span className="text-5xl font-black tracking-tighter text-black">R</span>
+            </div>
+          </div>
+          <p className="text-xs font-black uppercase tracking-[0.24em] text-teal-400">Secure account</p>
+          <h1 className="mt-4 text-4xl font-black tracking-tight text-white">Sign in to RoboAgent</h1>
+          <p className="mt-4 text-base font-semibold leading-7 text-zinc-400">
+            Use one owner account for RoboAgent. Tesla connection comes next through Tesla OAuth, so your Tesla password stays with Tesla.
           </p>
 
-          <div className="mt-6 space-y-4">
-            <Step
-              number="1"
-              title="Sign in or create account"
-              detail="Use email-based identity for RoboAgent. This is separate from your Tesla password."
-            />
-            <Step
-              number="2"
-              title="Review consent"
-              detail="You will see exactly what vehicle data RoboAgent uses before connecting a Tesla."
-            />
-            <Step
-              number="3"
-              title="Connect Tesla securely"
-              detail="Tesla OAuth happens after signup. RoboAgent never asks for your Tesla password."
-            />
-          </div>
-
-          <div className="mt-6 rounded-lg border border-emerald-300/20 bg-emerald-300/10 p-4 text-sm leading-6 text-emerald-100">
-            First Tesla is free during beta. Add more vehicles later when you are ready.
+          <div className="mt-6 grid gap-3">
+            <TrustRow title="First Tesla free" detail="Start with one vehicle during beta before adding more." />
+            <TrustRow title="Tesla OAuth second" detail="Vehicle access is separate from your RoboAgent account." />
+            <TrustRow title="Delete anytime" detail="Admin and user controls can purge beta data and Tesla sync." />
           </div>
         </aside>
 
-        <main className="rounded-xl border border-white/10 bg-slate-900/80 p-5 shadow-2xl shadow-black/20 sm:p-6">
+        <section className="rounded-3xl border border-zinc-800 bg-zinc-950/80 p-6 shadow-2xl shadow-black/30">
           {(message || error) && (
-            <div
-              className={`mb-5 rounded-lg border p-4 text-sm font-semibold ${
-                error
-                  ? 'border-red-400/25 bg-red-400/10 text-red-100'
-                  : 'border-emerald-400/25 bg-emerald-400/10 text-emerald-100'
-              }`}
-            >
+            <div className={`mb-5 rounded-2xl border p-4 text-sm font-semibold ${
+              error ? 'border-red-400/30 bg-red-500/10 text-red-200' : 'border-emerald-400/30 bg-emerald-500/10 text-emerald-200'
+            }`}>
               {error || message}
             </div>
           )}
 
-          {hasRealAccount ? (
+          {!hasRealAccount ? (
             <div className="space-y-5">
-              <div className="rounded-lg border border-emerald-400/20 bg-emerald-400/10 p-5">
-                <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-200">Signed In</p>
-                <h2 className="mt-2 text-2xl font-black text-white">{user.name || 'RoboAgent Owner'}</h2>
-                <p className="mt-1 text-sm font-semibold text-emerald-100">{user.email}</p>
+              {clerkReady ? (
+                <div className="space-y-4">
+                  <SignInButton mode="modal">
+                    <button
+                      type="button"
+                      className="w-full rounded-3xl bg-teal-500 px-5 py-6 text-xl font-semibold text-black transition hover:bg-teal-400"
+                    >
+                      Sign In
+                    </button>
+                  </SignInButton>
+                  <SignUpButton mode="modal">
+                    <button
+                      type="button"
+                      className="w-full rounded-3xl border border-zinc-700 bg-zinc-900 px-5 py-6 text-xl font-semibold text-white transition hover:bg-zinc-800"
+                    >
+                      Create Account
+                    </button>
+                  </SignUpButton>
+                  <p className="text-center text-sm font-semibold leading-6 text-zinc-500">
+                    Sign in or create an account, then continue onboarding to connect Tesla.
+                  </p>
+                </div>
+              ) : (
+                <div className="space-y-5">
+                  <div className="flex rounded-2xl border border-zinc-800 bg-zinc-900 p-1">
+                    {[
+                      ['signin', 'Sign In'],
+                      ['create', 'Create'],
+                    ].map(([mode, label]) => (
+                      <button
+                        key={mode}
+                        type="button"
+                        onClick={() => setAuthMode(mode)}
+                        className={`flex-1 rounded-xl px-4 py-3 text-sm font-black transition ${
+                          authMode === mode ? 'bg-teal-500 text-black shadow-sm' : 'text-zinc-400 hover:bg-zinc-800 hover:text-white'
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+
+                  {authMode === 'signin' ? (
+                    <div className="space-y-4">
+                      <Field label="Email">
+                        <TextInput
+                          type="email"
+                          value={loginForm.email}
+                          onChange={(event) => setLoginForm({ ...loginForm, email: event.target.value })}
+                          placeholder="you@example.com"
+                        />
+                      </Field>
+                      <Field label="Password">
+                        <TextInput
+                          type="password"
+                          value={loginForm.password}
+                          onChange={(event) => setLoginForm({ ...loginForm, password: event.target.value })}
+                          placeholder="Password"
+                        />
+                      </Field>
+                      <button
+                        type="button"
+                        disabled={isBusy}
+                        onClick={() => runAction(() => loginFleetOsAccount(loginForm), 'Signed in successfully.')}
+                        className="w-full rounded-3xl bg-teal-500 px-5 py-6 text-xl font-semibold text-black transition hover:bg-teal-400 disabled:cursor-wait disabled:opacity-60"
+                      >
+                        Sign In
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <Field label="Name">
+                        <TextInput value={registerForm.name} onChange={(event) => setRegisterForm({ ...registerForm, name: event.target.value })} placeholder="Jane Owner" />
+                      </Field>
+                      <Field label="Email">
+                        <TextInput type="email" value={registerForm.email} onChange={(event) => setRegisterForm({ ...registerForm, email: event.target.value })} placeholder="you@example.com" />
+                      </Field>
+                      <Field label="Password">
+                        <TextInput type="password" value={registerForm.password} onChange={(event) => setRegisterForm({ ...registerForm, password: event.target.value })} placeholder="8+ characters" />
+                      </Field>
+                      <Field label="Invite Code">
+                        <TextInput value={registerForm.inviteCode} onChange={(event) => setRegisterForm({ ...registerForm, inviteCode: event.target.value })} placeholder="Provided beta code" />
+                      </Field>
+                      <button
+                        type="button"
+                        disabled={isBusy}
+                        onClick={() => runAction(() => registerFleetOsAccount(registerForm), 'Account created. This browser is now signed in.')}
+                        className="w-full rounded-3xl bg-teal-500 px-5 py-6 text-xl font-semibold text-black transition hover:bg-teal-400 disabled:cursor-wait disabled:opacity-60"
+                      >
+                        Create Account
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              <button
+                type="button"
+                onClick={() => setShowTeslaConsent(true)}
+                className="w-full rounded-2xl border border-teal-500/30 bg-teal-500/10 px-5 py-4 text-sm font-black text-teal-200 transition hover:bg-teal-500/20"
+              >
+                Preview Tesla Data Permissions
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-5">
+              <div className="flex items-start justify-between gap-4 rounded-2xl border border-emerald-400/30 bg-emerald-500/10 p-5">
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-300">Signed In</p>
+                  <h2 className="mt-2 text-2xl font-black text-white">{user.name || 'RoboAgent Owner'}</h2>
+                  <p className="mt-1 text-sm font-semibold text-emerald-200">{user.email}</p>
+                </div>
+                {clerkReady ? <UserButton /> : null}
               </div>
 
               <div className="grid gap-3 sm:grid-cols-3">
-                <Metric
-                  label="Plan"
-                  value="First Tesla Free"
-                  detail={`${billing?.vehicleCount || 0} synced vehicle${billing?.vehicleCount === 1 ? '' : 's'}`}
-                />
-                <Metric label="Included" value={`${billing?.includedVehicles || 1} Tesla`} detail="Beta coverage" />
-                <Metric
-                  label="Billable"
-                  value={billingRequired ? `${billing?.billableVehicles || 0}` : 'None'}
-                  detail={billingRequired ? 'Paid plan needed later' : 'No action needed'}
-                />
+                <Metric label="Plan" value="Free" />
+                <Metric label="Included" value={`${billing?.includedVehicles || 1} Tesla`} />
+                <Metric label="Synced" value={billing?.vehicleCount || 0} />
               </div>
 
-              {clerkReady ? <ClerkAccountSummary /> : null}
-
-              <div className="rounded-lg border border-white/10 bg-slate-950/50 p-5">
-                <p className="text-xs font-bold uppercase tracking-[0.22em] text-sky-300">Profile</p>
-                <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-                  <Input
+              <Field label="Display Name">
+                <div className="flex flex-col gap-3 sm:flex-row">
+                  <TextInput
                     value={profileName}
                     onChange={(event) => setProfileName(event.target.value)}
                     placeholder="Display name"
@@ -607,320 +409,52 @@ export default function AccountPanel({ onNavigate }) {
                   <button
                     type="button"
                     disabled={isBusy}
-                    onClick={() =>
-                      runAction(
-                        () => updateFleetOsProfile({ name: profileName }),
-                        'Profile updated.',
-                      )
-                    }
-                    className="rounded-lg border border-white/10 bg-white/10 px-5 py-3 text-sm font-black text-slate-100 transition hover:bg-white/15 disabled:cursor-wait disabled:opacity-60"
+                    onClick={() => runAction(() => updateFleetOsProfile({ name: profileName }), 'Profile updated.')}
+                    className="rounded-2xl border border-zinc-700 bg-zinc-900 px-5 py-4 text-sm font-black text-zinc-200 transition hover:bg-zinc-800 disabled:cursor-wait disabled:opacity-60"
                   >
                     Save
                   </button>
                 </div>
-              </div>
+              </Field>
 
               <div className="grid gap-3 sm:grid-cols-3">
-                <button
-                  type="button"
-                  onClick={() => onNavigate?.('onboarding')}
-                  className="rounded-lg bg-sky-300 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-sky-200"
-                >
-                  Connect Tesla
+                <button type="button" onClick={() => onNavigate?.('onboarding')} className="rounded-2xl bg-teal-500 px-5 py-4 text-sm font-black text-black transition hover:bg-teal-400">
+                  Continue Onboarding
                 </button>
-                <button
-                  type="button"
-                  onClick={() => onNavigate?.('overview')}
-                  className="rounded-lg border border-white/10 bg-white/10 px-5 py-3 text-sm font-black text-slate-100 transition hover:bg-white/15"
-                >
+                <button type="button" onClick={() => onNavigate?.('overview')} className="rounded-2xl border border-zinc-700 bg-zinc-900 px-5 py-4 text-sm font-black text-zinc-200 transition hover:bg-zinc-800">
                   Open Dashboard
                 </button>
                 <button
                   type="button"
                   disabled={isBusy}
-                  onClick={() =>
-                    runAction(
-                      () => logoutFleetOsAccount(),
-                      'Signed out on this browser.',
-                    )
-                  }
-                  className="rounded-lg border border-red-400/20 bg-red-400/10 px-5 py-3 text-sm font-black text-red-100 transition hover:bg-red-400/15 disabled:cursor-wait disabled:opacity-60"
+                  onClick={() => runAction(() => logoutFleetOsAccount(), 'Signed out on this browser.')}
+                  className="rounded-2xl border border-red-400/30 bg-red-500/10 px-5 py-4 text-sm font-black text-red-200 transition hover:bg-red-500/20 disabled:cursor-wait disabled:opacity-60"
                 >
                   Sign Out
                 </button>
               </div>
-            </div>
-          ) : (
-            <div className="space-y-5">
-              {clerkReady ? (
-                <div>
-                  <ClerkAccountSummary />
-                  <p className="mt-3 rounded-lg border border-white/10 bg-white/[0.04] p-3 text-sm leading-6 text-slate-300">
-                    If you do not know your password, choose Clerk&apos;s email code or passwordless option in the sign-in window.
-                  </p>
-                </div>
-              ) : null}
 
-              <div className={clerkReady ? 'hidden' : 'rounded-lg border border-white/10 bg-slate-950/50 p-5'}>
-                <div className="mb-5 flex rounded-lg border border-white/10 bg-slate-950 p-1">
-                  <button
-                    type="button"
-                    onClick={() => setAuthMode('signin')}
-                    className={`flex-1 rounded-md px-4 py-2 text-sm font-black transition ${
-                      activeForm === 'signin'
-                        ? 'bg-sky-300 text-slate-950'
-                        : 'text-slate-400 hover:bg-white/5 hover:text-slate-100'
-                    }`}
-                  >
-                    Sign In
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setAuthMode('create')}
-                    className={`flex-1 rounded-md px-4 py-2 text-sm font-black transition ${
-                      activeForm === 'create'
-                        ? 'bg-sky-300 text-slate-950'
-                        : 'text-slate-400 hover:bg-white/5 hover:text-slate-100'
-                    }`}
-                  >
-                    Create Account
-                  </button>
-                </div>
-
-                {activeForm === 'signin' ? (
-                  <div className="space-y-4">
-                    <Field label="Email">
-                      <Input
-                        type="email"
-                        value={loginForm.email}
-                        onChange={(event) => setLoginForm({ ...loginForm, email: event.target.value })}
-                        placeholder="you@example.com"
-                      />
-                    </Field>
-                    <Field label="Password">
-                      <Input
-                        type="password"
-                        value={loginForm.password}
-                        onChange={(event) => setLoginForm({ ...loginForm, password: event.target.value })}
-                        placeholder="Password"
-                      />
-                    </Field>
-                    <button
-                      type="button"
-                      disabled={isBusy}
-                      onClick={() =>
-                        runAction(
-                          () => loginFleetOsAccount(loginForm),
-                          'Signed in successfully.',
-                        )
-                      }
-                      className="w-full rounded-lg bg-sky-300 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-sky-200 disabled:cursor-wait disabled:opacity-60"
-                    >
-                      Sign In
-                    </button>
-                  </div>
-                ) : (
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    <Field label="Name">
-                      <Input
-                        value={registerForm.name}
-                        onChange={(event) => setRegisterForm({ ...registerForm, name: event.target.value })}
-                        placeholder="Jane Owner"
-                      />
-                    </Field>
-                    <Field label="Invite Code">
-                      <Input
-                        value={registerForm.inviteCode}
-                        onChange={(event) => setRegisterForm({ ...registerForm, inviteCode: event.target.value })}
-                        placeholder="Provided beta code"
-                      />
-                    </Field>
-                    <Field label="Email">
-                      <Input
-                        type="email"
-                        value={registerForm.email}
-                        onChange={(event) => setRegisterForm({ ...registerForm, email: event.target.value })}
-                        placeholder="you@example.com"
-                      />
-                    </Field>
-                    <Field label="Password">
-                      <Input
-                        type="password"
-                        value={registerForm.password}
-                        onChange={(event) => setRegisterForm({ ...registerForm, password: event.target.value })}
-                        placeholder="8+ characters"
-                      />
-                    </Field>
-                    <button
-                      type="button"
-                      disabled={isBusy}
-                      onClick={() =>
-                        runAction(
-                          () => registerFleetOsAccount(registerForm),
-                          'Account created. This browser is now signed in.',
-                        )
-                      }
-                      className="sm:col-span-2 w-full rounded-lg bg-sky-300 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-sky-200 disabled:cursor-wait disabled:opacity-60"
-                    >
-                      Create RoboAgent Account
-                    </button>
-                  </div>
-                )}
-              </div>
-
-              {clerkReady ? (
-                <details className="rounded-lg border border-white/10 bg-white/[0.03] p-4">
-                  <summary className="cursor-pointer text-sm font-black text-slate-200">
-                    Legacy beta fallback
-                  </summary>
-                  <div className="mt-4 rounded-lg border border-white/10 bg-slate-950/50 p-5">
-                    <div className="mb-5 flex rounded-lg border border-white/10 bg-slate-950 p-1">
-                      <button
-                        type="button"
-                        onClick={() => setAuthMode('signin')}
-                        className={`flex-1 rounded-md px-4 py-2 text-sm font-black transition ${
-                          activeForm === 'signin'
-                            ? 'bg-sky-300 text-slate-950'
-                            : 'text-slate-400 hover:bg-white/5 hover:text-slate-100'
-                        }`}
-                      >
-                        Sign In
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => setAuthMode('create')}
-                        className={`flex-1 rounded-md px-4 py-2 text-sm font-black transition ${
-                          activeForm === 'create'
-                            ? 'bg-sky-300 text-slate-950'
-                            : 'text-slate-400 hover:bg-white/5 hover:text-slate-100'
-                        }`}
-                      >
-                        Create Account
-                      </button>
-                    </div>
-
-                    {activeForm === 'signin' ? (
-                      <div className="space-y-4">
-                        <Field label="Email">
-                          <Input
-                            type="email"
-                            value={loginForm.email}
-                            onChange={(event) => setLoginForm({ ...loginForm, email: event.target.value })}
-                            placeholder="you@example.com"
-                          />
-                        </Field>
-                        <Field label="Password">
-                          <Input
-                            type="password"
-                            value={loginForm.password}
-                            onChange={(event) => setLoginForm({ ...loginForm, password: event.target.value })}
-                            placeholder="Password"
-                          />
-                        </Field>
-                        <button
-                          type="button"
-                          disabled={isBusy}
-                          onClick={() =>
-                            runAction(
-                              () => loginFleetOsAccount(loginForm),
-                              'Signed in successfully.',
-                            )
-                          }
-                          className="w-full rounded-lg bg-sky-300 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-sky-200 disabled:cursor-wait disabled:opacity-60"
-                        >
-                          Sign In
-                        </button>
-                      </div>
-                    ) : (
-                      <div className="grid gap-4 sm:grid-cols-2">
-                        <Field label="Name">
-                          <Input
-                            value={registerForm.name}
-                            onChange={(event) => setRegisterForm({ ...registerForm, name: event.target.value })}
-                            placeholder="Jane Owner"
-                          />
-                        </Field>
-                        <Field label="Invite Code">
-                          <Input
-                            value={registerForm.inviteCode}
-                            onChange={(event) => setRegisterForm({ ...registerForm, inviteCode: event.target.value })}
-                            placeholder="Provided beta code"
-                          />
-                        </Field>
-                        <Field label="Email">
-                          <Input
-                            type="email"
-                            value={registerForm.email}
-                            onChange={(event) => setRegisterForm({ ...registerForm, email: event.target.value })}
-                            placeholder="you@example.com"
-                          />
-                        </Field>
-                        <Field label="Password">
-                          <Input
-                            type="password"
-                            value={registerForm.password}
-                            onChange={(event) => setRegisterForm({ ...registerForm, password: event.target.value })}
-                            placeholder="8+ characters"
-                          />
-                        </Field>
-                        <button
-                          type="button"
-                          disabled={isBusy}
-                          onClick={() =>
-                            runAction(
-                              () => registerFleetOsAccount(registerForm),
-                              'Account created. This browser is now signed in.',
-                            )
-                          }
-                          className="w-full rounded-lg bg-sky-300 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-sky-200 disabled:cursor-wait disabled:opacity-60 sm:col-span-2"
-                        >
-                          Create RoboAgent Account
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </details>
-              ) : null}
-
-              <div className="rounded-lg border border-white/10 bg-white/[0.03] p-4">
-                <p className="text-sm font-black text-slate-100">Need passwordless beta access?</p>
-                <p className="mt-1 text-sm leading-6 text-slate-400">
-                  Generate a temporary magic link for testing. Email delivery is manual until the beta email provider is connected.
-                </p>
-                <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-                  <Input
-                    type="email"
-                    value={magicEmail}
-                    onChange={(event) => setMagicEmail(event.target.value)}
-                    placeholder="you@example.com"
-                  />
-                  <button
-                    type="button"
-                    disabled={isBusy}
-                    onClick={() =>
-                      runAction(async () => {
-                        const result = await requestFleetOsMagicLink({ email: magicEmail });
-                        setMagicLink(result.magicLink);
-                      }, 'Magic link generated for beta testing.')
-                    }
-                    className="rounded-lg border border-sky-400/30 bg-sky-400/10 px-5 py-3 text-sm font-black text-sky-100 transition hover:bg-sky-400/20 disabled:cursor-wait disabled:opacity-60"
-                  >
-                    Generate
-                  </button>
-                </div>
-                {magicLink ? (
-                  <a
-                    href={magicLink}
-                    className="mt-4 block break-all rounded-lg border border-emerald-400/20 bg-emerald-400/10 p-3 text-sm font-semibold text-emerald-100"
-                  >
-                    {magicLink}
-                  </a>
-                ) : null}
-              </div>
+              <button
+                type="button"
+                onClick={() => setShowTeslaConsent(true)}
+                className="w-full rounded-2xl border border-teal-500/30 bg-teal-500/10 px-5 py-4 text-sm font-black text-teal-200 transition hover:bg-teal-500/20"
+              >
+                Preview Tesla Data Permissions
+              </button>
             </div>
           )}
-        </main>
-      </section>
+        </section>
+      </main>
+
+      {showTeslaConsent ? (
+        <TeslaConsentModal
+          checks={teslaConsentChecks}
+          onCancel={() => setShowTeslaConsent(false)}
+          onConfirm={confirmTeslaConsent}
+          onNavigate={onNavigate}
+          onToggle={(key, value) => setTeslaConsentChecks((current) => ({ ...current, [key]: value }))}
+        />
+      ) : null}
     </div>
   );
 }

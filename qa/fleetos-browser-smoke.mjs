@@ -294,6 +294,18 @@ async function testAiOperations(browser, profile) {
   return assertNoRuntimeErrors(`ai operations (${profile})`, telemetry);
 }
 
+async function testIntegrations(browser, profile) {
+  const telemetry = await makePage(browser, profile);
+  const { page, context } = telemetry;
+  await page.goto(routeUrl('#/integrations'), { waitUntil: 'networkidle' });
+  await page.getByText('Tesla Robotaxi / Cybercab Updates from X').waitFor({ timeout: 15000 });
+  await page.getByText(/X API Ready|Demo Feed/).waitFor({ timeout: 15000 });
+  await page.getByText('Tesla Fleet API').waitFor({ timeout: 15000 });
+  await page.getByText('Current Connected State').waitFor({ timeout: 15000 });
+  await context.close();
+  return assertNoRuntimeErrors(`integrations social signal (${profile})`, telemetry);
+}
+
 function summarize(results) {
   return results.reduce((acc, item) => {
     acc[item.status] = (acc[item.status] || 0) + 1;
@@ -329,6 +341,7 @@ for (const profile of ['desktop', 'mobile']) {
     [`landing CTA to onboarding (${profile})`, () => testLandingCtas(browser, profile)],
     [`owner value dashboard (${profile})`, () => testOwnerValueDashboard(browser, profile)],
     [`ai operations (${profile})`, () => testAiOperations(browser, profile)],
+    [`integrations social signal (${profile})`, () => testIntegrations(browser, profile)],
   );
 }
 

@@ -159,6 +159,12 @@ function parseAiJson(text) {
   return JSON.parse(match ? match[0] : trimmed);
 }
 
+async function readProviderJson(response, provider) {
+  const text = await response.text();
+  if (!text) throw new Error(`${provider} returned an empty response.`);
+  return JSON.parse(text);
+}
+
 async function runAiFleetAnalysis(fleet = [], context = {}) {
   const fallback = buildHeuristicFleetAnalysis(fleet, context);
   const prompt = buildFleetAnalysisPrompt(fleet, context);
@@ -180,7 +186,7 @@ async function runAiFleetAnalysis(fleet = [], context = {}) {
     });
 
     if (!response.ok) throw new Error(await response.text());
-    const data = await response.json();
+    const data = await readProviderJson(response, 'Anthropic');
     const text = data.content?.map((part) => part.text || '').join('\n') || '';
     return {
       ...fallback,
@@ -209,7 +215,7 @@ async function runAiFleetAnalysis(fleet = [], context = {}) {
     });
 
     if (!response.ok) throw new Error(await response.text());
-    const data = await response.json();
+    const data = await readProviderJson(response, 'xAI');
     return {
       ...fallback,
       ...parseAiJson(data.choices?.[0]?.message?.content || ''),

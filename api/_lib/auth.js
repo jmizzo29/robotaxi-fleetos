@@ -521,7 +521,11 @@ export async function refreshTeslaTokenForConnection(connection) {
     throw new Error(detail || `Tesla token refresh failed with ${response.status}`);
   }
 
-  const data = await response.json();
+  const tokenText = await response.text();
+  if (!tokenText) {
+    throw new Error('Tesla token refresh returned an empty response.');
+  }
+  const data = JSON.parse(tokenText);
   const nextRefreshToken = data.refresh_token || refreshToken;
   const expiresAt = new Date(Date.now() + Math.max((data.expires_in || 3600) - 90, 60) * 1000).toISOString();
   await query(
@@ -576,7 +580,11 @@ export async function teslaRequestForSession(req, res, path, options = {}) {
     const detail = await response.text();
     throw new Error(detail || `Tesla request failed with ${response.status}`);
   }
-  return response.json();
+  const text = await response.text();
+  if (!text) {
+    throw new Error(`Tesla request returned an empty response for ${path}`);
+  }
+  return JSON.parse(text);
 }
 
 export async function disconnectTesla(req, res) {
