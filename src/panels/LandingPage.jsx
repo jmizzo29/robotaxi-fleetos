@@ -633,7 +633,7 @@ export default function LandingPage({ onNavigate }) {
           <p className="mb-5 text-sm font-black uppercase tracking-[0.28em] text-teal-300">
             RoboAgent
           </p>
-          <h1 className="mb-6 text-5xl font-bold leading-tight tracking-tight md:text-6xl">
+          <h1 className="mb-6 text-4xl font-bold leading-tight tracking-tight sm:text-5xl md:text-6xl">
             Your Tesla Fleet.<br />
             <span className="bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">
               AI Optimized.
@@ -656,12 +656,9 @@ export default function LandingPage({ onNavigate }) {
             <button
               type="button"
               onClick={() => onNavigate('how-it-works')}
-              className="group inline-flex items-center justify-center rounded-2xl bg-teal-500 px-10 py-5 text-lg font-semibold text-black shadow-2xl shadow-teal-500/30 transition-all duration-300 hover:bg-teal-400 hover:scale-[1.02] active:scale-95"
+              className="inline-flex items-center justify-center rounded-2xl border border-white/20 bg-black/35 px-10 py-5 text-lg font-semibold text-white shadow-2xl shadow-black/20 transition-all duration-300 hover:bg-white/10 hover:scale-[1.02] active:scale-95"
             >
-              How does it work
-              <span className="ml-3 text-2xl transition-transform duration-300 group-hover:translate-x-1">
-                -&gt;
-              </span>
+              How it works
             </button>
           </div>
 
@@ -674,7 +671,7 @@ export default function LandingPage({ onNavigate }) {
           </button>
 
           <p className="mt-6 text-sm font-medium text-zinc-400">
-            First vehicle is free - Takes under 60 seconds
+            First vehicle is free. Setup takes under 60 seconds.
           </p>
         </div>
       </main>

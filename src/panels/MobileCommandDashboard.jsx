@@ -8,14 +8,14 @@ function formatCurrency(value) {
 
 function MiniMetric({ label, value, tone, icon }) {
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-3 shadow-lg shadow-black/20">
-      <div className={`mb-3 flex h-9 w-9 items-center justify-center rounded-full ${tone}`}>
-        <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
+    <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-2.5 shadow-lg shadow-black/20">
+      <div className={`mb-2 flex h-8 w-8 items-center justify-center rounded-full ${tone}`}>
+        <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
           <path d={icon} fill="currentColor" />
         </svg>
       </div>
-      <p className="text-[12px] font-semibold leading-tight text-slate-200">{label}</p>
-      <p className="mt-1 text-2xl font-black tracking-tight text-white">{value}</p>
+      <p className="text-[11px] font-semibold leading-tight text-slate-300">{label}</p>
+      <p className="mt-1 text-xl font-black tracking-tight text-white">{value}</p>
     </div>
   );
 }
@@ -50,7 +50,7 @@ function MapPreview({ fleet = [], onNavigate }) {
     <button
       type="button"
       onClick={() => onNavigate('map')}
-      className="relative h-[330px] w-full overflow-hidden rounded-2xl border border-white/10 bg-[#202225] text-left shadow-2xl shadow-black/25"
+      className="relative h-[260px] w-full overflow-hidden rounded-2xl border border-white/10 bg-[#202225] text-left shadow-2xl shadow-black/25"
     >
       <div className="absolute inset-0 opacity-80">
         <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px)] bg-[size:54px_54px]" />
@@ -85,14 +85,14 @@ function MapPreview({ fleet = [], onNavigate }) {
             className="absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center"
             style={{ left: `${left}%`, top: `${top}%` }}
           >
-            <div className={`flex h-11 w-11 items-center justify-center rounded-full border shadow-xl ${
+            <div className={`flex h-9 w-9 items-center justify-center rounded-full border shadow-xl ${
               real
                 ? 'border-sky-300 bg-sky-500 shadow-sky-500/40'
                 : vehicle.anomalyRisk > 18
                   ? 'border-rose-200 bg-rose-500 shadow-rose-500/35'
                   : 'border-white/25 bg-slate-600 shadow-black/30'
             }`}>
-              <svg viewBox="0 0 24 24" className="h-6 w-6 text-white" aria-hidden="true">
+              <svg viewBox="0 0 24 24" className="h-5 w-5 text-white" aria-hidden="true">
                 <path fill="currentColor" d="M5 11h14l2 5v4h-2a2 2 0 0 1-4 0H9a2 2 0 0 1-4 0H3v-4l2-5Zm2-5h10l2 5H5l2-5Z" />
               </svg>
             </div>
@@ -132,7 +132,7 @@ export default function MobileCommandDashboard({
       <div className="flex items-center justify-between pt-1">
         <div>
           <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-sky-300">RoboAgent</p>
-          <h1 className="mt-1 text-3xl font-black tracking-tight text-white">Home Dashboard</h1>
+          <h1 className="mt-1 text-2xl font-black tracking-tight text-white">Command</h1>
         </div>
         <button
           type="button"

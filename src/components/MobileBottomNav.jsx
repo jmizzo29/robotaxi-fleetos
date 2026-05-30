@@ -11,7 +11,7 @@ function NavIcon({ type }) {
   };
 
   return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-5 w-5">
+    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4">
       <path d={paths[type]} fill="currentColor" />
     </svg>
   );
@@ -152,7 +152,7 @@ export default function MobileBottomNav({ route, onNavigate }) {
         </div>
       )}
 
-      <nav className="fixed inset-x-4 bottom-4 z-50 rounded-2xl border border-white/[0.12] bg-[linear-gradient(145deg,rgba(30,41,59,0.94),rgba(17,17,17,0.94))] p-2 shadow-2xl shadow-black/35 backdrop-blur lg:hidden">
+      <nav className="fixed inset-x-4 bottom-4 z-50 rounded-2xl border border-white/[0.12] bg-[linear-gradient(145deg,rgba(30,41,59,0.94),rgba(17,17,17,0.94))] p-1.5 shadow-2xl shadow-black/35 backdrop-blur lg:hidden">
         <div className="grid grid-cols-5 gap-1">
           {items.map(([id, icon, label]) => {
             const active = id === 'more' ? isMoreActive || isOpen : route === id;
@@ -162,7 +162,7 @@ export default function MobileBottomNav({ route, onNavigate }) {
                 key={id}
                 type="button"
                 onClick={() => navigateMobile(id)}
-                className={`flex flex-col items-center gap-1 rounded-xl px-2 py-2 text-[11px] font-semibold transition ${
+                className={`flex flex-col items-center gap-1 rounded-xl px-2 py-1.5 text-[10px] font-semibold transition ${
                   active ? 'bg-sky-400/10 text-sky-300' : 'text-slate-300 hover:bg-white/[0.07] hover:text-sky-300'
                 }`}
               >
