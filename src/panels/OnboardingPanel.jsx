@@ -12,7 +12,7 @@ import { getTeslaLoginUrl } from '../services/teslaHealthService';
 
 function StepBadge({ step }) {
   return (
-    <div className="rounded-full bg-zinc-900 px-4 py-1 text-sm text-zinc-300">
+    <div className="rounded-full border border-[#141b27]/10 bg-white px-4 py-1 text-sm font-semibold text-slate-700 shadow-sm">
       Step {step} of 5
     </div>
   );
@@ -22,7 +22,7 @@ function PrimaryButton({ children, className = '', ...props }) {
   return (
     <button
       type="button"
-      className={`w-full rounded-3xl bg-teal-500 py-6 text-xl font-semibold text-black transition hover:bg-teal-400 disabled:cursor-not-allowed disabled:bg-zinc-800 disabled:text-zinc-500 ${className}`}
+      className={`w-full rounded-3xl bg-[#172231] py-6 text-xl font-semibold text-white transition hover:bg-[#243044] disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400 ${className}`}
       {...props}
     >
       {children}
@@ -521,16 +521,16 @@ export default function OnboardingPanel({
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-gradient-to-b from-zinc-950 to-black px-4 py-3 text-white sm:px-6">
+    <div className="flex min-h-screen flex-col bg-[#f7f7f5] px-4 py-3 text-[#141b27] sm:px-6">
       <div className="mx-auto mb-2 flex w-full max-w-6xl items-center justify-between">
-        <button type="button" onClick={() => onNavigate?.('landing')} className="text-xl font-semibold tracking-[0.08em] text-teal-300">
+        <button type="button" onClick={() => onNavigate?.('landing')} className="text-xl font-semibold tracking-[0.08em] text-[#172231]">
           ROBOAGENT
         </button>
         <div className="flex items-center gap-3">
           <button
             type="button"
             onClick={() => onNavigate?.('landing')}
-            className="rounded-full border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm font-semibold text-zinc-200 transition hover:border-teal-400 hover:text-teal-200"
+            className="rounded-full border border-[#141b27]/10 bg-white px-4 py-2 text-sm font-semibold text-[#172231] shadow-sm transition hover:bg-slate-100"
           >
             Back Home
           </button>

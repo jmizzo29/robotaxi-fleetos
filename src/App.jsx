@@ -134,12 +134,12 @@ const initialFleet = [
 
 function SsoCallbackPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-950 px-6 text-white">
+    <div className="flex min-h-screen items-center justify-center bg-[#f7f7f5] px-6 text-[#141b27]">
       <AuthenticateWithRedirectCallback />
       <div className="text-center">
-        <p className="text-sm font-black uppercase tracking-[0.22em] text-teal-300">RoboAgent</p>
+        <p className="text-sm font-black uppercase tracking-[0.22em] text-slate-500">RoboAgent</p>
         <h1 className="mt-3 text-3xl font-black">Finishing secure sign in...</h1>
-        <p className="mt-3 text-sm text-zinc-400">You will return to onboarding automatically.</p>
+        <p className="mt-3 text-sm text-slate-500">You will return to onboarding automatically.</p>
       </div>
     </div>
   );
@@ -255,31 +255,31 @@ function FleetApp() {
   ];
 
   const operationsStatus = (
-    <div className="w-full rounded-lg border border-white/10 bg-slate-900/80 p-4 shadow-xl shadow-black/10 sm:min-w-[280px] sm:w-auto sm:p-5">
-      <p className="text-xs uppercase tracking-[0.2em] text-sky-300 mb-3">
+    <div className="w-full rounded-lg border border-[#141b27]/10 bg-white/80 p-4 shadow-xl shadow-slate-900/10 sm:min-w-[280px] sm:w-auto sm:p-5">
+      <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
         Operations Status
       </p>
 
       <div className="space-y-3">
         <div className="flex justify-between">
-          <span className="text-slate-400">Active Vehicles</span>
-          <span className="font-bold text-emerald-300">{fleet.length}</span>
+          <span className="text-slate-500">Active Vehicles</span>
+          <span className="font-bold text-[#141b27]">{fleet.length}</span>
         </div>
 
         <div className="flex justify-between">
-          <span className="text-slate-400">Real Tesla</span>
-          <span className="font-bold text-emerald-300">{realVehicles.length}</span>
+          <span className="text-slate-500">Real Tesla</span>
+          <span className="font-bold text-[#141b27]">{realVehicles.length}</span>
         </div>
 
         <div className="flex justify-between">
-          <span className="text-slate-400">Simulation Fleet</span>
-          <span className="font-bold text-slate-300">{simulatedVehicles.length}</span>
+          <span className="text-slate-500">Simulation Fleet</span>
+          <span className="font-bold text-slate-700">{simulatedVehicles.length}</span>
         </div>
 
         <button
           onClick={refreshRealTesla}
           disabled={isLoadingReal}
-          className="w-full rounded-md border border-sky-400/30 bg-sky-400/10 px-4 py-3 text-sm font-bold text-sky-100 transition hover:bg-sky-400/20 disabled:cursor-wait disabled:opacity-60"
+          className="w-full rounded-md border border-[#172231]/15 bg-[#172231] px-4 py-3 text-sm font-bold text-white transition hover:bg-[#243044] disabled:cursor-wait disabled:opacity-60"
         >
           {isLoadingReal ? 'Syncing Tesla...' : 'Sync Tesla Telemetry'}
         </button>
@@ -312,7 +312,7 @@ function FleetApp() {
         <div className="hidden md:block">
           <PageHeader
             eyebrow="Live Operations"
-            title={<><span>RoboAgent</span><span className="block text-sky-300">Command Center</span></>}
+            title={<><span>RoboAgent</span><span className="block text-slate-500">Command Center</span></>}
             description="The main owner dashboard after sign-in: AI plans, Tesla telemetry, pricing, charging, maintenance, and profitability."
             action={operationsStatus}
           />
@@ -391,7 +391,7 @@ function FleetApp() {
         />
         <Suspense
           fallback={(
-            <div className="flex h-[430px] items-center justify-center rounded-lg border border-white/10 bg-slate-900/80 text-sm font-bold text-slate-400 shadow-xl shadow-black/20 sm:h-[520px] lg:h-[900px]">
+            <div className="flex h-[430px] items-center justify-center rounded-lg border border-[#141b27]/10 bg-white/80 text-sm font-bold text-slate-500 shadow-xl shadow-slate-900/10 sm:h-[520px] lg:h-[900px]">
               Loading fleet map...
             </div>
           )}
@@ -701,29 +701,41 @@ function FleetApp() {
   }
 
   if (isPublicAgentRoute) {
-    return <AgentChatPage onNavigate={navigate} />;
+    return (
+      <div className="robo-minimal">
+        <AgentChatPage onNavigate={navigate} />
+      </div>
+    );
   }
 
   if (isPublicAboutRoute) {
-    return <AgentAboutPage onNavigate={navigate} />;
+    return (
+      <div className="robo-minimal">
+        <AgentAboutPage onNavigate={navigate} />
+      </div>
+    );
   }
 
   if (isPublicHowItWorksRoute) {
-    return <HowItWorksPage onNavigate={navigate} />;
+    return (
+      <div className="robo-minimal">
+        <HowItWorksPage onNavigate={navigate} />
+      </div>
+    );
   }
 
   if (isPublicLegalRoute) {
     return (
-      <div className="min-h-screen bg-[#0b1120] px-5 py-6 text-slate-100">
+      <div className="robo-minimal min-h-screen bg-[#f7f7f5] px-5 py-6 text-[#141b27]">
         <header className="mx-auto mb-8 flex max-w-5xl items-center justify-between">
           <button type="button" onClick={() => navigate('landing')} className="flex items-center gap-3">
-            <span className="h-2.5 w-2.5 rounded-full bg-sky-300 shadow-lg shadow-sky-300/50" />
-            <span className="text-sm font-black uppercase tracking-[0.28em] text-sky-200">RoboAgent</span>
+            <span className="h-2.5 w-2.5 rounded-full bg-[#172231]" />
+            <span className="text-sm font-black uppercase tracking-[0.28em] text-[#172231]">RoboAgent</span>
           </button>
           <button
             type="button"
             onClick={() => navigate('landing')}
-            className="rounded-full border border-white/10 bg-white/5 px-4 py-2 text-sm font-bold text-slate-200 transition hover:bg-white/10"
+            className="rounded-full border border-[#172231]/15 bg-white px-4 py-2 text-sm font-bold text-[#172231] shadow-sm transition hover:bg-slate-100"
           >
             Back to Home
           </button>
@@ -735,18 +747,20 @@ function FleetApp() {
 
   if (isPublicOnboardingRoute) {
     return (
-      <OnboardingPanel
-        realVehicleCount={realVehicles.length}
-        isLoading={isLoadingReal}
-        onSync={refreshRealTesla}
-        onNavigate={navigate}
-      />
+      <div className="robo-minimal">
+        <OnboardingPanel
+          realVehicleCount={realVehicles.length}
+          isLoading={isLoadingReal}
+          onSync={refreshRealTesla}
+          onNavigate={navigate}
+        />
+      </div>
     );
   }
 
   if (isPublicAccountRoute) {
     return (
-      <div className="min-h-screen bg-[radial-gradient(circle_at_12%_8%,rgba(14,165,233,0.13),transparent_30%),linear-gradient(180deg,#f5f7fb_0%,#eaf2f7_48%,#ffffff_100%)] text-slate-950">
+      <div className="robo-minimal min-h-screen bg-[#f7f7f5] text-[#141b27]">
         <main>
           <AccountPanel onNavigate={navigate} />
         </main>
@@ -755,7 +769,7 @@ function FleetApp() {
   }
 
   return (
-    <div className="min-h-screen bg-[#111111] text-slate-100 flex">
+    <div className="robo-minimal flex min-h-screen bg-[#f7f7f5] text-[#141b27]">
       <Sidebar
         replayMode={replayMode}
         setReplayMode={setReplayMode}
@@ -765,7 +779,7 @@ function FleetApp() {
         onNavigate={navigate}
       />
 
-      <main className="flex-1 overflow-y-auto bg-[radial-gradient(circle_at_top_left,rgba(14,165,233,0.10),transparent_34%),radial-gradient(circle_at_bottom_right,rgba(16,185,129,0.06),transparent_34%),linear-gradient(180deg,#171717_0%,#111111_100%)] p-4 pb-28 sm:p-6 sm:pb-28 lg:p-8">
+      <main className="flex-1 overflow-y-auto bg-[#f7f7f5] p-4 pb-28 sm:p-6 sm:pb-28 lg:p-8">
         <div className="mx-auto max-w-[1900px]">
           {pages[route] || pages.overview}
         </div>

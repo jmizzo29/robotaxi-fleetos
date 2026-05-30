@@ -20,7 +20,7 @@ function TextInput(props) {
   return (
     <input
       {...props}
-      className="w-full rounded-2xl border border-zinc-700 bg-zinc-900 px-4 py-3 text-sm font-semibold text-white outline-none transition placeholder:text-zinc-500 focus:border-teal-500 sm:py-4"
+      className="w-full rounded-2xl border border-[#141b27]/15 bg-white px-4 py-3 text-sm font-semibold text-[#141b27] outline-none transition placeholder:text-slate-400 focus:border-[#172231] sm:py-4"
     />
   );
 }
@@ -28,7 +28,7 @@ function TextInput(props) {
 function Field({ label, children }) {
   return (
     <label className="block">
-      <span className="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-zinc-400">{label}</span>
+      <span className="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-slate-500">{label}</span>
       {children}
     </label>
   );
@@ -36,9 +36,9 @@ function Field({ label, children }) {
 
 function Metric({ label, value }) {
   return (
-    <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
-      <p className="text-xs font-black uppercase tracking-[0.16em] text-zinc-500">{label}</p>
-      <p className="mt-2 text-2xl font-black text-white">{value}</p>
+    <div className="rounded-2xl border border-[#141b27]/10 bg-slate-50 p-4">
+      <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">{label}</p>
+      <p className="mt-2 text-2xl font-black text-[#141b27]">{value}</p>
     </div>
   );
 }
@@ -150,29 +150,29 @@ export default function AccountPanel({ onNavigate }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#050506] px-4 py-5 text-white">
+    <div className="min-h-screen bg-[#f7f7f5] px-4 py-5 text-[#141b27]">
       <header className="mx-auto flex max-w-3xl items-center justify-between">
         <button type="button" onClick={() => onNavigate?.('landing')} className="flex items-center gap-3">
-          <span className="h-2.5 w-2.5 rounded-full bg-teal-400 shadow-lg shadow-teal-300/50" />
-          <span className="text-sm font-black uppercase tracking-[0.24em] text-teal-200">RoboAgent</span>
+          <span className="h-2.5 w-2.5 rounded-full bg-[#172231]" />
+          <span className="text-sm font-black uppercase tracking-[0.2em] text-[#172231]">RoboAgent</span>
         </button>
         <button
           type="button"
           onClick={() => onNavigate?.('landing')}
-          className="rounded-full border border-zinc-800 bg-zinc-950 px-4 py-2 text-sm font-black text-zinc-300 transition hover:border-zinc-700 hover:text-white"
+          className="rounded-full border border-[#141b27]/10 bg-white px-4 py-2 text-sm font-black text-[#172231] shadow-sm transition hover:bg-slate-100"
         >
           Home
         </button>
       </header>
 
       <main className="mx-auto grid min-h-[calc(100vh-92px)] max-w-3xl place-items-center py-5 sm:py-8">
-        <section className="w-full max-w-[480px] rounded-[1.5rem] border border-zinc-800 bg-zinc-950 p-4 shadow-2xl shadow-black/40 sm:p-6">
+        <section className="w-full max-w-[480px] rounded-[1.5rem] border border-[#141b27]/10 bg-white/90 p-4 shadow-2xl shadow-slate-900/10 sm:p-6">
           <div className="mb-5 sm:mb-6">
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-teal-300">Account</p>
-            <h1 className="mt-2 text-2xl font-black tracking-tight text-white sm:text-3xl">
+            <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">Account</p>
+            <h1 className="mt-2 text-2xl font-semibold text-black sm:text-3xl">
               {hasRealAccount ? 'You are signed in' : 'Sign in to RoboAgent'}
             </h1>
-            <p className="mt-2 text-sm font-semibold leading-5 text-zinc-400 sm:leading-6">
+            <p className="mt-2 text-sm font-semibold leading-5 text-slate-500 sm:leading-6">
               {hasRealAccount
                 ? 'Manage this browser session.'
                 : 'Use your account first. Tesla connects after sign in.'}
@@ -194,21 +194,21 @@ export default function AccountPanel({ onNavigate }) {
                   <button
                     type="button"
                     onClick={() => openClerkAuth('signin')}
-                    className="w-full rounded-2xl bg-teal-500 px-5 py-4 text-base font-black text-black transition hover:bg-teal-400"
+                    className="w-full rounded-2xl bg-[#172231] px-5 py-4 text-base font-black text-white transition hover:bg-[#243044]"
                   >
                     Sign In
                   </button>
                   <button
                     type="button"
                     onClick={() => openClerkAuth('create')}
-                    className="w-full rounded-2xl border border-zinc-700 bg-zinc-900 px-5 py-4 text-base font-black text-zinc-100 transition hover:bg-zinc-800"
+                    className="w-full rounded-2xl border border-[#141b27]/10 bg-slate-100 px-5 py-4 text-base font-black text-[#141b27] transition hover:bg-slate-200"
                   >
                     Create Account
                   </button>
                 </>
               ) : (
                 <>
-                  <div className="flex rounded-2xl border border-zinc-800 bg-zinc-900 p-1">
+                  <div className="flex rounded-2xl border border-[#141b27]/10 bg-slate-100 p-1">
                     {[
                       ['signin', 'Sign In'],
                       ['create', 'Create'],
@@ -218,7 +218,7 @@ export default function AccountPanel({ onNavigate }) {
                         type="button"
                         onClick={() => setAuthMode(mode)}
                         className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-black transition sm:py-3 ${
-                          authMode === mode ? 'bg-teal-500 text-black shadow-sm' : 'text-zinc-400 hover:bg-zinc-800 hover:text-white'
+                          authMode === mode ? 'bg-[#172231] text-white shadow-sm' : 'text-slate-500 hover:bg-white hover:text-black'
                         }`}
                       >
                         {label}
@@ -248,7 +248,7 @@ export default function AccountPanel({ onNavigate }) {
                         type="button"
                         disabled={isBusy}
                         onClick={() => runAction(() => loginFleetOsAccount(loginForm), 'Signed in successfully.')}
-                        className="w-full rounded-2xl bg-teal-500 px-5 py-3.5 text-base font-black text-black transition hover:bg-teal-400 disabled:cursor-wait disabled:opacity-60 sm:py-4"
+                        className="w-full rounded-2xl bg-[#172231] px-5 py-3.5 text-base font-black text-white transition hover:bg-[#243044] disabled:cursor-wait disabled:opacity-60 sm:py-4"
                       >
                         {isBusy ? 'Signing In...' : 'Sign In'}
                       </button>
@@ -271,7 +271,7 @@ export default function AccountPanel({ onNavigate }) {
                         type="button"
                         disabled={isBusy}
                         onClick={() => runAction(() => registerFleetOsAccount(registerForm), 'Account created. This browser is now signed in.')}
-                        className="w-full rounded-2xl bg-teal-500 px-5 py-4 text-base font-black text-black transition hover:bg-teal-400 disabled:cursor-wait disabled:opacity-60"
+                        className="w-full rounded-2xl bg-[#172231] px-5 py-4 text-base font-black text-white transition hover:bg-[#243044] disabled:cursor-wait disabled:opacity-60"
                       >
                         {isBusy ? 'Creating...' : 'Create Account'}
                       </button>
@@ -280,22 +280,22 @@ export default function AccountPanel({ onNavigate }) {
                 </>
               )}
 
-              <p className="text-center text-xs font-semibold leading-5 text-zinc-600">
+              <p className="text-center text-xs font-semibold leading-5 text-slate-500">
                 Tesla login is separate and comes next.
               </p>
             </div>
           ) : (
             <div className="space-y-4">
-              <div className="rounded-2xl border border-zinc-800 bg-zinc-900 p-4">
-                <p className="text-xs font-black uppercase tracking-[0.16em] text-emerald-300">Signed In</p>
-                <p className="mt-2 text-lg font-black text-white">{user.name || 'RoboAgent Owner'}</p>
-                <p className="mt-1 truncate text-sm font-semibold text-zinc-400">{user.email}</p>
+              <div className="rounded-2xl border border-[#141b27]/10 bg-slate-50 p-4">
+                <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">Signed In</p>
+                <p className="mt-2 text-lg font-black text-[#141b27]">{user.name || 'RoboAgent Owner'}</p>
+                <p className="mt-1 truncate text-sm font-semibold text-slate-500">{user.email}</p>
               </div>
 
               <button
                 type="button"
                 onClick={() => onNavigate?.('overview')}
-                className="w-full rounded-2xl bg-teal-500 px-5 py-4 text-base font-black text-black transition hover:bg-teal-400"
+                className="w-full rounded-2xl bg-[#172231] px-5 py-4 text-base font-black text-white transition hover:bg-[#243044]"
               >
                 Open Dashboard
               </button>
@@ -303,13 +303,13 @@ export default function AccountPanel({ onNavigate }) {
                 type="button"
                 disabled={isBusy}
                 onClick={signOut}
-                className="w-full rounded-2xl border border-red-400/30 bg-red-500/10 px-5 py-4 text-base font-black text-red-200 transition hover:bg-red-500/20 disabled:cursor-wait disabled:opacity-60"
+                className="w-full rounded-2xl border border-red-500/15 bg-red-50 px-5 py-4 text-base font-black text-red-700 transition hover:bg-red-100 disabled:cursor-wait disabled:opacity-60"
               >
                 {isBusy ? 'Signing Out...' : 'Sign Out'}
               </button>
 
-              <details className="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-4">
-                <summary className="cursor-pointer text-sm font-black text-zinc-300">Account Details</summary>
+              <details className="rounded-2xl border border-[#141b27]/10 bg-slate-50 p-4">
+                <summary className="cursor-pointer text-sm font-black text-slate-700">Account Details</summary>
                 <div className="mt-4 space-y-4">
                   <div className="grid gap-3 sm:grid-cols-3">
                     <Metric label="Plan" value="Free" />
@@ -327,7 +327,7 @@ export default function AccountPanel({ onNavigate }) {
                         type="button"
                         disabled={isBusy}
                         onClick={() => runAction(() => updateFleetOsProfile({ name: profileName }), 'Profile updated.')}
-                        className="rounded-2xl border border-zinc-700 bg-zinc-900 px-5 py-4 text-sm font-black text-zinc-200 transition hover:bg-zinc-800 disabled:cursor-wait disabled:opacity-60"
+                        className="rounded-2xl border border-[#141b27]/10 bg-white px-5 py-4 text-sm font-black text-[#141b27] transition hover:bg-slate-100 disabled:cursor-wait disabled:opacity-60"
                       >
                         Save
                       </button>
@@ -336,7 +336,7 @@ export default function AccountPanel({ onNavigate }) {
                   <button
                     type="button"
                     onClick={() => onNavigate?.('onboarding')}
-                    className="w-full rounded-2xl border border-teal-500/30 bg-teal-500/10 px-5 py-4 text-sm font-black text-teal-200 transition hover:bg-teal-500/20"
+                    className="w-full rounded-2xl border border-[#172231]/15 bg-slate-100 px-5 py-4 text-sm font-black text-[#172231] transition hover:bg-slate-200"
                   >
                     Connect Tesla
                   </button>

@@ -663,51 +663,51 @@ export function AgentChatPage({ onNavigate }) {
   const primaryAction = response.steps?.[0] || 'Charge Model Y after 11 PM and clean both cars before Saturday bookings.';
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#0a0a0a]">
-      <header className="sticky top-0 z-50 flex items-center justify-between border-b border-zinc-800 bg-black/80 p-4 backdrop-blur-md">
+    <div className="flex min-h-screen flex-col bg-[#f7f7f5] text-[#141b27]">
+      <header className="sticky top-0 z-50 flex items-center justify-between border-b border-[#141b27]/10 bg-white/90 p-4 backdrop-blur-md">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-400 text-xl">
+          <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[#172231] text-xl font-black text-white">
             R
           </div>
           <div>
-            <p className="font-semibold text-white">RoboAgent</p>
+            <p className="font-semibold text-[#141b27]">RoboAgent</p>
             <p data-testid="agent-online-status" className="flex items-center gap-1 text-xs text-teal-400 before:mr-1 before:content-['●'] [&>span:first-child]:hidden">
               <span aria-hidden="true">●</span>
               <span>Online</span>
             </p>
           </div>
         </div>
-        <button type="button" onClick={() => onNavigate('landing')} className="text-xl text-zinc-400 hover:text-white" aria-label="Back home">
+        <button type="button" onClick={() => onNavigate('landing')} className="text-xl text-slate-500 hover:text-black" aria-label="Back home">
           ...
         </button>
       </header>
 
       <main className="flex-1 space-y-6 overflow-y-auto p-4 pb-32">
         <div className="flex gap-3">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-400 text-xl">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl bg-[#172231] text-xl font-black text-white">
             R
           </div>
-          <div className="max-w-[75%] rounded-3xl rounded-tl-none bg-zinc-900 px-5 py-4">
-            <p className="text-zinc-100">
+          <div className="max-w-[75%] rounded-3xl rounded-tl-none border border-[#141b27]/10 bg-white px-5 py-4 shadow-sm">
+            <p className="text-slate-700">
               Good morning! I&apos;ve analyzed your fleet. Here&apos;s what I recommend for today:
             </p>
           </div>
         </div>
 
         <div className="flex justify-end">
-          <div className="max-w-[70%] rounded-3xl rounded-tr-none bg-teal-600 px-5 py-4">
+          <div className="max-w-[70%] rounded-3xl rounded-tr-none bg-[#172231] px-5 py-4">
             <p className="text-white">{goal || "What's the best plan for this weekend?"}</p>
           </div>
         </div>
 
         <div className="flex gap-3">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-400 text-xl">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl bg-[#172231] text-xl font-black text-white">
             R
           </div>
-          <div className="max-w-[75%] rounded-3xl rounded-tl-none bg-zinc-900 px-5 py-4">
-            <p className="font-medium text-emerald-400">{firstMetric}</p>
-            <p className="mt-2 text-zinc-300">{primaryAction}</p>
-            <p className="mt-3 text-xs text-teal-400">
+          <div className="max-w-[75%] rounded-3xl rounded-tl-none border border-[#141b27]/10 bg-white px-5 py-4 shadow-sm">
+            <p className="font-medium text-[#141b27]">{firstMetric}</p>
+            <p className="mt-2 text-slate-600">{primaryAction}</p>
+            <p className="mt-3 text-xs text-slate-500">
               Expected impact: <span className="font-bold">{response.impact || '$284 projected'}</span>
             </p>
             <span className="hidden">{response.title}</span>
@@ -715,7 +715,7 @@ export function AgentChatPage({ onNavigate }) {
         </div>
       </main>
 
-      <div className="border-t border-zinc-800 bg-[#0a0a0a] px-4 pb-4">
+      <div className="border-t border-[#141b27]/10 bg-[#f7f7f5] px-4 pb-4">
         <div className="flex gap-2 overflow-x-auto pb-3 pt-3">
           {prompts.map(([chip, prompt]) => (
             <button
@@ -725,7 +725,7 @@ export function AgentChatPage({ onNavigate }) {
                 setGoal(prompt);
                 setResponse(buildDemoResponse(prompt));
               }}
-              className="whitespace-nowrap rounded-2xl border border-zinc-700 bg-zinc-900 px-5 py-2 text-sm text-zinc-300 hover:bg-zinc-800"
+              className="whitespace-nowrap rounded-2xl border border-[#141b27]/10 bg-white px-5 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
             >
               {chip}
             </button>
@@ -733,8 +733,8 @@ export function AgentChatPage({ onNavigate }) {
         </div>
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 border-t border-zinc-800 bg-zinc-950 p-4">
-        <div className="flex items-center rounded-3xl bg-zinc-900 px-5 py-2">
+      <div className="fixed bottom-0 left-0 right-0 border-t border-[#141b27]/10 bg-white p-4">
+        <div className="flex items-center rounded-3xl border border-[#141b27]/10 bg-slate-50 px-5 py-2">
           <input
             id="public-agent-question"
             type="text"
@@ -744,13 +744,13 @@ export function AgentChatPage({ onNavigate }) {
               if (event.key === 'Enter') askAgent();
             }}
             placeholder="Ask RoboAgent anything..."
-            className="flex-1 bg-transparent text-white outline-none placeholder:text-zinc-500"
+            className="flex-1 bg-transparent text-[#141b27] outline-none placeholder:text-slate-400"
           />
           <button
             type="button"
             onClick={askAgent}
             disabled={isThinking}
-            className="ml-3 flex h-10 w-10 items-center justify-center rounded-2xl bg-teal-500 text-xl text-white hover:bg-teal-600 disabled:cursor-wait disabled:opacity-70"
+            className="ml-3 flex h-10 min-w-16 items-center justify-center rounded-2xl bg-[#172231] px-4 text-sm font-black text-white hover:bg-[#243044] disabled:cursor-wait disabled:opacity-70"
             aria-label="Ask RoboAgent"
           >
             Send

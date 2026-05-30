@@ -6,8 +6,83 @@ body,
   margin: 0;
   padding: 0;
   min-height: 100%;
-  background: #111111;
+  background: #f7f7f5;
   font-family: Inter, sans-serif;
+}
+
+.robo-minimal {
+  background: #f7f7f5;
+  color: #141b27;
+}
+
+.robo-minimal [class*="bg-slate-900"],
+.robo-minimal [class*="bg-slate-950"],
+.robo-minimal [class*="bg-zinc-900"],
+.robo-minimal [class*="bg-zinc-950"],
+.robo-minimal [class*="bg-black"],
+.robo-minimal [class*="bg-[#111111]"],
+.robo-minimal [class*="bg-[#151821]"],
+.robo-minimal [class*="bg-[#0a0a0a]"],
+.robo-minimal [class*="bg-[#050506]"],
+.robo-minimal [class*="from-zinc-900"],
+.robo-minimal [class*="from-zinc-950"],
+.robo-minimal [class*="from-slate-900"],
+.robo-minimal [class*="to-zinc-950"],
+.robo-minimal [class*="to-black"],
+.robo-minimal [class*="to-slate-950"] {
+  background: rgba(255, 255, 255, 0.82) !important;
+  color: #141b27 !important;
+}
+
+.robo-minimal [class*="bg-gradient-to"] {
+  background-image: none !important;
+}
+
+.robo-minimal [class*="border-white/10"],
+.robo-minimal [class*="border-zinc-800"],
+.robo-minimal [class*="border-slate-800"] {
+  border-color: rgba(20, 27, 39, 0.12) !important;
+}
+
+.robo-minimal [class*="text-white"],
+.robo-minimal [class*="text-slate-50"],
+.robo-minimal [class*="text-slate-100"],
+.robo-minimal [class*="text-zinc-100"] {
+  color: #141b27 !important;
+}
+
+.robo-minimal [class*="text-slate-200"],
+.robo-minimal [class*="text-slate-300"],
+.robo-minimal [class*="text-zinc-200"],
+.robo-minimal [class*="text-zinc-300"] {
+  color: #334155 !important;
+}
+
+.robo-minimal [class*="text-slate-400"],
+.robo-minimal [class*="text-slate-500"],
+.robo-minimal [class*="text-zinc-400"],
+.robo-minimal [class*="text-zinc-500"] {
+  color: #64748b !important;
+}
+
+.robo-minimal button[class*="bg-[#172231]"],
+.robo-minimal a[class*="bg-[#172231]"],
+.robo-minimal [class*="bg-[#172231]"][class*="text-white"],
+.robo-minimal [class*="bg-[#172231]"] [class*="text-white"] {
+  color: #ffffff !important;
+}
+
+.robo-minimal [class*="shadow-black"] {
+  --tw-shadow-color: rgba(15, 23, 42, 0.14) !important;
+  --tw-shadow: var(--tw-shadow-colored) !important;
+}
+
+.robo-minimal input,
+.robo-minimal select,
+.robo-minimal textarea {
+  background: rgba(255, 255, 255, 0.9) !important;
+  color: #141b27 !important;
+  border-color: rgba(20, 27, 39, 0.16) !important;
 }
 
 .mapboxgl-popup.fleetos-popup {

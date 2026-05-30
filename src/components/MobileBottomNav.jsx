@@ -98,25 +98,25 @@ export default function MobileBottomNav({ route, onNavigate }) {
   return (
     <>
       {isOpen && (
-        <div className="fixed inset-x-4 bottom-24 z-50 max-h-[68vh] overflow-hidden rounded-2xl border border-white/[0.12] bg-[linear-gradient(145deg,rgba(30,41,59,0.96),rgba(17,17,17,0.96))] shadow-2xl shadow-black/40 backdrop-blur lg:hidden">
-          <div className="flex items-center justify-between border-b border-white/10 px-4 py-3">
+        <div className="fixed inset-x-4 bottom-24 z-50 max-h-[68vh] overflow-hidden rounded-2xl border border-[#141b27]/10 bg-white/95 shadow-2xl shadow-slate-900/20 backdrop-blur lg:hidden">
+          <div className="flex items-center justify-between border-b border-[#141b27]/10 px-4 py-3">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-sky-300">RoboAgent</p>
-              <h2 className="text-lg font-black text-slate-100">Menu</h2>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">RoboAgent</p>
+              <h2 className="text-lg font-black text-[#141b27]">Menu</h2>
             </div>
             <div className="flex items-center gap-2">
               <button
                 type="button"
                 onClick={signOut}
                 disabled={isSigningOut}
-                className="rounded-full border border-red-400/20 bg-red-500/10 px-3 py-2 text-xs font-black text-red-100 transition hover:bg-red-500/15 disabled:cursor-wait disabled:opacity-60"
+                className="rounded-full border border-red-500/15 bg-red-50 px-3 py-2 text-xs font-black text-red-700 transition hover:bg-red-100 disabled:cursor-wait disabled:opacity-60"
               >
                 {isSigningOut ? '...' : 'Sign Out'}
               </button>
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-300"
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-[#141b27]/10 bg-slate-100 text-slate-700"
                 aria-label="Close mobile menu"
               >
                 X
@@ -127,7 +127,7 @@ export default function MobileBottomNav({ route, onNavigate }) {
           <div className="max-h-[54vh] space-y-4 overflow-y-auto p-3">
             {menuSections.map((section) => (
               <div key={section.label}>
-                <p className="mb-2 px-1 text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">
+                <p className="mb-2 px-1 text-[10px] font-black uppercase tracking-[0.16em] text-slate-500">
                   {section.label}
                 </p>
                 <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
@@ -138,12 +138,12 @@ export default function MobileBottomNav({ route, onNavigate }) {
                       onClick={() => navigateMobile(id)}
                       className={`rounded-xl border p-3 text-left transition ${
                         route === id
-                          ? 'border-sky-400/30 bg-sky-400/10 text-sky-100'
-                          : 'border-white/10 bg-white/[0.07] text-slate-100 hover:border-white/20 hover:bg-white/[0.12]'
+                          ? 'border-[#172231]/15 bg-[#172231] text-white'
+                          : 'border-[#141b27]/10 bg-slate-50 text-slate-700 hover:border-[#141b27]/15 hover:bg-white'
                       }`}
                     >
                       <span className="block text-sm font-black">{label}</span>
-                      <span className="mt-1 block text-xs leading-5 text-slate-300">{detail}</span>
+                      <span className={`mt-1 block text-xs leading-5 ${route === id ? 'text-white/75' : 'text-slate-500'}`}>{detail}</span>
                     </button>
                   ))}
                 </div>
@@ -153,7 +153,7 @@ export default function MobileBottomNav({ route, onNavigate }) {
         </div>
       )}
 
-      <nav className="fixed inset-x-4 bottom-4 z-50 rounded-2xl border border-white/[0.12] bg-[linear-gradient(145deg,rgba(30,41,59,0.94),rgba(17,17,17,0.94))] p-1.5 shadow-2xl shadow-black/35 backdrop-blur lg:hidden">
+      <nav className="fixed inset-x-4 bottom-4 z-50 rounded-2xl border border-[#141b27]/10 bg-white/95 p-1.5 shadow-2xl shadow-slate-900/20 backdrop-blur lg:hidden">
         <div className="grid grid-cols-5 gap-1">
           {items.map(([id, icon, label]) => {
             const active = id === 'more' ? isMoreActive || isOpen : route === id;
@@ -164,7 +164,7 @@ export default function MobileBottomNav({ route, onNavigate }) {
                 type="button"
                 onClick={() => navigateMobile(id)}
                 className={`flex flex-col items-center gap-1 rounded-xl px-2 py-1.5 text-[10px] font-semibold transition ${
-                  active ? 'bg-sky-400/10 text-sky-300' : 'text-slate-300 hover:bg-white/[0.07] hover:text-sky-300'
+                  active ? 'bg-[#172231] text-white' : 'text-slate-600 hover:bg-slate-100 hover:text-black'
                 }`}
               >
                 <NavIcon type={icon} />
