@@ -72,6 +72,7 @@ export default function ClerkAuthProvider({ children }) {
           socialButtonsBlockButton: 'border border-zinc-700 bg-zinc-900 text-white hover:bg-zinc-800',
           socialButtonsBlockButtonText: 'text-white font-semibold',
           socialButtonsBlockButton__github: 'hidden',
+          socialButtonsBlockButton__apple: 'hidden',
           dividerLine: 'bg-zinc-800',
           dividerText: 'text-zinc-500',
           footer: 'bg-zinc-950 border-zinc-800',

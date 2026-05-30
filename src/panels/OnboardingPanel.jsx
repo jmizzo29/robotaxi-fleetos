@@ -117,7 +117,7 @@ function ClerkOAuthButtons() {
 
   return (
     <>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 gap-4">
         <button
           type="button"
           onClick={() => startOAuth('oauth_google')}
@@ -128,15 +128,6 @@ function ClerkOAuthButtons() {
           Google
         </button>
 
-        <button
-          type="button"
-          onClick={() => startOAuth('oauth_apple')}
-          disabled={!clerkReady}
-          className="flex items-center justify-center gap-3 rounded-2xl border border-zinc-700 bg-zinc-900 py-5 font-medium transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          <span className="text-xl">A</span>
-          Apple
-        </button>
       </div>
 
       {oauthError && (
@@ -147,7 +138,7 @@ function ClerkOAuthButtons() {
 
       {loadTimedOut && !clerkReady && (
         <div className="rounded-2xl border border-amber-400/30 bg-amber-500/10 p-4 text-sm font-semibold text-amber-100">
-          Google and Apple sign-up are waiting on Clerk. Check that production Clerk keys and social providers are enabled.
+          Google sign-up is waiting on Clerk. Check that production Clerk keys and Google are enabled.
         </div>
       )}
     </>
@@ -157,21 +148,18 @@ function ClerkOAuthButtons() {
 function OAuthFallbackButtons() {
   return (
     <>
-      <div className="grid grid-cols-2 gap-4">
-        {['Google', 'Apple'].map((provider) => (
-          <button
-            key={provider}
-            type="button"
-            disabled
-            className="flex cursor-not-allowed items-center justify-center gap-3 rounded-2xl border border-zinc-700 bg-zinc-900 py-5 font-medium opacity-50"
-          >
-            <span className="text-xl">{provider === 'Google' ? 'G' : 'A'}</span>
-            {provider}
-          </button>
-        ))}
+      <div className="grid grid-cols-1 gap-4">
+        <button
+          type="button"
+          disabled
+          className="flex cursor-not-allowed items-center justify-center gap-3 rounded-2xl border border-zinc-700 bg-zinc-900 py-5 font-medium opacity-50"
+        >
+          <span className="text-xl">G</span>
+          Google
+        </button>
       </div>
       <div className="rounded-2xl border border-amber-400/30 bg-amber-500/10 p-4 text-sm font-semibold text-amber-100">
-        Google and Apple OAuth require Clerk&apos;s public browser key.
+        Google OAuth requires Clerk&apos;s public browser key.
       </div>
     </>
   );
