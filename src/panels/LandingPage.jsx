@@ -609,7 +609,7 @@ export default function LandingPage({ onNavigate }) {
           </p>
 
           <h1 className="mx-auto mt-16 max-w-3xl text-4xl font-medium leading-tight text-black sm:text-5xl md:text-6xl">
-            Autonomous AI Agents to maximize your Tesla rents and robotaxis
+            Autonomous AI Agents to maximize your Tesla rentals and robotaxis
           </h1>
 
           <div className="mt-7 flex flex-wrap items-center justify-center gap-4 sm:gap-10">
