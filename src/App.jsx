@@ -5,6 +5,7 @@ import FeedbackButton from './components/FeedbackButton';
 import KPIGrid from './components/KPIGrid';
 import MobileBottomNav from './components/MobileBottomNav';
 import PageHeader from './components/PageHeader';
+import RoboLogo from './components/RoboLogo';
 import Sidebar from './components/Sidebar';
 import Timeline from './components/Timeline';
 import AIRecommendationPanel from './panels/AIRecommendationPanel';
@@ -137,7 +138,8 @@ function SsoCallbackPage() {
     <div className="flex min-h-screen items-center justify-center bg-[#f7f7f5] px-6 text-[#141b27]">
       <AuthenticateWithRedirectCallback />
       <div className="text-center">
-        <p className="text-sm font-black uppercase tracking-[0.22em] text-slate-500">RoboAgent</p>
+        <RoboLogo className="mx-auto h-16 w-16" />
+        <p className="mt-3 text-sm font-black uppercase tracking-[0.22em] text-slate-500">RoboAgent</p>
         <h1 className="mt-3 text-3xl font-black">Finishing secure sign in...</h1>
         <p className="mt-3 text-sm text-slate-500">You will return to onboarding automatically.</p>
       </div>
@@ -729,7 +731,7 @@ function FleetApp() {
       <div className="robo-minimal min-h-screen bg-[#f7f7f5] px-5 py-6 text-[#141b27]">
         <header className="mx-auto mb-8 flex max-w-5xl items-center justify-between">
           <button type="button" onClick={() => navigate('landing')} className="flex items-center gap-3">
-            <span className="h-2.5 w-2.5 rounded-full bg-[#172231]" />
+            <RoboLogo className="h-8 w-8" />
             <span className="text-sm font-black uppercase tracking-[0.28em] text-[#172231]">RoboAgent</span>
           </button>
           <button

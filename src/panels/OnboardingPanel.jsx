@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSignUp } from '@clerk/react';
 import { isClerkConfigured } from '../auth/clerkConfig';
+import RoboLogo from '../components/RoboLogo';
 import {
   acceptTeslaConsent,
   canUseTeslaTelemetry,
@@ -524,7 +525,10 @@ export default function OnboardingPanel({
     <div className="flex min-h-screen flex-col bg-[#f7f7f5] px-4 py-3 text-[#141b27] sm:px-6">
       <div className="mx-auto mb-2 flex w-full max-w-6xl items-center justify-between">
         <button type="button" onClick={() => onNavigate?.('landing')} className="text-xl font-semibold tracking-[0.08em] text-[#172231]">
-          ROBOAGENT
+          <span className="flex items-center gap-3">
+            <RoboLogo className="h-8 w-8" />
+            ROBOAGENT
+          </span>
         </button>
         <div className="flex items-center gap-3">
           <button
@@ -552,9 +556,7 @@ export default function OnboardingPanel({
       {activeStep === 1 && (
         <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col justify-start px-0 py-0">
           <div className="mb-3 text-center">
-            <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-500 shadow-xl shadow-teal-500/30 sm:h-14 sm:w-14">
-              <span className="text-3xl font-bold tracking-tighter text-black">R</span>
-            </div>
+            <RoboLogo className="mx-auto mb-2 h-14 w-14 sm:h-16 sm:w-16" />
             <h1 className="mb-1.5 text-2xl font-bold leading-tight sm:text-3xl">
               Create Your RoboAgent Account
             </h1>

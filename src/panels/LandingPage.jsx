@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import RoboLogo from '../components/RoboLogo';
 import { buildMarketRentalAnswer, isMarketQuestion } from '../services/marketIntelligenceService';
 
 const demoPrompts = [
@@ -506,7 +507,7 @@ export function HowItWorksPage({ onNavigate }) {
     <div data-testid="how-it-works" className="min-h-screen bg-zinc-950 px-6 py-8 text-white">
       <header className="mx-auto mb-10 flex max-w-4xl items-center justify-between">
         <button type="button" onClick={() => onNavigate('landing')} className="flex items-center gap-3">
-          <span className="h-2.5 w-2.5 rounded-full bg-teal-300 shadow-lg shadow-teal-300/50" />
+          <RoboLogo className="h-8 w-8" />
           <span className="text-sm font-black uppercase tracking-[0.28em] text-teal-200">RoboAgent</span>
         </button>
         <button
@@ -601,9 +602,7 @@ export default function LandingPage({ onNavigate }) {
     <div className="min-h-screen bg-[#f7f7f5] text-[#141b27]">
       <section className="grid min-h-screen place-items-center px-6 py-10">
         <main className="w-full max-w-3xl text-center">
-          <div className="mx-auto flex h-20 w-20 items-center justify-center text-6xl font-black leading-none text-[#172231]">
-            R
-          </div>
+          <RoboLogo className="mx-auto h-24 w-24 sm:h-28 sm:w-28" />
           <p className="mt-3 text-2xl font-semibold uppercase text-[#172231] sm:text-3xl">
             RoboAgent
           </p>
@@ -666,9 +665,7 @@ export function AgentChatPage({ onNavigate }) {
     <div className="flex min-h-screen flex-col bg-[#f7f7f5] text-[#141b27]">
       <header className="sticky top-0 z-50 flex items-center justify-between border-b border-[#141b27]/10 bg-white/90 p-4 backdrop-blur-md">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-[#172231] text-xl font-black text-white">
-            R
-          </div>
+          <RoboLogo className="h-10 w-10 shrink-0" />
           <div>
             <p className="font-semibold text-[#141b27]">RoboAgent</p>
             <p data-testid="agent-online-status" className="flex items-center gap-1 text-xs text-teal-400 before:mr-1 before:content-['●'] [&>span:first-child]:hidden">
@@ -684,9 +681,7 @@ export function AgentChatPage({ onNavigate }) {
 
       <main className="flex-1 space-y-6 overflow-y-auto p-4 pb-32">
         <div className="flex gap-3">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl bg-[#172231] text-xl font-black text-white">
-            R
-          </div>
+          <RoboLogo className="h-9 w-9 shrink-0" />
           <div className="max-w-[75%] rounded-3xl rounded-tl-none border border-[#141b27]/10 bg-white px-5 py-4 shadow-sm">
             <p className="text-slate-700">
               Good morning! I&apos;ve analyzed your fleet. Here&apos;s what I recommend for today:
@@ -701,9 +696,7 @@ export function AgentChatPage({ onNavigate }) {
         </div>
 
         <div className="flex gap-3">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-2xl bg-[#172231] text-xl font-black text-white">
-            R
-          </div>
+          <RoboLogo className="h-9 w-9 shrink-0" />
           <div className="max-w-[75%] rounded-3xl rounded-tl-none border border-[#141b27]/10 bg-white px-5 py-4 shadow-sm">
             <p className="font-medium text-[#141b27]">{firstMetric}</p>
             <p className="mt-2 text-slate-600">{primaryAction}</p>
@@ -768,7 +761,7 @@ export function AgentAboutPage({ onNavigate }) {
     <div className="min-h-screen bg-[radial-gradient(circle_at_12%_8%,rgba(14,165,233,0.13),transparent_30%),linear-gradient(180deg,#f5f7fb_0%,#eaf2f7_48%,#ffffff_100%)] text-slate-950">
       <header className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5">
         <button type="button" onClick={() => onNavigate('landing')} className="flex items-center gap-3">
-          <span className="h-2.5 w-2.5 rounded-full bg-sky-500 shadow-lg shadow-sky-300/50" />
+          <RoboLogo className="h-8 w-8" />
           <span className="text-sm font-black uppercase tracking-[0.28em] text-slate-900">RoboAgent</span>
         </button>
         <button

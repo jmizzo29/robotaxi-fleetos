@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { isClerkConfigured } from '../auth/clerkConfig';
+import RoboLogo from '../components/RoboLogo';
 import {
   getFleetOsBillingStatus,
   getFleetOsSession,
@@ -153,7 +154,7 @@ export default function AccountPanel({ onNavigate }) {
     <div className="min-h-screen bg-[#f7f7f5] px-4 py-5 text-[#141b27]">
       <header className="mx-auto flex max-w-3xl items-center justify-between">
         <button type="button" onClick={() => onNavigate?.('landing')} className="flex items-center gap-3">
-          <span className="h-2.5 w-2.5 rounded-full bg-[#172231]" />
+          <RoboLogo className="h-9 w-9" />
           <span className="text-sm font-black uppercase tracking-[0.2em] text-[#172231]">RoboAgent</span>
         </button>
         <button
