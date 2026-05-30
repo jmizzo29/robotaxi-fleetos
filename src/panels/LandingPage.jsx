@@ -598,47 +598,36 @@ export function HowItWorksPage({ onNavigate }) {
 
 export default function LandingPage({ onNavigate }) {
   return (
-    <div className="bg-black text-white">
-      <section className="relative grid min-h-screen place-items-center overflow-hidden px-5 py-8">
-        <div
-          className="absolute inset-0 scale-105 bg-cover bg-center bg-no-repeat blur-[1.5px]"
-          style={{ backgroundImage: "url('/images/hero-cybertruck.jpg')" }}
-          aria-hidden="true"
-        />
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(255,255,255,0.08),transparent_27%),linear-gradient(115deg,rgba(11,20,28,0.50),rgba(3,4,7,0.12)_45%,rgba(8,15,22,0.72)),linear-gradient(180deg,rgba(0,0,0,0.42),rgba(0,0,0,0.72))]" />
-        <div className="absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-rose-500/22 to-transparent" aria-hidden="true" />
-        <div className="absolute inset-y-0 right-0 w-1/3 bg-gradient-to-l from-cyan-300/16 to-transparent" aria-hidden="true" />
+    <div className="min-h-screen bg-[#f7f7f5] text-[#141b27]">
+      <section className="grid min-h-screen place-items-center px-6 py-10">
+        <main className="w-full max-w-3xl text-center">
+          <div className="mx-auto flex h-20 w-20 items-center justify-center text-6xl font-black leading-none text-[#172231]">
+            R
+          </div>
+          <p className="mt-3 text-2xl font-semibold uppercase text-[#172231] sm:text-3xl">
+            RoboAgent
+          </p>
 
-        <main className="relative z-10 w-full max-w-[520px]">
-          <section className="overflow-hidden rounded-[1.75rem] border border-white/25 bg-zinc-950/35 px-8 py-10 text-center shadow-2xl shadow-black/50 backdrop-blur-xl sm:px-12 sm:py-14">
-            <h1
-              className="text-4xl font-light uppercase text-white sm:text-5xl"
-              style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}
+          <h1 className="mx-auto mt-16 max-w-3xl text-4xl font-medium leading-tight text-black sm:text-5xl md:text-6xl">
+            Autonomous AI Agents to maximize your Tesla rents and robotaxis
+          </h1>
+
+          <div className="mt-7 flex flex-wrap items-center justify-center gap-4 sm:gap-10">
+            <button
+              type="button"
+              onClick={() => onNavigate('account')}
+              className="min-h-14 rounded-2xl px-8 text-xl font-semibold text-black transition hover:bg-black/5 active:scale-[0.99]"
             >
-              RoboAgent
-            </h1>
-
-            <p className="mx-auto mt-5 max-w-sm text-sm font-semibold uppercase tracking-[0.18em] text-zinc-200">
-              AI plans for Tesla rentals and robotaxi fleets.
-            </p>
-
-            <div className="mt-12 grid gap-4">
-              <button
-                type="button"
-                onClick={() => onNavigate('account')}
-                className="rounded-2xl bg-white/85 px-6 py-4 text-base font-black uppercase tracking-[0.12em] text-zinc-950 shadow-xl shadow-white/10 transition hover:bg-white active:scale-[0.99]"
-              >
-                Sign In
-              </button>
-              <button
-                type="button"
-                onClick={() => onNavigate('how-it-works')}
-                className="rounded-2xl border border-white/35 bg-black/25 px-6 py-4 text-base font-black uppercase tracking-[0.12em] text-white transition hover:bg-white/10 active:scale-[0.99]"
-              >
-                Learn More
-              </button>
-            </div>
-          </section>
+              Sign In
+            </button>
+            <button
+              type="button"
+              onClick={() => onNavigate('how-it-works')}
+              className="min-h-14 rounded-lg bg-[#172231] px-10 text-xl font-semibold text-white shadow-lg shadow-black/10 transition hover:bg-[#0e1724] active:scale-[0.99]"
+            >
+              Learn More
+            </button>
+          </div>
         </main>
       </section>
 
