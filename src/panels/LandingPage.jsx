@@ -598,83 +598,48 @@ export function HowItWorksPage({ onNavigate }) {
 
 export default function LandingPage({ onNavigate }) {
   return (
-    <div className="bg-black">
-      <section className="relative flex min-h-screen items-center overflow-hidden bg-black">
-      <header className="absolute left-0 right-0 top-0 z-20 mx-auto flex max-w-6xl items-center justify-between px-6 py-5 text-white">
-        <button
-          type="button"
-          onClick={() => onNavigate('landing')}
-          className="flex items-center gap-3"
-        >
-          <span className="h-2.5 w-2.5 rounded-full bg-teal-300 shadow-lg shadow-teal-300/50" />
-          <span className="text-sm font-black uppercase tracking-[0.28em] text-teal-100">RoboAgent</span>
-        </button>
-        <button
-          type="button"
-          onClick={() => onNavigate('account')}
-          className="rounded-full border border-white/30 bg-black/25 px-5 py-2 text-sm font-black text-white backdrop-blur transition hover:border-teal-300 hover:bg-white/10"
-        >
-          Sign In
-        </button>
-      </header>
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{
-          backgroundImage: "url('/images/hero-cybertruck.jpg')",
-          filter: 'brightness(0.65)',
-        }}
-        aria-hidden="true"
-      />
-      <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/60 to-transparent" />
-      <div className="absolute inset-0 bg-gradient-to-t from-black/35 via-transparent to-black/20" />
+    <div className="bg-black text-white">
+      <section className="relative grid min-h-screen place-items-center overflow-hidden px-5 py-8">
+        <div
+          className="absolute inset-0 scale-105 bg-cover bg-center bg-no-repeat blur-[1.5px]"
+          style={{ backgroundImage: "url('/images/hero-cybertruck.jpg')" }}
+          aria-hidden="true"
+        />
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_42%,rgba(255,255,255,0.08),transparent_27%),linear-gradient(115deg,rgba(11,20,28,0.50),rgba(3,4,7,0.12)_45%,rgba(8,15,22,0.72)),linear-gradient(180deg,rgba(0,0,0,0.42),rgba(0,0,0,0.72))]" />
+        <div className="absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-rose-500/22 to-transparent" aria-hidden="true" />
+        <div className="absolute inset-y-0 right-0 w-1/3 bg-gradient-to-l from-cyan-300/16 to-transparent" aria-hidden="true" />
 
-      <main className="relative z-10 mx-auto w-full max-w-5xl px-6 pb-16 pt-24 text-white">
-        <div className="max-w-2xl">
-          <p className="mb-5 text-sm font-black uppercase tracking-[0.28em] text-teal-300">
-            RoboAgent
-          </p>
-          <h1 className="mb-6 text-4xl font-bold leading-tight tracking-tight sm:text-5xl md:text-6xl">
-            Your Tesla Fleet.<br />
-            <span className="bg-gradient-to-r from-teal-400 to-cyan-400 bg-clip-text text-transparent">
-              AI Optimized.
-            </span>
-          </h1>
-
-          <p className="mb-10 text-xl font-medium text-zinc-300 md:text-2xl">
-            Daily AI plans for pricing, charging, maintenance, and profit.
-          </p>
-
-          <div className="flex flex-col gap-4 sm:flex-row">
-            <button
-              type="button"
-              onClick={() => onNavigate('onboarding')}
-              className="inline-flex items-center justify-center rounded-2xl bg-teal-500 px-10 py-5 text-lg font-semibold text-black shadow-2xl shadow-teal-500/30 transition-all duration-300 hover:bg-teal-400 hover:scale-[1.02] active:scale-95"
+        <main className="relative z-10 w-full max-w-[520px]">
+          <section className="overflow-hidden rounded-[1.75rem] border border-white/25 bg-zinc-950/35 px-8 py-10 text-center shadow-2xl shadow-black/50 backdrop-blur-xl sm:px-12 sm:py-14">
+            <h1
+              className="text-4xl font-light uppercase text-white sm:text-5xl"
+              style={{ fontFamily: 'Georgia, "Times New Roman", serif' }}
             >
-              Get Started
-            </button>
+              RoboAgent
+            </h1>
 
-            <button
-              type="button"
-              onClick={() => onNavigate('how-it-works')}
-              className="inline-flex items-center justify-center rounded-2xl border border-white/20 bg-black/35 px-10 py-5 text-lg font-semibold text-white shadow-2xl shadow-black/20 transition-all duration-300 hover:bg-white/10 hover:scale-[1.02] active:scale-95"
-            >
-              How it works
-            </button>
-          </div>
+            <p className="mx-auto mt-5 max-w-sm text-sm font-semibold uppercase tracking-[0.18em] text-zinc-200">
+              AI plans for Tesla rentals and robotaxi fleets.
+            </p>
 
-          <button
-            type="button"
-            onClick={() => onNavigate('account')}
-            className="mt-4 text-sm font-black text-zinc-300 underline decoration-white/30 underline-offset-4 transition hover:text-white sm:hidden"
-          >
-            Already have an account? Sign in
-          </button>
-
-          <p className="mt-6 text-sm font-medium text-zinc-400">
-            First vehicle is free. Setup takes under 60 seconds.
-          </p>
-        </div>
-      </main>
+            <div className="mt-12 grid gap-4">
+              <button
+                type="button"
+                onClick={() => onNavigate('account')}
+                className="rounded-2xl bg-white/85 px-6 py-4 text-base font-black uppercase tracking-[0.12em] text-zinc-950 shadow-xl shadow-white/10 transition hover:bg-white active:scale-[0.99]"
+              >
+                Sign In
+              </button>
+              <button
+                type="button"
+                onClick={() => onNavigate('how-it-works')}
+                className="rounded-2xl border border-white/35 bg-black/25 px-6 py-4 text-base font-black uppercase tracking-[0.12em] text-white transition hover:bg-white/10 active:scale-[0.99]"
+              >
+                Learn More
+              </button>
+            </div>
+          </section>
+        </main>
       </section>
 
       <span className="hidden">Your AI Agent for Tesla Rentals & Robotaxis</span>
