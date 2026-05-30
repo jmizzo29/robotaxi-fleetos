@@ -221,7 +221,7 @@ export function useFleetSimulation({
     appendFleetMemory({
       type: 'Command',
       title: command,
-      detail: 'Operator command queued from RoboAgent workflow.',
+      detail: 'Operator command queued from ROBOAGENT workflow.',
       source: priority,
       status: 'queued',
       ragReady: false,

@@ -78,7 +78,7 @@ export default function SocialSignalPanel() {
           </p>
           <h2 className="text-2xl font-black tracking-tight">Tesla Robotaxi / Cybercab Updates from X</h2>
           <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-400">
-            RoboAgent watches public Tesla Robotaxi and Cybercab updates so owners can follow launch, rollout, policy, and service-area signals faster.
+            ROBOAGENT watches public Tesla Robotaxi and Cybercab updates so owners can follow launch, rollout, policy, and service-area signals faster.
           </p>
         </div>
 

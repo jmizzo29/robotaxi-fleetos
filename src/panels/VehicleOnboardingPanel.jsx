@@ -68,7 +68,7 @@ export default function VehicleOnboardingPanel({
 
   const enrich = async () => {
     if (!selectedVehicle?.vin) {
-      setStatus({ state: 'error', message: 'Sync Tesla first so RoboAgent can discover the VIN automatically.' });
+      setStatus({ state: 'error', message: 'Sync Tesla first so ROBOAGENT can discover the VIN automatically.' });
       return;
     }
 
@@ -77,7 +77,7 @@ export default function VehicleOnboardingPanel({
       const decoded = await decodeVehicleVin(selectedVehicle.vin);
       setDecodedVin(decoded);
       setDraft(buildSuggestedRecord(selectedVehicle, decoded));
-      setStatus({ state: 'success', message: 'Vehicle details auto-filled. Review only the ownership fields RoboAgent cannot infer.' });
+      setStatus({ state: 'success', message: 'Vehicle details auto-filled. Review only the ownership fields ROBOAGENT cannot infer.' });
     } catch (error) {
       setStatus({ state: 'error', message: error.message || 'VIN enrichment failed.' });
     }
@@ -92,7 +92,7 @@ export default function VehicleOnboardingPanel({
     setStatus({ state: 'loading', message: 'Saving vehicle asset record to Postgres...' });
     try {
       await saveVehicleOwnership(getVehicleOwnershipKey(selectedVehicle), draft);
-      setStatus({ state: 'success', message: 'Vehicle onboarded. RoboAgent saved the asset record to Postgres.' });
+      setStatus({ state: 'success', message: 'Vehicle onboarded. ROBOAGENT saved the asset record to Postgres.' });
     } catch (error) {
       setStatus({ state: 'error', message: error.message || 'Vehicle asset record could not be saved.' });
     }
@@ -107,7 +107,7 @@ export default function VehicleOnboardingPanel({
           </p>
           <h2 className="mt-2 text-2xl font-black tracking-tight text-white">Add a Tesla in three taps</h2>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
-            RoboAgent discovers the vehicle from Tesla, decodes the VIN with free NHTSA data, then asks only for financial details like purchase price and loan balance.
+            ROBOAGENT discovers the vehicle from Tesla, decodes the VIN with free NHTSA data, then asks only for financial details like purchase price and loan balance.
           </p>
         </div>
         <button
@@ -167,7 +167,7 @@ export default function VehicleOnboardingPanel({
             </>
           ) : (
             <div className="mt-4 rounded-md border border-amber-300/20 bg-amber-400/10 p-4 text-sm leading-6 text-amber-100">
-              Sync Tesla telemetry first. Once Tesla returns the vehicle list, RoboAgent can onboard without manual VIN entry.
+              Sync Tesla telemetry first. Once Tesla returns the vehicle list, ROBOAGENT can onboard without manual VIN entry.
             </div>
           )}
         </div>
@@ -209,7 +209,7 @@ export default function VehicleOnboardingPanel({
             </>
           ) : (
             <div className="rounded-md border border-white/10 bg-white/[0.03] p-5 text-sm leading-6 text-slate-400">
-              RoboAgent will prefill model year, make, model, and vehicle identity. You only review the ownership and finance fields.
+              ROBOAGENT will prefill model year, make, model, and vehicle identity. You only review the ownership and finance fields.
             </div>
           )}
         </div>

@@ -9,7 +9,7 @@ export default function TeslaIndependenceNotice({ compact = false, tone = 'dark'
         Independent Tesla Integration
       </p>
       <p className={`${compact ? 'mt-1 text-xs' : 'mt-2 text-sm'} leading-6 ${light ? 'text-slate-600' : 'text-slate-400'}`}>
-        RoboAgent is not affiliated with, endorsed by, or sponsored by Tesla. Tesla controls vehicle access,
+        ROBOAGENT is not affiliated with, endorsed by, or sponsored by Tesla. Tesla controls vehicle access,
         API availability, command execution, and autonomous driving eligibility.
       </p>
     </div>

@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useSignUp } from '@clerk/react';
 import { isClerkConfigured } from '../auth/clerkConfig';
 import RoboLogo from '../components/RoboLogo';
+import RoboWordmark from '../components/RoboWordmark';
 import {
   acceptTeslaConsent,
   canUseTeslaTelemetry,
@@ -181,8 +182,8 @@ function TeslaConnectionStep({
 }) {
   const flowSteps = [
     ['1', 'Redirect to Tesla', 'Authenticate directly on Tesla-owned screens.'],
-    ['2', 'Approve data scopes', 'You choose whether RoboAgent can read vehicle data.'],
-    ['3', 'Return to RoboAgent', 'We sync telemetry and unlock the command center.'],
+    ['2', 'Approve data scopes', 'You choose whether ROBOAGENT can read vehicle data.'],
+    ['3', 'Return to ROBOAGENT', 'We sync telemetry and unlock the command center.'],
   ];
 
   const trustItems = [
@@ -198,7 +199,7 @@ function TeslaConnectionStep({
         <p className="mb-3 text-xs font-black uppercase tracking-[0.22em] text-teal-300">Tesla OAuth</p>
         <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl">Connect Your Tesla</h2>
         <p className="mx-auto mt-3 max-w-2xl text-base leading-7 text-zinc-400">
-          Use Tesla&apos;s secure login to authorize vehicle telemetry. RoboAgent never receives your Tesla password.
+          Use Tesla&apos;s secure login to authorize vehicle telemetry. ROBOAGENT never receives your Tesla password.
         </p>
       </div>
 
@@ -209,7 +210,7 @@ function TeslaConnectionStep({
           </div>
           <h3 className="mt-5 text-2xl font-black text-white">Official Tesla handoff</h3>
           <p className="mt-3 text-sm font-semibold leading-6 text-zinc-400">
-            You will leave RoboAgent briefly, approve access with Tesla, then return here to sync your first vehicle.
+            You will leave ROBOAGENT briefly, approve access with Tesla, then return here to sync your first vehicle.
           </p>
 
           <div className="mt-6 grid gap-3">
@@ -238,7 +239,7 @@ function TeslaConnectionStep({
             <div className="mt-5">
               {!hasAccount ? (
                 <PrimaryButton onClick={() => onNavigate?.('account')} className="py-4 text-base sm:py-5 sm:text-lg">
-                  Create RoboAgent Account
+                  Create ROBOAGENT Account
                 </PrimaryButton>
               ) : teslaConnected ? (
                 <PrimaryButton onClick={onContinue} className="py-4 text-base sm:py-5 sm:text-lg">
@@ -380,7 +381,7 @@ function ClerkEmailSignUpButton({ email, password, onValidate, onSignedUp }) {
             className="w-full rounded-2xl border border-zinc-700 bg-zinc-950 px-6 py-5 text-white outline-none transition placeholder:text-zinc-600 focus:border-teal-500"
           />
           <p className="mt-3 text-sm text-zinc-400">
-            We sent a code to {email}. This keeps signup inside RoboAgent.
+            We sent a code to {email}. This keeps signup inside ROBOAGENT.
           </p>
         </div>
       )}
@@ -489,7 +490,7 @@ export default function OnboardingPanel({
   };
 
   const completeClerkAccount = async () => {
-    setMessage('Account created. Next, confirm data permission so RoboAgent can connect Tesla securely.');
+    setMessage('Account created. Next, confirm data permission so ROBOAGENT can connect Tesla securely.');
     try {
       await refreshSession();
     } catch {
@@ -512,7 +513,7 @@ export default function OnboardingPanel({
     try {
       await onSync?.();
       await refreshSession();
-      setMessage('Telemetry sync requested. If the car is awake and permissions are granted, it will appear in RoboAgent.');
+      setMessage('Telemetry sync requested. If the car is awake and permissions are granted, it will appear in ROBOAGENT.');
       nextLinearStep();
     } catch (syncError) {
       setError(syncError.message);
@@ -524,10 +525,10 @@ export default function OnboardingPanel({
   return (
     <div className="flex min-h-screen flex-col bg-[#f7f7f5] px-4 py-3 text-[#141b27] sm:px-6">
       <div className="mx-auto mb-2 flex w-full max-w-6xl items-center justify-between">
-        <button type="button" onClick={() => onNavigate?.('landing')} className="text-xl font-semibold tracking-[0.08em] text-[#172231]">
+        <button type="button" onClick={() => onNavigate?.('landing')} className="text-xl font-semibold text-[#172231]">
           <span className="flex items-center gap-3">
             <RoboLogo className="h-8 w-8" />
-            ROBOAGENT
+            <RoboWordmark />
           </span>
         </button>
         <div className="flex items-center gap-3">
@@ -558,7 +559,7 @@ export default function OnboardingPanel({
           <div className="mb-3 text-center">
             <RoboLogo className="mx-auto mb-2 h-14 w-14 sm:h-16 sm:w-16" />
             <h1 className="mb-1.5 text-2xl font-bold leading-tight sm:text-3xl">
-              Create Your RoboAgent Account
+              Create Your ROBOAGENT Account
             </h1>
             <p className="mx-auto max-w-md text-sm leading-5 text-zinc-400">
               One account to manage all your Teslas, rentals, and future Robotaxis
@@ -690,14 +691,14 @@ export default function OnboardingPanel({
             <p className="mb-3 text-xs font-black uppercase tracking-[0.22em] text-teal-300">Data Permission</p>
             <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl">Just a few permissions needed</h2>
             <p className="mx-auto mt-3 max-w-2xl text-base leading-7 text-zinc-400">
-              RoboAgent needs access to help you maximize earnings
+              ROBOAGENT needs access to help you maximize earnings
             </p>
           </div>
 
           <section className="rounded-3xl border border-zinc-700 bg-zinc-950/80 p-5 shadow-2xl shadow-black/25 sm:p-6">
             <div className="flex flex-col gap-2 border-b border-zinc-800 pb-4 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <h3 className="text-xl font-black text-white">What RoboAgent will access</h3>
+                <h3 className="text-xl font-black text-white">What ROBOAGENT will access</h3>
                 <p className="mt-1 text-sm font-semibold leading-6 text-zinc-400">
                   Read-only Tesla data for planning, monitoring, and owner-approved recommendations.
                 </p>
@@ -744,7 +745,7 @@ export default function OnboardingPanel({
         <div className="flex flex-1 flex-col justify-center">
           <h2 className="mb-6 text-3xl font-bold">We Need Your Permission</h2>
           <div className="mb-8 space-y-6 rounded-3xl border border-zinc-800 bg-zinc-900 p-6 text-zinc-300">
-            <p>RoboAgent will access:</p>
+            <p>ROBOAGENT will access:</p>
             <ul className="space-y-3">
               <li className="flex gap-3"><span>✓</span><span>Vehicle location & status</span></li>
               <li className="flex gap-3"><span>✓</span><span>Battery & charging info</span></li>
@@ -752,7 +753,7 @@ export default function OnboardingPanel({
               <li className="flex gap-3"><span>✓</span><span>Commands with owner approval</span></li>
             </ul>
             <p className="text-sm text-zinc-500">
-              Tesla keeps your password. You can revoke access from Tesla or RoboAgent anytime.
+              Tesla keeps your password. You can revoke access from Tesla or ROBOAGENT anytime.
             </p>
           </div>
           <PrimaryButton onClick={approveConsent}>I Understand & Approve</PrimaryButton>
@@ -782,7 +783,7 @@ export default function OnboardingPanel({
 
           <div className="mx-auto w-full max-w-md">
             {!hasAccount ? (
-              <PrimaryButton onClick={() => onNavigate?.('account')}>Create RoboAgent Account</PrimaryButton>
+              <PrimaryButton onClick={() => onNavigate?.('account')}>Create ROBOAGENT Account</PrimaryButton>
             ) : teslaConnected ? (
               <PrimaryButton onClick={nextLinearStep}>Continue to Vehicle Sync</PrimaryButton>
             ) : (
@@ -799,7 +800,7 @@ export default function OnboardingPanel({
               <p className="mb-3 font-medium text-teal-400">🔒 Secure & Private</p>
               <ul className="space-y-3 text-sm text-zinc-400">
                 <li>• You’ll be redirected to Tesla’s official login</li>
-                <li>• RoboAgent never sees your Tesla password</li>
+                <li>• ROBOAGENT never sees your Tesla password</li>
                 <li>• You control what data we can access</li>
                 <li>• Can be disconnected anytime</li>
               </ul>
@@ -823,7 +824,7 @@ export default function OnboardingPanel({
               {syncedVehicle ? 'Vehicle Found!' : 'Finding Your Vehicles...'}
             </h2>
             <p className="text-lg text-zinc-400">
-              {syncedVehicle ? 'Your first Tesla is ready for RoboAgent' : 'This usually takes 10-20 seconds'}
+              {syncedVehicle ? 'Your first Tesla is ready for ROBOAGENT' : 'This usually takes 10-20 seconds'}
             </p>
           </div>
 
@@ -884,7 +885,7 @@ export default function OnboardingPanel({
         <div className="flex flex-1 flex-col justify-center text-center">
           <div className="mb-10">
             <div className="mb-6 text-7xl">🎉</div>
-            <h1 className="mb-3 text-5xl font-bold">Welcome to RoboAgent!</h1>
+            <h1 className="mb-3 text-5xl font-bold">Welcome to ROBOAGENT!</h1>
             <p className="text-xl text-teal-400">Your AI Agent is now active</p>
           </div>
 
@@ -894,7 +895,7 @@ export default function OnboardingPanel({
                 🤖
               </div>
               <div>
-                <p className="font-semibold">RoboAgent</p>
+                <p className="font-semibold">ROBOAGENT</p>
                 <p className="text-xs text-teal-400">Just now</p>
               </div>
             </div>
@@ -926,7 +927,7 @@ export default function OnboardingPanel({
       {activeStep === 99 && (
         <div className="flex flex-1 flex-col justify-center text-center">
           <div className="mb-8 text-6xl">✓</div>
-          <h1 className="mb-4 text-4xl font-bold">Welcome to RoboAgent!</h1>
+          <h1 className="mb-4 text-4xl font-bold">Welcome to ROBOAGENT!</h1>
           <p className="mb-10 text-lg text-zinc-400">Your AI Agent is now active and analyzing your fleet.</p>
           <div className="mb-10 rounded-3xl border border-zinc-800 bg-zinc-900 p-6 text-left">
             <p className="font-medium text-teal-400">First AI Message:</p>

@@ -1,4 +1,4 @@
-export default function RoboLogo({ className = 'h-12 w-12', title = 'RoboAgent' }) {
+export default function RoboLogo({ className = 'h-12 w-12', title = 'ROBOAGENT' }) {
   return (
     <svg
       viewBox="0 0 120 120"

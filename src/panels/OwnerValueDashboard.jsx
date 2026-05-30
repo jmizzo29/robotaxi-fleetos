@@ -239,7 +239,7 @@ function VehicleReadinessCard({ vehicle, onQueue }) {
           <p className="text-xs font-black uppercase tracking-[0.24em] text-emerald-300">Vehicle Readiness</p>
           <h2 className="mt-2 text-2xl font-black tracking-tight text-white">{vehicle ? vehicleLabel(vehicle) : 'Sync your first Tesla'}</h2>
           <p className="mt-2 text-sm leading-6 text-slate-400">
-            RoboAgent converts Tesla telemetry into a simple rental-ready decision.
+            ROBOAGENT converts Tesla telemetry into a simple rental-ready decision.
           </p>
           <div className="mt-5 flex items-end gap-3">
             <span className={`text-6xl font-black tracking-tight ${readiness.tone}`}>{readiness.score}</span>
@@ -257,7 +257,7 @@ function VehicleReadinessCard({ vehicle, onQueue }) {
               onClick={() => onQueue(`Review readiness for ${vehicle ? vehicleLabel(vehicle) : 'my first Tesla'}: ${readiness.nextAction}`, readiness.score < 72 ? 'HIGH' : 'NORMAL')}
               className="mt-4 w-full rounded-md border border-white/10 bg-white/10 px-4 py-2.5 text-sm font-black text-white transition hover:bg-white/15"
             >
-              Ask RoboAgent to Review
+              Ask ROBOAGENT to Review
             </button>
           ) : null}
         </div>
@@ -494,7 +494,7 @@ export default function OwnerValueDashboard({ fleet = [], onQueueCommand }) {
           value={formatCurrency(dailyBrief.projectedToday)}
           tone="emerald"
           buttonLabel="Open Brief"
-          onQueue={() => onQueueCommand?.('Give me today’s full RoboAgent fleet brief with exact next steps', 'HIGH')}
+          onQueue={() => onQueueCommand?.('Give me today’s full ROBOAGENT fleet brief with exact next steps', 'HIGH')}
         />
         <ActionCard
           eyebrow="Pricing Opportunities"
@@ -508,7 +508,7 @@ export default function OwnerValueDashboard({ fleet = [], onQueueCommand }) {
         <ActionCard
           eyebrow="Maintenance Watch"
           title={criticalMaintenance ? `${criticalMaintenance} high priority` : 'No urgent watch'}
-          detail={topMaintenance ? `${topMaintenance.reason} Suggested window: ${topMaintenance.window}.` : 'RoboAgent did not detect a high-priority maintenance item yet.'}
+          detail={topMaintenance ? `${topMaintenance.reason} Suggested window: ${topMaintenance.window}.` : 'ROBOAGENT did not detect a high-priority maintenance item yet.'}
           value={topMaintenance?.priority}
           tone={topMaintenance?.priority === 'HIGH' ? 'rose' : 'amber'}
           buttonLabel="Plan Service"
@@ -530,7 +530,7 @@ export default function OwnerValueDashboard({ fleet = [], onQueueCommand }) {
           value="Monthly proof"
           tone="emerald"
           buttonLabel="Show Impact"
-          onQueue={() => onQueueCommand?.('Generate monthly RoboAgent earnings impact report', 'NORMAL')}
+          onQueue={() => onQueueCommand?.('Generate monthly ROBOAGENT earnings impact report', 'NORMAL')}
         />
       </div>
 

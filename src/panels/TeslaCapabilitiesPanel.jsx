@@ -4,7 +4,7 @@ import { wakeTeslaVehicle } from '../services/teslaService';
 const capabilityGroups = [
   {
     title: 'Telemetry In Use',
-    description: 'What RoboAgent is already reading from your Tesla Fleet API connection.',
+    description: 'What ROBOAGENT is already reading from your Tesla Fleet API connection.',
     items: [
       ['Vehicle identity', 'VIN, display name, online/asleep state'],
       ['Location', 'GPS coordinates, heading, last GPS timestamp'],
@@ -19,7 +19,7 @@ const capabilityGroups = [
       ['Sync telemetry', 'Refresh the latest Fleet API vehicle data'],
       ['Wake vehicle', 'Ask Tesla to bring an asleep vehicle online'],
       ['Show on map', 'Jump the operations view to the selected vehicle'],
-      ['AI review', 'Ask the RoboAgent AI layer to explain risk and next best action'],
+      ['AI review', 'Ask the ROBOAGENT AI layer to explain risk and next best action'],
     ],
   },
   {
@@ -124,10 +124,10 @@ export default function TeslaCapabilitiesPanel({
               API Capabilities & Controls
             </h2>
             <p className="mt-3 max-w-3xl text-sm leading-6 text-slate-400">
-              RoboAgent is using Tesla telemetry today and can now expose a controlled command surface. Riskier commands should stay gated behind virtual-key readiness, confirmation dialogs, and audit logging.
+              ROBOAGENT is using Tesla telemetry today and can now expose a controlled command surface. Riskier commands should stay gated behind virtual-key readiness, confirmation dialogs, and audit logging.
             </p>
             <div className="mt-4 rounded-lg border border-sky-300/20 bg-sky-300/[0.06] p-4 text-sm leading-6 text-sky-100">
-              Rate-limit protection is VIN-scoped: RoboAgent caches recent state, avoids unnecessary wakes, and warns when wake or command limits are close.
+              Rate-limit protection is VIN-scoped: ROBOAGENT caches recent state, avoids unnecessary wakes, and warns when wake or command limits are close.
             </div>
 
             <div className="mt-6 grid grid-cols-2 gap-3 xl:grid-cols-4">

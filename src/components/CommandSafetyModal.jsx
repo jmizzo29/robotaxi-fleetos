@@ -20,7 +20,7 @@ function classifyCommand(command = '', priority = 'NORMAL') {
   return {
     level: 'Safe Queue',
     tone: 'border-emerald-400/30 bg-emerald-400/10 text-emerald-100',
-    detail: 'This queues a non-destructive workflow item and records it in RoboAgent memory.',
+    detail: 'This queues a non-destructive workflow item and records it in ROBOAGENT memory.',
   };
 }
 
@@ -38,7 +38,7 @@ export default function CommandSafetyModal({ pendingCommand, onCancel, onConfirm
           </p>
           <h2 className="text-2xl font-black tracking-tight text-white">Confirm Operator Action</h2>
           <p className="mt-2 text-sm leading-6 text-slate-400">
-            RoboAgent will queue this command, write it to the audit trail, and keep Tesla execution boundaries explicit.
+            ROBOAGENT will queue this command, write it to the audit trail, and keep Tesla execution boundaries explicit.
           </p>
         </div>
 

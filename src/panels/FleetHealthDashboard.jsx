@@ -159,7 +159,7 @@ export default function FleetHealthDashboard({ fleet = [], onQueueCommand }) {
         </p>
         <h2 className="text-2xl font-black tracking-tight">Utilization, Earnings, Cleaning, and Health</h2>
         <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">
-          Since rental revenue APIs are limited, RoboAgent estimates earnings from utilization, telemetry, battery, health, and owner-entered revenue. The scheduler turns those signals into cleaning and maintenance work before vehicles lose availability.
+          Since rental revenue APIs are limited, ROBOAGENT estimates earnings from utilization, telemetry, battery, health, and owner-entered revenue. The scheduler turns those signals into cleaning and maintenance work before vehicles lose availability.
         </p>
       </article>
 

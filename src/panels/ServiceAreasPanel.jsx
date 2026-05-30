@@ -96,7 +96,7 @@ export default function ServiceAreasPanel({ fleet = [], demandZones = [], onQueu
               <p className="text-xs font-black uppercase tracking-[0.22em] text-sky-300">Service Areas</p>
               <h2 className="mt-2 text-2xl font-black text-white">Demand and pricing zones</h2>
               <p className="mt-2 text-sm leading-6 text-slate-400">
-                RoboAgent blends vehicle location, demand heat, owner economics, and health status into service-area recommendations.
+                ROBOAGENT blends vehicle location, demand heat, owner economics, and health status into service-area recommendations.
               </p>
             </div>
             <button
@@ -199,7 +199,7 @@ export default function ServiceAreasPanel({ fleet = [], demandZones = [], onQueu
               Top rented Teslas near {ownerMarket.market?.city || 'your operating area'}
             </h2>
             <p className="mt-2 text-sm leading-6 text-slate-400">
-              RoboAgent infers the owner market from connected vehicle city/GPS when available, then answers market questions with transparent confidence. This is not live Turo inventory yet; it becomes stronger as owners import rental history.
+              ROBOAGENT infers the owner market from connected vehicle city/GPS when available, then answers market questions with transparent confidence. This is not live Turo inventory yet; it becomes stronger as owners import rental history.
             </p>
           </div>
           <button

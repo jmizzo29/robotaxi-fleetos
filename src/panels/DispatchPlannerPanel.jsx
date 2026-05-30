@@ -164,7 +164,7 @@ function PlanCard({ plan, onQueueCommand, onShowMap }) {
         <div className="rounded-lg border border-amber-400/20 bg-amber-400/10 p-4">
           <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-200">Tesla Boundary</p>
           <p className="mt-2 text-sm font-bold text-amber-50">
-            RoboAgent plans; Tesla controls autonomous execution.
+            ROBOAGENT plans; Tesla controls autonomous execution.
           </p>
         </div>
       </div>
@@ -214,7 +214,7 @@ export default function DispatchPlannerPanel({
             </p>
             <h2 className="text-2xl font-black tracking-tight">Tonight's Fleet Plan</h2>
             <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">
-              RoboAgent can recommend where each vehicle should stage, whether it should charge first, and what revenue window to expect. The app is planning operator intent; Tesla still controls any autonomous driving capability.
+              ROBOAGENT can recommend where each vehicle should stage, whether it should charge first, and what revenue window to expect. The app is planning operator intent; Tesla still controls any autonomous driving capability.
             </p>
           </div>
 

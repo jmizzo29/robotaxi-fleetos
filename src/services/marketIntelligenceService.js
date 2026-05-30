@@ -229,7 +229,7 @@ export function buildMarketRentalAnswer(question = '', fleet = []) {
     `Estimated active comparable ${requestedModel.replace('Tesla ', '')} rentals near ${market.city}: ${supply.range}.`,
     supply.note,
     market.pricingNote,
-    'This is a RoboAgent market estimate, not a live Turo scrape. Connect owner history or import Turo CSVs to make it sharper.',
+    'This is a ROBOAGENT market estimate, not a live Turo scrape. Connect owner history or import Turo CSVs to make it sharper.',
   ] : [
     `Likely top rented Tesla in ${market.city}: ${market.topTeslaModels[0].model}. ${market.topTeslaModels[0].reason}`,
     `Second: ${market.topTeslaModels[1].model}. ${market.topTeslaModels[1].reason}`,
@@ -252,8 +252,8 @@ export function buildMarketRentalAnswer(question = '', fleet = []) {
     steps,
     confidence: market.confidence,
     impact: supply
-      ? `Use this to size the local rental market before buying, pricing, or moving a Tesla. RoboAgent should improve this with owner location, imported Turo history, and manual market-rate inputs.`
-      : `Use this to choose which vehicle to buy, where to stage it, and how aggressively to price it. For paid users, RoboAgent should improve this with imported Turo history, owner vehicle locations, and city-specific booking performance.`,
+      ? `Use this to size the local rental market before buying, pricing, or moving a Tesla. ROBOAGENT should improve this with owner location, imported Turo history, and manual market-rate inputs.`
+      : `Use this to choose which vehicle to buy, where to stage it, and how aggressively to price it. For paid users, ROBOAGENT should improve this with imported Turo history, owner vehicle locations, and city-specific booking performance.`,
   };
 }
 

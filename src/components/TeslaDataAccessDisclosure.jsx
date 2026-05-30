@@ -17,13 +17,13 @@ export default function TeslaDataAccessDisclosure({ compact = false, tone = 'dar
       <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
         <div>
           <p className={`text-xs font-black uppercase tracking-[0.22em] ${light ? 'text-sky-700' : 'text-sky-300'}`}>
-            What Data Does RoboAgent Access?
+            What Data Does ROBOAGENT Access?
           </p>
           <h2 className={`${compact ? 'mt-2 text-xl' : 'mt-3 text-3xl'} font-black tracking-tight ${light ? 'text-slate-950' : 'text-white'}`}>
             Minimum data for useful AI fleet operations.
           </h2>
           <p className={`mt-3 max-w-3xl text-sm leading-6 ${light ? 'text-slate-600' : 'text-slate-400'}`}>
-            RoboAgent only requests data needed for AI agent features, fleet monitoring, predictive maintenance, charging advice, location intelligence, and earnings optimization.
+            ROBOAGENT only requests data needed for AI agent features, fleet monitoring, predictive maintenance, charging advice, location intelligence, and earnings optimization.
           </p>
         </div>
         <span className={`shrink-0 rounded-full border px-3 py-1 text-xs font-black uppercase ${
@@ -57,9 +57,9 @@ export default function TeslaDataAccessDisclosure({ compact = false, tone = 'dar
       <div className="mt-4 grid grid-cols-1 gap-3 md:grid-cols-4">
         {[
           'You stay in full control and can revoke access.',
-          'RoboAgent only reads vehicles you explicitly connect.',
+          'ROBOAGENT only reads vehicles you explicitly connect.',
           'Sensitive tokens are encrypted server-side.',
-          'RoboAgent does not sell Tesla telemetry.',
+          'ROBOAGENT does not sell Tesla telemetry.',
         ].map((note) => (
           <div key={note} className={`rounded-xl border px-3 py-2 text-xs font-bold leading-5 ${
             light ? 'border-emerald-200 bg-emerald-50 text-emerald-800' : 'border-emerald-300/15 bg-emerald-400/[0.06] text-emerald-100'

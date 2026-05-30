@@ -6,6 +6,7 @@ import KPIGrid from './components/KPIGrid';
 import MobileBottomNav from './components/MobileBottomNav';
 import PageHeader from './components/PageHeader';
 import RoboLogo from './components/RoboLogo';
+import RoboWordmark from './components/RoboWordmark';
 import Sidebar from './components/Sidebar';
 import Timeline from './components/Timeline';
 import AIRecommendationPanel from './panels/AIRecommendationPanel';
@@ -139,7 +140,9 @@ function SsoCallbackPage() {
       <AuthenticateWithRedirectCallback />
       <div className="text-center">
         <RoboLogo className="mx-auto h-16 w-16" />
-        <p className="mt-3 text-sm font-black uppercase tracking-[0.22em] text-slate-500">RoboAgent</p>
+        <p className="mt-3 text-xl">
+          <RoboWordmark />
+        </p>
         <h1 className="mt-3 text-3xl font-black">Finishing secure sign in...</h1>
         <p className="mt-3 text-sm text-slate-500">You will return to onboarding automatically.</p>
       </div>
@@ -314,7 +317,7 @@ function FleetApp() {
         <div className="hidden md:block">
           <PageHeader
             eyebrow="Live Operations"
-            title={<><span>RoboAgent</span><span className="block text-slate-500">Command Center</span></>}
+            title={<><RoboWordmark className="text-inherit" colorClass="text-black" /><span className="block text-slate-500">Command Center</span></>}
             description="The main owner dashboard after sign-in: AI plans, Tesla telemetry, pricing, charging, maintenance, and profitability."
             action={operationsStatus}
           />
@@ -468,7 +471,7 @@ function FleetApp() {
         <PageHeader
           eyebrow="Owner Economics"
           title="Finance"
-          description="Track revenue, operating cost, loan exposure, equity, and ROI so RoboAgent can prove whether the fleet is making money."
+          description="Track revenue, operating cost, loan exposure, equity, and ROI so ROBOAGENT can prove whether the fleet is making money."
           action={operationsStatus}
         />
         <FleetFinancePanel
@@ -541,7 +544,7 @@ function FleetApp() {
         <PageHeader
           eyebrow="AI Command"
           title="AI Operations"
-          description="Review next best actions, confidence scores, and one-click execution recommendations from the RoboAgent AI layer."
+          description="Review next best actions, confidence scores, and one-click execution recommendations from the ROBOAGENT AI layer."
           action={operationsStatus}
         />
         <RoboAgentAskPanel onQueueCommand={requestCommand} />
@@ -576,7 +579,7 @@ function FleetApp() {
         <PageHeader
           eyebrow="Fleet Memory"
           title="Events"
-          description="Capture telemetry, alerts, recommendations, and commands as future retrieval memory for RoboAgent AI."
+          description="Capture telemetry, alerts, recommendations, and commands as future retrieval memory for ROBOAGENT AI."
           action={operationsStatus}
         />
         <MemoryEventsPanel
@@ -625,7 +628,7 @@ function FleetApp() {
         <PageHeader
           eyebrow="Tesla Fleet API"
           title="Capabilities"
-          description="See exactly which Tesla APIs RoboAgent uses today, which controls are safe to operate, and which commands should be added next."
+          description="See exactly which Tesla APIs ROBOAGENT uses today, which controls are safe to operate, and which commands should be added next."
           action={operationsStatus}
         />
         <TeslaCapabilitiesPanel
@@ -681,7 +684,7 @@ function FleetApp() {
         <PageHeader
           eyebrow="Privacy"
           title="Privacy Notice"
-          description="Draft beta privacy language and data handling summary for RoboAgent testers."
+          description="Draft beta privacy language and data handling summary for ROBOAGENT testers."
         />
         <LegalPage type="privacy" />
       </>
@@ -732,7 +735,7 @@ function FleetApp() {
         <header className="mx-auto mb-8 flex max-w-5xl items-center justify-between">
           <button type="button" onClick={() => navigate('landing')} className="flex items-center gap-3">
             <RoboLogo className="h-8 w-8" />
-            <span className="text-sm font-black uppercase tracking-[0.28em] text-[#172231]">RoboAgent</span>
+            <RoboWordmark className="text-lg" />
           </button>
           <button
             type="button"

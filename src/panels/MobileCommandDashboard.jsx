@@ -1,4 +1,5 @@
 import VehicleIdentityPlate from '../components/VehicleIdentityPlate';
+import RoboWordmark from '../components/RoboWordmark';
 
 function formatCurrency(value) {
   if (!Number.isFinite(value)) return '$0';
@@ -131,7 +132,9 @@ export default function MobileCommandDashboard({
     <section className="space-y-4 lg:hidden">
       <div className="flex items-center justify-between pt-1">
         <div>
-          <p className="text-[11px] font-bold uppercase tracking-[0.22em] text-sky-300">RoboAgent</p>
+          <p className="text-sm">
+            <RoboWordmark colorClass="text-sky-300" />
+          </p>
           <h1 className="mt-1 text-2xl font-black tracking-tight text-white">Command</h1>
         </div>
         <button

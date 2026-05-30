@@ -44,7 +44,7 @@ function buildMemoryEvents({ fleet = [], analysis, commandQueue = [], realSyncSt
     ...commandQueue.map((command) => ({
       type: 'Command',
       title: command.command,
-      detail: 'Operator command queued from RoboAgent workflow.',
+      detail: 'Operator command queued from ROBOAGENT workflow.',
       timestamp: null,
       source: command.priority || 'NORMAL',
       ragReady: false,
@@ -123,7 +123,7 @@ export default function MemoryEventsPanel({ fleet, analysis, commandQueue, realS
             </p>
             <h2 className="text-2xl font-black tracking-tight">Events For Future RAG</h2>
             <p className="mt-2 max-w-3xl text-sm text-slate-400">
-              These events are the raw material RoboAgent will store, embed, retrieve, and use to explain similar future situations. Syncs and operator commands now persist through the RoboAgent backend as an audit trail.
+              These events are the raw material ROBOAGENT will store, embed, retrieve, and use to explain similar future situations. Syncs and operator commands now persist through the ROBOAGENT backend as an audit trail.
             </p>
           </div>
           <div className="flex gap-2">

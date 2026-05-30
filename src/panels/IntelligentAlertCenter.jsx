@@ -16,7 +16,7 @@ export default function IntelligentAlertCenter({ analysis, isAnalyzing }) {
           </p>
           <h2 className="text-xl font-black tracking-tight sm:text-2xl">Intelligent Alert Center</h2>
           <p className="mt-2 max-w-3xl text-sm text-slate-400">
-            {analysis?.summary || 'RoboAgent AI is ranking active operating risks.'}
+            {analysis?.summary || 'ROBOAGENT AI is ranking active operating risks.'}
           </p>
         </div>
 
@@ -30,7 +30,7 @@ export default function IntelligentAlertCenter({ analysis, isAnalyzing }) {
           <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-4 text-emerald-200">
             <p className="font-bold">No AI-prioritized alerts.</p>
             <p className="mt-1 text-sm text-emerald-100/80">
-              RoboAgent has not detected a high-priority operating risk in the current snapshot.
+              ROBOAGENT has not detected a high-priority operating risk in the current snapshot.
             </p>
           </div>
         )}

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import RoboLogo from './RoboLogo';
+import RoboWordmark from './RoboWordmark';
 import { logoutFleetOsAccount } from '../services/sessionService';
 
 export default function Sidebar({
@@ -80,9 +81,7 @@ export default function Sidebar({
 
           <RoboLogo className="h-8 w-8 shrink-0" />
 
-          <span className="text-xs font-black uppercase tracking-[0.2em] text-[#172231]">
-            RoboAgent
-          </span>
+          <RoboWordmark className="text-sm" />
 
         </div>
 

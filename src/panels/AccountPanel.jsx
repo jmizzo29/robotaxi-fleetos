@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { isClerkConfigured } from '../auth/clerkConfig';
 import RoboLogo from '../components/RoboLogo';
+import RoboWordmark from '../components/RoboWordmark';
 import {
   getFleetOsBillingStatus,
   getFleetOsSession,
@@ -155,7 +156,7 @@ export default function AccountPanel({ onNavigate }) {
       <header className="mx-auto flex max-w-3xl items-center justify-between">
         <button type="button" onClick={() => onNavigate?.('landing')} className="flex items-center gap-3">
           <RoboLogo className="h-9 w-9" />
-          <span className="text-sm font-black uppercase tracking-[0.2em] text-[#172231]">RoboAgent</span>
+          <RoboWordmark className="text-lg" />
         </button>
         <button
           type="button"
@@ -171,7 +172,7 @@ export default function AccountPanel({ onNavigate }) {
           <div className="mb-5 sm:mb-6">
             <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">Account</p>
             <h1 className="mt-2 text-2xl font-semibold text-black sm:text-3xl">
-              {hasRealAccount ? 'You are signed in' : 'Sign in to RoboAgent'}
+              {hasRealAccount ? 'You are signed in' : 'Sign in to ROBOAGENT'}
             </h1>
             <p className="mt-2 text-sm font-semibold leading-5 text-slate-500 sm:leading-6">
               {hasRealAccount
@@ -289,7 +290,7 @@ export default function AccountPanel({ onNavigate }) {
             <div className="space-y-4">
               <div className="rounded-2xl border border-[#141b27]/10 bg-slate-50 p-4">
                 <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">Signed In</p>
-                <p className="mt-2 text-lg font-black text-[#141b27]">{user.name || 'RoboAgent Owner'}</p>
+                <p className="mt-2 text-lg font-black text-[#141b27]">{user.name || 'ROBOAGENT Owner'}</p>
                 <p className="mt-1 truncate text-sm font-semibold text-slate-500">{user.email}</p>
               </div>
 

@@ -195,13 +195,13 @@ export default function BetaAdminPanel() {
         <>
           <article className="overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-br from-slate-900 to-slate-950 shadow-2xl shadow-black/20">
             <div className="border-b border-white/10 bg-white/[0.03] px-6 py-4">
-              <p className="text-xs font-semibold uppercase tracking-[0.28em] text-sky-300">RoboAgent Admin</p>
+              <p className="text-sm font-bold uppercase text-sky-300">ROBOAGENT Admin</p>
             </div>
             <div className="p-6">
               <p className="text-xs font-semibold uppercase tracking-[0.22em] text-amber-200">Sign in required</p>
               <h2 className="mt-3 text-4xl font-black text-white">Admin Access</h2>
               <p className="mt-3 max-w-2xl text-sm leading-6 text-slate-300">
-                Sign in with your RoboAgent admin account first. Your email must be listed in the server-side ADMIN_EMAILS allowlist.
+                Sign in with your ROBOAGENT admin account first. Your email must be listed in the server-side ADMIN_EMAILS allowlist.
               </p>
               {message && (
                 <div className="mt-5 rounded-2xl border border-amber-300/20 bg-amber-400/10 p-4 text-sm font-semibold text-amber-100">
@@ -241,7 +241,7 @@ export default function BetaAdminPanel() {
             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-emerald-300">Beta Admin</p>
             <h2 className="mt-2 text-3xl font-black text-white">Tester Operations</h2>
             <p className="mt-2 text-sm leading-6 text-slate-400">
-              Track redacted feedback and confirm whether RoboAgent is using Postgres for durable beta storage.
+              Track redacted feedback and confirm whether ROBOAGENT is using Postgres for durable beta storage.
             </p>
           </div>
           <button type="button" onClick={refresh} className="rounded-md border border-sky-400/30 bg-sky-400/10 px-4 py-3 text-sm font-bold text-sky-100">
@@ -260,7 +260,7 @@ export default function BetaAdminPanel() {
                 <p className="text-xs font-semibold uppercase tracking-[0.22em] text-rose-200">Danger Zone</p>
                 <h2 className="mt-2 text-2xl font-black text-white">Purge Beta User</h2>
                 <p className="mt-2 max-w-3xl text-sm leading-6 text-rose-100/80">
-                  Deletes the RoboAgent user, sessions, Tesla token storage, fleet vehicles, telemetry snapshots, revenue, memory, assets, and matching beta lead or feedback rows. If Clerk can be reached, the matching Clerk user is deleted too.
+                  Deletes the ROBOAGENT user, sessions, Tesla token storage, fleet vehicles, telemetry snapshots, revenue, memory, assets, and matching beta lead or feedback rows. If Clerk can be reached, the matching Clerk user is deleted too.
                 </p>
               </div>
               <span className="rounded-full border border-rose-300/20 bg-rose-300/10 px-3 py-1 text-xs font-black uppercase text-rose-100">

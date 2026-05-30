@@ -89,7 +89,7 @@ export default function AgentOrchestrationPanel({
           </p>
           <h2 className="text-2xl font-black tracking-tight">Agent Orchestration</h2>
           <p className="mt-2 max-w-3xl text-sm text-slate-400">
-            RoboAgent coordinates specialized agents around live Tesla telemetry, simulation, alerts, and operator commands.
+            ROBOAGENT coordinates specialized agents around live Tesla telemetry, simulation, alerts, and operator commands.
           </p>
         </div>
 

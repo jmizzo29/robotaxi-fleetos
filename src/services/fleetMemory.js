@@ -9,7 +9,7 @@ function normalizeEvent(event) {
   return {
     id: event.id || `mem-${Date.now()}-${Math.random().toString(16).slice(2)}`,
     type: event.type || 'Event',
-    title: event.title || 'RoboAgent event',
+    title: event.title || 'ROBOAGENT event',
     detail: event.detail || '',
     timestamp: event.timestamp || new Date().toISOString(),
     source: event.source || 'fleetos',

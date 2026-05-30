@@ -74,7 +74,7 @@ export default function VehicleDetailPanel({
                   {vehicle.isReal ? 'Real Tesla' : 'Simulated Vehicle'}
                 </p>
                 <h2 className="text-4xl font-black tracking-tight">{name}</h2>
-                <p className="mt-2 text-sm text-slate-400">{vehicle.vin ? maskVin(vehicle.vin) : vehicle.assignment || 'RoboAgent vehicle record'}</p>
+                <p className="mt-2 text-sm text-slate-400">{vehicle.vin ? maskVin(vehicle.vin) : vehicle.assignment || 'ROBOAGENT vehicle record'}</p>
               </div>
               <span className="rounded-full border border-emerald-300/25 bg-emerald-400/10 px-3 py-1 text-xs font-black uppercase text-emerald-200">
                 {status}

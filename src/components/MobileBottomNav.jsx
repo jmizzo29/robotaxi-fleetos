@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import RoboWordmark from './RoboWordmark';
 import { logoutFleetOsAccount } from '../services/sessionService';
 
 function NavIcon({ type }) {
@@ -101,7 +102,9 @@ export default function MobileBottomNav({ route, onNavigate }) {
         <div className="fixed inset-x-4 bottom-24 z-50 max-h-[68vh] overflow-hidden rounded-2xl border border-[#141b27]/10 bg-white/95 shadow-2xl shadow-slate-900/20 backdrop-blur lg:hidden">
           <div className="flex items-center justify-between border-b border-[#141b27]/10 px-4 py-3">
             <div>
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">RoboAgent</p>
+              <p className="text-sm">
+                <RoboWordmark />
+              </p>
               <h2 className="text-lg font-black text-[#141b27]">Menu</h2>
             </div>
             <div className="flex items-center gap-2">

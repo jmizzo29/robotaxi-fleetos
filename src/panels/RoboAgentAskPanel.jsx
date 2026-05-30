@@ -96,7 +96,7 @@ export default function RoboAgentAskPanel({ onQueueCommand }) {
     try {
       setAnswer(await askRoboAgent({ question: trimmed }));
     } catch (askError) {
-      setError(askError.message || 'RoboAgent could not answer right now.');
+      setError(askError.message || 'ROBOAGENT could not answer right now.');
     } finally {
       setIsAsking(false);
     }
@@ -107,11 +107,11 @@ export default function RoboAgentAskPanel({ onQueueCommand }) {
       <div className="mb-5 flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
         <div>
           <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-emerald-300">
-            RoboAgent Ask
+            ROBOAGENT Ask
           </p>
           <h2 className="text-2xl font-black tracking-tight">Ask your fleet agent anything</h2>
           <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
-            RoboAgent pulls signed-in fleet data, revenue records, memory events, and local context, then returns evidence-backed actions for owner approval.
+            ROBOAGENT pulls signed-in fleet data, revenue records, memory events, and local context, then returns evidence-backed actions for owner approval.
           </p>
         </div>
         <span className="w-fit rounded-md border border-emerald-300/20 bg-emerald-400/10 px-3 py-2 text-xs font-black text-emerald-200">
@@ -138,7 +138,7 @@ export default function RoboAgentAskPanel({ onQueueCommand }) {
             onClick={submit}
             className="mt-3 w-full rounded-md bg-sky-300 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-sky-200 disabled:cursor-wait disabled:opacity-70"
           >
-            {isAsking ? 'RoboAgent Thinking...' : 'Ask RoboAgent'}
+            {isAsking ? 'ROBOAGENT Thinking...' : 'Ask ROBOAGENT'}
           </button>
 
           <div className="mt-4 flex flex-wrap gap-2">

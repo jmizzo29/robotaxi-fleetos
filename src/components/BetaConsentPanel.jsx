@@ -58,7 +58,7 @@ export default function BetaConsentPanel({ compact = false, tone = 'dark', onAcc
           <h3 className={`mt-2 text-xl font-black ${light ? 'text-slate-950' : 'text-white'}`}>{ready ? 'Ready to Connect Tesla' : 'Required Before Tesla Sync'}</h3>
           {!compact && (
             <p className={`mt-2 text-sm leading-6 ${light ? 'text-slate-600' : 'text-slate-300'}`}>
-              RoboAgent processes VIN, precise location, battery, odometer, charging, and vehicle state. Beta users must explicitly consent before Tesla telemetry sync.
+              ROBOAGENT processes VIN, precise location, battery, odometer, charging, and vehicle state. Beta users must explicitly consent before Tesla telemetry sync.
             </p>
           )}
         </div>
@@ -98,8 +98,8 @@ export default function BetaConsentPanel({ compact = false, tone = 'dark', onAcc
           <TeslaIndependenceNotice compact tone={tone} />
           <TeslaDataAccessDisclosure compact tone={tone} />
           {[
-            ['telemetry', 'I authorize RoboAgent to access my Tesla telemetry for dashboard, finance, location, and owner intelligence features.'],
-            ['location', 'I understand RoboAgent may process precise vehicle location and parking history.'],
+            ['telemetry', 'I authorize ROBOAGENT to access my Tesla telemetry for dashboard, finance, location, and owner intelligence features.'],
+            ['location', 'I understand ROBOAGENT may process precise vehicle location and parking history.'],
             ['beta', 'I understand this is beta software and should not be used for emergency, safety, or autonomous-driving decisions.'],
           ].map(([key, label]) => (
             <label key={key} className={`flex gap-3 rounded-xl border p-3 text-sm leading-5 ${

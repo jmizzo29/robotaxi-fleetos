@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import RoboLogo from '../components/RoboLogo';
+import RoboWordmark from '../components/RoboWordmark';
 import { buildMarketRentalAnswer, isMarketQuestion } from '../services/marketIntelligenceService';
 
 const demoPrompts = [
@@ -18,8 +19,8 @@ function MobileTrustSection() {
         <h2 className="mt-3 text-3xl font-black tracking-tight text-white">Your Tesla login stays with Tesla.</h2>
         <div className="mt-5 grid gap-3">
           {[
-            ['RoboAgent account first', 'Your fleet, billing, and saved AI plans attach to your private app account.'],
-            ['Tesla OAuth second', 'You approve vehicle access directly with Tesla. RoboAgent never sees your Tesla password.'],
+            ['ROBOAGENT account first', 'Your fleet, billing, and saved AI plans attach to your private app account.'],
+            ['Tesla OAuth second', 'You approve vehicle access directly with Tesla. ROBOAGENT never sees your Tesla password.'],
             ['You stay in control', 'Revoke access, disconnect Tesla, or delete data from the app flow.'],
           ].map(([title, detail]) => (
             <article key={title} className="rounded-lg border border-emerald-300/15 bg-emerald-400/[0.06] p-4">
@@ -53,8 +54,8 @@ function buildDemoResponse(goal) {
       steps: [
         'Average speed was 42 mph, which is normal for this route mix.',
         'The trip used 61% battery and returned with enough range for a same-day cleaning and recharge.',
-        'No maintenance exception was triggered, but RoboAgent added the 287 miles to tire and service forecasts.',
-        'RoboAgent can show the full trip record or compare it against previous rentals.',
+        'No maintenance exception was triggered, but ROBOAGENT added the 287 miles to tire and service forecasts.',
+        'ROBOAGENT can show the full trip record or compare it against previous rentals.',
       ],
       confidence: 95,
       impact: 'This rental performed well: strong earnings, normal driving profile, and no immediate maintenance flags.',
@@ -64,7 +65,7 @@ function buildDemoResponse(goal) {
   if (lower.includes('health') || lower.includes('prepare')) {
     return {
       title: 'Tomorrow readiness command',
-      summary: 'RoboAgent found two vehicles that need action before morning demand and built a low-wake prep plan.',
+      summary: 'ROBOAGENT found two vehicles that need action before morning demand and built a low-wake prep plan.',
       metrics: ['94% fleet health', '2 prep tasks', '7:30 AM ready target'],
       steps: [
         'Charge Vehicle 2 from 48% to 82% overnight during the lowest-cost window.',
@@ -80,7 +81,7 @@ function buildDemoResponse(goal) {
   if (wantsPricing) {
     return {
       title: 'Turo revenue plan',
-      summary: 'RoboAgent sees stronger weekend demand and recommends price moves only where readiness and health support it.',
+      summary: 'ROBOAGENT sees stronger weekend demand and recommends price moves only where readiness and health support it.',
       metrics: ['+$284 projected', '+18% Model Y', '82% utilization target'],
       steps: [
         'Raise the Model Y weekend rate 18% because health score, battery readiness, and utilization are strong.',
@@ -96,7 +97,7 @@ function buildDemoResponse(goal) {
   if (wantsCharging) {
     return {
       title: 'Dynamic charging plan',
-      summary: 'RoboAgent found one avoidable charge window conflict and moved charging away from likely earning hours.',
+      summary: 'ROBOAGENT found one avoidable charge window conflict and moved charging away from likely earning hours.',
       metrics: ['11:30 PM charge start', '$9 estimated savings', '76 mi buffer'],
       steps: [
         'Start charging after 11:30 PM so Vehicle 1 reaches 85% before its morning rental.',
@@ -112,7 +113,7 @@ function buildDemoResponse(goal) {
   if (wantsWeather) {
     return {
       title: 'Weather and traffic protection plan',
-      summary: 'RoboAgent identified pickup risk and moved prep tasks earlier so delays do not eat into utilization.',
+      summary: 'ROBOAGENT identified pickup risk and moved prep tasks earlier so delays do not eat into utilization.',
       metrics: ['35 min buffer', '1 weather risk', '2 pickup zones'],
       steps: [
         'Move cleaning for Vehicle 1 earlier because rain risk overlaps the handoff window.',
@@ -128,10 +129,10 @@ function buildDemoResponse(goal) {
   if (wantsOnboarding) {
     return {
       title: 'Owner onboarding plan',
-      summary: 'RoboAgent turns signup into a guided checklist so the owner sees value before and after Tesla OAuth.',
+      summary: 'ROBOAGENT turns signup into a guided checklist so the owner sees value before and after Tesla OAuth.',
       metrics: ['5 steps', 'Tesla OAuth', 'No password sharing'],
       steps: [
-        'Create a secure RoboAgent account and save this plan to the owner profile.',
+        'Create a secure ROBOAGENT account and save this plan to the owner profile.',
         'Approve telemetry consent so the owner understands what data is used and why.',
         'Connect Tesla through OAuth, keeping the Tesla password with Tesla.',
         'Run the first sync, then review pricing, finance, health, and map views.',
@@ -144,7 +145,7 @@ function buildDemoResponse(goal) {
   if (lower.includes('summary') || lower.includes('fleet')) {
     return {
       title: 'Fleet summary brief',
-      summary: 'RoboAgent combines telemetry, imported earnings, health, and utilization into a single owner action brief.',
+      summary: 'ROBOAGENT combines telemetry, imported earnings, health, and utilization into a single owner action brief.',
       metrics: ['3 vehicles', '$1,284 weekend estimate', '1 maintenance watch'],
       steps: [
         'Summarize live battery, location, odometer, charging state, and last sync age.',
@@ -159,7 +160,7 @@ function buildDemoResponse(goal) {
 
   return {
     title: 'Weekend earnings command',
-    summary: 'RoboAgent built a weekend plan that balances price, charging, cleaning, and approval-safe Tesla actions.',
+    summary: 'ROBOAGENT built a weekend plan that balances price, charging, cleaning, and approval-safe Tesla actions.',
     metrics: ['$1,284 projected', '3 Teslas planned', '92% ready score'],
     steps: [
       'Raise weekend pricing 15-20% on the highest-readiness vehicle and keep one car priced for fast booking.',
@@ -217,7 +218,7 @@ function HeroAgentDemo({
 
       <div className="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4 lg:p-5">
         <label htmlFor={inputId} className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">
-          Ask RoboAgent anything
+          Ask ROBOAGENT anything
         </label>
         <textarea
           id={inputId}
@@ -315,7 +316,7 @@ function OwnerOutcomePanel() {
     <aside className="min-h-screen bg-gradient-to-b from-slate-950 to-black p-4 pb-20 text-white md:min-h-0 md:rounded-[2rem] md:p-6 lg:p-8" data-testid="agent-command-center">
       <div className="mb-6 flex items-start justify-between gap-4">
         <div>
-          <p className="text-sm font-medium uppercase tracking-wide text-teal-400">RoboAgent Command Center</p>
+          <p className="text-sm font-bold uppercase text-teal-400">ROBOAGENT Command Center</p>
           <h2 className="mt-1 text-3xl font-bold tracking-tight text-white">The AI agent is the product.</h2>
         </div>
         <span className="shrink-0 rounded-full bg-green-500/20 px-3 py-1 text-xs font-medium text-green-400">
@@ -520,7 +521,7 @@ export function HowItWorksPage({ onNavigate }) {
       <header className="mx-auto mb-6 flex max-w-7xl items-center justify-between">
         <button type="button" onClick={() => onNavigate('landing')} className="flex items-center gap-3">
           <RoboLogo className="h-8 w-8" />
-          <span className="text-sm font-black uppercase tracking-[0.2em] text-[#172231]">RoboAgent</span>
+          <RoboWordmark className="text-lg" />
         </button>
         <button
           type="button"
@@ -534,12 +535,12 @@ export function HowItWorksPage({ onNavigate }) {
       <main className="mx-auto max-w-7xl">
         <section className="grid min-h-[calc(100vh-112px)] items-center gap-8 lg:grid-cols-[0.92fr_1.08fr]">
           <div className="max-w-xl">
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">How RoboAgent Works</p>
+            <p className="text-xs font-bold uppercase text-slate-500">How ROBOAGENT Works</p>
             <h1 className="mt-4 text-4xl font-medium leading-tight text-black sm:text-5xl lg:text-6xl">
               From raw fleet data to a daily owner plan.
             </h1>
             <p className="mt-5 max-w-lg text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">
-              RoboAgent reads Tesla telemetry, rental context, market signals, and vehicle health, then turns it into pricing, charging, cleaning, and maintenance actions.
+              ROBOAGENT reads Tesla telemetry, rental context, market signals, and vehicle health, then turns it into pricing, charging, cleaning, and maintenance actions.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <button
@@ -661,7 +662,7 @@ export function HowItWorksPage({ onNavigate }) {
         <section className="grid gap-3 pb-8 sm:grid-cols-3">
           {[
             ['Inputs', 'Tesla telemetry, rental history, weather, and market context.'],
-            ['Reasoning', 'RoboAgent ranks what will increase earnings and reduce risk.'],
+            ['Reasoning', 'ROBOAGENT ranks what will increase earnings and reduce risk.'],
             ['Output', 'A simple daily plan you can approve, inspect, or ignore.'],
           ].map(([title, detail]) => (
             <div key={title} className="rounded-2xl border border-[#141b27]/10 bg-white/85 p-5 shadow-sm">
@@ -681,8 +682,8 @@ export default function LandingPage({ onNavigate }) {
       <section className="grid min-h-screen place-items-center px-6 py-10">
         <main className="w-full max-w-3xl text-center">
           <RoboLogo className="mx-auto h-24 w-24 sm:h-28 sm:w-28" />
-          <p className="mt-3 text-2xl font-semibold uppercase text-[#172231] sm:text-3xl">
-            RoboAgent
+          <p className="mt-3 text-2xl sm:text-3xl">
+            <RoboWordmark />
           </p>
 
           <h1 className="mx-auto mt-16 max-w-3xl text-4xl font-medium leading-tight text-black sm:text-5xl md:text-6xl">
@@ -745,7 +746,9 @@ export function AgentChatPage({ onNavigate }) {
         <div className="flex items-center gap-3">
           <RoboLogo className="h-10 w-10 shrink-0" />
           <div>
-            <p className="font-semibold text-[#141b27]">RoboAgent</p>
+            <p className="text-lg">
+              <RoboWordmark />
+            </p>
             <p data-testid="agent-online-status" className="flex items-center gap-1 text-xs text-teal-400 before:mr-1 before:content-['●'] [&>span:first-child]:hidden">
               <span aria-hidden="true">●</span>
               <span>Online</span>
@@ -814,7 +817,7 @@ export function AgentChatPage({ onNavigate }) {
             onKeyDown={(event) => {
               if (event.key === 'Enter') askAgent();
             }}
-            placeholder="Ask RoboAgent anything..."
+            placeholder="Ask ROBOAGENT anything..."
             className="flex-1 bg-transparent text-[#141b27] outline-none placeholder:text-slate-400"
           />
           <button
@@ -822,7 +825,7 @@ export function AgentChatPage({ onNavigate }) {
             onClick={askAgent}
             disabled={isThinking}
             className="ml-3 flex h-10 min-w-16 items-center justify-center rounded-2xl bg-[#172231] px-4 text-sm font-black text-white hover:bg-[#243044] disabled:cursor-wait disabled:opacity-70"
-            aria-label="Ask RoboAgent"
+            aria-label="Ask ROBOAGENT"
           >
             Send
           </button>
@@ -840,7 +843,7 @@ export function AgentAboutPage({ onNavigate }) {
       <header className="mx-auto flex max-w-7xl items-center justify-between px-5 py-5">
         <button type="button" onClick={() => onNavigate('landing')} className="flex items-center gap-3">
           <RoboLogo className="h-8 w-8" />
-          <span className="text-sm font-black uppercase tracking-[0.28em] text-slate-900">RoboAgent</span>
+          <RoboWordmark className="text-lg" />
         </button>
         <button
           type="button"
@@ -881,7 +884,7 @@ export function AgentAboutPage({ onNavigate }) {
       </main>
 
       <footer className={`mx-auto max-w-7xl flex-col gap-3 border-t border-white/10 px-5 py-8 text-sm text-slate-500 sm:flex sm:flex-row sm:items-center sm:justify-between ${showMobileMore ? 'flex' : 'hidden sm:flex'}`}>
-        <p>RoboAgent beta. Not affiliated with or endorsed by Tesla.</p>
+        <p>ROBOAGENT beta. Not affiliated with or endorsed by Tesla.</p>
         <div className="flex gap-4">
           <button type="button" onClick={() => onNavigate('privacy')} className="hover:text-sky-300">Privacy</button>
           <button type="button" onClick={() => onNavigate('terms')} className="hover:text-sky-300">Terms</button>

@@ -1,7 +1,7 @@
 import { readJsonResponse } from './apiClient';
 
 const OPERATING_BASE = {
-  label: 'RoboAgent Central Florida Base',
+  label: 'ROBOAGENT Central Florida Base',
   latitude: 28.084192,
   longitude: -81.725751,
 };
