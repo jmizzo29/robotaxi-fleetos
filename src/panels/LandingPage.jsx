@@ -503,95 +503,173 @@ function MobileHeroCta({ onNavigate, onSeeMore, isMoreOpen }) {
 }
 
 export function HowItWorksPage({ onNavigate }) {
+  const actions = [
+    ['Price', 'Raise Orlando weekend rate', '9:00 AM'],
+    ['Charge', 'Start Model Y after 11 PM', '11:00 PM'],
+    ['Clean', 'Schedule pre-pickup detail', '2:30 PM'],
+    ['Health', 'Check Tampa tire pressure', '7:15 AM'],
+  ];
+  const pricing = [
+    ['Model Y', '$118', 'Ready'],
+    ['Model 3', '$92', 'Watch'],
+    ['Model S', '$142', 'Ready'],
+  ];
+
   return (
-    <div data-testid="how-it-works" className="min-h-screen bg-zinc-950 px-6 py-8 text-white">
-      <header className="mx-auto mb-10 flex max-w-4xl items-center justify-between">
+    <div data-testid="how-it-works" className="min-h-screen bg-[#f7f7f5] px-5 py-6 text-[#141b27] sm:px-6 sm:py-8">
+      <header className="mx-auto mb-6 flex max-w-7xl items-center justify-between">
         <button type="button" onClick={() => onNavigate('landing')} className="flex items-center gap-3">
           <RoboLogo className="h-8 w-8" />
-          <span className="text-sm font-black uppercase tracking-[0.28em] text-teal-200">RoboAgent</span>
+          <span className="text-sm font-black uppercase tracking-[0.2em] text-[#172231]">RoboAgent</span>
         </button>
         <button
           type="button"
           onClick={() => onNavigate('landing')}
-          className="rounded-full border border-zinc-700 bg-zinc-900 px-4 py-2 text-sm font-black text-zinc-200 transition hover:border-teal-400 hover:text-teal-200"
+          className="rounded-full border border-[#141b27]/10 bg-white px-4 py-2 text-sm font-black text-[#172231] shadow-sm transition hover:bg-slate-100"
         >
           Back Home
         </button>
       </header>
 
-      <main className="mx-auto max-w-4xl">
-        <div className="mb-12 text-center">
-          <h2 className="mb-3 text-4xl font-bold">How RoboAgent Works</h2>
-          <p className="text-lg text-zinc-400">From raw data to daily profit</p>
-        </div>
-
-        <div className="grid items-center gap-8 md:grid-cols-3">
-          <div className="space-y-6">
-            <h3 className="mb-6 text-lg font-semibold text-teal-400">INPUTS</h3>
-            <div className="space-y-6 rounded-3xl bg-zinc-900 p-6">
-              <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-zinc-800 text-sm font-black">EV</div>
-                <div>
-                  <p className="font-medium">Tesla Telemetry</p>
-                  <p className="text-sm text-zinc-400">Battery, location, odometer, charging state</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-zinc-800 text-sm font-black">TR</div>
-                <div>
-                  <p className="font-medium">Turo Rentals</p>
-                  <p className="text-sm text-zinc-400">Bookings, pricing history, availability</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-zinc-800 text-sm font-black">WX</div>
-                <div>
-                  <p className="font-medium">Weather & Market Data</p>
-                  <p className="text-sm text-zinc-400">Open-Meteo + local demand</p>
-                </div>
-              </div>
+      <main className="mx-auto max-w-7xl">
+        <section className="grid min-h-[calc(100vh-112px)] items-center gap-8 lg:grid-cols-[0.92fr_1.08fr]">
+          <div className="max-w-xl">
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">How RoboAgent Works</p>
+            <h1 className="mt-4 text-4xl font-medium leading-tight text-black sm:text-5xl lg:text-6xl">
+              From raw fleet data to a daily owner plan.
+            </h1>
+            <p className="mt-5 max-w-lg text-base leading-7 text-slate-600 sm:text-lg sm:leading-8">
+              RoboAgent reads Tesla telemetry, rental context, market signals, and vehicle health, then turns it into pricing, charging, cleaning, and maintenance actions.
+            </p>
+            <div className="mt-7 flex flex-wrap gap-3">
+              <button
+                type="button"
+                onClick={() => onNavigate('account')}
+                className="rounded-lg bg-[#172231] px-6 py-4 text-sm font-black text-white shadow-lg shadow-slate-900/10 transition hover:bg-[#243044]"
+              >
+                Sign In
+              </button>
+              <button
+                type="button"
+                onClick={() => onNavigate('onboarding')}
+                className="rounded-lg border border-[#141b27]/10 bg-white px-6 py-4 text-sm font-black text-[#172231] shadow-sm transition hover:bg-slate-100"
+              >
+                Start Setup
+              </button>
             </div>
           </div>
 
-          <div className="flex justify-center">
-            <div className="text-center">
-              <div className="mx-auto mb-6 flex h-32 w-32 items-center justify-center rounded-3xl bg-gradient-to-br from-teal-400 to-cyan-500 shadow-2xl shadow-teal-500/50">
-                <div className="text-5xl font-black text-black">AI</div>
-              </div>
-              <p className="text-xl font-semibold text-teal-400">RoboAgent AI</p>
-              <p className="mt-1 text-sm text-zinc-500">Analyzes - Reasons - Plans</p>
-            </div>
-          </div>
+          <div className="relative min-h-[520px] overflow-hidden rounded-[2rem] border border-[#141b27]/10 bg-white/72 p-4 shadow-2xl shadow-slate-900/10 sm:p-6 lg:min-h-[620px]">
+            <div className="absolute inset-x-6 bottom-10 h-px bg-slate-200" />
+            <div className="absolute bottom-10 left-[13%] right-[30%] h-px origin-left rotate-[-12deg] bg-sky-200" />
+            <div className="absolute bottom-10 left-[32%] right-[23%] h-px origin-left rotate-[9deg] bg-sky-200" />
 
-          <div className="space-y-6">
-            <h3 className="mb-6 text-right text-lg font-semibold text-teal-400">OUTPUTS</h3>
-            <div className="space-y-6 rounded-3xl bg-zinc-900 p-6">
-              <div className="flex items-center justify-end gap-4">
-                <div className="text-right">
-                  <p className="font-medium">Smart Pricing</p>
-                  <p className="text-sm text-zinc-400">Dynamic Turo rate recommendations</p>
+            <div className="absolute left-2 top-20 grid w-[46%] grid-cols-2 gap-3 sm:left-5 sm:top-28">
+              {[0, 1, 2, 3, 4].map((item) => (
+                <div
+                  key={item}
+                  className={`relative h-20 rounded-[44%_56%_47%_53%/56%_46%_54%_44%] bg-[#151b25] shadow-xl shadow-slate-900/20 ${
+                    item === 0 ? 'translate-y-10 -rotate-6' : ''
+                  } ${item === 1 ? 'translate-y-0 rotate-3' : ''} ${item === 2 ? '-translate-y-1 rotate-2' : ''} ${
+                    item === 3 ? '-translate-y-4 -rotate-3' : ''
+                  } ${item === 4 ? '-translate-y-10 rotate-4' : ''}`}
+                >
+                  <div className="absolute left-[14%] top-[28%] h-[34%] w-[42%] rounded-t-2xl bg-slate-600/40" />
+                  <div className="absolute bottom-2 left-4 h-3 w-3 rounded-full border-2 border-slate-300 bg-slate-900" />
+                  <div className="absolute bottom-2 right-4 h-3 w-3 rounded-full border-2 border-slate-300 bg-slate-900" />
+                  <div className="absolute right-2 top-8 h-1.5 w-8 rounded-full bg-sky-200/70" />
                 </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-zinc-800 text-sm font-black">$</div>
-              </div>
-              <div className="flex items-center justify-end gap-4">
-                <div className="text-right">
-                  <p className="font-medium">Charging & Maintenance</p>
-                  <p className="text-sm text-zinc-400">Optimized schedules and alerts</p>
-                </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-zinc-800 text-sm font-black">KW</div>
-              </div>
-              <div className="flex items-center justify-end gap-4">
-                <div className="text-right">
-                  <p className="font-medium">Earnings Forecasts</p>
-                  <p className="text-sm text-zinc-400">Daily & weekly profit predictions</p>
-                </div>
-                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-zinc-800 text-sm font-black">ROI</div>
-              </div>
+              ))}
             </div>
-          </div>
-        </div>
 
-        <p className="mt-16 text-center text-sm text-zinc-500">Powered by advanced AI</p>
+            <div className="absolute left-[37%] top-[44%] flex h-28 w-28 -translate-x-1/2 -translate-y-1/2 rotate-45 items-center justify-center rounded-3xl border border-sky-100 bg-white shadow-2xl shadow-sky-300/30">
+              <div className="-rotate-45 text-4xl font-black text-[#3b63ff]">AI</div>
+            </div>
+
+            <section className="absolute right-4 top-10 w-[48%] rotate-3 rounded-2xl border border-[#141b27]/10 bg-white/95 p-4 shadow-2xl shadow-slate-900/12 backdrop-blur sm:right-8 sm:top-14 sm:w-[47%] sm:p-5">
+              <div className="mb-4 flex items-center justify-between gap-3">
+                <div>
+                  <p className="text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">Daily Plan</p>
+                  <h2 className="mt-1 text-xl font-black text-black">Approve today</h2>
+                </div>
+                <RoboLogo className="h-8 w-8" />
+              </div>
+
+              <div className="mb-4 grid grid-cols-2 overflow-hidden rounded-xl border border-slate-200 text-center sm:grid-cols-4">
+                {[
+                  ['Actions', '24'],
+                  ['Confirmed', '18'],
+                  ['Pending', '6'],
+                  ['Success', '75%'],
+                ].map(([label, value]) => (
+                  <div key={label} className="border-r border-b border-slate-200 px-2 py-3 even:border-r-0 last:border-b-0 sm:border-b-0 sm:even:border-r sm:last:border-r-0">
+                    <p className="text-[8px] font-black uppercase text-slate-400 sm:text-[9px] sm:tracking-[0.12em]">{label}</p>
+                    <p className="mt-1 text-lg font-black text-black">{value}</p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="grid gap-4 lg:grid-cols-[1.1fr_0.9fr]">
+                <div>
+                  <p className="mb-2 text-[10px] font-black uppercase tracking-[0.16em] text-slate-500">Action Queue</p>
+                  <div className="divide-y divide-slate-100 rounded-xl border border-slate-200">
+                    {actions.map(([type, action, time]) => (
+                      <div key={action} className="grid grid-cols-[44px_1fr] items-center gap-2 px-3 py-2 text-xs sm:grid-cols-[54px_1fr_auto]">
+                        <span className="font-black text-slate-500">{type}</span>
+                        <span className="truncate font-semibold text-slate-800">{action}</span>
+                        <span className="hidden text-slate-400 sm:inline">{time}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="hidden sm:block">
+                  <p className="mb-2 text-[10px] font-black uppercase tracking-[0.16em] text-slate-500">Pricing</p>
+                  <div className="divide-y divide-slate-100 rounded-xl border border-slate-200">
+                    {pricing.map(([model, price, status]) => (
+                      <div key={model} className="grid grid-cols-[1fr_auto] gap-2 px-3 py-2 text-xs">
+                        <span className="font-semibold text-slate-800">{model}</span>
+                        <span className="font-black text-black">{price}</span>
+                        <span className="text-slate-400">{status}</span>
+                        <span className="text-right text-emerald-600">Ready</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="mt-3 h-20 rounded-xl border border-slate-200 bg-[linear-gradient(135deg,#f8fafc_0%,#ffffff_100%)] p-2">
+                    <div className="h-full rounded-lg border border-sky-200 bg-white">
+                      <svg viewBox="0 0 140 70" className="h-full w-full" aria-hidden="true">
+                        <path d="M15 52 42 44 58 50 76 24 105 18 124 28" fill="none" stroke="#3b82f6" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" />
+                        <path d="M14 53h112" stroke="#dbeafe" strokeWidth="1" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-4 flex justify-end gap-2">
+                <button type="button" className="rounded-md bg-[#172231] px-4 py-2 text-xs font-black text-white">
+                  Approve All
+                </button>
+                <button type="button" className="rounded-md border border-[#141b27]/10 px-4 py-2 text-xs font-black text-slate-700">
+                  Inspect All
+                </button>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section className="grid gap-3 pb-8 sm:grid-cols-3">
+          {[
+            ['Inputs', 'Tesla telemetry, rental history, weather, and market context.'],
+            ['Reasoning', 'RoboAgent ranks what will increase earnings and reduce risk.'],
+            ['Output', 'A simple daily plan you can approve, inspect, or ignore.'],
+          ].map(([title, detail]) => (
+            <div key={title} className="rounded-2xl border border-[#141b27]/10 bg-white/85 p-5 shadow-sm">
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">{title}</p>
+              <p className="mt-2 text-sm font-semibold leading-6 text-slate-700">{detail}</p>
+            </div>
+          ))}
+        </section>
       </main>
     </div>
   );
