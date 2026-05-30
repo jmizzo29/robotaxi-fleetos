@@ -23,7 +23,8 @@ const AI_MODEL = process.env.AI_MODEL || (AI_PROVIDER === 'xai' ? 'grok-4' : 'cl
 const DEFAULT_ALLOWED_ORIGINS = [
   'http://localhost:5173',
   'http://127.0.0.1:5173',
-  'https://robotaxi-fleetos.vercel.app',
+  'https://www.autofleeto.com',
+  'https://autofleeto.com',
 ];
 const pgPool = process.env.DATABASE_URL
   ? new Pool({

@@ -7,6 +7,17 @@ The browser should not be configured with a public backend host for normal
 production use. Deployed pages call relative `/api` routes, which keeps the
 frontend and backend on the same origin.
 
+Canonical production domain:
+
+```bash
+PUBLIC_APP_URL=https://www.autofleeto.com
+TESLA_REDIRECT_URI=https://www.autofleeto.com/api/tesla/callback
+```
+
+Register the same callback URL in the Tesla Developer Console for the active
+`TESLA_CLIENT_ID`. Tesla OAuth rejects the connection if this URL differs by
+protocol, hostname, path, or trailing slash.
+
 ## Local Development Path
 
 Local development can still use the Express backend in `backend/server.js`.

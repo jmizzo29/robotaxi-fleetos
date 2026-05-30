@@ -31,7 +31,8 @@ export default function FeedbackButton({ route }) {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="fixed bottom-24 right-4 z-50 rounded-full border border-emerald-300/30 bg-emerald-400 px-4 py-3 text-sm font-black text-slate-950 shadow-2xl shadow-black/30 lg:bottom-6"
+        aria-label="Open feedback form"
+        className="fixed bottom-4 left-4 z-50 hidden rounded-full border border-emerald-300/30 bg-emerald-400 px-4 py-3 text-sm font-black text-slate-950 shadow-2xl shadow-black/30 transition hover:bg-emerald-300 lg:flex"
       >
         Feedback
       </button>

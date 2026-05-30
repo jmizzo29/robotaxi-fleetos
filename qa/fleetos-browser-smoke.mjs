@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { chromium, devices } from 'playwright';
 
-const BASE_URL = (process.env.FLEETOS_QA_BASE_URL || process.argv[2] || 'https://robotaxi-fleetos.vercel.app').replace(/\/$/, '');
+const BASE_URL = (process.env.FLEETOS_QA_BASE_URL || process.argv[2] || 'https://www.autofleeto.com').replace(/\/$/, '');
 const REPORT_DIR = path.join(process.cwd(), 'qa', 'reports');
 
 function routeUrl(route = '') {
@@ -78,10 +78,11 @@ async function assertNoRuntimeErrors(name, telemetry) {
 async function testLanding(browser, profile) {
   const telemetry = await makePage(browser, profile);
   const { page, context } = telemetry;
-  await page.goto(routeUrl('?qa=browser'), { waitUntil: 'networkidle' });
+  await page.goto(routeUrl('?qa=browser'), { waitUntil: 'domcontentloaded' });
+  const main = page.getByRole('main');
   await page.getByText('Your Tesla Fleet.').waitFor({ timeout: 15000 });
   await page.getByText('AI Optimized.').waitFor({ timeout: 15000 });
-  await page.getByText('RoboAgent').waitFor({ timeout: 15000 });
+  await main.getByText('RoboAgent', { exact: true }).first().waitFor({ timeout: 15000 });
   await page.getByText('Daily AI plans for pricing, charging, maintenance, and profit.').waitFor({ timeout: 15000 });
   await page.getByText('First vehicle is free').waitFor({ timeout: 15000 });
   await page.getByRole('button', { name: 'Get Started' }).waitFor({ timeout: 15000 });
@@ -163,7 +164,7 @@ async function testAgentChat(browser, profile) {
 async function testOnboardingStandalone(browser, profile) {
   const telemetry = await makePage(browser, profile);
   const { page, context } = telemetry;
-  await page.goto(routeUrl('#/onboarding'), { waitUntil: 'networkidle' });
+  await page.goto(routeUrl('#/onboarding'), { waitUntil: 'domcontentloaded' });
   await page.getByText('Create Your RoboAgent Account').waitFor({ timeout: 15000 });
   await page.getByText('Step 1 of 5').waitFor({ timeout: 15000 });
   await page.getByRole('button', { name: 'Back Home' }).waitFor({ timeout: 15000 });
@@ -173,7 +174,6 @@ async function testOnboardingStandalone(browser, profile) {
   await page.getByText('Enter your email address.').waitFor({ timeout: 15000 });
   await page.getByText('Create a password.').waitFor({ timeout: 15000 });
   await page.getByRole('button', { name: 'Google' }).waitFor({ timeout: 15000 });
-  await page.getByRole('button', { name: 'Apple' }).waitFor({ timeout: 15000 });
   const sideMenuVisible = await page.getByRole('button', { name: 'Fleet', exact: true }).count();
   if (sideMenuVisible > 0) throw new Error('App navigation is visible on onboarding.');
   await context.close();
@@ -183,7 +183,7 @@ async function testOnboardingStandalone(browser, profile) {
 async function testAccountStandalone(browser, profile) {
   const telemetry = await makePage(browser, profile);
   const { page, context } = telemetry;
-  await page.goto(routeUrl('#/account'), { waitUntil: 'networkidle' });
+  await page.goto(routeUrl('#/account'), { waitUntil: 'domcontentloaded' });
   await page.getByRole('heading', { name: 'Sign in to RoboAgent' }).waitFor({ timeout: 15000 });
   await page.getByRole('button', { name: 'Preview Tesla Data Permissions' }).click();
   await page.getByRole('heading', { name: 'RoboAgent wants to connect to your Tesla Account' }).waitFor({ timeout: 15000 });
@@ -297,11 +297,11 @@ async function testAiOperations(browser, profile) {
 async function testIntegrations(browser, profile) {
   const telemetry = await makePage(browser, profile);
   const { page, context } = telemetry;
-  await page.goto(routeUrl('#/integrations'), { waitUntil: 'networkidle' });
+  await page.goto(routeUrl('#/integrations'), { waitUntil: 'domcontentloaded' });
   await page.getByText('Tesla Robotaxi / Cybercab Updates from X').waitFor({ timeout: 15000 });
   await page.getByText(/X API Ready|Demo Feed/).waitFor({ timeout: 15000 });
-  await page.getByText('Tesla Fleet API').waitFor({ timeout: 15000 });
-  await page.getByText('Current Connected State').waitFor({ timeout: 15000 });
+  await page.getByRole('heading', { name: 'Tesla Fleet API' }).waitFor({ timeout: 15000 });
+  await page.getByRole('heading', { name: 'Current Connected State' }).waitFor({ timeout: 15000 });
   await context.close();
   return assertNoRuntimeErrors(`integrations social signal (${profile})`, telemetry);
 }

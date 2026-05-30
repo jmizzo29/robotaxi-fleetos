@@ -1,8 +1,7 @@
-import { useEffect, useMemo, useState } from 'react';
+import { Suspense, lazy, useEffect, useMemo, useState } from 'react';
 import { AuthenticateWithRedirectCallback } from '@clerk/react';
 import CommandSafetyModal from './components/CommandSafetyModal';
 import FeedbackButton from './components/FeedbackButton';
-import FleetMap from './components/FleetMap';
 import KPIGrid from './components/KPIGrid';
 import MobileBottomNav from './components/MobileBottomNav';
 import PageHeader from './components/PageHeader';
@@ -47,6 +46,8 @@ import useAiFleetAnalysis from './hooks/useAiFleetAnalysis';
 import useHashRoute from './hooks/useHashRoute';
 import { useFleetSimulation } from './hooks/useFleetSimulation';
 import { canUseTeslaTelemetry } from './services/betaCompliance';
+
+const FleetMap = lazy(() => import('./components/FleetMap'));
 
 const initialFleet = [
   {
@@ -388,14 +389,22 @@ function FleetApp() {
           description="See your own Teslas first: real-time location, status, battery, health score, and next rental context. Service-area demand layers are secondary."
           action={operationsStatus}
         />
-        <FleetMap
-          fleet={fleet}
-          selectedVehicle={selectedVehicle}
-          setSelectedVehicle={setSelectedVehicle}
-          weatherZones={weatherZones}
-          demandZones={demandZones}
-          chargingStations={chargingStations}
-        />
+        <Suspense
+          fallback={(
+            <div className="flex h-[430px] items-center justify-center rounded-lg border border-white/10 bg-slate-900/80 text-sm font-bold text-slate-400 shadow-xl shadow-black/20 sm:h-[520px] lg:h-[900px]">
+              Loading fleet map...
+            </div>
+          )}
+        >
+          <FleetMap
+            fleet={fleet}
+            selectedVehicle={selectedVehicle}
+            setSelectedVehicle={setSelectedVehicle}
+            weatherZones={weatherZones}
+            demandZones={demandZones}
+            chargingStations={chargingStations}
+          />
+        </Suspense>
         <ServiceAreasPanel
           fleet={fleet}
           demandZones={demandZones}

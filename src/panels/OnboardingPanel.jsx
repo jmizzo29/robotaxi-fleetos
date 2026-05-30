@@ -122,7 +122,7 @@ function ClerkOAuthButtons() {
           type="button"
           onClick={() => startOAuth('oauth_google')}
           disabled={!clerkReady}
-          className="flex items-center justify-center gap-3 rounded-2xl border border-zinc-700 bg-zinc-900 py-5 font-medium transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex items-center justify-center gap-3 rounded-2xl border border-zinc-700 bg-zinc-900 py-3 font-medium transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <span className="text-xl">G</span>
           Google
@@ -152,7 +152,7 @@ function OAuthFallbackButtons() {
         <button
           type="button"
           disabled
-          className="flex cursor-not-allowed items-center justify-center gap-3 rounded-2xl border border-zinc-700 bg-zinc-900 py-5 font-medium opacity-50"
+          className="flex cursor-not-allowed items-center justify-center gap-3 rounded-2xl border border-zinc-700 bg-zinc-900 py-3 font-medium opacity-50"
         >
           <span className="text-xl">G</span>
           Google
@@ -162,6 +162,109 @@ function OAuthFallbackButtons() {
         Google OAuth requires Clerk&apos;s public browser key.
       </div>
     </>
+  );
+}
+
+function permissionCode(title) {
+  if (title.startsWith('Vehicle')) return 'LOC';
+  if (title.startsWith('Battery')) return 'BAT';
+  if (title.startsWith('Health')) return 'HLT';
+  return 'ODO';
+}
+
+function TeslaConnectionStep({
+  hasAccount,
+  teslaConnected,
+  onNavigate,
+  onContinue,
+}) {
+  const flowSteps = [
+    ['1', 'Redirect to Tesla', 'Authenticate directly on Tesla-owned screens.'],
+    ['2', 'Approve data scopes', 'You choose whether RoboAgent can read vehicle data.'],
+    ['3', 'Return to RoboAgent', 'We sync telemetry and unlock the command center.'],
+  ];
+
+  const trustItems = [
+    ['Password private', 'Tesla credentials stay with Tesla.'],
+    ['Disconnect anytime', 'Revoke access in settings or Tesla.'],
+    ['Owner approved', 'No vehicle command runs without approval.'],
+    ['Encrypted tokens', 'OAuth tokens are stored server-side.'],
+  ];
+
+  return (
+    <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col justify-center py-4">
+      <div className="mb-6 text-center">
+        <p className="mb-3 text-xs font-black uppercase tracking-[0.22em] text-teal-300">Tesla OAuth</p>
+        <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl">Connect Your Tesla</h2>
+        <p className="mx-auto mt-3 max-w-2xl text-base leading-7 text-zinc-400">
+          Use Tesla&apos;s secure login to authorize vehicle telemetry. RoboAgent never receives your Tesla password.
+        </p>
+      </div>
+
+      <section className="grid overflow-hidden rounded-3xl border border-zinc-700 bg-zinc-950/80 shadow-2xl shadow-black/25 lg:grid-cols-[0.95fr_1.05fr]">
+        <div className="border-b border-zinc-800 p-5 sm:p-6 lg:border-b-0 lg:border-r">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-2xl font-black text-black">
+            T
+          </div>
+          <h3 className="mt-5 text-2xl font-black text-white">Official Tesla handoff</h3>
+          <p className="mt-3 text-sm font-semibold leading-6 text-zinc-400">
+            You will leave RoboAgent briefly, approve access with Tesla, then return here to sync your first vehicle.
+          </p>
+
+          <div className="mt-6 grid gap-3">
+            {flowSteps.map(([step, title, detail]) => (
+              <div key={title} className="flex gap-3 rounded-2xl border border-zinc-800 bg-zinc-900/70 p-4">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-teal-400/15 text-sm font-black text-teal-200">
+                  {step}
+                </div>
+                <div>
+                  <p className="font-black text-white">{title}</p>
+                  <p className="mt-1 text-sm font-semibold leading-5 text-zinc-400">{detail}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="flex flex-col justify-center p-5 sm:p-6">
+          <div className="rounded-3xl border border-zinc-800 bg-black/30 p-5">
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-teal-300">Ready to connect</p>
+            <h3 className="mt-2 text-xl font-black text-white">First Tesla is free during beta</h3>
+            <p className="mt-2 text-sm font-semibold leading-6 text-zinc-400">
+              Connect one vehicle now. Add more later after your first sync is working.
+            </p>
+
+            <div className="mt-5">
+              {!hasAccount ? (
+                <PrimaryButton onClick={() => onNavigate?.('account')} className="py-4 text-base sm:py-5 sm:text-lg">
+                  Create RoboAgent Account
+                </PrimaryButton>
+              ) : teslaConnected ? (
+                <PrimaryButton onClick={onContinue} className="py-4 text-base sm:py-5 sm:text-lg">
+                  Continue to Vehicle Sync
+                </PrimaryButton>
+              ) : (
+                <a
+                  href={getTeslaLoginUrl('onboarding')}
+                  className="flex w-full items-center justify-center gap-3 rounded-3xl bg-white px-5 py-5 text-lg font-black text-black shadow-lg shadow-teal-500/20 transition hover:bg-zinc-100"
+                >
+                  Sign in with Tesla
+                </a>
+              )}
+            </div>
+          </div>
+
+          <div className="mt-4 grid gap-3 sm:grid-cols-2">
+            {trustItems.map(([title, detail]) => (
+              <div key={title} className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4">
+                <p className="text-sm font-black text-white">{title}</p>
+                <p className="mt-1 text-xs font-semibold leading-5 text-zinc-400">{detail}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+    </div>
   );
 }
 
@@ -299,7 +402,7 @@ function ClerkEmailSignUpButton({ email, password, onValidate, onSignedUp }) {
         type="button"
         onClick={verificationSent ? verifyEmailCode : startSignUp}
         disabled={isSubmitting}
-        className="w-full rounded-3xl bg-teal-500 py-6 text-xl font-semibold text-black transition hover:bg-teal-400 disabled:cursor-not-allowed disabled:bg-zinc-800 disabled:text-zinc-500"
+        className="w-full rounded-3xl bg-teal-500 py-3 text-base font-semibold text-black transition hover:bg-teal-400 disabled:cursor-not-allowed disabled:bg-zinc-800 disabled:text-zinc-500"
       >
         {isSubmitting ? 'Working...' : verificationSent ? 'Verify Email' : 'Create Free Account'}
       </button>
@@ -418,8 +521,8 @@ export default function OnboardingPanel({
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-gradient-to-b from-zinc-950 to-black px-6 py-8 text-white">
-      <div className="mb-8 flex items-center justify-between">
+    <div className="flex min-h-screen flex-col bg-gradient-to-b from-zinc-950 to-black px-4 py-3 text-white sm:px-6">
+      <div className="mx-auto mb-2 flex w-full max-w-6xl items-center justify-between">
         <button type="button" onClick={() => onNavigate?.('landing')} className="text-xl font-semibold tracking-[0.08em] text-teal-300">
           ROBOAGENT
         </button>
@@ -436,7 +539,7 @@ export default function OnboardingPanel({
       </div>
 
       {(message || error) && (
-        <div className={`mb-5 rounded-2xl border p-4 text-sm font-semibold ${
+        <div className={`mx-auto mb-4 w-full max-w-5xl rounded-2xl border p-4 text-sm font-semibold ${
           error
             ? 'border-red-400/30 bg-red-500/10 text-red-200'
             : 'border-emerald-400/30 bg-emerald-500/10 text-emerald-200'
@@ -447,15 +550,15 @@ export default function OnboardingPanel({
       )}
 
       {activeStep === 1 && (
-        <div className="flex flex-1 flex-col justify-center px-6 py-8">
-          <div className="mb-12 text-center">
-            <div className="mx-auto mb-8 flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-teal-400 to-cyan-500 shadow-xl shadow-teal-500/30">
-              <span className="text-5xl font-bold tracking-tighter text-black">R</span>
+        <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col justify-start px-0 py-0">
+          <div className="mb-3 text-center">
+            <div className="mx-auto mb-2 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-teal-400 to-cyan-500 shadow-xl shadow-teal-500/30 sm:h-14 sm:w-14">
+              <span className="text-3xl font-bold tracking-tighter text-black">R</span>
             </div>
-            <h1 className="mb-4 text-4xl font-bold leading-tight md:text-5xl">
+            <h1 className="mb-1.5 text-2xl font-bold leading-tight sm:text-3xl">
               Create Your RoboAgent Account
             </h1>
-            <p className="mx-auto max-w-md text-lg text-zinc-400">
+            <p className="mx-auto max-w-md text-sm leading-5 text-zinc-400">
               One account to manage all your Teslas, rentals, and future Robotaxis
             </p>
             {realProgressStep > 1 && (
@@ -477,7 +580,7 @@ export default function OnboardingPanel({
             )}
           </div>
 
-          <div className="mx-auto w-full max-w-md space-y-6">
+          <div className="mx-auto w-full max-w-md space-y-2.5">
             <div>
               <label htmlFor="onboarding-email" className="mb-2 block text-sm text-zinc-400">Email Address</label>
               <input
@@ -490,7 +593,7 @@ export default function OnboardingPanel({
                 }}
                 placeholder="you@email.com"
                 aria-invalid={Boolean(accountErrors.email)}
-                className={`w-full rounded-2xl border bg-zinc-900 px-6 py-5 text-white outline-none transition placeholder:text-zinc-600 focus:border-teal-500 ${
+                className={`w-full rounded-2xl border bg-zinc-900 px-5 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-teal-500 ${
                   accountErrors.email ? 'border-red-400' : 'border-zinc-700'
                 }`}
               />
@@ -511,7 +614,7 @@ export default function OnboardingPanel({
                 }}
                 placeholder="Create a password"
                 aria-invalid={Boolean(accountErrors.password)}
-                className={`w-full rounded-2xl border bg-zinc-900 px-6 py-5 text-white outline-none transition placeholder:text-zinc-600 focus:border-teal-500 ${
+                className={`w-full rounded-2xl border bg-zinc-900 px-5 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-teal-500 ${
                   accountErrors.password ? 'border-red-400' : 'border-zinc-700'
                 }`}
               />
@@ -528,12 +631,12 @@ export default function OnboardingPanel({
                 onSignedUp={completeClerkAccount}
               />
             ) : (
-              <PrimaryButton onClick={createNativeAccount}>
+              <PrimaryButton onClick={createNativeAccount} className="py-3 text-base">
                 Create Free Account
               </PrimaryButton>
             )}
 
-            <div className="relative my-6">
+            <div className="relative my-1.5">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-zinc-700" />
               </div>
@@ -570,7 +673,7 @@ export default function OnboardingPanel({
             <button
               type="button"
               onClick={() => onNavigate?.('account')}
-              className="w-full rounded-2xl border border-zinc-700 bg-zinc-900 px-5 py-4 text-sm font-semibold text-zinc-200 transition hover:border-teal-400 hover:text-teal-200"
+                className="w-full rounded-2xl border border-zinc-700 bg-zinc-900 px-5 py-3 text-sm font-semibold text-zinc-200 transition hover:border-teal-400 hover:text-teal-200"
             >
               Already have an account? Sign in
             </button>
@@ -580,44 +683,58 @@ export default function OnboardingPanel({
       )}
 
       {activeStep === 2 && (
-        <div className="flex flex-1 flex-col justify-center">
-          <div className="mb-10 text-center">
-            <h2 className="mb-4 text-4xl font-bold">Just a few permissions needed</h2>
-            <p className="text-lg text-zinc-400">
+        <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col justify-center py-4">
+          <div className="mb-6 text-center">
+            <p className="mb-3 text-xs font-black uppercase tracking-[0.22em] text-teal-300">Data Permission</p>
+            <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl">Just a few permissions needed</h2>
+            <p className="mx-auto mt-3 max-w-2xl text-base leading-7 text-zinc-400">
               RoboAgent needs access to help you maximize earnings
             </p>
           </div>
 
-          <div className="mb-10 rounded-3xl border border-zinc-700 bg-zinc-900/70 p-8">
-            <h3 className="mb-6 text-lg font-semibold text-white">What RoboAgent will access:</h3>
-            <div className="space-y-6">
+          <section className="rounded-3xl border border-zinc-700 bg-zinc-950/80 p-5 shadow-2xl shadow-black/25 sm:p-6">
+            <div className="flex flex-col gap-2 border-b border-zinc-800 pb-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <h3 className="text-xl font-black text-white">What RoboAgent will access</h3>
+                <p className="mt-1 text-sm font-semibold leading-6 text-zinc-400">
+                  Read-only Tesla data for planning, monitoring, and owner-approved recommendations.
+                </p>
+              </div>
+              <span className="w-fit rounded-full border border-teal-400/25 bg-teal-400/10 px-3 py-1 text-xs font-black uppercase tracking-[0.14em] text-teal-200">
+                Owner controlled
+              </span>
+            </div>
+            <div className="mt-5 grid gap-3 sm:grid-cols-2">
               {[
                 ['📍', 'Vehicle Location & Status', 'Real-time location, lock status, and software version'],
                 ['🔋', 'Battery & Charging', 'Battery level, charging speed, and optimal charge times'],
                 ['🛠️', 'Health & Maintenance', 'Tire pressure, brake wear, service alerts'],
                 ['📊', 'Odometer & Trip Data', 'Mileage and rental usage data'],
-              ].map(([icon, title, detail]) => (
-                <div key={title} className="flex gap-4">
-                  <div className="mt-1 text-2xl text-teal-400">{icon}</div>
-                  <div>
-                    <p className="font-medium">{title}</p>
-                    <p className="text-sm text-zinc-400">{detail}</p>
+              ].map(([, title, detail]) => (
+                <div key={title} className="flex gap-4 rounded-2xl border border-zinc-800 bg-zinc-900/70 p-4">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-teal-400/15 text-xs font-black tracking-[0.12em] text-teal-200">{permissionCode(title)}</div>
+                  <div className="min-w-0">
+                    <p className="font-black text-white">{title}</p>
+                    <p className="mt-1 text-sm font-semibold leading-6 text-zinc-400">{detail}</p>
                   </div>
                 </div>
               ))}
             </div>
+
+            <div className="mt-5 rounded-2xl border border-zinc-800 bg-black/30 p-4 text-center text-sm font-semibold leading-6 text-zinc-400">
+              You can revoke access anytime in settings. Tesla controls all account authorization.
+            </div>
+          </section>
+
+          <div className="mx-auto mt-6 w-full max-w-md">
+            <PrimaryButton onClick={approveConsent} className="py-4 text-base sm:py-5 sm:text-lg">
+              Approve & Continue
+            </PrimaryButton>
+
+            <p className="mt-3 text-center text-xs font-semibold text-zinc-500">
+              Required before connecting Tesla telemetry.
+            </p>
           </div>
-
-          <div className="mb-8 text-center text-sm text-zinc-400">
-            You can revoke access anytime in settings.<br />
-            Tesla controls all data access.
-          </div>
-
-          <PrimaryButton onClick={approveConsent}>Approve & Continue</PrimaryButton>
-
-          <p className="mt-6 text-center text-xs text-zinc-500">
-            This is required to use RoboAgent
-          </p>
         </div>
       )}
 
@@ -641,6 +758,15 @@ export default function OnboardingPanel({
       )}
 
       {activeStep === 3 && (
+        <TeslaConnectionStep
+          hasAccount={hasAccount}
+          teslaConnected={teslaConnected}
+          onNavigate={onNavigate}
+          onContinue={nextLinearStep}
+        />
+      )}
+
+      {activeStep === 'legacy-step-3' && (
         <div className="flex flex-1 flex-col justify-center">
           <div className="mb-10 text-center">
             <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-white/10 text-5xl">
@@ -812,9 +938,9 @@ export default function OnboardingPanel({
         </div>
       )}
 
-      <div className="mt-8 flex justify-between text-sm">
+      <div className="mx-auto mt-5 flex w-full max-w-md justify-between text-sm">
         {activeStep > 1 ? (
-          <button type="button" onClick={prevStep} className="text-zinc-400">
+          <button type="button" onClick={prevStep} className="rounded-full border border-zinc-800 bg-zinc-950 px-4 py-2 font-semibold text-zinc-400 transition hover:border-teal-400/40 hover:text-teal-200">
             Back
           </button>
         ) : <span />}

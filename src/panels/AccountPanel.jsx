@@ -39,9 +39,9 @@ function Field({ label, children }) {
 
 function TrustRow({ title, detail }) {
   return (
-    <div className="rounded-2xl border border-teal-500/20 bg-teal-500/10 p-4">
+    <div className="rounded-2xl border border-teal-500/20 bg-teal-500/10 p-3 sm:p-4">
       <p className="text-sm font-black text-white">{title}</p>
-      <p className="mt-1 text-sm font-semibold leading-6 text-zinc-300">{detail}</p>
+      <p className="mt-1 text-sm font-semibold leading-5 text-zinc-300 sm:leading-6">{detail}</p>
     </div>
   );
 }
@@ -200,6 +200,7 @@ export default function AccountPanel({ onNavigate }) {
   const [isBusy, setIsBusy] = useState(false);
   const [showTeslaConsent, setShowTeslaConsent] = useState(false);
   const [teslaConsentChecks, setTeslaConsentChecks] = useState({ independent: false, legal: false });
+  const [showClerkAuth, setShowClerkAuth] = useState(false);
 
   const clerkReady = isClerkConfigured();
   const user = session?.user || {};
@@ -265,8 +266,8 @@ export default function AccountPanel({ onNavigate }) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-zinc-950 to-black px-4 py-6 text-white">
-      <header className="mx-auto mb-8 flex max-w-5xl items-center justify-between">
+    <div className="min-h-screen bg-gradient-to-b from-zinc-950 to-black px-4 py-4 text-white sm:py-5">
+      <header className="mx-auto mb-5 flex max-w-5xl items-center justify-between">
         <button type="button" onClick={() => onNavigate?.('landing')} className="flex items-center gap-3">
           <span className="h-2.5 w-2.5 rounded-full bg-teal-400 shadow-lg shadow-teal-300/50" />
           <span className="text-sm font-black uppercase tracking-[0.28em] text-sky-200">RoboAgent</span>
@@ -281,26 +282,26 @@ export default function AccountPanel({ onNavigate }) {
       </header>
 
       <main className="mx-auto grid max-w-5xl gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-        <aside className="rounded-3xl border border-zinc-800 bg-zinc-950/80 p-7 shadow-2xl shadow-black/30">
-          <div className="mb-7 flex justify-center lg:justify-start">
-            <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-teal-400 to-cyan-500 shadow-xl shadow-teal-500/30">
-              <span className="text-5xl font-black tracking-tighter text-black">R</span>
+        <aside className="rounded-3xl border border-zinc-800 bg-zinc-950/80 p-5 shadow-2xl shadow-black/30 sm:p-6">
+          <div className="mb-5 flex justify-center lg:justify-start">
+            <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-gradient-to-br from-teal-400 to-cyan-500 shadow-xl shadow-teal-500/30">
+              <span className="text-4xl font-black tracking-tighter text-black">R</span>
             </div>
           </div>
           <p className="text-xs font-black uppercase tracking-[0.24em] text-teal-400">Secure account</p>
-          <h1 className="mt-4 text-4xl font-black tracking-tight text-white">Sign in to RoboAgent</h1>
-          <p className="mt-4 text-base font-semibold leading-7 text-zinc-400">
+          <h1 className="mt-3 text-3xl font-black tracking-tight text-white sm:text-4xl">Sign in to RoboAgent</h1>
+          <p className="mt-3 text-base font-semibold leading-6 text-zinc-400 sm:leading-7">
             Use one owner account for RoboAgent. Tesla connection comes next through Tesla OAuth, so your Tesla password stays with Tesla.
           </p>
 
-          <div className="mt-6 grid gap-3">
+          <div className="mt-5 grid gap-2.5 sm:gap-3">
             <TrustRow title="First Tesla free" detail="Start with one vehicle during beta before adding more." />
             <TrustRow title="Tesla OAuth second" detail="Vehicle access is separate from your RoboAgent account." />
             <TrustRow title="Delete anytime" detail="Admin and user controls can purge beta data and Tesla sync." />
           </div>
         </aside>
 
-        <section className="rounded-3xl border border-zinc-800 bg-zinc-950/80 p-6 shadow-2xl shadow-black/30">
+        <section className="rounded-3xl border border-zinc-800 bg-zinc-950/80 p-5 shadow-2xl shadow-black/30 sm:p-6">
           {(message || error) && (
             <div className={`mb-5 rounded-2xl border p-4 text-sm font-semibold ${
               error ? 'border-red-400/30 bg-red-500/10 text-red-200' : 'border-emerald-400/30 bg-emerald-500/10 text-emerald-200'
@@ -313,27 +314,54 @@ export default function AccountPanel({ onNavigate }) {
             <div className="space-y-5">
               {clerkReady ? (
                 <div className="space-y-5">
-                  <div className="flex rounded-2xl border border-zinc-800 bg-zinc-900 p-1">
-                    {[
-                      ['signin', 'Sign In'],
-                      ['create', 'Create'],
-                    ].map(([mode, label]) => (
-                      <button
-                        key={mode}
-                        type="button"
-                        onClick={() => setAuthMode(mode)}
-                        className={`flex-1 rounded-xl px-4 py-3 text-sm font-black transition ${
-                          authMode === mode ? 'bg-teal-500 text-black shadow-sm' : 'text-zinc-400 hover:bg-zinc-800 hover:text-white'
-                        }`}
-                      >
-                        {label}
-                      </button>
-                    ))}
-                  </div>
+                  {showClerkAuth ? (
+                    <>
+                      <div className="flex rounded-2xl border border-zinc-800 bg-zinc-900 p-1">
+                        {[
+                          ['signin', 'Sign In'],
+                          ['create', 'Create'],
+                        ].map(([mode, label]) => (
+                          <button
+                            key={mode}
+                            type="button"
+                            onClick={() => setAuthMode(mode)}
+                            className={`flex-1 rounded-xl px-4 py-3 text-sm font-black transition ${
+                              authMode === mode ? 'bg-teal-500 text-black shadow-sm' : 'text-zinc-400 hover:bg-zinc-800 hover:text-white'
+                            }`}
+                          >
+                            {label}
+                          </button>
+                        ))}
+                      </div>
 
-                  <div className="overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-950">
-                    <EmbeddedClerkAuth mode={authMode === 'create' ? 'create' : 'signin'} />
-                  </div>
+                      <div className="overflow-hidden rounded-3xl border border-zinc-800 bg-zinc-950">
+                        <EmbeddedClerkAuth mode={authMode === 'create' ? 'create' : 'signin'} />
+                      </div>
+                    </>
+                  ) : (
+                    <div className="grid gap-3">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAuthMode('signin');
+                          setShowClerkAuth(true);
+                        }}
+                        className="w-full rounded-3xl bg-teal-500 px-5 py-5 text-lg font-black text-black transition hover:bg-teal-400"
+                      >
+                        Sign In
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAuthMode('create');
+                          setShowClerkAuth(true);
+                        }}
+                        className="w-full rounded-3xl border border-zinc-700 bg-zinc-900 px-5 py-5 text-lg font-black text-zinc-100 transition hover:bg-zinc-800"
+                      >
+                        Create Account
+                      </button>
+                    </div>
+                  )}
 
                   <p className="text-center text-sm font-semibold leading-6 text-zinc-500">
                     Create your RoboAgent account first. Tesla OAuth comes next in onboarding.

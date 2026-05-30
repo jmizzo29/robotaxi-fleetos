@@ -19,34 +19,48 @@ function NavIcon({ type }) {
 const items = [
   ['overview', 'home', 'Command'],
   ['map', 'map', 'Map'],
-  ['fleet', 'fleet', 'Fleet'],
-  ['dispatch', 'ai', 'Plan'],
+  ['ai', 'ai', 'Agent'],
+  ['health', 'fleet', 'Health'],
   ['more', 'more', 'More'],
 ];
 
-const menuItems = [
-  ['overview', 'Command Center', 'Main owner dashboard'],
-  ['onboarding', 'Onboarding', 'Signup and Tesla connection'],
-  ['map', 'Fleet Map', 'Your vehicles, status, battery, and health'],
-  ['fleet', 'Fleet', 'Vehicle registry'],
-  ['vehicle', 'Vehicle Detail', 'Selected vehicle view'],
-  ['assets', 'Assets', 'Ownership and asset records'],
-  ['finance', 'Finance', 'ROI and owner economics'],
-  ['health', 'Fleet Health', 'Earnings, cleaning, and maintenance'],
-  ['charging', 'Charging', 'Battery and dispatch readiness'],
-  ['dispatch', 'Dispatch', 'Nightly staging planner'],
-  ['readiness', 'Readiness', 'Driverless readiness scoring'],
-  ['ai', 'AI Command', 'Recommendations and one-click actions'],
-  ['alerts', 'Alerts', 'AI alert triage'],
-  ['memory', 'Memory', 'Fleet event history'],
-  ['reports', 'Reports', 'Operations intelligence'],
-  ['integrations', 'Integrations', 'Connected services'],
-  ['tesla', 'Tesla API', 'Capabilities and controls'],
-  ['account', 'Account', 'Signup, login, and plan status'],
-  ['settings', 'Settings', 'Admin controls'],
-  ['admin', 'Beta Admin', 'Feedback and tester status'],
-  ['privacy', 'Privacy', 'Data collection and deletion'],
-  ['terms', 'Terms', 'Beta terms and boundaries'],
+const menuSections = [
+  {
+    label: 'Core',
+    items: [
+      ['overview', 'Command', 'Owner dashboard'],
+      ['map', 'Map', 'Vehicles and service areas'],
+      ['ai', 'Agent', 'Ask and approve actions'],
+      ['dispatch', 'Plan', 'Staging and pricing'],
+    ],
+  },
+  {
+    label: 'Fleet',
+    items: [
+      ['fleet', 'Vehicles', 'Registry'],
+      ['health', 'Health', 'Maintenance and risk'],
+      ['charging', 'Charging', 'Energy readiness'],
+      ['finance', 'Money', 'Revenue and ROI'],
+    ],
+  },
+  {
+    label: 'Setup',
+    items: [
+      ['onboarding', 'Setup', 'Account and Tesla connect'],
+      ['tesla', 'Tesla', 'API status'],
+      ['integrations', 'Integrations', 'Connected systems'],
+      ['account', 'Account', 'Profile and access'],
+    ],
+  },
+  {
+    label: 'Advanced',
+    items: [
+      ['alerts', 'Alerts', 'AI triage'],
+      ['reports', 'Reports', 'Operations review'],
+      ['settings', 'Settings', 'Runtime controls'],
+      ['admin', 'Admin', 'Beta operations'],
+    ],
+  },
 ];
 
 export default function MobileBottomNav({ route, onNavigate }) {
@@ -83,21 +97,30 @@ export default function MobileBottomNav({ route, onNavigate }) {
             </button>
           </div>
 
-          <div className="grid max-h-[54vh] grid-cols-1 gap-2 overflow-y-auto p-3 sm:grid-cols-2">
-            {menuItems.map(([id, label, detail]) => (
-              <button
-                key={id}
-                type="button"
-                onClick={() => navigateMobile(id)}
-                className={`rounded-xl border p-3 text-left transition ${
-                  route === id
-                    ? 'border-sky-400/30 bg-sky-400/10 text-sky-100'
-                    : 'border-white/10 bg-white/[0.07] text-slate-100 hover:border-white/20 hover:bg-white/[0.12]'
-                }`}
-              >
-                <span className="block text-sm font-black">{label}</span>
-                <span className="mt-1 block text-xs leading-5 text-slate-300">{detail}</span>
-              </button>
+          <div className="max-h-[54vh] space-y-4 overflow-y-auto p-3">
+            {menuSections.map((section) => (
+              <div key={section.label}>
+                <p className="mb-2 px-1 text-[10px] font-black uppercase tracking-[0.18em] text-slate-500">
+                  {section.label}
+                </p>
+                <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                  {section.items.map(([id, label, detail]) => (
+                    <button
+                      key={id}
+                      type="button"
+                      onClick={() => navigateMobile(id)}
+                      className={`rounded-xl border p-3 text-left transition ${
+                        route === id
+                          ? 'border-sky-400/30 bg-sky-400/10 text-sky-100'
+                          : 'border-white/10 bg-white/[0.07] text-slate-100 hover:border-white/20 hover:bg-white/[0.12]'
+                      }`}
+                    >
+                      <span className="block text-sm font-black">{label}</span>
+                      <span className="mt-1 block text-xs leading-5 text-slate-300">{detail}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
             ))}
           </div>
         </div>

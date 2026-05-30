@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Map, { Layer, Marker, Popup, Source } from 'react-map-gl/mapbox';
+import 'mapbox-gl/dist/mapbox-gl.css';
 import HeatmapLayer from './HeatmapLayer';
 import heatmapData from '../data/heatmapData';
 import { maskVin } from '../utils/vinPrivacy';

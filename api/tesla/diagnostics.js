@@ -1,5 +1,6 @@
 import { getTeslaConnectionForSession, teslaRequestForSession } from '../_lib/auth.js';
 import { auditEvent } from '../_lib/security.js';
+import { redirectUriFromRequest } from './login.js';
 
 const DEFAULT_FLEET_API_BASE = process.env.TESLA_API_BASE || 'https://fleet-api.prd.na.vn.cloud.tesla.com';
 
@@ -34,6 +35,12 @@ export default async function handler(req, res) {
     },
     fleetApiBaseConfigured: Boolean(DEFAULT_FLEET_API_BASE),
     partnerDomainConfigured: Boolean(process.env.TESLA_PARTNER_DOMAIN),
+    oauth: {
+      redirectUri: redirectUriFromRequest(req),
+      redirectUriConfigured: Boolean(process.env.TESLA_REDIRECT_URI),
+      expectedRegisteredRedirectUri: redirectUriFromRequest(req),
+      message: 'Tesla Developer Console must register this exact redirect URI for the active client_id.',
+    },
     token: null,
     vehicles: null,
     location: null,

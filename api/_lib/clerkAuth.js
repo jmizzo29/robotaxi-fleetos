@@ -31,7 +31,8 @@ function authorizedParties(req) {
       requestOrigin(req),
       'http://localhost:5173',
       'http://127.0.0.1:5173',
-      'https://robotaxi-fleetos.vercel.app',
+      'https://www.autofleeto.com',
+      'https://autofleeto.com',
     ]),
   ];
 }

@@ -192,6 +192,28 @@ async function auditTeslaRateLimitGuards() {
   return pass('Tesla rate-limit guards', 'Tesla wake limits are VIN-scoped and telemetry sync uses short-lived cached state.');
 }
 
+async function auditTeslaOAuthRedirect() {
+  const loginFile = await read(path.join(API_DIR, 'tesla', 'login.js'));
+  const diagnosticsFile = await read(path.join(API_DIR, 'tesla', 'diagnostics.js'));
+  const requiredLoginSnippets = [
+    'DEFAULT_PUBLIC_APP_URL',
+    'PUBLIC_APP_URL',
+    'configuredIsLocal',
+    '/api/tesla/callback',
+  ];
+  const missingLogin = requiredLoginSnippets.filter((snippet) => !loginFile.includes(snippet));
+  const diagnosticsExposeRedirect = diagnosticsFile.includes('redirectUriFromRequest(req)') && diagnosticsFile.includes('expectedRegisteredRedirectUri');
+
+  if (missingLogin.length || !diagnosticsExposeRedirect) {
+    return fail('Tesla OAuth redirect registration', 'Tesla OAuth redirect URI is not clearly canonicalized or exposed for setup diagnostics.', {
+      missingLogin,
+      diagnosticsExposeRedirect,
+    });
+  }
+
+  return pass('Tesla OAuth redirect registration', 'Tesla OAuth uses a canonical production callback and exposes the exact URI Tesla must register.');
+}
+
 function summarize(results) {
   return results.reduce((acc, item) => {
     acc[item.status] = (acc[item.status] || 0) + 1;
@@ -227,6 +249,7 @@ const results = [
   await auditPrivacyDefault(),
   await auditDeleteDataScope(),
   await auditTeslaRateLimitGuards(),
+  await auditTeslaOAuthRedirect(),
 ];
 
 results.forEach((item) => console.log(`${item.status.toUpperCase()} ${item.name}: ${item.detail}`));
