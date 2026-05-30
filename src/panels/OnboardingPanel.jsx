@@ -14,8 +14,9 @@ import { getTeslaLoginUrl } from '../services/teslaHealthService';
 
 function StepBadge({ step }) {
   return (
-    <div className="rounded-full border border-[#141b27]/10 bg-white px-4 py-1 text-sm font-semibold text-slate-700 shadow-sm">
-      Step {step} of 5
+    <div className="whitespace-nowrap rounded-full border border-[#141b27]/10 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm sm:px-4 sm:py-1 sm:text-sm">
+      <span className="sm:hidden">Step {step}/5</span>
+      <span className="hidden sm:inline">Step {step} of 5</span>
     </div>
   );
 }
@@ -124,7 +125,7 @@ function ClerkOAuthButtons() {
           type="button"
           onClick={() => startOAuth('oauth_google')}
           disabled={!clerkReady}
-          className="flex items-center justify-center gap-3 rounded-2xl border border-zinc-700 bg-zinc-900 py-3 font-medium transition hover:bg-zinc-800 disabled:cursor-not-allowed disabled:opacity-50"
+          className="flex items-center justify-center gap-3 rounded-2xl border border-[#141b27]/10 bg-white py-3 font-bold text-[#141b27] shadow-sm transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50"
         >
           <span className="text-xl">G</span>
           Google
@@ -133,13 +134,13 @@ function ClerkOAuthButtons() {
       </div>
 
       {oauthError && (
-        <div className="rounded-2xl border border-red-400/30 bg-red-500/10 p-4 text-sm font-semibold text-red-200">
+        <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">
           {oauthError}
         </div>
       )}
 
       {loadTimedOut && !clerkReady && (
-        <div className="rounded-2xl border border-amber-400/30 bg-amber-500/10 p-4 text-sm font-semibold text-amber-100">
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-800">
           Google sign-up is waiting on Clerk. Check that production Clerk keys and Google are enabled.
         </div>
       )}
@@ -154,13 +155,13 @@ function OAuthFallbackButtons() {
         <button
           type="button"
           disabled
-          className="flex cursor-not-allowed items-center justify-center gap-3 rounded-2xl border border-zinc-700 bg-zinc-900 py-3 font-medium opacity-50"
+          className="flex cursor-not-allowed items-center justify-center gap-3 rounded-2xl border border-[#141b27]/10 bg-white py-3 font-bold text-slate-400 opacity-60"
         >
           <span className="text-xl">G</span>
           Google
         </button>
       </div>
-      <div className="rounded-2xl border border-amber-400/30 bg-amber-500/10 p-4 text-sm font-semibold text-amber-100">
+      <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-800">
         Google OAuth requires Clerk&apos;s public browser key.
       </div>
     </>
@@ -367,8 +368,8 @@ function ClerkEmailSignUpButton({ email, password, onValidate, onSignedUp }) {
   return (
     <div className="space-y-4">
       {verificationSent && (
-        <div className="rounded-3xl border border-teal-400/30 bg-teal-500/10 p-5">
-          <label htmlFor="onboarding-email-code" className="mb-2 block text-sm font-semibold text-teal-100">
+        <div className="rounded-3xl border border-emerald-200 bg-emerald-50 p-5">
+          <label htmlFor="onboarding-email-code" className="mb-2 block text-sm font-semibold text-emerald-900">
             Enter the email verification code
           </label>
           <input
@@ -378,16 +379,16 @@ function ClerkEmailSignUpButton({ email, password, onValidate, onSignedUp }) {
             value={verificationCode}
             onChange={(event) => setVerificationCode(event.target.value)}
             placeholder="6-digit code"
-            className="w-full rounded-2xl border border-zinc-700 bg-zinc-950 px-6 py-5 text-white outline-none transition placeholder:text-zinc-600 focus:border-teal-500"
+            className="w-full rounded-2xl border border-slate-300 bg-white px-6 py-5 text-[#141b27] outline-none transition placeholder:text-slate-400 focus:border-[#172231]"
           />
-          <p className="mt-3 text-sm text-zinc-400">
+          <p className="mt-3 text-sm font-semibold text-emerald-800">
             We sent a code to {email}. This keeps signup inside ROBOAGENT.
           </p>
         </div>
       )}
 
       {clerkError && (
-        <div className="rounded-2xl border border-red-400/30 bg-red-500/10 p-4 text-sm font-semibold text-red-200">
+        <div className="rounded-2xl border border-red-200 bg-red-50 p-4 text-sm font-semibold text-red-700">
           {clerkError}
         </div>
       )}
@@ -395,7 +396,7 @@ function ClerkEmailSignUpButton({ email, password, onValidate, onSignedUp }) {
       <div id="clerk-captcha" className="min-h-0" />
 
       {loadTimedOut && !clerkReady && !clerkError && (
-        <div className="rounded-2xl border border-amber-400/30 bg-amber-500/10 p-4 text-sm font-semibold text-amber-100">
+        <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-semibold text-amber-800">
           Secure sign-up is waiting on Clerk. If this persists on production, switch Vercel to Clerk production keys and confirm your domain in Clerk.
         </div>
       )}
@@ -404,7 +405,7 @@ function ClerkEmailSignUpButton({ email, password, onValidate, onSignedUp }) {
         type="button"
         onClick={verificationSent ? verifyEmailCode : startSignUp}
         disabled={isSubmitting}
-        className="w-full rounded-3xl bg-teal-500 py-3 text-base font-semibold text-black transition hover:bg-teal-400 disabled:cursor-not-allowed disabled:bg-zinc-800 disabled:text-zinc-500"
+        className="w-full rounded-3xl bg-[#172231] py-3 text-base font-semibold text-white transition hover:bg-[#243044] disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400"
       >
         {isSubmitting ? 'Working...' : verificationSent ? 'Verify Email' : 'Create Free Account'}
       </button>
@@ -524,20 +525,21 @@ export default function OnboardingPanel({
 
   return (
     <div className="flex min-h-screen flex-col bg-[#f7f7f5] px-4 py-3 text-[#141b27] sm:px-6">
-      <div className="mx-auto mb-2 flex w-full max-w-6xl items-center justify-between">
-        <button type="button" onClick={() => onNavigate?.('landing')} className="text-xl font-semibold text-[#172231]">
+      <div className="mx-auto mb-2 flex w-full max-w-6xl items-center justify-between gap-2">
+        <button type="button" onClick={() => onNavigate?.('landing')} className="min-w-0 text-sm font-semibold text-[#172231] sm:text-xl">
           <span className="flex items-center gap-3">
             <RoboLogo className="h-8 w-8" />
-            <RoboWordmark />
+            <RoboWordmark className="truncate" />
           </span>
         </button>
-        <div className="flex items-center gap-3">
+        <div className="flex shrink-0 items-center gap-2 sm:gap-3">
           <button
             type="button"
             onClick={() => onNavigate?.('landing')}
-            className="rounded-full border border-[#141b27]/10 bg-white px-4 py-2 text-sm font-semibold text-[#172231] shadow-sm transition hover:bg-slate-100"
+            className="whitespace-nowrap rounded-full border border-[#141b27]/10 bg-white px-3 py-2 text-xs font-semibold text-[#172231] shadow-sm transition hover:bg-slate-100 sm:px-4 sm:text-sm"
           >
-            Back Home
+            <span className="sm:hidden">Back</span>
+            <span className="hidden sm:inline">Back Home</span>
           </button>
           <StepBadge step={activeStep} />
         </div>
@@ -546,8 +548,8 @@ export default function OnboardingPanel({
       {(message || error) && (
         <div className={`mx-auto mb-4 w-full max-w-5xl rounded-2xl border p-4 text-sm font-semibold ${
           error
-            ? 'border-red-400/30 bg-red-500/10 text-red-200'
-            : 'border-emerald-400/30 bg-emerald-500/10 text-emerald-200'
+            ? 'border-red-200 bg-red-50 text-red-700'
+            : 'border-emerald-200 bg-emerald-50 text-emerald-800'
         }`}
         >
           {error || message}
@@ -555,37 +557,56 @@ export default function OnboardingPanel({
       )}
 
       {activeStep === 1 && (
-        <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col justify-start px-0 py-0">
-          <div className="mb-3 text-center">
-            <RoboLogo className="mx-auto mb-2 h-14 w-14 sm:h-16 sm:w-16" />
-            <h1 className="mb-1.5 text-2xl font-bold leading-tight sm:text-3xl">
+        <div className="mx-auto grid w-full max-w-6xl flex-1 items-center gap-8 py-5 lg:grid-cols-[0.9fr_1.1fr] lg:py-8">
+          <section className="text-center lg:text-left">
+            <RoboLogo className="mx-auto mb-3 h-14 w-14 lg:mx-0 sm:mb-4 sm:h-20 sm:w-20" />
+            <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">Secure account</p>
+            <h1 className="mt-3 text-3xl font-medium leading-tight text-black sm:text-5xl">
               Create Your ROBOAGENT Account
             </h1>
-            <p className="mx-auto max-w-md text-sm leading-5 text-zinc-400">
+            <p className="mx-auto mt-3 max-w-md text-sm font-semibold leading-6 text-slate-600 sm:mt-4 sm:text-base sm:leading-7 lg:mx-0">
               One account to manage all your Teslas, rentals, and future Robotaxis
             </p>
+            <div className="mt-6 hidden gap-3 lg:grid">
+              {[
+                ['Private by default', 'Tesla connects only after your ROBOAGENT account is ready.'],
+                ['Fast setup', 'Create the account, approve data use, then connect Tesla.'],
+                ['Owner controlled', 'Sign out, revoke access, or delete data from settings.'],
+              ].map(([title, detail]) => (
+                <article key={title} className="rounded-2xl border border-[#141b27]/10 bg-white p-4 shadow-sm">
+                  <p className="text-sm font-black text-[#141b27]">{title}</p>
+                  <p className="mt-1 text-sm font-semibold leading-5 text-slate-500">{detail}</p>
+                </article>
+              ))}
+            </div>
             {realProgressStep > 1 && (
-              <div className="mx-auto mt-6 max-w-md rounded-2xl border border-teal-400/30 bg-teal-500/10 p-4 text-left">
-                <p className="text-sm font-semibold text-teal-100">
+              <div className="mx-auto mt-6 max-w-md rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-left lg:mx-0">
+                <p className="text-sm font-black text-emerald-900">
                   Existing setup detected for this browser.
                 </p>
-                <p className="mt-1 text-sm leading-6 text-zinc-400">
+                <p className="mt-1 text-sm font-semibold leading-6 text-emerald-800">
                   Continue where you left off, or use the sign-in page to switch accounts before connecting Tesla again.
                 </p>
                 <button
                   type="button"
                   onClick={continueExistingSetup}
-                  className="mt-4 w-full rounded-2xl border border-teal-400/40 bg-teal-400/15 px-4 py-3 text-sm font-black text-teal-100 transition hover:bg-teal-400/25"
+                  className="mt-4 w-full rounded-2xl border border-emerald-300 bg-white px-4 py-3 text-sm font-black text-emerald-900 transition hover:bg-emerald-100"
                 >
                   Continue Existing Setup
                 </button>
               </div>
             )}
-          </div>
+          </section>
 
-          <div className="mx-auto w-full max-w-md space-y-2.5">
+          <section className="mx-auto w-full max-w-md rounded-[1.5rem] border border-[#141b27]/10 bg-white/95 p-4 shadow-2xl shadow-slate-900/10 sm:p-6">
+            <div className="mb-5">
+              <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">Start free</p>
+              <h2 className="mt-2 text-2xl font-semibold text-black">Create account</h2>
+            </div>
+
+            <div className="space-y-3">
             <div>
-              <label htmlFor="onboarding-email" className="mb-2 block text-sm text-zinc-400">Email Address</label>
+              <label htmlFor="onboarding-email" className="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-slate-500">Email Address</label>
               <input
                 id="onboarding-email"
                 type="email"
@@ -596,17 +617,17 @@ export default function OnboardingPanel({
                 }}
                 placeholder="you@email.com"
                 aria-invalid={Boolean(accountErrors.email)}
-                className={`w-full rounded-2xl border bg-zinc-900 px-5 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-teal-500 ${
-                  accountErrors.email ? 'border-red-400' : 'border-zinc-700'
+                className={`w-full rounded-2xl border bg-white px-5 py-3 text-[#141b27] outline-none transition placeholder:text-slate-400 focus:border-[#172231] ${
+                  accountErrors.email ? 'border-red-400' : 'border-[#141b27]/15'
                 }`}
               />
               {accountErrors.email && (
-                <p className="mt-2 text-sm font-semibold text-red-300">{accountErrors.email}</p>
+                <p className="mt-2 text-sm font-semibold text-red-600">{accountErrors.email}</p>
               )}
             </div>
 
             <div>
-              <label htmlFor="onboarding-password" className="mb-2 block text-sm text-zinc-400">Password</label>
+              <label htmlFor="onboarding-password" className="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-slate-500">Password</label>
               <input
                 id="onboarding-password"
                 type="password"
@@ -617,12 +638,12 @@ export default function OnboardingPanel({
                 }}
                 placeholder="Create a password"
                 aria-invalid={Boolean(accountErrors.password)}
-                className={`w-full rounded-2xl border bg-zinc-900 px-5 py-3 text-white outline-none transition placeholder:text-zinc-600 focus:border-teal-500 ${
-                  accountErrors.password ? 'border-red-400' : 'border-zinc-700'
+                className={`w-full rounded-2xl border bg-white px-5 py-3 text-[#141b27] outline-none transition placeholder:text-slate-400 focus:border-[#172231] ${
+                  accountErrors.password ? 'border-red-400' : 'border-[#141b27]/15'
                 }`}
               />
               {accountErrors.password && (
-                <p className="mt-2 text-sm font-semibold text-red-300">{accountErrors.password}</p>
+                <p className="mt-2 text-sm font-semibold text-red-600">{accountErrors.password}</p>
               )}
             </div>
 
@@ -641,10 +662,10 @@ export default function OnboardingPanel({
 
             <div className="relative my-1.5">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-zinc-700" />
+                <div className="w-full border-t border-slate-200" />
               </div>
               <div className="relative text-center">
-                <span className="bg-zinc-950 px-4 text-sm text-zinc-500">or continue with</span>
+                <span className="bg-white px-4 text-sm font-semibold text-slate-500">or continue with</span>
               </div>
             </div>
 
@@ -652,7 +673,7 @@ export default function OnboardingPanel({
               <button
                 type="button"
                 onClick={() => onNavigate?.('account')}
-                className="flex items-center justify-center gap-3 rounded-2xl border border-zinc-700 bg-zinc-900 py-5 transition hover:bg-zinc-800"
+                className="flex items-center justify-center gap-3 rounded-2xl border border-[#141b27]/10 bg-white py-5 transition hover:bg-slate-50"
               >
                 <span className="text-xl">G</span>
                 Google
@@ -660,7 +681,7 @@ export default function OnboardingPanel({
               <button
                 type="button"
                 onClick={() => onNavigate?.('account')}
-                className="flex items-center justify-center gap-3 rounded-2xl border border-zinc-700 bg-zinc-900 py-5 transition hover:bg-zinc-800"
+                className="flex items-center justify-center gap-3 rounded-2xl border border-[#141b27]/10 bg-white py-5 transition hover:bg-slate-50"
               >
                 <span className="text-xl"></span>
                 Apple
@@ -676,12 +697,13 @@ export default function OnboardingPanel({
             <button
               type="button"
               onClick={() => onNavigate?.('account')}
-                className="w-full rounded-2xl border border-zinc-700 bg-zinc-900 px-5 py-3 text-sm font-semibold text-zinc-200 transition hover:border-teal-400 hover:text-teal-200"
+              className="w-full rounded-2xl border border-[#141b27]/10 bg-slate-50 px-5 py-3 text-sm font-bold text-[#172231] transition hover:bg-slate-100"
             >
               Already have an account? Sign in
             </button>
+            </div>
 
-          </div>
+          </section>
         </div>
       )}
 
