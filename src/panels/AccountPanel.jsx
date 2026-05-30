@@ -282,7 +282,7 @@ export default function AccountPanel({ onNavigate }) {
       </header>
 
       <main className="mx-auto grid max-w-5xl gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-        <aside className="rounded-3xl border border-zinc-800 bg-zinc-950/80 p-5 shadow-2xl shadow-black/30 sm:p-6">
+        <aside className="hidden rounded-3xl border border-zinc-800 bg-zinc-950/80 p-5 shadow-2xl shadow-black/30 sm:p-6 lg:block">
           <div className="mb-5 flex justify-center lg:justify-start">
             <div className="flex h-16 w-16 items-center justify-center rounded-3xl bg-gradient-to-br from-teal-400 to-cyan-500 shadow-xl shadow-teal-500/30">
               <span className="text-4xl font-black tracking-tighter text-black">R</span>
@@ -302,6 +302,14 @@ export default function AccountPanel({ onNavigate }) {
         </aside>
 
         <section className="rounded-3xl border border-zinc-800 bg-zinc-950/80 p-5 shadow-2xl shadow-black/30 sm:p-6">
+          <div className="mb-5 lg:hidden">
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-teal-300">Secure account</p>
+            <h1 className="mt-2 text-3xl font-black tracking-tight text-white">Sign in to RoboAgent</h1>
+            <p className="mt-2 text-sm font-semibold leading-6 text-zinc-400">
+              Use one owner account. Tesla connection comes next through Tesla OAuth.
+            </p>
+          </div>
+
           {(message || error) && (
             <div className={`mb-5 rounded-2xl border p-4 text-sm font-semibold ${
               error ? 'border-red-400/30 bg-red-500/10 text-red-200' : 'border-emerald-400/30 bg-emerald-500/10 text-emerald-200'

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { logoutFleetOsAccount } from '../services/sessionService';
 
 function NavIcon({ type }) {
   const paths = {
@@ -65,6 +66,7 @@ const menuSections = [
 
 export default function MobileBottomNav({ route, onNavigate }) {
   const [isOpen, setIsOpen] = useState(false);
+  const [isSigningOut, setIsSigningOut] = useState(false);
   const primaryRouteIds = new Set(items.map(([id]) => id).filter((id) => id !== 'more'));
   const isMoreActive = !primaryRouteIds.has(route);
 
@@ -78,6 +80,20 @@ export default function MobileBottomNav({ route, onNavigate }) {
     onNavigate(id);
   };
 
+  const signOut = async () => {
+    setIsSigningOut(true);
+    try {
+      await logoutFleetOsAccount().catch(() => {});
+      if (window.Clerk?.loaded && typeof window.Clerk.signOut === 'function') {
+        await window.Clerk.signOut();
+      }
+    } finally {
+      setIsSigningOut(false);
+      setIsOpen(false);
+      onNavigate('landing');
+    }
+  };
+
   return (
     <>
       {isOpen && (
@@ -87,14 +103,24 @@ export default function MobileBottomNav({ route, onNavigate }) {
               <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-sky-300">RoboAgent</p>
               <h2 className="text-lg font-black text-slate-100">Menu</h2>
             </div>
-            <button
-              type="button"
-              onClick={() => setIsOpen(false)}
-              className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-300"
-              aria-label="Close mobile menu"
-            >
-              X
-            </button>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={signOut}
+                disabled={isSigningOut}
+                className="rounded-full border border-red-400/20 bg-red-500/10 px-3 py-2 text-xs font-black text-red-100 transition hover:bg-red-500/15 disabled:cursor-wait disabled:opacity-60"
+              >
+                {isSigningOut ? '...' : 'Sign Out'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className="flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5 text-slate-300"
+                aria-label="Close mobile menu"
+              >
+                X
+              </button>
+            </div>
           </div>
 
           <div className="max-h-[54vh] space-y-4 overflow-y-auto p-3">
