@@ -124,16 +124,16 @@ body,
 /* Clerk renders outside our component tree, so keep auth modals readable with hard overrides. */
 .cl-modalBackdrop,
 .cl-modalBackdrop__modal {
-  background: rgba(0, 0, 0, 0.82) !important;
-  backdrop-filter: blur(10px) !important;
+  background: rgba(15, 23, 42, 0.24) !important;
+  backdrop-filter: blur(8px) !important;
 }
 
 .cl-card,
 .cl-cardBox {
-  background: #09090b !important;
-  color: #ffffff !important;
-  border: 1px solid rgba(63, 63, 70, 0.95) !important;
-  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.65) !important;
+  background: #ffffff !important;
+  color: #141b27 !important;
+  border: 1px solid rgba(20, 27, 39, 0.12) !important;
+  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.18) !important;
 }
 
 .cl-headerTitle,
@@ -143,46 +143,46 @@ body,
 .cl-identityPreviewText,
 .cl-formHeaderTitle,
 .cl-formHeaderSubtitle {
-  color: #ffffff !important;
+  color: #141b27 !important;
 }
 
 .cl-headerSubtitle,
 .cl-formHeaderSubtitle,
 .cl-footerAction {
-  color: #d4d4d8 !important;
+  color: #64748b !important;
 }
 
 .cl-formFieldInput,
 .cl-input {
-  background: #18181b !important;
-  color: #ffffff !important;
-  border-color: #3f3f46 !important;
+  background: #ffffff !important;
+  color: #141b27 !important;
+  border-color: #cbd5e1 !important;
   box-shadow: none !important;
 }
 
 .cl-formFieldInput::placeholder,
 .cl-input::placeholder {
-  color: #a1a1aa !important;
+  color: #94a3b8 !important;
 }
 
 .cl-formButtonPrimary {
-  background: #14b8a6 !important;
-  color: #000000 !important;
+  background: #172231 !important;
+  color: #ffffff !important;
   box-shadow: none !important;
 }
 
 .cl-formButtonPrimary:hover {
-  background: #2dd4bf !important;
+  background: #243044 !important;
 }
 
 .cl-socialButtonsBlockButton {
-  background: #18181b !important;
-  color: #ffffff !important;
-  border-color: #3f3f46 !important;
+  background: #ffffff !important;
+  color: #141b27 !important;
+  border-color: #cbd5e1 !important;
 }
 
 .cl-socialButtonsBlockButton:hover {
-  background: #27272a !important;
+  background: #f8fafc !important;
 }
 
 .cl-socialButtonsBlockButtonText,
@@ -190,18 +190,18 @@ body,
 .cl-footerActionText,
 .cl-footerActionLink,
 .cl-formResendCodeLink {
-  color: #ffffff !important;
+  color: #172231 !important;
 }
 
 .cl-footer,
 .cl-footerPages {
-  background: #09090b !important;
-  border-color: #27272a !important;
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
 }
 
 .cl-internal-b3fm6y,
 .cl-internal-1dauvpw {
-  color: #a1a1aa !important;
+  color: #64748b !important;
 }
 
 button[data-provider="github"],
