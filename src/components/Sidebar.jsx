@@ -57,6 +57,8 @@ export default function Sidebar({
   const advancedSection = navSections.find((section) => section.label === 'Advanced');
   const signOut = async () => {
     setIsSigningOut(true);
+    onNavigate('landing');
+
     try {
       await logoutFleetOsAccount().catch(() => {});
       if (window.Clerk?.loaded && typeof window.Clerk.signOut === 'function') {
@@ -64,7 +66,6 @@ export default function Sidebar({
       }
     } finally {
       setIsSigningOut(false);
-      onNavigate('landing');
     }
   };
 
@@ -91,6 +92,25 @@ export default function Sidebar({
           </span>
         </h1>
 
+      </div>
+
+      <div className="mb-5 rounded-2xl border border-white/10 bg-white/[0.04] p-3">
+        <button
+          type="button"
+          onClick={() => onNavigate('account')}
+          className="w-full rounded-xl px-3 py-2.5 text-left text-sm font-black text-slate-100 transition hover:bg-white/[0.07]"
+        >
+          Account
+          <span className="mt-0.5 block text-xs font-semibold leading-4 text-slate-500">Sign in, sign out, profile</span>
+        </button>
+        <button
+          type="button"
+          onClick={signOut}
+          disabled={isSigningOut}
+          className="mt-1 w-full rounded-xl border border-red-400/20 bg-red-500/10 px-3 py-2.5 text-left text-sm font-black text-red-100 transition hover:bg-red-500/15 disabled:cursor-wait disabled:opacity-60"
+        >
+          {isSigningOut ? 'Signing out...' : 'Sign Out'}
+        </button>
       </div>
 
       <nav className="mb-5 space-y-5">
@@ -217,26 +237,6 @@ export default function Sidebar({
 
       </div>
       )}
-
-      <div className="mt-auto rounded-2xl border border-white/10 bg-white/[0.04] p-3">
-        <button
-          type="button"
-          onClick={() => onNavigate('account')}
-          className="w-full rounded-xl px-3 py-2.5 text-left text-sm font-black text-slate-100 transition hover:bg-white/[0.07]"
-        >
-          Account
-          <span className="mt-0.5 block text-xs font-semibold leading-4 text-slate-500">Profile, billing, Tesla access</span>
-        </button>
-        <button
-          type="button"
-          onClick={signOut}
-          disabled={isSigningOut}
-          className="mt-1 w-full rounded-xl border border-red-400/20 bg-red-500/10 px-3 py-2.5 text-left text-sm font-black text-red-100 transition hover:bg-red-500/15 disabled:cursor-wait disabled:opacity-60"
-        >
-          {isSigningOut ? 'Signing out...' : 'Sign Out'}
-          <span className="mt-0.5 block text-xs font-semibold leading-4 text-red-100/60">Leave this browser session</span>
-        </button>
-      </div>
 
     </aside>
   )

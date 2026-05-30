@@ -82,6 +82,9 @@ export default function MobileBottomNav({ route, onNavigate }) {
 
   const signOut = async () => {
     setIsSigningOut(true);
+    setIsOpen(false);
+    onNavigate('landing');
+
     try {
       await logoutFleetOsAccount().catch(() => {});
       if (window.Clerk?.loaded && typeof window.Clerk.signOut === 'function') {
@@ -89,8 +92,6 @@ export default function MobileBottomNav({ route, onNavigate }) {
       }
     } finally {
       setIsSigningOut(false);
-      setIsOpen(false);
-      onNavigate('landing');
     }
   };
 

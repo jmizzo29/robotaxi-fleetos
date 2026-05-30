@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { SignIn, SignUp, UserButton } from '@clerk/react';
+import { SignIn, SignUp } from '@clerk/react';
 import { isClerkConfigured } from '../auth/clerkConfig';
 import {
   getFleetOsBillingStatus,
@@ -265,6 +265,23 @@ export default function AccountPanel({ onNavigate }) {
     window.location.href = getTeslaLoginUrl('onboarding');
   };
 
+  const signOut = async () => {
+    setIsBusy(true);
+    setError('');
+    setMessage('');
+    setSession({ authenticated: false, user: {} });
+    onNavigate?.('landing');
+
+    try {
+      await logoutFleetOsAccount().catch(() => {});
+      if (window.Clerk?.loaded && typeof window.Clerk.signOut === 'function') {
+        await window.Clerk.signOut();
+      }
+    } finally {
+      setIsBusy(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-zinc-950 to-black px-4 py-4 text-white sm:py-5">
       <header className="mx-auto mb-5 flex max-w-5xl items-center justify-between">
@@ -449,73 +466,68 @@ export default function AccountPanel({ onNavigate }) {
                 </div>
               )}
 
-              <button
-                type="button"
-                onClick={() => setShowTeslaConsent(true)}
-                className="w-full rounded-2xl border border-teal-500/30 bg-teal-500/10 px-5 py-4 text-sm font-black text-teal-200 transition hover:bg-teal-500/20"
-              >
-                Preview Tesla Data Permissions
-              </button>
+              <p className="text-center text-xs font-semibold leading-5 text-zinc-600">
+                Tesla connection happens after sign in.
+              </p>
             </div>
           ) : (
             <div className="space-y-5">
-              <div className="flex items-start justify-between gap-4 rounded-2xl border border-emerald-400/30 bg-emerald-500/10 p-5">
+              <div className="rounded-2xl border border-emerald-400/30 bg-emerald-500/10 p-5">
                 <div>
                   <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-300">Signed In</p>
                   <h2 className="mt-2 text-2xl font-black text-white">{user.name || 'RoboAgent Owner'}</h2>
                   <p className="mt-1 text-sm font-semibold text-emerald-200">{user.email}</p>
                 </div>
-                {clerkReady ? <UserButton /> : null}
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-3">
-                <Metric label="Plan" value="Free" />
-                <Metric label="Included" value={`${billing?.includedVehicles || 1} Tesla`} />
-                <Metric label="Synced" value={billing?.vehicleCount || 0} />
-              </div>
-
-              <Field label="Display Name">
-                <div className="flex flex-col gap-3 sm:flex-row">
-                  <TextInput
-                    value={profileName}
-                    onChange={(event) => setProfileName(event.target.value)}
-                    placeholder="Display name"
-                  />
-                  <button
-                    type="button"
-                    disabled={isBusy}
-                    onClick={() => runAction(() => updateFleetOsProfile({ name: profileName }), 'Profile updated.')}
-                    className="rounded-2xl border border-zinc-700 bg-zinc-900 px-5 py-4 text-sm font-black text-zinc-200 transition hover:bg-zinc-800 disabled:cursor-wait disabled:opacity-60"
-                  >
-                    Save
-                  </button>
-                </div>
-              </Field>
-
-              <div className="grid gap-3 sm:grid-cols-3">
-                <button type="button" onClick={() => onNavigate?.('onboarding')} className="rounded-2xl bg-teal-500 px-5 py-4 text-sm font-black text-black transition hover:bg-teal-400">
-                  Continue Onboarding
-                </button>
-                <button type="button" onClick={() => onNavigate?.('overview')} className="rounded-2xl border border-zinc-700 bg-zinc-900 px-5 py-4 text-sm font-black text-zinc-200 transition hover:bg-zinc-800">
+              <div className="grid gap-3 sm:grid-cols-2">
+                <button type="button" onClick={() => onNavigate?.('overview')} className="rounded-2xl bg-teal-500 px-5 py-5 text-sm font-black text-black transition hover:bg-teal-400">
                   Open Dashboard
                 </button>
                 <button
                   type="button"
                   disabled={isBusy}
-                  onClick={() => runAction(() => logoutFleetOsAccount(), 'Signed out on this browser.')}
-                  className="rounded-2xl border border-red-400/30 bg-red-500/10 px-5 py-4 text-sm font-black text-red-200 transition hover:bg-red-500/20 disabled:cursor-wait disabled:opacity-60"
+                  onClick={signOut}
+                  className="rounded-2xl border border-red-400/30 bg-red-500/10 px-5 py-5 text-sm font-black text-red-200 transition hover:bg-red-500/20 disabled:cursor-wait disabled:opacity-60"
                 >
-                  Sign Out
+                  {isBusy ? 'Signing Out...' : 'Sign Out'}
                 </button>
               </div>
 
-              <button
-                type="button"
-                onClick={() => setShowTeslaConsent(true)}
-                className="w-full rounded-2xl border border-teal-500/30 bg-teal-500/10 px-5 py-4 text-sm font-black text-teal-200 transition hover:bg-teal-500/20"
-              >
-                Preview Tesla Data Permissions
-              </button>
+              <details className="rounded-2xl border border-zinc-800 bg-zinc-900/70 p-4">
+                <summary className="cursor-pointer text-sm font-black text-zinc-200">Account Details</summary>
+                <div className="mt-4 space-y-4">
+                  <div className="grid gap-3 sm:grid-cols-3">
+                    <Metric label="Plan" value="Free" />
+                    <Metric label="Included" value={`${billing?.includedVehicles || 1} Tesla`} />
+                    <Metric label="Synced" value={billing?.vehicleCount || 0} />
+                  </div>
+                  <Field label="Display Name">
+                    <div className="flex flex-col gap-3 sm:flex-row">
+                      <TextInput
+                        value={profileName}
+                        onChange={(event) => setProfileName(event.target.value)}
+                        placeholder="Display name"
+                      />
+                      <button
+                        type="button"
+                        disabled={isBusy}
+                        onClick={() => runAction(() => updateFleetOsProfile({ name: profileName }), 'Profile updated.')}
+                        className="rounded-2xl border border-zinc-700 bg-zinc-900 px-5 py-4 text-sm font-black text-zinc-200 transition hover:bg-zinc-800 disabled:cursor-wait disabled:opacity-60"
+                      >
+                        Save
+                      </button>
+                    </div>
+                  </Field>
+                  <button
+                    type="button"
+                    onClick={() => onNavigate?.('onboarding')}
+                    className="w-full rounded-2xl border border-teal-500/30 bg-teal-500/10 px-5 py-4 text-sm font-black text-teal-200 transition hover:bg-teal-500/20"
+                  >
+                    Connect Tesla
+                  </button>
+                </div>
+              </details>
             </div>
           )}
         </section>

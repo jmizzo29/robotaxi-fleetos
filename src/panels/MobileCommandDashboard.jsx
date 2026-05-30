@@ -136,13 +136,11 @@ export default function MobileCommandDashboard({
         </div>
         <button
           type="button"
-          onClick={() => onNavigate('settings')}
-          className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/[0.06] text-slate-200"
-          aria-label="Open settings"
+          onClick={() => onNavigate('account')}
+          className="rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-sm font-black text-slate-200"
+          aria-label="Open account"
         >
-          <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
-            <path fill="currentColor" d="M12 8a4 4 0 1 1 0 8 4 4 0 0 1 0-8Zm8.7 5.4-1.9.6a7.2 7.2 0 0 1-.7 1.7l.9 1.8-1.6 1.6-1.8-.9c-.5.3-1.1.5-1.7.7l-.6 1.9h-2.3l-.6-1.9a7.2 7.2 0 0 1-1.7-.7l-1.8.9-1.6-1.6.9-1.8a7.2 7.2 0 0 1-.7-1.7l-1.9-.6v-2.3l1.9-.6c.2-.6.4-1.2.7-1.7l-.9-1.8 1.6-1.6 1.8.9c.5-.3 1.1-.5 1.7-.7l.6-1.9h2.3l.6 1.9c.6.2 1.2.4 1.7.7l1.8-.9 1.6 1.6-.9 1.8c.3.5.5 1.1.7 1.7l1.9.6v2.3Z" />
-          </svg>
+          Account
         </button>
       </div>
 
