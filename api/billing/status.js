@@ -25,7 +25,7 @@ export default async function handler(req, res) {
       billing,
       policy: {
         label: 'First Tesla free',
-        detail: 'RoboAgent beta includes one Tesla at no cost. Additional vehicles are marked billable until a paid plan is attached.',
+        detail: 'ROBOAGENT beta includes one Tesla at no cost. Additional vehicles are marked billable until a paid plan is attached.',
       },
     });
   } catch (error) {

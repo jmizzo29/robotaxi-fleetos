@@ -100,7 +100,7 @@ export default async function handler(req, res) {
     return;
   }
 
-  console.log('RoboAgent early access lead', {
+  console.log('ROBOAGENT early access lead', {
     email: lead.email,
     teslaCount: lead.teslaCount,
     useCase: lead.useCase,

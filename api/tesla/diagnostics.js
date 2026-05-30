@@ -53,7 +53,7 @@ export default async function handler(req, res) {
         ok: false,
         message: connectionError?.status === 401
           ? 'Sign in to check Tesla connection health.'
-          : 'Tesla is not connected for this RoboAgent user.',
+          : 'Tesla is not connected for this ROBOAGENT user.',
       },
     });
     return;

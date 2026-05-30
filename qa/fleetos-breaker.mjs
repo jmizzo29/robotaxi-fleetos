@@ -32,7 +32,7 @@ async function request(pathname, options = {}) {
     redirect: options.redirect || 'manual',
     method: options.method || 'GET',
     headers: {
-      'User-Agent': 'RoboAgent-Breaker/1.0',
+      'User-Agent': 'ROBOAGENT-Breaker/1.0',
       Accept: options.accept || '*/*',
       ...(options.headers || {}),
     },
@@ -112,8 +112,8 @@ async function testStaleCopy() {
   const { bundle } = await getIndexAndBundle();
   const forbidden = [
     'Join Early Access',
-    'Start free, then pay only when RoboAgent helps manage more Teslas',
-    'Open RoboAgent Console',
+    'Start free, then pay only when ROBOAGENT helps manage more Teslas',
+    'Open ROBOAGENT Console',
     'Tesla OAuth only',
   ];
   const found = forbidden.filter((phrase) => bundle?.text.includes(phrase));
@@ -130,15 +130,15 @@ async function testExpectedLandingCopy() {
     'Maximize earnings with intelligent daily plans for pricing, charging, maintenance & more.',
     'Get Started Free',
     'How does it work',
-    'How RoboAgent Works',
+    'How ROBOAGENT Works',
     'Tesla Telemetry',
     'Smart Pricing',
-    'Ask RoboAgent',
+    'Ask ROBOAGENT',
     'Charging Strategy',
-    'Ask RoboAgent anything',
+    'Ask ROBOAGENT anything',
     'public-agent-question',
     'PREDICTIVE MAINTENANCE',
-    'RoboAgent Command Center',
+    'ROBOAGENT Command Center',
     'The AI agent is the product.',
     '7:04 AM AI Plan Ready',
     'Approve Plan',
@@ -193,7 +193,7 @@ async function testSignedOutSessionGate() {
       body: truncate(session.text),
     });
   }
-  return pass('signed-out session gate', 'Signed-out user cannot get an authenticated RoboAgent session.');
+  return pass('signed-out session gate', 'Signed-out user cannot get an authenticated ROBOAGENT session.');
 }
 
 async function testAdminGate() {
@@ -208,13 +208,13 @@ async function testAdminGate() {
 
 async function testTeslaLoginGate() {
   const login = await request('/api/tesla/login?returnTo=%2F%23%2Fonboarding', { redirect: 'manual' });
-  if (login.status !== 401 || !String(login.text || '').includes('Sign in to RoboAgent')) {
+  if (login.status !== 401 || !String(login.text || '').includes('Sign in to ROBOAGENT')) {
     return fail('Tesla OAuth account gate', `Expected 401 account gate, got ${login.status}.`, {
       location: login.location,
       body: truncate(login.text),
     });
   }
-  return pass('Tesla OAuth account gate', 'Signed-out visitor must create or sign into RoboAgent before Tesla OAuth starts.');
+  return pass('Tesla OAuth account gate', 'Signed-out visitor must create or sign into ROBOAGENT before Tesla OAuth starts.');
 }
 
 async function testTeslaCallbackMisuse() {
@@ -224,7 +224,7 @@ async function testTeslaCallbackMisuse() {
       body: truncate(callback.text),
     });
   }
-  if (!callback.text.includes('Return to RoboAgent onboarding')) {
+  if (!callback.text.includes('Return to ROBOAGENT onboarding')) {
     return warn('Tesla callback misuse', 'Callback blocks misuse, but friendly recovery copy was not detected.', {
       body: truncate(callback.text),
     });
@@ -254,7 +254,7 @@ async function testAgentAskGate() {
       body: truncate(agent.text),
     });
   }
-  return pass('agent ask gate', 'Signed-out user cannot ask RoboAgent to analyze private fleet data.');
+  return pass('agent ask gate', 'Signed-out user cannot ask ROBOAGENT to analyze private fleet data.');
 }
 
 async function testMethodHardening() {
@@ -334,7 +334,7 @@ async function writeReports(results) {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>RoboAgent Breaker Report</title>
+    <title>ROBOAGENT Breaker Report</title>
     <style>
       body { margin: 0; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: #07111f; color: #e5eefb; }
       main { max-width: 1080px; margin: 0 auto; padding: 32px 20px; }
@@ -355,7 +355,7 @@ async function writeReports(results) {
   </head>
   <body>
     <main>
-      <h1>RoboAgent Breaker Report</h1>
+      <h1>ROBOAGENT Breaker Report</h1>
       <p class="meta">Target: ${escapeHtml(BASE_URL)} · Generated: ${escapeHtml(generatedAt)}</p>
       <section class="summary">
         <div class="card">Total<strong>${summary.total}</strong></div>
@@ -405,7 +405,7 @@ for (const [name, fn] of tests) {
 }
 
 const report = await writeReports(results);
-console.log('\nRoboAgent Breaker Summary');
+console.log('\nROBOAGENT Breaker Summary');
 console.log(`Target: ${BASE_URL}`);
 console.log(`Pass: ${report.summary.pass}  Warn: ${report.summary.warn}  Fail: ${report.summary.fail}`);
 console.log(`HTML report: ${report.htmlPath}`);

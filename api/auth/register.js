@@ -9,14 +9,14 @@ export default async function handler(req, res) {
   }
 
   if (!hasPostgres()) {
-    res.status(503).json({ error: 'DATABASE_REQUIRED', message: 'Postgres is required for RoboAgent accounts.' });
+    res.status(503).json({ error: 'DATABASE_REQUIRED', message: 'Postgres is required for ROBOAGENT accounts.' });
     return;
   }
 
   if (!validateInviteCode(req.body?.inviteCode)) {
     res.status(403).json({
       error: 'INVITE_REQUIRED',
-      message: 'RoboAgent beta is invite-only. Enter the invite code provided to this tester.',
+      message: 'ROBOAGENT beta is invite-only. Enter the invite code provided to this tester.',
     });
     return;
   }

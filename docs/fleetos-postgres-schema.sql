@@ -1,4 +1,4 @@
--- RoboAgent production schema for Neon Postgres.
+-- ROBOAGENT production schema for Neon Postgres.
 -- This mirrors api/_lib/db.js and can be run manually in Neon SQL Editor.
 
 create table if not exists fleetos_users (
@@ -209,7 +209,7 @@ create table if not exists fleetos_earnings_estimates (
   vehicle_id text references fleetos_vehicles(id) on delete cascade,
   fleet_id text references fleetos_fleets(id) on delete set null,
   estimate_date date not null,
-  source text not null default 'RoboAgent AI',
+  source text not null default 'ROBOAGENT AI',
   expected_revenue numeric,
   expected_cost numeric,
   confidence numeric,

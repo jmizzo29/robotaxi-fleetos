@@ -171,7 +171,7 @@ function buildHeuristicAnswer({ question, vehicles, revenueRecords, memory, exte
         ? `Your latest rental context is for ${vehicleLabel(vehicle)}${latestRevenue?.date ? ` on ${latestRevenue.date}` : ''}. ${earned ? `Recorded host earnings are $${Math.round(earned)}. ` : ''}${miles ? `Fleet memory shows ${Math.round(miles)} miles driven. ` : ''}I can compare it against prior rentals once more trip-history rows are imported.`
         : 'I do not see imported rental history yet. Upload a Turo earnings or trip-history CSV and I can answer last-rental mileage, earnings, rating, and vehicle performance directly.',
       recommendedActions: [
-        action('REVENUE_IMPORT', 'Import latest Turo trip history', 'Upload trip CSV so RoboAgent can answer last-rental mileage and earnings with evidence.', 'HIGH', false),
+        action('REVENUE_IMPORT', 'Import latest Turo trip history', 'Upload trip CSV so ROBOAGENT can answer last-rental mileage and earnings with evidence.', 'HIGH', false),
       ],
       confidence: latestRevenue || relevantRentalMemory ? 76 : 48,
       confidenceReasons,
@@ -182,7 +182,7 @@ function buildHeuristicAnswer({ question, vehicles, revenueRecords, memory, exte
   if (intent === 'pricing') {
     const lift = pricingSignals?.suggestedLift || 0;
     return {
-      answer: `Pricing pressure looks ${contextSignals?.pricingPressure || 'normal'}. Based on utilization, health, weather, and fleet context, RoboAgent would ${lift > 0 ? `test a ${lift}% increase` : lift < 0 ? `test a ${Math.abs(lift)}% decrease` : 'hold pricing'} where vehicle readiness supports it.`,
+      answer: `Pricing pressure looks ${contextSignals?.pricingPressure || 'normal'}. Based on utilization, health, weather, and fleet context, ROBOAGENT would ${lift > 0 ? `test a ${lift}% increase` : lift < 0 ? `test a ${Math.abs(lift)}% decrease` : 'hold pricing'} where vehicle readiness supports it.`,
       recommendedActions: [
         action('PRICE_REVIEW', 'Review Turo pricing recommendations', `Evaluate ${lift > 0 ? '+' : ''}${lift}% pricing movement against each vehicle and owner floor price.`, lift >= 10 ? 'HIGH' : 'NORMAL'),
         action('MARKET_INPUTS', 'Add local market rates', 'Enter current daily rate, competitor average, minimum acceptable rate, and target rate to improve confidence.', 'NORMAL', false),
@@ -224,7 +224,7 @@ function buildHeuristicAnswer({ question, vehicles, revenueRecords, memory, exte
   }
 
   return {
-    answer: `RoboAgent sees ${vehicles.length} connected vehicle${vehicles.length === 1 ? '' : 's'}, ${revenueRecords.length} revenue record${revenueRecords.length === 1 ? '' : 's'}, and ${memory.length} relevant memory event${memory.length === 1 ? '' : 's'}. Total recorded revenue is $${Math.round(totalRevenue)}. Charging pressure is ${contextSignals?.chargingPressure || 'unknown'}, pricing pressure is ${contextSignals?.pricingPressure || 'unknown'}, and traffic/weather risk is ${contextSignals?.trafficRisk || 'unknown'}.`,
+    answer: `ROBOAGENT sees ${vehicles.length} connected vehicle${vehicles.length === 1 ? '' : 's'}, ${revenueRecords.length} revenue record${revenueRecords.length === 1 ? '' : 's'}, and ${memory.length} relevant memory event${memory.length === 1 ? '' : 's'}. Total recorded revenue is $${Math.round(totalRevenue)}. Charging pressure is ${contextSignals?.chargingPressure || 'unknown'}, pricing pressure is ${contextSignals?.pricingPressure || 'unknown'}, and traffic/weather risk is ${contextSignals?.trafficRisk || 'unknown'}.`,
     recommendedActions: [
       action('DAILY_BRIEF', 'Generate daily AI fleet brief', 'Summarize charging, pricing, maintenance, cleaning, and revenue impact for the owner.', 'NORMAL', false),
       action('PRICE_REVIEW', 'Review pricing opportunities', 'Check whether weekend or utilization signals justify price movement.', 'NORMAL'),
@@ -277,7 +277,7 @@ function buildFleetSummary({ vehicles = [], externalContext = {} } = {}) {
 }
 
 function buildRoboAgentSystemPrompt({ vehicles, externalContext }) {
-  return `You are RoboAgent, the most intelligent and practical AI Agent for Tesla owners running Turo rentals and preparing for the Robotaxi network.
+  return `You are ROBOAGENT, the most intelligent and practical AI Agent for Tesla owners running Turo rentals and preparing for the Robotaxi network.
 
 Your goal is to help owners maximize earnings while maintaining excellent vehicle health and minimizing effort. You combine deep Tesla knowledge, real-time data, and smart reasoning to give exceptionally valuable advice.
 
@@ -505,11 +505,11 @@ function normalizeAgentResponse(response, fallback) {
     recommendedActions: actions.slice(0, 6).map((item) => ({
       id: item.id || `${String(item.type || 'ACTION').toLowerCase()}-${Date.now()}-${Math.random().toString(16).slice(2, 8)}`,
       type: item.type || 'DAILY_BRIEF',
-      title: item.title || 'Review RoboAgent recommendation',
+      title: item.title || 'Review ROBOAGENT recommendation',
       detail: item.detail || item.command || '',
       priority: item.priority || 'NORMAL',
       approvalRequired: item.approvalRequired !== false,
-      command: item.command || `${item.title || 'RoboAgent action'}: ${item.detail || ''}`,
+      command: item.command || `${item.title || 'ROBOAGENT action'}: ${item.detail || ''}`,
     })),
     clarifyingQuestion: merged.clarifyingQuestion || null,
     provider: merged.provider || 'heuristic',
@@ -526,26 +526,26 @@ export default async function handler(req, res) {
   }
 
   if (!hasPostgres()) {
-    res.status(503).json({ error: 'DATABASE_REQUIRED', message: 'Postgres DATABASE_URL is required for RoboAgent ask.' });
+    res.status(503).json({ error: 'DATABASE_REQUIRED', message: 'Postgres DATABASE_URL is required for ROBOAGENT ask.' });
     return;
   }
 
   try {
     const session = await getSession(req, res, { create: false });
     if (!session?.user?.email) {
-      res.status(401).json({ error: 'LOGIN_REQUIRED', message: 'Sign in to ask RoboAgent about your fleet.' });
+      res.status(401).json({ error: 'LOGIN_REQUIRED', message: 'Sign in to ask ROBOAGENT about your fleet.' });
       return;
     }
 
     const context = await getDefaultFleetForSession(req, res, { create: true });
     if (!context?.fleet?.id) {
-      res.status(500).json({ error: 'FLEET_CONTEXT_REQUIRED', message: 'RoboAgent could not load a fleet context.' });
+      res.status(500).json({ error: 'FLEET_CONTEXT_REQUIRED', message: 'ROBOAGENT could not load a fleet context.' });
       return;
     }
 
     const question = String(req.body?.question || '').trim();
     if (question.length < 3) {
-      res.status(400).json({ error: 'QUESTION_REQUIRED', message: 'Ask RoboAgent a question about your fleet.' });
+      res.status(400).json({ error: 'QUESTION_REQUIRED', message: 'Ask ROBOAGENT a question about your fleet.' });
       return;
     }
 
@@ -563,7 +563,7 @@ export default async function handler(req, res) {
     const status = error.status || error.statusCode || 500;
     res.status(status === 401 ? 401 : 500).json({
       error: status === 401 ? 'LOGIN_REQUIRED' : 'AGENT_ASK_FAILED',
-      message: status === 401 ? 'Sign in to ask RoboAgent about your fleet.' : error.message,
+      message: status === 401 ? 'Sign in to ask ROBOAGENT about your fleet.' : error.message,
     });
   }
 }

@@ -1,6 +1,6 @@
-# RoboAgent Breaker
+# ROBOAGENT Breaker
 
-RoboAgent Breaker is a small external QA harness for trying to break the deployed RoboAgent app before beta users do.
+ROBOAGENT Breaker is a small external QA harness for trying to break the deployed ROBOAGENT app before beta users do.
 
 It checks:
 

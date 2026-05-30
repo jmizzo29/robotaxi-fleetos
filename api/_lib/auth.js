@@ -548,7 +548,7 @@ export async function refreshTeslaTokenForConnection(connection) {
 export async function getTeslaAccessTokenForRequest(req, res) {
   const result = await getTeslaConnectionForSession(req, res);
   if (!result?.connection) {
-    const error = new Error('Connect Tesla for this RoboAgent user before syncing telemetry.');
+    const error = new Error('Connect Tesla for this ROBOAGENT user before syncing telemetry.');
     error.status = 401;
     throw error;
   }

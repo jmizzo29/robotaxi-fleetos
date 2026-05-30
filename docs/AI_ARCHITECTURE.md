@@ -1,8 +1,8 @@
-# RoboAgent AI Architecture
+# ROBOAGENT AI Architecture
 
 ## 1. Updated System Architecture
 
-RoboAgent should evolve into an AI-operated fleet console, not a dashboard with AI sprinkled in.
+ROBOAGENT should evolve into an AI-operated fleet console, not a dashboard with AI sprinkled in.
 
 Current production-ready direction:
 
@@ -15,7 +15,7 @@ Current production-ready direction:
 Target request flow:
 
 1. Tesla Fleet API syncs live telemetry.
-2. RoboAgent normalizes real + simulated vehicles into one operating snapshot.
+2. ROBOAGENT normalizes real + simulated vehicles into one operating snapshot.
 3. AI orchestrator analyzes the snapshot.
 4. Specialized agents produce alerts, recommendations, charging guidance, and dispatch actions.
 5. Operator executes or rejects recommended actions.
@@ -118,7 +118,7 @@ AI_MODEL=grok-4
 XAI_API_KEY=...
 ```
 
-If no AI key is configured, RoboAgent uses deterministic local heuristics so the UI remains useful.
+If no AI key is configured, ROBOAGENT uses deterministic local heuristics so the UI remains useful.
 
 ## 5. Tesla Fleet API Integration Plan
 
@@ -178,4 +178,4 @@ ai_recommendations(id, created_at, provider, model, confidence, command, accepte
 fleet_memories(id, event_id, summary, embedding)
 ```
 
-The important product principle: RoboAgent should learn from what operators accepted, ignored, or corrected.
+The important product principle: ROBOAGENT should learn from what operators accepted, ignored, or corrected.

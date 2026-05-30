@@ -1,8 +1,8 @@
-# RoboAgent Backend Direction
+# ROBOAGENT Backend Direction
 
 ## Current Production Path
 
-RoboAgent uses Vercel Serverless functions under `/api` as the production backend.
+ROBOAGENT uses Vercel Serverless functions under `/api` as the production backend.
 The browser should not be configured with a public backend host for normal
 production use. Deployed pages call relative `/api` routes, which keeps the
 frontend and backend on the same origin.
@@ -40,7 +40,7 @@ environment variables. Locally, set it in `backend/.env`.
 
 Keep the Express server for local development and future jobs that may need a
 long-running process, such as WebSocket telemetry streaming, background polling,
-or queue workers. Do not treat it as the primary production API while RoboAgent is
+or queue workers. Do not treat it as the primary production API while ROBOAGENT is
 hosted on Vercel.
 
 ## Next Refactor

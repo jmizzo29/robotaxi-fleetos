@@ -169,7 +169,7 @@ export default async function handler(req, res) {
       clerk,
       message: postgres.found
         ? 'User, Tesla sync, and fleet data purge completed.'
-        : 'No RoboAgent user row found. Matching beta lead/feedback rows were still cleared if present.',
+        : 'No ROBOAGENT user row found. Matching beta lead/feedback rows were still cleared if present.',
     });
   } catch (error) {
     res.status(500).json({ error: 'ADMIN_PURGE_FAILED', message: error.message });

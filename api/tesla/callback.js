@@ -22,9 +22,9 @@ export default async function handler(req, res) {
       <html>
         <body style="font-family: system-ui; background: #0b1120; color: white; padding: 32px; line-height: 1.5;">
           <h1>Tesla connection was not started correctly</h1>
-          <p>This callback URL must be opened by Tesla after you click Connect Tesla inside RoboAgent.</p>
-          <p>Go back to RoboAgent onboarding, sign in, then click Connect Tesla again.</p>
-          <p><a style="color: #7dd3fc;" href="/#/onboarding">Return to RoboAgent onboarding</a></p>
+          <p>This callback URL must be opened by Tesla after you click Connect Tesla inside ROBOAGENT.</p>
+          <p>Go back to ROBOAGENT onboarding, sign in, then click Connect Tesla again.</p>
+          <p><a style="color: #7dd3fc;" href="/#/onboarding">Return to ROBOAGENT onboarding</a></p>
         </body>
       </html>
     `);
@@ -46,8 +46,8 @@ export default async function handler(req, res) {
         <body style="font-family: system-ui; background: #0b1120; color: white; padding: 32px; line-height: 1.5;">
           <h1>Tesla connection expired</h1>
           <p>The Tesla authorization state was invalid or expired. This can happen if the callback URL was opened directly, the browser session changed, or the redirect URI pointed at an old localhost callback.</p>
-          <p>Please return to RoboAgent and start Connect Tesla again.</p>
-          <p><a style="color: #7dd3fc;" href="/#/onboarding">Return to RoboAgent onboarding</a></p>
+          <p>Please return to ROBOAGENT and start Connect Tesla again.</p>
+          <p><a style="color: #7dd3fc;" href="/#/onboarding">Return to ROBOAGENT onboarding</a></p>
         </body>
       </html>
     `);
@@ -57,7 +57,7 @@ export default async function handler(req, res) {
   const sessionRows = await query('select user_id from fleetos_sessions where id = $1 and expires_at > now()', [oauthState.session_id]);
   const session = sessionRows.rows[0];
   if (!session) {
-    res.status(400).send('RoboAgent session expired before Tesla authorization completed.');
+    res.status(400).send('ROBOAGENT session expired before Tesla authorization completed.');
     return;
   }
 

@@ -82,7 +82,7 @@ async function testLanding(browser, profile) {
   const main = page.getByRole('main');
   await page.getByText('Your Tesla Fleet.').waitFor({ timeout: 15000 });
   await page.getByText('AI Optimized.').waitFor({ timeout: 15000 });
-  await main.getByText('RoboAgent', { exact: true }).first().waitFor({ timeout: 15000 });
+  await main.getByText('ROBOAGENT', { exact: true }).first().waitFor({ timeout: 15000 });
   await page.getByText('Daily AI plans for pricing, charging, maintenance, and profit.').waitFor({ timeout: 15000 });
   await page.getByText('First vehicle is free').waitFor({ timeout: 15000 });
   await page.getByRole('button', { name: 'Get Started' }).waitFor({ timeout: 15000 });
@@ -110,7 +110,7 @@ async function testAboutAgent(browser, profile) {
   const telemetry = await makePage(browser, profile);
   const { page, context } = telemetry;
   await page.goto(routeUrl('#/about'), { waitUntil: 'networkidle' });
-  await page.getByText('RoboAgent', { exact: true }).first().waitFor({ timeout: 15000 });
+  await page.getByText('ROBOAGENT', { exact: true }).first().waitFor({ timeout: 15000 });
   if (profile === 'desktop') {
     const commandCenter = page.locator('[data-testid="agent-command-center"]');
     await commandCenter.getByText('The AI agent is the product.').waitFor({ timeout: 15000 });
@@ -146,15 +146,15 @@ async function testAgentChat(browser, profile) {
   await page.locator('[data-testid="agent-online-status"]').getByText('Online').waitFor({ timeout: 15000 });
   await page.getByText('Good morning! I\'ve analyzed your fleet.').waitFor({ timeout: 15000 });
   await page.locator('#public-agent-question').waitFor({ timeout: 15000 });
-  await page.getByRole('button', { name: 'Ask RoboAgent' }).waitFor({ timeout: 15000 });
+  await page.getByRole('button', { name: 'Ask ROBOAGENT' }).waitFor({ timeout: 15000 });
   await page.getByText('$1,284 projected').waitFor({ timeout: 15000 });
   await page.getByRole('button', { name: 'Daily Plan' }).waitFor({ timeout: 15000 });
   await page.getByRole('button', { name: 'Pricing Advice' }).waitFor({ timeout: 15000 });
   await page.locator('#public-agent-question').fill('Should I raise price this weekend in Tampa?');
-  await page.getByRole('button', { name: 'Ask RoboAgent' }).click();
+  await page.getByRole('button', { name: 'Ask ROBOAGENT' }).click();
   await page.getByText('+$284 projected').waitFor({ timeout: 15000 });
   await page.locator('#public-agent-question').fill('How many Model X rentals are available in Orlando?');
-  await page.getByRole('button', { name: 'Ask RoboAgent' }).click();
+  await page.getByRole('button', { name: 'Ask ROBOAGENT' }).click();
   await page.getByText('Orlando Model X: 8-16 comparable rentals').waitFor({ timeout: 15000 });
   await page.getByRole('button', { name: 'Back home' }).waitFor({ timeout: 15000 });
   await context.close();
@@ -165,7 +165,7 @@ async function testOnboardingStandalone(browser, profile) {
   const telemetry = await makePage(browser, profile);
   const { page, context } = telemetry;
   await page.goto(routeUrl('#/onboarding'), { waitUntil: 'domcontentloaded' });
-  await page.getByText('Create Your RoboAgent Account').waitFor({ timeout: 15000 });
+  await page.getByText('Create Your ROBOAGENT Account').waitFor({ timeout: 15000 });
   await page.getByText('Step 1 of 5').waitFor({ timeout: 15000 });
   await page.getByRole('button', { name: 'Back Home' }).waitFor({ timeout: 15000 });
   await page.getByLabel('Email Address').waitFor({ timeout: 15000 });
@@ -184,12 +184,12 @@ async function testAccountStandalone(browser, profile) {
   const telemetry = await makePage(browser, profile);
   const { page, context } = telemetry;
   await page.goto(routeUrl('#/account'), { waitUntil: 'domcontentloaded' });
-  await page.getByRole('heading', { name: 'Sign in to RoboAgent' }).waitFor({ timeout: 15000 });
+  await page.getByRole('heading', { name: 'Sign in to ROBOAGENT' }).waitFor({ timeout: 15000 });
   await page.getByRole('button', { name: 'Preview Tesla Data Permissions' }).click();
-  await page.getByRole('heading', { name: 'RoboAgent wants to connect to your Tesla Account' }).waitFor({ timeout: 15000 });
+  await page.getByRole('heading', { name: 'ROBOAGENT wants to connect to your Tesla Account' }).waitFor({ timeout: 15000 });
   const allowAccess = page.getByRole('button', { name: 'Allow Access' });
   if (!(await allowAccess.isDisabled())) throw new Error('Allow Access should require both consent checkboxes.');
-  await page.getByLabel('I understand that RoboAgent is a third-party app and is not affiliated with Tesla.').check();
+  await page.getByLabel('I understand that ROBOAGENT is a third-party app and is not affiliated with Tesla.').check();
   await page.getByLabel(/I have read and agree/).check();
   if (await allowAccess.isDisabled()) throw new Error('Allow Access should enable after both consent checkboxes.');
   await page.getByRole('button', { name: 'Cancel', exact: true }).click();
@@ -203,8 +203,8 @@ async function testLegalStandalone(browser, profile) {
   const telemetry = await makePage(browser, profile);
   const { page, context } = telemetry;
   await page.goto(routeUrl('#/privacy'), { waitUntil: 'networkidle' });
-  await page.getByText('RoboAgent Privacy Notice').waitFor({ timeout: 15000 });
-  await page.getByText('What Data Does RoboAgent Access?').waitFor({ timeout: 15000 });
+  await page.getByText('ROBOAGENT Privacy Notice').waitFor({ timeout: 15000 });
+  await page.getByText('What Data Does ROBOAGENT Access?').waitFor({ timeout: 15000 });
   await page.getByRole('button', { name: 'Back to Home' }).waitFor({ timeout: 15000 });
   const appMenuVisible = await page.getByRole('button', { name: 'Settings' }).count();
   if (appMenuVisible > 0) throw new Error('App navigation is visible on legal page.');
@@ -237,7 +237,7 @@ async function testLandingCtas(browser, profile) {
     await page.getByRole('button', { name: 'How does it work' }).click();
     await page.waitForURL('**/#/how-it-works', { timeout: 10000 });
     const howItWorks = page.locator('[data-testid="how-it-works"]');
-    await howItWorks.getByText('How RoboAgent Works').waitFor({ timeout: 15000 });
+    await howItWorks.getByText('How ROBOAGENT Works').waitFor({ timeout: 15000 });
     await howItWorks.getByText('Tesla Telemetry').waitFor({ timeout: 15000 });
     await howItWorks.getByText('Smart Pricing').waitFor({ timeout: 15000 });
     await howItWorks.getByRole('button', { name: 'Back Home' }).click();
@@ -246,12 +246,12 @@ async function testLandingCtas(browser, profile) {
     });
     await page.getByRole('button', { name: 'Get Started', exact: true }).first().click();
     await page.waitForURL('**/#/onboarding', { timeout: 10000 });
-    await page.getByText('Create Your RoboAgent Account').waitFor({ timeout: 15000 });
+    await page.getByText('Create Your ROBOAGENT Account').waitFor({ timeout: 15000 });
   } else {
     await page.getByRole('button', { name: 'How does it work' }).click();
     await page.waitForURL('**/#/how-it-works', { timeout: 10000 });
     const howItWorks = page.locator('[data-testid="how-it-works"]');
-    await howItWorks.getByText('How RoboAgent Works').waitFor({ timeout: 15000 });
+    await howItWorks.getByText('How ROBOAGENT Works').waitFor({ timeout: 15000 });
     await howItWorks.getByText('Turo Rentals').waitFor({ timeout: 15000 });
     await howItWorks.getByText('Earnings Forecasts').waitFor({ timeout: 15000 });
     await howItWorks.getByRole('button', { name: 'Back Home' }).click();
@@ -260,7 +260,7 @@ async function testLandingCtas(browser, profile) {
     });
     await page.getByRole('button', { name: 'Get Started' }).first().click();
     await page.waitForURL('**/#/onboarding', { timeout: 10000 });
-    await page.getByText('Create Your RoboAgent Account').waitFor({ timeout: 15000 });
+    await page.getByText('Create Your ROBOAGENT Account').waitFor({ timeout: 15000 });
   }
   await context.close();
   return assertNoRuntimeErrors(`landing CTA to onboarding (${profile})`, telemetry);
@@ -288,7 +288,7 @@ async function testAiOperations(browser, profile) {
   const { page, context } = telemetry;
   await page.goto(routeUrl('#/ai'), { waitUntil: 'networkidle' });
   await page.getByRole('heading', { name: 'Ask your fleet agent anything' }).waitFor({ timeout: 15000 });
-  await page.getByRole('button', { name: 'Ask RoboAgent' }).waitFor({ timeout: 15000 });
+  await page.getByRole('button', { name: 'Ask ROBOAGENT' }).waitFor({ timeout: 15000 });
   await page.getByText('Operator Next Best Actions').waitFor({ timeout: 15000 });
   await context.close();
   return assertNoRuntimeErrors(`ai operations (${profile})`, telemetry);

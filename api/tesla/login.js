@@ -55,7 +55,7 @@ export default async function handler(req, res) {
   }
 
   if (!session?.user?.email) {
-    res.status(401).send('Sign in to RoboAgent before connecting Tesla.');
+    res.status(401).send('Sign in to ROBOAGENT before connecting Tesla.');
     return;
   }
   const redirectUri = redirectUriFromRequest(req);

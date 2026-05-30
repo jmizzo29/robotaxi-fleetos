@@ -243,7 +243,7 @@ export async function ensureFleetSchema() {
       vehicle_id text references fleetos_vehicles(id) on delete cascade,
       fleet_id text references fleetos_fleets(id) on delete set null,
       estimate_date date not null,
-      source text not null default 'RoboAgent AI',
+      source text not null default 'ROBOAGENT AI',
       expected_revenue numeric,
       expected_cost numeric,
       confidence numeric,

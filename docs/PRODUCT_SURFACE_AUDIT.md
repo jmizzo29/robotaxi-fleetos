@@ -1,8 +1,8 @@
-# RoboAgent Product Surface Audit
+# ROBOAGENT Product Surface Audit
 
 ## Product Standard
 
-RoboAgent should feel like a premium Tesla owner command layer: fast, minimal, confident, and obvious. The app should not feel like an internal demo catalog.
+ROBOAGENT should feel like a premium Tesla owner command layer: fast, minimal, confident, and obvious. The app should not feel like an internal demo catalog.
 
 ## Core V1 Surface
 
