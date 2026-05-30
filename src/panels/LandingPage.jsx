@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { isClerkConfigured } from '../auth/clerkConfig';
 import RoboLogo from '../components/RoboLogo';
 import RoboWordmark from '../components/RoboWordmark';
 import { buildMarketRentalAnswer, isMarketQuestion } from '../services/marketIntelligenceService';
@@ -10,6 +11,43 @@ const demoPrompts = [
   'Check health and prepare all vehicles for tomorrow',
   'Give me a full fleet summary',
 ];
+
+function waitForClerk(timeoutMs = 1200) {
+  if (!isClerkConfigured() || typeof window === 'undefined') return Promise.resolve(null);
+  if (window.Clerk?.loaded) return Promise.resolve(window.Clerk);
+
+  return new Promise((resolve) => {
+    const startedAt = Date.now();
+    const timer = window.setInterval(() => {
+      if (window.Clerk?.loaded) {
+        window.clearInterval(timer);
+        resolve(window.Clerk);
+        return;
+      }
+
+      if (Date.now() - startedAt >= timeoutMs) {
+        window.clearInterval(timer);
+        resolve(null);
+      }
+    }, 50);
+  });
+}
+
+async function openDirectSignIn(onNavigate) {
+  const clerk = await waitForClerk();
+  const redirectUrl = `${window.location.origin}/#/onboarding`;
+
+  if (clerk?.openSignIn) {
+    await clerk.openSignIn({
+      fallbackRedirectUrl: redirectUrl,
+      signInFallbackRedirectUrl: redirectUrl,
+      signUpFallbackRedirectUrl: redirectUrl,
+    });
+    return;
+  }
+
+  onNavigate?.('account');
+}
 
 function MobileTrustSection() {
   return (
@@ -545,7 +583,7 @@ export function HowItWorksPage({ onNavigate }) {
             <div className="mt-7 flex flex-wrap gap-3">
               <button
                 type="button"
-                onClick={() => onNavigate('account')}
+                onClick={() => openDirectSignIn(onNavigate)}
                 className="rounded-lg bg-[#172231] px-6 py-4 text-sm font-black text-white shadow-lg shadow-slate-900/10 transition hover:bg-[#243044]"
               >
                 Sign In
@@ -693,7 +731,7 @@ export default function LandingPage({ onNavigate }) {
           <div className="mt-7 flex flex-wrap items-center justify-center gap-4 sm:gap-10">
             <button
               type="button"
-              onClick={() => onNavigate('account')}
+              onClick={() => openDirectSignIn(onNavigate)}
               className="min-h-14 rounded-2xl px-8 text-xl font-semibold text-black transition hover:bg-black/5 active:scale-[0.99]"
             >
               Sign In
