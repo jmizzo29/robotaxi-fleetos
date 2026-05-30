@@ -625,7 +625,7 @@ export default function LandingPage({ onNavigate }) {
               onClick={() => onNavigate('how-it-works')}
               className="min-h-14 rounded-lg bg-[#172231] px-10 text-xl font-semibold text-white shadow-lg shadow-black/10 transition hover:bg-[#0e1724] active:scale-[0.99]"
             >
-              Learn More
+              Learn how in 15 seconds
             </button>
           </div>
         </main>
