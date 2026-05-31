@@ -652,17 +652,12 @@ export default function LandingPage({ onNavigate }) {
         </div>
       </header>
 
-      {/* TEMP DEBUG BANNER - Remove after testing */}
-      <div className="bg-red-600 py-2 text-center text-white font-bold text-sm">
-        DEBUG: Homepage v2025-06-01-03 | Commit 8b6a677 | If you see this banner, the latest code is live
-      </div>
-
-      {/* Hero - Matching refined mockup 09 + mobile mockup 10 */}
-      <div className="mx-auto max-w-6xl px-5 pt-8 pb-12">
+      {/* Hero - Closely matching mockup 5 / 09 style */}
+      <div className="mx-auto max-w-6xl px-5 pt-8 pb-14">
         <div className="grid items-center gap-10 lg:grid-cols-2">
-          {/* Text content */}
+          {/* Text */}
           <div className="text-center lg:text-left">
-            <h1 className="text-5xl font-semibold tracking-tighter text-black sm:text-6xl md:text-7xl leading-[1.05]">
+            <h1 className="text-5xl font-semibold tracking-tighter text-black sm:text-6xl md:text-7xl leading-tight">
               Turn your Teslas into a profitable, hands-off business.
             </h1>
             <p className="mt-5 text-xl text-slate-600 max-w-lg mx-auto lg:mx-0">
@@ -691,7 +686,7 @@ export default function LandingPage({ onNavigate }) {
             </div>
           </div>
 
-          {/* Large Tesla visual (matching mockup 09) */}
+          {/* Large Tesla visual - core of mockup 5/09 */}
           <div className="relative">
             <img 
               src="/images/roboagent-tesla-rental-hero.png" 
