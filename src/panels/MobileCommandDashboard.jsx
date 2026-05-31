@@ -147,6 +147,29 @@ export default function MobileCommandDashboard({
           Last synced {formatTime(syncStatus.lastSyncedAt)} • {syncStatus.state}
         </div>
       )}
+
+      {/* Simple Vehicles at a Glance (clean, not busy) */}
+      <div className="pt-2">
+        <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-400 mb-2 px-1">Vehicles</p>
+        <div className="space-y-2">
+          {fleet.slice(0, 3).map((v) => (
+            <button
+              key={v.id}
+              onClick={() => onNavigate('fleet')}
+              className="w-full flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-left active:bg-white/10"
+            >
+              <div>
+                <p className="text-sm font-black text-white">{v.id}</p>
+                <p className="text-[11px] text-slate-400">{v.city || '—'}</p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm font-black text-white">{v.battery ? `${Math.round(v.battery)}%` : '--'}</p>
+                <p className="text-[10px] text-slate-400">{v.status}</p>
+              </div>
+            </button>
+          ))}
+        </div>
+      </div>
     </section>
   );
 }
