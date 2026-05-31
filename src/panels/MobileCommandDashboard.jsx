@@ -1,11 +1,4 @@
-import VehicleIdentityPlate from '../components/VehicleIdentityPlate';
 import RoboWordmark from '../components/RoboWordmark';
-
-function formatCurrency(value) {
-  if (!Number.isFinite(value)) return '$0';
-  if (value >= 1000) return `$${Math.round(value / 1000)}k`;
-  return `$${Math.round(value)}`;
-}
 
 function MiniMetric({ label, value, tone, icon }) {
   return (
@@ -40,67 +33,6 @@ function ActionTile({ label, detail, tone, onClick, disabled = false }) {
     >
       <span className="block text-sm font-black text-white">{label}</span>
       <span className="mt-0.5 block truncate text-[11px] font-semibold text-slate-300">{detail}</span>
-    </button>
-  );
-}
-
-function MapPreview({ fleet = [], onNavigate }) {
-  const visible = fleet.slice(0, 9);
-
-  return (
-    <button
-      type="button"
-      onClick={() => onNavigate('map')}
-      className="relative h-[260px] w-full overflow-hidden rounded-2xl border border-white/10 bg-[#202225] text-left shadow-2xl shadow-black/25"
-    >
-      <div className="absolute inset-0 opacity-80">
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(255,255,255,0.08)_1px,transparent_1px),linear-gradient(rgba(255,255,255,0.08)_1px,transparent_1px)] bg-[size:54px_54px]" />
-        <div className="absolute left-[-20%] top-[18%] h-14 w-[145%] rotate-[28deg] rounded-full border-y border-white/12 bg-white/[0.03]" />
-        <div className="absolute left-[-22%] top-[52%] h-16 w-[150%] -rotate-[14deg] rounded-full border-y border-white/12 bg-white/[0.03]" />
-        <div className="absolute left-[36%] top-[-12%] h-[128%] w-16 rotate-[2deg] rounded-full border-x border-white/12 bg-white/[0.03]" />
-        <div className="absolute left-[66%] top-[-18%] h-[140%] w-14 rotate-[24deg] rounded-full border-x border-white/12 bg-white/[0.03]" />
-      </div>
-
-      <div className="absolute left-4 top-4 rounded-full border border-white/10 bg-black/45 px-3 py-1 text-[11px] font-black uppercase tracking-[0.16em] text-slate-200">
-        Live Map
-      </div>
-
-      {visible.map((vehicle, index) => {
-        const positions = [
-          [49, 45],
-          [26, 22],
-          [77, 25],
-          [20, 66],
-          [74, 70],
-          [44, 83],
-          [86, 50],
-          [15, 40],
-          [58, 18],
-        ];
-        const [left, top] = positions[index] || [50, 50];
-        const real = vehicle.isReal;
-
-        return (
-          <div
-            key={vehicle.vin || vehicle.id}
-            className="absolute flex -translate-x-1/2 -translate-y-1/2 flex-col items-center"
-            style={{ left: `${left}%`, top: `${top}%` }}
-          >
-            <div className={`flex h-9 w-9 items-center justify-center rounded-full border shadow-xl ${
-              real
-                ? 'border-sky-300 bg-sky-500 shadow-sky-500/40'
-                : vehicle.anomalyRisk > 18
-                  ? 'border-rose-200 bg-rose-500 shadow-rose-500/35'
-                  : 'border-white/25 bg-slate-600 shadow-black/30'
-            }`}>
-              <svg viewBox="0 0 24 24" className="h-5 w-5 text-white" aria-hidden="true">
-                <path fill="currentColor" d="M5 11h14l2 5v4h-2a2 2 0 0 1-4 0H9a2 2 0 0 1-4 0H3v-4l2-5Zm2-5h10l2 5H5l2-5Z" />
-              </svg>
-            </div>
-            {real && <div className="mt-1 h-5 w-1 rounded-full bg-sky-500" />}
-          </div>
-        );
-      })}
     </button>
   );
 }
