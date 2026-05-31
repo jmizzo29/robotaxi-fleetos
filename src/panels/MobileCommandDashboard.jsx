@@ -120,16 +120,11 @@ export default function MobileCommandDashboard({
   const utilization = fleet.length
     ? Math.round(fleet.reduce((sum, vehicle) => sum + (vehicle.utilization || 0), 0) / fleet.length)
     : 0;
-  const vehicle = primaryTesla || fleet[0] || {};
   const alerts = avgAnomalyRisk > 15 ? 'High' : avgAnomalyRisk > 8 ? 'Med' : 'Low';
-  const syncTone = syncStatus?.state === 'error'
-    ? 'border-rose-400/25 bg-rose-400/10 text-rose-100'
-    : syncStatus?.state === 'success'
-      ? 'border-emerald-400/25 bg-emerald-400/10 text-emerald-100'
-      : 'border-sky-400/25 bg-sky-400/10 text-sky-100';
 
   return (
-    <section className="space-y-4 lg:hidden">
+    <section className="space-y-5 lg:hidden">
+      {/* Header */}
       <div className="flex items-center justify-between pt-1">
         <div>
           <p className="text-sm">
@@ -141,15 +136,15 @@ export default function MobileCommandDashboard({
           type="button"
           onClick={() => onNavigate('account')}
           className="rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-sm font-black text-slate-200"
-          aria-label="Open account"
         >
           Account
         </button>
       </div>
 
+      {/* Clean KPIs - less busy */}
       <div className="grid grid-cols-3 gap-3">
         <MiniMetric
-          label="Active Vehicles"
+          label="Active"
           value={`${active}/${fleet.length || 0}`}
           tone="bg-emerald-400 text-slate-950"
           icon="M5 11h14l2 5v4h-2a2 2 0 0 1-4 0H9a2 2 0 0 1-4 0H3v-4l2-5Zm2-5h10l2 5H5l2-5Z"
@@ -168,62 +163,58 @@ export default function MobileCommandDashboard({
         />
       </div>
 
-      <MapPreview fleet={fleet} onNavigate={onNavigate} />
-
-      <article className="overflow-hidden rounded-2xl border border-white/10 bg-white/[0.06] shadow-xl shadow-black/20">
-        <div className="p-3">
-          <VehicleIdentityPlate vehicle={vehicle} />
+      {/* Today's AI Plan - prominent but clean */}
+      <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-4">
+        <div className="flex items-center justify-between mb-2">
+          <p className="text-sm font-black text-white">Today’s AI Plan</p>
+          <span className="text-[10px] font-black px-2 py-0.5 rounded bg-emerald-400/20 text-emerald-300">3 actions</span>
         </div>
+        <p className="text-sm text-slate-300 leading-snug">
+          Raise Orlando pricing, charge Model Y after 11 PM, clean before pickup.
+        </p>
+        <button
+          onClick={() => onNavigate('ai')}
+          className="mt-3 w-full rounded-xl bg-white text-[#172231] py-2.5 text-sm font-black active:opacity-90"
+        >
+          Approve Plan
+        </button>
+      </div>
 
-        <div className="grid grid-cols-3 gap-px bg-white/10">
-          <div className="bg-[#151821] p-3">
-            <p className="text-[11px] font-semibold text-slate-400">Battery</p>
-            <p className="mt-1 text-xl font-black text-white">{Number.isFinite(vehicle.battery) ? `${Math.round(vehicle.battery)}%` : '--'}</p>
-          </div>
-          <div className="bg-[#151821] p-3">
-            <p className="text-[11px] font-semibold text-slate-400">Revenue</p>
-            <p className="mt-1 text-xl font-black text-white">{formatCurrency(totalRevenue)}</p>
-          </div>
-          <div className="bg-[#151821] p-3">
-            <p className="text-[11px] font-semibold text-slate-400">Speed</p>
-            <p className="mt-1 text-xl font-black text-white">{vehicle.speed || 0}<span className="text-[11px] text-slate-400"> mph</span></p>
-          </div>
-        </div>
-        <div className={`border-t px-3 py-3 text-xs font-semibold ${syncTone}`}>
-          <div className="flex items-center justify-between gap-3">
-            <span className="truncate">{syncStatus?.message || 'Tesla telemetry ready'}</span>
-            <span className="shrink-0">{formatTime(syncStatus?.lastSyncedAt || vehicle.syncedAt)}</span>
-          </div>
-        </div>
-      </article>
-
+      {/* Quick Actions - clean 2x2 */}
       <div className="grid grid-cols-2 gap-3">
         <ActionTile
-          label={isLoading ? 'Syncing' : 'Sync Tesla'}
-          detail={syncStatus?.state === 'success' ? `Updated ${formatTime(syncStatus.lastSyncedAt)}` : 'Refresh telemetry'}
+          label={isLoading ? 'Syncing…' : 'Sync Tesla'}
+          detail="Refresh telemetry"
           tone="border-emerald-400/20 bg-emerald-400/10"
           onClick={onSync}
           disabled={isLoading}
         />
         <ActionTile
-          label="Plan Tonight"
-          detail="Open dispatch planner"
-          tone="border-sky-400/20 bg-sky-400/10"
-          onClick={() => onNavigate('dispatch')}
-        />
-        <ActionTile
           label="AI Review"
-          detail="Queue operator analysis"
-          tone="border-violet-400/20 bg-violet-400/10"
-          onClick={() => onExecute('Mobile AI operator review requested', 'HIGH')}
+          detail="Get recommendations"
+          tone="border-sky-400/20 bg-sky-400/10"
+          onClick={() => onNavigate('ai')}
         />
         <ActionTile
-          label="Finance"
-          detail="Check fleet ROI"
-          tone="border-amber-400/20 bg-amber-400/10"
+          label="Map"
+          detail="See live locations"
+          tone="border-white/10 bg-white/5"
+          onClick={() => onNavigate('map')}
+        />
+        <ActionTile
+          label="Money"
+          detail="Revenue & costs"
+          tone="border-white/10 bg-white/5"
           onClick={() => onNavigate('finance')}
         />
       </div>
+
+      {/* Minimal last sync status */}
+      {syncStatus && (
+        <div className="text-center text-[11px] text-slate-400">
+          Last synced {formatTime(syncStatus.lastSyncedAt)} • {syncStatus.state}
+        </div>
+      )}
     </section>
   );
 }
