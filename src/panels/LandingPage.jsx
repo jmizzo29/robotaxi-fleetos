@@ -652,42 +652,42 @@ export default function LandingPage({ onNavigate }) {
         </div>
       </header>
 
-      {/* Hero - Closely matching mockup 5 / 09 style */}
-      <div className="mx-auto max-w-6xl px-5 pt-8 pb-14">
-        <div className="grid items-center gap-10 lg:grid-cols-2">
-          {/* Text */}
-          <div className="text-center lg:text-left">
-            <h1 className="text-5xl font-semibold tracking-tighter text-black sm:text-6xl md:text-7xl leading-tight">
+      {/* Hero — Aiming for the exact feel of mockup 5/09 you liked */}
+      <div className="mx-auto max-w-6xl px-5 pt-6 pb-12">
+        <div className="flex flex-col lg:flex-row items-center gap-10">
+          {/* Left side - Text (more compact like the mockup) */}
+          <div className="flex-1 text-center lg:text-left">
+            <h1 className="text-5xl font-semibold tracking-tighter text-black sm:text-6xl md:text-7xl leading-[1.05]">
               Turn your Teslas into a profitable, hands-off business.
             </h1>
-            <p className="mt-5 text-xl text-slate-600 max-w-lg mx-auto lg:mx-0">
+            <p className="mt-4 text-lg text-slate-600 max-w-md mx-auto lg:mx-0">
               ROBOAGENT uses AI to handle pricing, charging, maintenance, and daily planning — so your fleet earns more with less work.
             </p>
 
-            <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row lg:justify-start">
+            <div className="mt-7 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
               <button
                 onClick={() => onNavigate('onboarding')}
-                className="flex h-14 w-full items-center justify-center rounded-3xl bg-[#172231] px-10 text-lg font-black text-white shadow-lg hover:bg-[#243044] sm:w-auto sm:min-w-[260px]"
+                className="h-14 px-9 rounded-3xl bg-[#172231] text-lg font-black text-white shadow-lg hover:bg-[#243044]"
               >
                 Start free — Add your first Tesla
               </button>
               <button
                 onClick={() => onNavigate('how-it-works')}
-                className="flex h-14 w-full items-center justify-center rounded-3xl border border-[#141b27]/10 bg-white px-8 text-lg font-black text-[#172231] hover:bg-slate-100 sm:w-auto"
+                className="h-14 px-8 rounded-3xl border border-[#141b27]/10 bg-white text-lg font-black text-[#172231] hover:bg-slate-100"
               >
                 See how it works
               </button>
             </div>
 
-            <div className="mt-5 flex flex-wrap justify-center gap-x-5 gap-y-1 text-sm font-medium text-slate-500 lg:justify-start">
+            <div className="mt-4 text-sm text-slate-500 flex flex-wrap gap-x-4 justify-center lg:justify-start">
               <span>First Tesla free in beta</span>
               <span>Official Tesla Fleet API</span>
               <span>Revoke anytime</span>
             </div>
           </div>
 
-          {/* Large Tesla visual - core of mockup 5/09 */}
-          <div className="relative">
+          {/* Right side - Big Tesla visual (core of the mockup you liked) */}
+          <div className="flex-1">
             <img 
               src="/images/roboagent-tesla-rental-hero.png" 
               alt="Tesla vehicle" 
