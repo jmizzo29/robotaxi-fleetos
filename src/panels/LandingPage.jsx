@@ -562,42 +562,34 @@ export function HowItWorksPage({ onNavigate }) {
         <div className="max-w-2xl">
           <p className="text-sm font-black uppercase tracking-[0.2em] text-slate-500">How it works</p>
           <h1 className="mt-2 text-5xl font-semibold tracking-tight">You stay in control.<br />ROBOAGENT does the work.</h1>
+          <p className="mt-4 text-lg text-slate-600">Three simple steps. Real Tesla data. You always approve.</p>
         </div>
 
         <div className="mt-12 grid gap-6 md:grid-cols-3">
           {[
-            {
-              step: "01",
-              title: "Connect your Tesla",
-              desc: "Secure OAuth. ROBOAGENT never sees your password. First Tesla is free during beta.",
-            },
-            {
-              step: "02",
-              title: "Get daily AI plans",
-              desc: "Every morning you receive clear recommendations for pricing, charging, cleaning, and maintenance.",
-            },
-            {
-              step: "03",
-              title: "Approve what you want",
-              desc: "You review and approve actions. Nothing happens without your explicit approval.",
-            },
-          ].map((item) => (
-            <div key={item.step} className="rounded-3xl border border-[#141b27]/10 bg-white p-6">
-              <div className="text-sm font-black text-slate-400">{item.step}</div>
-              <h3 className="mt-3 text-2xl font-bold">{item.title}</h3>
-              <p className="mt-3 text-slate-600 leading-relaxed">{item.desc}</p>
+            { Icon: Car, step: "01", title: "Connect your Tesla", desc: "Secure OAuth. ROBOAGENT never sees your password. First Tesla is free during beta." },
+            { Icon: ListChecks, step: "02", title: "Get daily AI plans", desc: "Every morning you receive clear recommendations for pricing, charging, cleaning, and maintenance." },
+            { Icon: ShieldCheck, step: "03", title: "Approve what you want", desc: "You review and approve actions. Nothing happens without your explicit approval." },
+          ].map(({ Icon, step, title, desc }) => (
+            <div key={step} className="rounded-3xl border border-[#141b27]/10 bg-white p-6">
+              <div className="flex items-center gap-2 text-sm font-black text-slate-400">
+                <span>{step}</span>
+                <Icon className="h-4 w-4" />
+              </div>
+              <h3 className="mt-3 text-2xl font-bold">{title}</h3>
+              <p className="mt-3 text-slate-600 leading-relaxed">{desc}</p>
             </div>
           ))}
         </div>
 
         <div className="mt-12 rounded-3xl border border-[#141b27]/10 bg-white p-8">
-          <h3 className="text-xl font-bold">What ROBOAGENT actually does with your data</h3>
+          <h3 className="text-xl font-bold">What ROBOAGENT actually does every day</h3>
           <div className="mt-6 grid gap-x-8 gap-y-6 md:grid-cols-2">
             {[
-              ["Pricing", "Raises/lowers rates based on real local demand, weather, and events."],
-              ["Charging", "Moves charging to the cheapest, lowest-impact hours."],
-              ["Maintenance", "Predicts issues from Tesla telemetry before they become expensive."],
-              ["Operations", "Creates daily prioritized action lists you can approve in seconds."],
+              ["Dynamic Pricing", "Raises/lowers rates based on real local demand, weather, and events."],
+              ["Smart Charging", "Moves charging to the cheapest, lowest-impact hours automatically."],
+              ["Predictive Maintenance", "Predicts issues from Tesla telemetry before they become expensive."],
+              ["Daily Action Lists", "Creates prioritized owner tasks you can approve in seconds from your phone."],
             ].map(([title, desc]) => (
               <div key={title}>
                 <div className="font-black">{title}</div>
