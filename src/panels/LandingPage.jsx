@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { isClerkConfigured } from '../auth/clerkConfig';
 import RoboLogo from '../components/RoboLogo';
 import RoboWordmark from '../components/RoboWordmark';
-import { TrendingUp, BatteryCharging, Wrench, ListChecks, ArrowRight, Shield, Zap } from 'lucide-react';
+import { TrendingUp, BatteryCharging, Wrench, ListChecks, ArrowRight, Shield, Zap, Car, ShieldCheck } from 'lucide-react';
 import { buildMarketRentalAnswer, isMarketQuestion } from '../services/marketIntelligenceService';
 
 const demoPrompts = [
