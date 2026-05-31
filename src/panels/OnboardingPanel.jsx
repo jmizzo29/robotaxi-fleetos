@@ -25,7 +25,7 @@ function PrimaryButton({ children, className = '', ...props }) {
   return (
     <button
       type="button"
-      className={`w-full rounded-3xl bg-[#172231] py-6 text-xl font-semibold text-white transition hover:bg-[#243044] disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400 ${className}`}
+      className={`w-full rounded-3xl bg-[#172231] py-5 text-lg font-bold text-white transition hover:bg-[#243044] disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400 ${className}`}
       {...props}
     >
       {children}
@@ -197,32 +197,32 @@ function TeslaConnectionStep({
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col justify-center py-4">
       <div className="mb-6 text-center">
-        <p className="mb-3 text-xs font-black uppercase tracking-[0.22em] text-teal-300">Tesla OAuth</p>
-        <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl">Connect Your Tesla</h2>
-        <p className="mx-auto mt-3 max-w-2xl text-base leading-7 text-zinc-400">
-          Use Tesla&apos;s secure login to authorize vehicle telemetry. ROBOAGENT never receives your Tesla password.
+        <p className="mb-3 text-xs font-black uppercase tracking-[0.22em] text-slate-500">Tesla Connection</p>
+        <h2 className="text-3xl font-semibold tracking-tight text-black">Connect Your Tesla</h2>
+        <p className="mx-auto mt-3 max-w-2xl text-base leading-7 text-slate-600">
+          Use Tesla&apos;s secure login. ROBOAGENT never receives your Tesla password.
         </p>
       </div>
 
-      <section className="grid overflow-hidden rounded-3xl border border-zinc-700 bg-zinc-950/80 shadow-2xl shadow-black/25 lg:grid-cols-[0.95fr_1.05fr]">
-        <div className="border-b border-zinc-800 p-5 sm:p-6 lg:border-b-0 lg:border-r">
-          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-white text-2xl font-black text-black">
+      <section className="grid overflow-hidden rounded-3xl border border-[#141b27]/10 bg-white shadow-sm lg:grid-cols-[0.95fr_1.05fr]">
+        <div className="border-b border-[#141b27]/10 p-5 sm:p-6 lg:border-b-0 lg:border-r">
+          <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#172231] text-2xl font-black text-white">
             T
           </div>
-          <h3 className="mt-5 text-2xl font-black text-white">Official Tesla handoff</h3>
-          <p className="mt-3 text-sm font-semibold leading-6 text-zinc-400">
+          <h3 className="mt-5 text-2xl font-black text-[#141b27]">Official Tesla handoff</h3>
+          <p className="mt-3 text-sm font-semibold leading-6 text-slate-600">
             You will leave ROBOAGENT briefly, approve access with Tesla, then return here to sync your first vehicle.
           </p>
 
           <div className="mt-6 grid gap-3">
             {flowSteps.map(([step, title, detail]) => (
-              <div key={title} className="flex gap-3 rounded-2xl border border-zinc-800 bg-zinc-900/70 p-4">
-                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-teal-400/15 text-sm font-black text-teal-200">
+              <div key={title} className="flex gap-3 rounded-2xl border border-[#141b27]/10 bg-[#f7f7f5] p-4">
+                <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#172231]/10 text-sm font-black text-[#172231]">
                   {step}
                 </div>
                 <div>
-                  <p className="font-black text-white">{title}</p>
-                  <p className="mt-1 text-sm font-semibold leading-5 text-zinc-400">{detail}</p>
+                  <p className="font-black text-[#141b27]">{title}</p>
+                  <p className="mt-1 text-sm font-semibold leading-5 text-slate-600">{detail}</p>
                 </div>
               </div>
             ))}
@@ -230,10 +230,10 @@ function TeslaConnectionStep({
         </div>
 
         <div className="flex flex-col justify-center p-5 sm:p-6">
-          <div className="rounded-3xl border border-zinc-800 bg-black/30 p-5">
-            <p className="text-xs font-black uppercase tracking-[0.18em] text-teal-300">Ready to connect</p>
-            <h3 className="mt-2 text-xl font-black text-white">First Tesla is free during beta</h3>
-            <p className="mt-2 text-sm font-semibold leading-6 text-zinc-400">
+          <div className="rounded-3xl border border-[#141b27]/10 bg-[#f7f7f5] p-5">
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-500">Ready to connect</p>
+            <h3 className="mt-2 text-xl font-black text-[#141b27]">First Tesla is free during beta</h3>
+            <p className="mt-2 text-sm font-semibold leading-6 text-slate-600">
               Connect one vehicle now. Add more later after your first sync is working.
             </p>
 
@@ -249,7 +249,7 @@ function TeslaConnectionStep({
               ) : (
                 <a
                   href={getTeslaLoginUrl('onboarding')}
-                  className="flex w-full items-center justify-center gap-3 rounded-3xl bg-white px-5 py-5 text-lg font-black text-black shadow-lg shadow-teal-500/20 transition hover:bg-zinc-100"
+                  className="flex w-full items-center justify-center gap-3 rounded-3xl bg-white px-5 py-5 text-lg font-black text-black border border-[#141b27]/10 hover:bg-slate-50"
                 >
                   Sign in with Tesla
                 </a>
@@ -259,9 +259,9 @@ function TeslaConnectionStep({
 
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             {trustItems.map(([title, detail]) => (
-              <div key={title} className="rounded-2xl border border-zinc-800 bg-zinc-900/60 p-4">
-                <p className="text-sm font-black text-white">{title}</p>
-                <p className="mt-1 text-xs font-semibold leading-5 text-zinc-400">{detail}</p>
+              <div key={title} className="rounded-2xl border border-[#141b27]/10 bg-[#f7f7f5] p-4">
+                <p className="text-sm font-black text-[#141b27]">{title}</p>
+                <p className="mt-1 text-xs font-semibold leading-5 text-slate-600">{detail}</p>
               </div>
             ))}
           </div>
@@ -710,25 +710,26 @@ export default function OnboardingPanel({
       {activeStep === 2 && (
         <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col justify-center py-4">
           <div className="mb-6 text-center">
-            <p className="mb-3 text-xs font-black uppercase tracking-[0.22em] text-teal-300">Data Permission</p>
-            <h2 className="text-3xl font-black tracking-tight text-white sm:text-4xl">Just a few permissions needed</h2>
-            <p className="mx-auto mt-3 max-w-2xl text-base leading-7 text-zinc-400">
-              ROBOAGENT needs access to help you maximize earnings
+            <p className="mb-3 text-xs font-black uppercase tracking-[0.22em] text-slate-500">Data Permission</p>
+            <h2 className="text-3xl font-semibold tracking-tight text-black">A few permissions needed</h2>
+            <p className="mx-auto mt-3 max-w-2xl text-base leading-7 text-slate-600">
+              ROBOAGENT needs read-only access to help you maximize earnings
             </p>
           </div>
 
-          <section className="rounded-3xl border border-zinc-700 bg-zinc-950/80 p-5 shadow-2xl shadow-black/25 sm:p-6">
-            <div className="flex flex-col gap-2 border-b border-zinc-800 pb-4 sm:flex-row sm:items-end sm:justify-between">
+          <section className="rounded-3xl border border-[#141b27]/10 bg-white p-6 shadow-sm">
+            <div className="flex flex-col gap-2 border-b border-[#141b27]/10 pb-4 sm:flex-row sm:items-end sm:justify-between">
               <div>
-                <h3 className="text-xl font-black text-white">What ROBOAGENT will access</h3>
-                <p className="mt-1 text-sm font-semibold leading-6 text-zinc-400">
+                <h3 className="text-xl font-black text-[#141b27]">What ROBOAGENT will access</h3>
+                <p className="mt-1 text-sm font-semibold leading-6 text-slate-600">
                   Read-only Tesla data for planning, monitoring, and owner-approved recommendations.
                 </p>
               </div>
-              <span className="w-fit rounded-full border border-teal-400/25 bg-teal-400/10 px-3 py-1 text-xs font-black uppercase tracking-[0.14em] text-teal-200">
+              <span className="w-fit rounded-full border border-[#141b27]/10 bg-slate-100 px-3 py-1 text-xs font-black uppercase tracking-[0.14em] text-[#141b27]">
                 Owner controlled
               </span>
             </div>
+
             <div className="mt-5 grid gap-3 sm:grid-cols-2">
               {[
                 ['📍', 'Vehicle Location & Status', 'Real-time location, lock status, and software version'],
@@ -736,17 +737,17 @@ export default function OnboardingPanel({
                 ['🛠️', 'Health & Maintenance', 'Tire pressure, brake wear, service alerts'],
                 ['📊', 'Odometer & Trip Data', 'Mileage and rental usage data'],
               ].map(([, title, detail]) => (
-                <div key={title} className="flex gap-4 rounded-2xl border border-zinc-800 bg-zinc-900/70 p-4">
-                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-teal-400/15 text-xs font-black tracking-[0.12em] text-teal-200">{permissionCode(title)}</div>
+                <div key={title} className="flex gap-4 rounded-2xl border border-[#141b27]/10 bg-[#f7f7f5] p-4">
+                  <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-[#172231]/10 text-xs font-black tracking-[0.12em] text-[#172231]">{permissionCode(title)}</div>
                   <div className="min-w-0">
-                    <p className="font-black text-white">{title}</p>
-                    <p className="mt-1 text-sm font-semibold leading-6 text-zinc-400">{detail}</p>
+                    <p className="font-black text-[#141b27]">{title}</p>
+                    <p className="mt-1 text-sm font-semibold leading-6 text-slate-600">{detail}</p>
                   </div>
                 </div>
               ))}
             </div>
 
-            <div className="mt-5 rounded-2xl border border-zinc-800 bg-black/30 p-4 text-center text-sm font-semibold leading-6 text-zinc-400">
+            <div className="mt-5 rounded-2xl border border-[#141b27]/10 bg-slate-50 p-4 text-center text-sm font-semibold text-slate-600">
               You can revoke access anytime in settings. Tesla controls all account authorization.
             </div>
           </section>
@@ -756,7 +757,7 @@ export default function OnboardingPanel({
               Approve & Continue
             </PrimaryButton>
 
-            <p className="mt-3 text-center text-xs font-semibold text-zinc-500">
+            <p className="mt-3 text-center text-xs font-semibold text-slate-500">
               Required before connecting Tesla telemetry.
             </p>
           </div>
