@@ -10,22 +10,13 @@ export default function Sidebar({
   route = 'overview',
   onNavigate = () => {},
 }) {
-  const [showAdvanced, setShowAdvanced] = useState(false);
-  const primaryItems = [
-    ['overview', 'Command', 'Daily owner plan'],
-    ['map', 'Map', 'Vehicles and service areas'],
-    ['ai', 'Agent', 'Ask and approve actions'],
-    ['fleet', 'Vehicles', 'Registry and readiness'],
-    ['finance', 'Money', 'Revenue and ROI'],
-    ['account', 'Account', 'Profile and access'],
-  ];
-  const advancedItems = [
-    ['onboarding', 'Setup', 'Connect first Tesla'],
-    ['tesla', 'Tesla', 'Connection status'],
-    ['health', 'Health', 'Maintenance risk'],
-    ['charging', 'Charging', 'Energy readiness'],
-    ['dispatch', 'Plan', 'Staging and pricing'],
-    ['settings', 'Settings', 'Runtime controls'],
+  const mainItems = [
+    ['overview', 'Command', 'Daily plan & AI actions'],
+    ['map', 'Map', 'Live locations'],
+    ['ai', 'Agent', 'Ask & approve'],
+    ['fleet', 'Vehicles', 'Fleet overview'],
+    ['finance', 'Money', 'Revenue & costs'],
+    ['account', 'Account', 'Profile & Tesla'],
   ];
 
   return (
@@ -51,68 +42,26 @@ export default function Sidebar({
 
       </div>
 
-      <nav className="mb-5 space-y-5">
-        <div>
-          <p className="mb-2 px-2 text-[10px] font-black uppercase tracking-[0.16em] text-slate-500">
-            Main
-          </p>
-          <div className="space-y-1">
-            {primaryItems.map(([id, label, detail]) => (
-              <button
-                key={id}
-                type="button"
-                onClick={() => onNavigate(id)}
-                className={`group w-full rounded-xl border px-3 py-2.5 text-left transition ${
-                  route === id
-                    ? 'border-[#172231]/15 bg-white text-[#141b27] shadow-sm'
-                    : 'border-transparent text-slate-600 hover:border-[#141b27]/10 hover:bg-white/70 hover:text-black'
-                }`}
-              >
-                <span className="block text-sm font-black">{label}</span>
-                <span className={`mt-0.5 block text-xs leading-4 ${
-                  route === id ? 'text-slate-600' : 'text-slate-500 group-hover:text-slate-600'
-                }`}
-                >
-                  {detail}
-                </span>
-              </button>
-            ))}
-          </div>
-        </div>
-        <div>
+      <nav className="space-y-1">
+        {mainItems.map(([id, label, detail]) => (
           <button
+            key={id}
             type="button"
-            onClick={() => setShowAdvanced((current) => !current)}
-            className="flex w-full items-center justify-between rounded-xl border border-[#141b27]/10 bg-white/70 px-3 py-2.5 text-left text-sm font-black text-[#141b27] transition hover:bg-white"
+            onClick={() => onNavigate(id)}
+            className={`group w-full rounded-xl border px-3 py-2.5 text-left transition ${
+              route === id
+                ? 'border-[#172231]/15 bg-white text-[#141b27] shadow-sm'
+                : 'border-transparent text-slate-600 hover:border-[#141b27]/10 hover:bg-white/70 hover:text-black'
+            }`}
           >
-            More
-            <span className="text-xs text-slate-500">{showAdvanced ? 'Hide' : `${advancedItems.length} tools`}</span>
+            <span className="block text-sm font-black">{label}</span>
+            <span className={`mt-0.5 block text-xs leading-4 ${
+              route === id ? 'text-slate-600' : 'text-slate-500 group-hover:text-slate-600'
+            }`}>
+              {detail}
+            </span>
           </button>
-          {showAdvanced && (
-            <div className="mt-2 space-y-1">
-              {advancedItems.map(([id, label, detail]) => (
-                <button
-                  key={id}
-                  type="button"
-                  onClick={() => onNavigate(id)}
-                  className={`group w-full rounded-xl border px-3 py-2.5 text-left transition ${
-                    route === id
-                      ? 'border-[#172231]/15 bg-white text-[#141b27] shadow-sm'
-                      : 'border-transparent text-slate-600 hover:border-[#141b27]/10 hover:bg-white/70 hover:text-black'
-                  }`}
-                >
-                  <span className="block text-sm font-black">{label}</span>
-                  <span className={`mt-0.5 block text-xs leading-4 ${
-                    route === id ? 'text-slate-600' : 'text-slate-500 group-hover:text-slate-600'
-                  }`}
-                  >
-                    {detail}
-                  </span>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
+        ))}
       </nav>
 
       <details className="mb-5 rounded-2xl border border-[#141b27]/10 bg-white/70 p-3">
