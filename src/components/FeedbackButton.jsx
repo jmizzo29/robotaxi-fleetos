@@ -32,14 +32,14 @@ export default function FeedbackButton({ route }) {
         type="button"
         onClick={() => setOpen(true)}
         aria-label="Open feedback form"
-        className="fixed bottom-4 left-4 z-50 hidden rounded-full border border-emerald-300/30 bg-emerald-400 px-4 py-3 text-sm font-black text-slate-950 shadow-2xl shadow-black/30 transition hover:bg-emerald-300 2xl:flex"
+        className="fixed bottom-4 left-4 z-50 hidden rounded-full border border-emerald-300/30 bg-emerald-400 px-5 py-3 text-sm font-black text-slate-950 shadow-2xl shadow-black/30 active:bg-emerald-300 2xl:flex"
       >
         Feedback
       </button>
 
       {open && (
         <div className="fixed inset-0 z-[80] flex items-end bg-black/60 p-4 backdrop-blur sm:items-center sm:justify-center">
-          <form onSubmit={submit} className="w-full max-w-lg rounded-2xl border border-white/10 bg-slate-950 p-5 shadow-2xl">
+          <form onSubmit={submit} className="w-full max-w-lg rounded-3xl border border-white/10 bg-slate-950 p-5 shadow-2xl">
             <div className="mb-4 flex items-start justify-between gap-3">
               <div>
                 <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-300">Beta Feedback</p>
@@ -83,9 +83,9 @@ export default function FeedbackButton({ route }) {
               value={form.email}
               onChange={(event) => update('email', event.target.value)}
               placeholder="Email optional"
-              className="mt-3 w-full rounded-md border border-white/10 bg-slate-900 px-3 py-3 text-sm font-bold text-white"
+              className="mt-3 w-full rounded-2xl border border-white/10 bg-slate-900 px-3 py-3 text-sm font-bold text-white"
             />
-            <button type="submit" className="mt-4 w-full rounded-md bg-sky-300 px-4 py-3 text-sm font-black text-slate-950">
+            <button type="submit" className="mt-4 w-full rounded-2xl bg-emerald-400 py-4 text-base font-black text-slate-950 active:bg-emerald-300">
               Send Feedback
             </button>
             {message && <p className="mt-3 text-sm font-semibold text-emerald-300">{message}</p>}
