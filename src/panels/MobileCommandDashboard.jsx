@@ -142,7 +142,7 @@ export default function MobileCommandDashboard({
         </button>
       </div>
 
-      {/* Quick Actions 2x2 — more useful */}
+      {/* Quick Actions 2x2 — wired to real commands */}
       <div className="grid grid-cols-2 gap-3">
         <ActionTile
           label={isLoading ? 'Syncing…' : 'Sync Tesla'}
@@ -152,16 +152,16 @@ export default function MobileCommandDashboard({
           disabled={isLoading}
         />
         <ActionTile
-          label="AI Agent"
+          label="Ask Agent"
           detail="Get fresh recommendations"
           tone="border-sky-400/20 bg-sky-400/10"
           onClick={() => onNavigate('ai')}
         />
         <ActionTile
-          label="Live Map"
-          detail="Vehicle locations + demand"
-          tone="border-white/10 bg-white/5"
-          onClick={() => onNavigate('map')}
+          label="Charge Plan"
+          detail="Smart overnight window"
+          tone="border-violet-400/20 bg-violet-400/10"
+          onClick={() => onExecute?.('Build optimal charging plan for tonight across the fleet', 'HIGH')}
         />
         <ActionTile
           label="Money"

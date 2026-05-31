@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { TrendingUp, Battery, Wrench, DollarSign, ArrowRight } from 'lucide-react';
 import {
   buildCleaningMaintenancePlan,
   buildFleetHealthSummary,
@@ -468,6 +469,40 @@ export default function OwnerValueDashboard({ fleet = [], onQueueCommand }) {
   return (
     <section className="space-y-4" data-testid="owner-value-dashboard">
       <VehicleReadinessCard vehicle={readinessVehicle} onQueue={onQueueCommand} />
+
+      {/* Compact mobile earnings + action summary (shown prominently on phone) */}
+      <div className="lg:hidden rounded-3xl border border-white/10 bg-[#172231] p-4 text-white">
+        <div className="flex items-center justify-between mb-3">
+          <div>
+            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-emerald-300">TODAY</p>
+            <p className="text-3xl font-black tracking-tighter">{formatCurrency(dailyBrief.projectedToday)}</p>
+          </div>
+          <div className="text-right">
+            <p className="text-xs text-slate-400">Fleet health</p>
+            <p className="text-2xl font-black text-emerald-300">{avgHealth}</p>
+          </div>
+        </div>
+        <div className="grid grid-cols-3 gap-2 text-xs">
+          <div className="rounded-2xl bg-white/10 p-2.5">
+            <div className="flex items-center gap-1 text-emerald-300"><TrendingUp className="h-3.5 w-3.5" /> Pricing</div>
+            <div className="font-black mt-0.5">{pricingUpsideCount} moves</div>
+          </div>
+          <div className="rounded-2xl bg-white/10 p-2.5">
+            <div className="flex items-center gap-1 text-amber-300"><Wrench className="h-3.5 w-3.5" /> Watch</div>
+            <div className="font-black mt-0.5">{criticalMaintenance} items</div>
+          </div>
+          <div className="rounded-2xl bg-white/10 p-2.5">
+            <div className="flex items-center gap-1 text-sky-300"><Battery className="h-3.5 w-3.5" /> Charge</div>
+            <div className="font-black mt-0.5">{chargingPlan.window}</div>
+          </div>
+        </div>
+        <button
+          onClick={() => onQueueCommand?.('Give me today’s full ROBOAGENT fleet brief with exact next steps', 'HIGH')}
+          className="mt-3 w-full rounded-2xl bg-white py-2.5 text-sm font-black text-[#172231] flex items-center justify-center gap-2 active:bg-slate-200"
+        >
+          See full daily brief <ArrowRight className="h-4 w-4" />
+        </button>
+      </div>
 
       <article className="rounded-xl border border-emerald-300/20 bg-slate-900/90 p-5 shadow-xl shadow-black/20">
         <div className="flex flex-col gap-5">

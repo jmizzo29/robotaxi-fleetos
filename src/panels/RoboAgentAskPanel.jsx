@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Send, Sparkles } from 'lucide-react';
 import { askRoboAgent } from '../services/aiService';
 
 const starterQuestions = [
@@ -60,21 +61,21 @@ function EvidenceList({ evidence = [] }) {
 function AgentActionCard({ action, onQueue }) {
   const tone = actionTone[action.priority] || actionTone.NORMAL;
   return (
-    <article className={`rounded-lg border p-4 ${tone}`}>
+    <article className={`rounded-2xl border p-4 ${tone}`}>
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-[11px] font-black uppercase tracking-[0.16em] opacity-80">{action.type}</p>
-          <h3 className="mt-1 text-base font-black text-white">{action.title}</h3>
+          <p className="text-[10px] font-black uppercase tracking-[0.16em] opacity-80">{action.type}</p>
+          <h3 className="mt-1 text-[15px] font-black text-white leading-tight">{action.title}</h3>
         </div>
-        <span className="rounded-md bg-black/20 px-2 py-1 text-[10px] font-black uppercase">
+        <span className="rounded-full bg-black/20 px-2 py-0.5 text-[10px] font-black uppercase tracking-wide">
           {action.approvalRequired ? 'Approval' : 'Info'}
         </span>
       </div>
-      <p className="mt-3 text-sm leading-6 text-slate-100/90">{action.detail}</p>
+      <p className="mt-2.5 text-sm leading-6 text-slate-100/90">{action.detail}</p>
       <button
         type="button"
         onClick={() => onQueue?.(action.command || `${action.title}: ${action.detail}`, action.priority || 'AI')}
-        className="mt-4 w-full rounded-md border border-white/15 bg-black/20 px-4 py-2.5 text-sm font-black text-white transition hover:bg-black/30"
+        className="mt-4 w-full rounded-2xl border border-white/15 bg-black/20 py-3 text-sm font-black text-white active:bg-black/40"
       >
         Queue Action
       </button>
@@ -103,42 +104,39 @@ export default function RoboAgentAskPanel({ onQueueCommand }) {
   };
 
   return (
-    <section className="mb-6 rounded-lg border border-sky-300/20 bg-slate-900/85 p-4 shadow-lg shadow-black/10 sm:mb-8 sm:p-6">
-      <div className="mb-5 flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-        <div>
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-emerald-300">
-            ROBOAGENT Ask
-          </p>
-          <h2 className="text-2xl font-black tracking-tight">Ask your fleet agent anything</h2>
-          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
-            ROBOAGENT pulls signed-in fleet data, revenue records, memory events, and local context, then returns evidence-backed actions for owner approval.
-          </p>
+    <section className="mb-6 rounded-3xl border border-sky-300/20 bg-slate-900/85 p-4 shadow-lg shadow-black/10 sm:mb-8 sm:p-6">
+      <div className="mb-5 flex flex-col gap-3">
+        <div className="flex items-center gap-2">
+          <Sparkles className="h-5 w-5 text-emerald-300" />
+          <p className="text-xs font-black uppercase tracking-[0.22em] text-emerald-300">ROBOAGENT • Ask</p>
         </div>
-        <span className="w-fit rounded-md border border-emerald-300/20 bg-emerald-400/10 px-3 py-2 text-xs font-black text-emerald-200">
-          {answer?.provider || 'agent'} {answer?.model ? `- ${answer.model}` : ''}
-        </span>
+        <h2 className="text-2xl font-black tracking-tight">Ask your fleet agent anything</h2>
+        <p className="text-sm leading-6 text-slate-400">
+          Real data. Evidence-backed answers. Queue actions for approval.
+        </p>
       </div>
 
       <div className="grid gap-4 xl:grid-cols-[0.9fr_1.1fr]">
-        <div className="rounded-lg border border-white/10 bg-slate-950/50 p-4">
+        <div className="rounded-2xl border border-white/10 bg-slate-950/50 p-4">
           <label htmlFor="roboagent-question" className="text-xs font-black uppercase tracking-[0.18em] text-sky-300">
-            Owner question
+            Your question
           </label>
           <textarea
             id="roboagent-question"
             value={question}
             onChange={(event) => setQuestion(event.target.value)}
-            rows={5}
-            className="mt-3 w-full resize-none rounded-lg border border-white/10 bg-slate-950 px-3 py-3 text-sm font-semibold leading-6 text-white outline-none transition placeholder:text-slate-600 focus:border-sky-300/50"
-            placeholder="Ask about pricing, last rental, charging, maintenance, cleaning, revenue, or fleet summary..."
+            rows={4}
+            className="mt-3 w-full resize-none rounded-xl border border-white/10 bg-slate-950 px-3 py-3 text-[15px] font-semibold leading-6 text-white outline-none transition placeholder:text-slate-600 focus:border-sky-300/50"
+            placeholder="Ask about pricing, last rental, charging, maintenance..."
           />
           <button
             type="button"
             disabled={isAsking}
             onClick={submit}
-            className="mt-3 w-full rounded-md bg-sky-300 px-5 py-3 text-sm font-black text-slate-950 transition hover:bg-sky-200 disabled:cursor-wait disabled:opacity-70"
+            className="mt-3 flex w-full items-center justify-center gap-2 rounded-2xl bg-sky-300 py-3.5 text-base font-black text-slate-950 active:bg-sky-200 disabled:opacity-70"
           >
-            {isAsking ? 'ROBOAGENT Thinking...' : 'Ask ROBOAGENT'}
+            <Send className="h-4 w-4" />
+            {isAsking ? 'Thinking...' : 'Ask ROBOAGENT'}
           </button>
 
           <div className="mt-4 flex flex-wrap gap-2">
@@ -147,7 +145,7 @@ export default function RoboAgentAskPanel({ onQueueCommand }) {
                 key={prompt}
                 type="button"
                 onClick={() => setQuestion(prompt)}
-                className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs font-bold text-slate-300 transition hover:bg-white/10"
+                className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 text-xs font-bold text-slate-300 active:bg-white/10"
               >
                 {prompt}
               </button>
@@ -170,11 +168,11 @@ export default function RoboAgentAskPanel({ onQueueCommand }) {
 
           {answer && (
             <>
-              <article className="rounded-lg border border-emerald-300/20 bg-emerald-400/[0.06] p-5">
+              <article className="rounded-2xl border border-emerald-300/20 bg-emerald-400/[0.06] p-5">
                 <p className="text-xs font-black uppercase tracking-[0.18em] text-emerald-300">Agent Answer</p>
-                <p className="mt-3 text-base leading-7 text-slate-100">{answer.answer}</p>
+                <p className="mt-3 text-[15px] leading-7 text-slate-100">{answer.answer}</p>
                 {answer.clarifyingQuestion && (
-                  <p className="mt-4 rounded-lg border border-amber-300/20 bg-amber-300/10 p-3 text-sm font-bold text-amber-100">
+                  <p className="mt-4 rounded-xl border border-amber-300/20 bg-amber-300/10 p-3 text-sm font-bold text-amber-100">
                     {answer.clarifyingQuestion}
                   </p>
                 )}
@@ -183,7 +181,7 @@ export default function RoboAgentAskPanel({ onQueueCommand }) {
               <ConfidenceBar value={answer.confidence} reasons={answer.confidenceReasons || []} />
               <EvidenceList evidence={answer.evidence || []} />
 
-              <div className="grid gap-3 md:grid-cols-2">
+              <div className="grid gap-3">
                 {(answer.recommendedActions || []).map((item) => (
                   <AgentActionCard key={item.id || `${item.type}-${item.title}`} action={item} onQueue={onQueueCommand} />
                 ))}
