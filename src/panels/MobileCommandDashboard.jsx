@@ -155,7 +155,10 @@ export default function MobileCommandDashboard({
 
       {/* Simple Vehicles at a Glance (clean, not busy) */}
       <div className="pt-2">
-        <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-400 mb-2 px-1">Vehicles</p>
+        <div className="flex items-center justify-between mb-2 px-1">
+          <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">Vehicles</p>
+          <button onClick={() => onNavigate('fleet')} className="text-[11px] text-sky-300 font-bold">See all →</button>
+        </div>
         <div className="space-y-2">
           {fleet.slice(0, 3).map((v) => (
             <button
@@ -175,6 +178,25 @@ export default function MobileCommandDashboard({
           ))}
         </div>
       </div>
+
+      {/* Quick Fleet Readiness Summary */}
+      <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-3 text-sm">
+        <div className="flex justify-between text-slate-300">
+          <span>Fleet Ready</span>
+          <span className="font-black text-white">{Math.round((active / (fleet.length || 1)) * 100)}%</span>
+        </div>
+        <div className="text-[11px] text-slate-400 mt-0.5">
+          {active} vehicles ready for dispatch
+        </div>
+      </div>
+
+      {/* Empty state for new users */}
+      {fleet.length === 0 && (
+        <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-center">
+          <p className="text-sm text-slate-300">No vehicles connected yet.</p>
+          <button onClick={() => onNavigate('onboarding')} className="mt-3 text-sm font-black text-sky-300">Connect your first Tesla →</button>
+        </div>
+      )}
     </section>
   );
 }
