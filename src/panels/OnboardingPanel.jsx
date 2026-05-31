@@ -764,24 +764,7 @@ export default function OnboardingPanel({
         </div>
       )}
 
-      {activeStep === 99 && (
-        <div className="flex flex-1 flex-col justify-center">
-          <h2 className="mb-6 text-3xl font-bold">We Need Your Permission</h2>
-          <div className="mb-8 space-y-6 rounded-3xl border border-zinc-800 bg-zinc-900 p-6 text-zinc-300">
-            <p>ROBOAGENT will access:</p>
-            <ul className="space-y-3">
-              <li className="flex gap-3"><span>✓</span><span>Vehicle location & status</span></li>
-              <li className="flex gap-3"><span>✓</span><span>Battery & charging info</span></li>
-              <li className="flex gap-3"><span>✓</span><span>Odometer & service data</span></li>
-              <li className="flex gap-3"><span>✓</span><span>Commands with owner approval</span></li>
-            </ul>
-            <p className="text-sm text-zinc-500">
-              Tesla keeps your password. You can revoke access from Tesla or ROBOAGENT anytime.
-            </p>
-          </div>
-          <PrimaryButton onClick={approveConsent}>I Understand & Approve</PrimaryButton>
-        </div>
-      )}
+
 
       {activeStep === 3 && (
         <TeslaConnectionStep
@@ -792,89 +775,47 @@ export default function OnboardingPanel({
         />
       )}
 
-      {activeStep === 'legacy-step-3' && (
-        <div className="flex flex-1 flex-col justify-center">
-          <div className="mb-10 text-center">
-            <div className="mx-auto mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-white/10 text-5xl">
-              ⚡
-            </div>
-            <h2 className="mb-4 text-4xl font-bold">Connect Your Tesla</h2>
-            <p className="mx-auto max-w-xs text-lg text-zinc-400">
-              Sign in securely with Tesla to sync your vehicles and let your AI Agent get to work
-            </p>
-          </div>
 
-          <div className="mx-auto w-full max-w-md">
-            {!hasAccount ? (
-              <PrimaryButton onClick={() => onNavigate?.('account')}>Create ROBOAGENT Account</PrimaryButton>
-            ) : teslaConnected ? (
-              <PrimaryButton onClick={nextLinearStep}>Continue to Vehicle Sync</PrimaryButton>
-            ) : (
-              <a
-                href={getTeslaLoginUrl('onboarding')}
-                className="flex w-full items-center justify-center gap-3 rounded-3xl bg-white py-7 text-xl font-semibold text-black shadow-lg shadow-teal-500/20 transition-all duration-200 hover:bg-gray-100 active:bg-gray-200"
-              >
-                <span className="text-2xl">🔌</span>
-                Sign in with Tesla
-              </a>
-            )}
-
-            <div className="mt-8 rounded-3xl border border-zinc-700 bg-zinc-900/50 p-6 text-sm">
-              <p className="mb-3 font-medium text-teal-400">🔒 Secure & Private</p>
-              <ul className="space-y-3 text-sm text-zinc-400">
-                <li>• You’ll be redirected to Tesla’s official login</li>
-                <li>• ROBOAGENT never sees your Tesla password</li>
-                <li>• You control what data we can access</li>
-                <li>• Can be disconnected anytime</li>
-              </ul>
-            </div>
-
-            <p className="mt-8 text-center text-xs text-zinc-500">
-              First Tesla is completely free
-            </p>
-          </div>
-        </div>
-      )}
 
       {activeStep === 4 && (
         <div className="flex flex-1 flex-col justify-center">
           <div className="mb-12 text-center">
             <div className="mx-auto mb-8">
-              <div className="mx-auto h-20 w-20 animate-spin rounded-full border-4 border-teal-500 border-t-transparent" />
+              <div className="mx-auto h-20 w-20 animate-spin rounded-full border-4 border-[#172231] border-t-transparent" />
             </div>
 
-            <h2 className="mb-4 text-4xl font-bold">
+            <h2 className="mb-4 text-3xl font-semibold tracking-tight text-black">
               {syncedVehicle ? 'Vehicle Found!' : 'Finding Your Vehicles...'}
             </h2>
-            <p className="text-lg text-zinc-400">
+            <p className="text-lg text-slate-600">
               {syncedVehicle ? 'Your first Tesla is ready for ROBOAGENT' : 'This usually takes 10-20 seconds'}
             </p>
           </div>
 
           <div className="mx-auto w-full max-w-md space-y-4">
-            <div className="flex items-center gap-4 rounded-3xl bg-zinc-900 p-6">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-zinc-800 text-3xl">
+            <div className="flex items-center gap-4 rounded-3xl border border-[#141b27]/10 bg-white p-6">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#172231]/10 text-3xl">
                 🚗
               </div>
               <div className="flex-1">
-                <p className="font-medium">{syncedVehicle ? 'Tesla Vehicle' : 'Model Y • Orlando'}</p>
-                <div className="mt-1 flex items-center gap-2 text-sm text-teal-400">
-                  <div className="h-2 w-2 animate-pulse rounded-full bg-teal-400" />
+                <p className="font-medium text-[#141b27]">{syncedVehicle ? 'Tesla Vehicle' : 'Model Y • Orlando'}</p>
+                <div className="mt-1 flex items-center gap-2 text-sm text-slate-500">
+                  <div className="h-2 w-2 animate-pulse rounded-full bg-[#172231]" />
                   {syncedVehicle ? 'Connected' : 'Connecting...'}
                 </div>
               </div>
-              <div className="text-right text-xs text-zinc-500">
+              <div className="text-right text-xs text-slate-500">
                 {syncedVehicle ? 'AI Ready' : '94% Battery'}
               </div>
             </div>
 
-            <div className="flex items-center gap-4 rounded-3xl bg-zinc-900 p-6 opacity-75">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-zinc-800 text-3xl">
+            <div className="flex items-center gap-4 rounded-3xl border border-[#141b27]/10 bg-white p-6 opacity-75">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-[#172231]/10 text-3xl">
                 🚙
               </div>
               <div className="flex-1">
-                <p className="font-medium">{realVehicleCount > 1 ? 'Additional Tesla' : 'Model 3 • Tampa'}</p>
-                <div className="mt-1 text-sm text-zinc-500">{realVehicleCount > 1 ? 'Queued for analysis' : 'Waiting for sync...'}</div>
+                <p className="font-medium text-[#141b27]">{realVehicleCount > 1 ? 'Additional Tesla' : 'Model 3 • Tampa'}</p>
+                <div className="mt-1 text-sm text-slate-500">{realVehicleCount > 1 ? 'Queued for analysis' : 'Waiting for sync...'}</div>
               </div>
             </div>
           </div>
