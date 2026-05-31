@@ -652,47 +652,41 @@ export default function LandingPage({ onNavigate }) {
         </div>
       </header>
 
-      {/* Hero - Matching mockup 5 with Tesla visual */}
-      <div className="mx-auto max-w-6xl px-5 pt-8 pb-12">
-        <div className="grid items-center gap-10 lg:grid-cols-2">
-          {/* Text side */}
-          <div className="text-center lg:text-left">
-            <h1 className="text-5xl font-semibold tracking-tighter text-black sm:text-6xl md:text-7xl">
-              Turn your Teslas into a profitable, hands-off business.
-            </h1>
-            <p className="mx-auto mt-5 max-w-xl text-xl text-slate-600 lg:mx-0">
-              ROBOAGENT uses AI to handle pricing, charging, maintenance, and daily planning — so your fleet earns more with less work.
-            </p>
+      {/* Hero - Based on mockup 5 with the Tesla picture */}
+      <div className="mx-auto max-w-6xl px-5 pt-6 pb-10">
+        <div className="flex flex-col items-center text-center">
+          <img 
+            src="/images/roboagent-tesla-rental-hero.png" 
+            alt="Tesla with ROBOAGENT" 
+            className="w-full max-w-[820px] rounded-3xl shadow-2xl mb-8"
+          />
 
-            <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row lg:justify-start">
-              <button
-                onClick={() => onNavigate('onboarding')}
-                className="flex h-14 w-full items-center justify-center rounded-3xl bg-[#172231] px-8 text-lg font-black text-white shadow-lg hover:bg-[#243044] sm:w-auto sm:px-10"
-              >
-                Start free — Add your first Tesla
-              </button>
-              <button
-                onClick={() => onNavigate('how-it-works')}
-                className="flex h-14 w-full items-center justify-center rounded-3xl border border-[#141b27]/10 bg-white px-8 text-lg font-black text-[#172231] hover:bg-slate-100 sm:w-auto"
-              >
-                See how it works
-              </button>
-            </div>
+          <h1 className="text-5xl font-semibold tracking-tighter text-black sm:text-6xl md:text-7xl max-w-5xl">
+            Turn your Teslas into a profitable, hands-off business.
+          </h1>
+          <p className="mt-5 max-w-2xl text-xl text-slate-600">
+            ROBOAGENT uses AI to handle pricing, charging, maintenance, and daily planning — so your fleet earns more with less work.
+          </p>
 
-            <div className="mt-6 flex flex-wrap justify-center gap-x-5 gap-y-1 text-sm font-medium text-slate-500 lg:justify-start">
-              <span>First Tesla free in beta</span>
-              <span>Official Tesla Fleet API</span>
-              <span>Revoke anytime</span>
-            </div>
+          <div className="mt-8 flex flex-col items-center gap-3 sm:flex-row">
+            <button
+              onClick={() => onNavigate('onboarding')}
+              className="flex h-14 items-center justify-center rounded-3xl bg-[#172231] px-10 text-lg font-black text-white shadow-lg hover:bg-[#243044]"
+            >
+              Start free — Add your first Tesla
+            </button>
+            <button
+              onClick={() => onNavigate('how-it-works')}
+              className="flex h-14 items-center justify-center rounded-3xl border border-[#141b27]/10 bg-white px-8 text-lg font-black text-[#172231] hover:bg-slate-100"
+            >
+              See how it works
+            </button>
           </div>
 
-          {/* Tesla visual - from mockup 5 */}
-          <div className="relative">
-            <img 
-              src="/images/roboagent-tesla-rental-hero.png" 
-              alt="Tesla vehicle with ROBOAGENT" 
-              className="w-full rounded-3xl shadow-2xl shadow-black/10"
-            />
+          <div className="mt-6 flex flex-wrap justify-center gap-x-5 gap-y-1 text-sm font-medium text-slate-500">
+            <span>First Tesla free in beta</span>
+            <span>Official Tesla Fleet API</span>
+            <span>Revoke anytime</span>
           </div>
         </div>
       </div>
