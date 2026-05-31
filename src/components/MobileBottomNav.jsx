@@ -1,21 +1,18 @@
 import { useState } from 'react';
+import { Home, Map, Bot, Car, MoreHorizontal } from 'lucide-react';
 import RoboWordmark from './RoboWordmark';
 import SignOutButton from './SignOutButton';
 
 function NavIcon({ type }) {
-  const paths = {
-    home: 'M3 10.5 12 3l9 7.5V21h-6v-6H9v6H3V10.5Z',
-    map: 'M9 18 3 21V6l6-3 6 3 6-3v15l-6 3-6-3Zm0 0V3m6 18V6',
-    fleet: 'M5 11h14l2 5v4h-2a2 2 0 0 1-4 0H9a2 2 0 0 1-4 0H3v-4l2-5Zm2-5h10l2 5H5l2-5Z',
-    ai: 'M12 3l1.9 5.2L19 10l-5.1 1.8L12 17l-1.9-5.2L5 10l5.1-1.8L12 3Zm6 10 1 2.7 2.7 1-2.7 1-1 2.7-1-2.7-2.7-1 2.7-1 1-2.7Z',
-    more: 'M5 10a2 2 0 1 1 0 4 2 2 0 0 1 0-4Zm7 0a2 2 0 1 1 0 4 2 2 0 0 1 0-4Zm7 0a2 2 0 1 1 0 4 2 2 0 0 1 0-4Z',
+  const icons = {
+    home: Home,
+    map: Map,
+    ai: Bot,
+    fleet: Car,
+    more: MoreHorizontal,
   };
-
-  return (
-    <svg viewBox="0 0 24 24" aria-hidden="true" className="h-4 w-4">
-      <path d={paths[type]} fill="currentColor" />
-    </svg>
-  );
+  const Icon = icons[type] || MoreHorizontal;
+  return <Icon className="h-4 w-4" />;
 }
 
 const items = [
