@@ -652,47 +652,44 @@ export default function LandingPage({ onNavigate }) {
         </div>
       </header>
 
-      {/* Hero — Aiming for the exact feel of mockup 5/09 you liked */}
-      <div className="mx-auto max-w-6xl px-5 pt-6 pb-12">
-        <div className="flex flex-col lg:flex-row items-center gap-10">
-          {/* Left side - Text (more compact like the mockup) */}
-          <div className="flex-1 text-center lg:text-left">
-            <h1 className="text-5xl font-semibold tracking-tighter text-black sm:text-6xl md:text-7xl leading-[1.05]">
-              Turn your Teslas into a profitable, hands-off business.
-            </h1>
-            <p className="mt-4 text-lg text-slate-600 max-w-md mx-auto lg:mx-0">
-              ROBOAGENT uses AI to handle pricing, charging, maintenance, and daily planning — so your fleet earns more with less work.
-            </p>
-
-            <div className="mt-7 flex flex-col sm:flex-row gap-3 justify-center lg:justify-start">
-              <button
-                onClick={() => onNavigate('onboarding')}
-                className="h-14 px-9 rounded-3xl bg-[#172231] text-lg font-black text-white shadow-lg hover:bg-[#243044]"
-              >
-                Start free — Add your first Tesla
-              </button>
-              <button
-                onClick={() => onNavigate('how-it-works')}
-                className="h-14 px-8 rounded-3xl border border-[#141b27]/10 bg-white text-lg font-black text-[#172231] hover:bg-slate-100"
-              >
-                See how it works
-              </button>
-            </div>
-
-            <div className="mt-4 text-sm text-slate-500 flex flex-wrap gap-x-4 justify-center lg:justify-start">
-              <span>First Tesla free in beta</span>
-              <span>Official Tesla Fleet API</span>
-              <span>Revoke anytime</span>
-            </div>
-          </div>
-
-          {/* Right side - Big Tesla visual (core of the mockup you liked) */}
-          <div className="flex-1">
+      {/* Hero — Much closer to the visual feel of the mockup you liked (big Tesla picture) */}
+      <div className="mx-auto max-w-6xl px-5 pt-6 pb-10">
+        <div className="flex flex-col items-center text-center">
+          {/* Big Tesla visual first — the hero of the mockup */}
+          <div className="w-full max-w-[860px]">
             <img 
               src="/images/roboagent-tesla-rental-hero.png" 
               alt="Tesla vehicle" 
               className="w-full rounded-3xl shadow-2xl"
             />
+          </div>
+
+          <h1 className="mt-8 text-5xl font-semibold tracking-tighter text-black sm:text-6xl md:text-7xl max-w-4xl">
+            Turn your Teslas into a profitable, hands-off business.
+          </h1>
+          <p className="mt-4 text-lg text-slate-600 max-w-lg">
+            ROBOAGENT uses AI to handle pricing, charging, maintenance, and daily planning — so your fleet earns more with less work.
+          </p>
+
+          <div className="mt-7 flex flex-col sm:flex-row gap-3">
+            <button
+              onClick={() => onNavigate('onboarding')}
+              className="h-14 px-9 rounded-3xl bg-[#172231] text-lg font-black text-white shadow-lg hover:bg-[#243044]"
+            >
+              Start free — Add your first Tesla
+            </button>
+            <button
+              onClick={() => onNavigate('how-it-works')}
+              className="h-14 px-8 rounded-3xl border border-[#141b27]/10 bg-white text-lg font-black text-[#172231] hover:bg-slate-100"
+            >
+              See how it works
+            </button>
+          </div>
+
+          <div className="mt-4 text-sm text-slate-500 flex flex-wrap gap-x-4">
+            <span>First Tesla free in beta</span>
+            <span>Official Tesla Fleet API</span>
+            <span>Revoke anytime</span>
           </div>
         </div>
       </div>
