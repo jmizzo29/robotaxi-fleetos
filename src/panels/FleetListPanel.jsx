@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { Battery, MapPin, TrendingUp } from 'lucide-react';
 import VehicleIdentityPlate from '../components/VehicleIdentityPlate';
 import { getVehicleOwnership } from '../data/vehicleOwnership';
 
@@ -13,40 +14,44 @@ function formatCurrency(value) {
 
 function FleetRow({ vehicle, onSelect }) {
   const ownership = vehicle.ownership || getVehicleOwnership(vehicle);
+  const battery = Math.round(Number(vehicle.battery || vehicle.batteryLevel || 0));
 
   return (
     <button
       type="button"
       onClick={() => onSelect?.({ ...vehicle, ownership })}
-      className="grid w-full grid-cols-[auto_minmax(0,1fr)] gap-3 rounded-lg border border-white/10 bg-slate-950/50 p-3 text-left transition hover:border-sky-400/30 hover:bg-slate-900 lg:grid-cols-[auto_minmax(0,1fr)_220px_110px]"
+      className="w-full rounded-2xl border border-white/10 bg-slate-950/50 p-4 text-left transition active:bg-slate-900 lg:grid lg:grid-cols-[auto_minmax(0,1fr)_180px_90px] lg:items-center lg:gap-4"
     >
-      <div className={`flex h-14 w-16 shrink-0 items-center justify-center rounded-lg border ${vehicle.isReal ? 'border-emerald-300/30 bg-emerald-400/10' : 'border-sky-300/20 bg-sky-400/10'}`}>
-        <VehicleIdentityPlate vehicle={vehicle} ownership={ownership} compact />
-      </div>
-      <div className="min-w-0">
-        <div className="flex items-center gap-2">
-          <p className="truncate font-black text-slate-100">{vehicle.name || vehicle.display_name || vehicle.id}</p>
-          <span className={`rounded-full px-2 py-0.5 text-[10px] font-black uppercase ${vehicle.isReal ? 'bg-emerald-400/10 text-emerald-200' : 'bg-sky-400/10 text-sky-200'}`}>
-            {vehicle.isReal ? 'Real' : 'Sim'}
-          </span>
+      <div className="flex items-center gap-3">
+        <div className={`flex h-12 w-14 shrink-0 items-center justify-center rounded-xl border ${vehicle.isReal ? 'border-emerald-300/30 bg-emerald-400/10' : 'border-sky-300/20 bg-sky-400/10'}`}>
+          <VehicleIdentityPlate vehicle={vehicle} ownership={ownership} compact />
         </div>
-        <p className="mt-1 truncate text-xs text-slate-500">
-          {ownership ? `${ownership.modelYear} ${ownership.model} - ${ownership.color} - ${ownership.tag}` : vehicle.assignment || vehicle.status || vehicle.state}
-        </p>
-      </div>
-      <div className="col-span-2 grid grid-cols-2 gap-2 text-xs lg:col-span-1">
-        <div>
-          <p className="text-slate-500">Price Paid</p>
-          <p className="font-bold text-slate-100">{formatCurrency(ownership?.pricePaid)}</p>
-        </div>
-        <div>
-          <p className="text-slate-500">Balance</p>
-          <p className="font-bold text-slate-100">{formatCurrency(ownership?.currentBalance)}</p>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center gap-2">
+            <p className="truncate font-black text-white text-base">{vehicle.name || vehicle.display_name || vehicle.id}</p>
+            <span className={`rounded-full px-2 py-px text-[10px] font-black uppercase tracking-wide ${vehicle.isReal ? 'bg-emerald-400/10 text-emerald-300' : 'bg-sky-400/10 text-sky-300'}`}>
+              {vehicle.isReal ? 'Tesla' : 'Sim'}
+            </span>
+          </div>
+          <p className="mt-0.5 truncate text-xs text-slate-400">
+            {ownership ? `${ownership.modelYear} ${ownership.model}` : vehicle.city || vehicle.status}
+          </p>
         </div>
       </div>
-      <div className="col-span-2 text-left lg:col-span-1 lg:text-right">
-        <p className="text-lg font-black text-emerald-300">{Math.round(vehicle.battery || 0)}%</p>
-        <p className="text-xs text-slate-500">{vehicle.status || vehicle.state || 'Unknown'}</p>
+
+      <div className="mt-3 grid grid-cols-3 gap-3 text-sm lg:mt-0 lg:grid-cols-1 lg:gap-1">
+        <div className="flex items-center gap-1.5 text-white">
+          <Battery className="h-4 w-4 text-emerald-300" />
+          <span className="font-black">{battery}%</span>
+        </div>
+        <div className="flex items-center gap-1.5 text-white">
+          <MapPin className="h-4 w-4 text-sky-300" />
+          <span className="font-semibold text-xs lg:text-sm truncate">{vehicle.city || vehicle.status || '—'}</span>
+        </div>
+        <div className="flex items-center gap-1.5 text-emerald-300">
+          <TrendingUp className="h-4 w-4" />
+          <span className="font-black text-xs lg:text-sm">{formatCurrency(ownership?.pricePaid)}</span>
+        </div>
       </div>
     </button>
   );
