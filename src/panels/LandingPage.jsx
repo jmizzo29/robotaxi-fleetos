@@ -652,10 +652,11 @@ export default function LandingPage({ onNavigate }) {
         </div>
       </header>
 
-      {/* Hero — Strong visual treatment closer to the mockup you liked */}
+      {/* Hero — Mobile-first, matching mockup 10 style (clean, big Tesla visual) */}
       <div className="mx-auto max-w-6xl px-5 pt-6 pb-10">
         <div className="flex flex-col items-center text-center">
-          <div className="w-full max-w-[920px]">
+          {/* Tesla visual - prominent on mobile */}
+          <div className="w-full max-w-[820px]">
             <img 
               src="/images/roboagent-tesla-rental-hero.png" 
               alt="Tesla vehicle" 
@@ -663,29 +664,29 @@ export default function LandingPage({ onNavigate }) {
             />
           </div>
 
-          <h1 className="mt-8 text-5xl font-semibold tracking-tighter text-black sm:text-6xl md:text-7xl max-w-4xl">
+          <h1 className="mt-6 text-4xl font-semibold tracking-tighter text-black sm:text-5xl md:text-6xl max-w-3xl">
             Turn your Teslas into a profitable, hands-off business.
           </h1>
-          <p className="mt-4 text-lg text-slate-600 max-w-lg">
+          <p className="mt-3 text-base text-slate-600 max-w-md sm:text-lg">
             ROBOAGENT uses AI to handle pricing, charging, maintenance, and daily planning — so your fleet earns more with less work.
           </p>
 
-          <div className="mt-7 flex flex-col sm:flex-row gap-3">
+          <div className="mt-6 flex flex-col gap-3 w-full max-w-xs">
             <button
               onClick={() => onNavigate('onboarding')}
-              className="h-14 px-9 rounded-3xl bg-[#172231] text-lg font-black text-white shadow-lg hover:bg-[#243044]"
+              className="h-14 rounded-3xl bg-[#172231] text-lg font-black text-white shadow-lg hover:bg-[#243044]"
             >
               Start free — Add your first Tesla
             </button>
             <button
               onClick={() => onNavigate('how-it-works')}
-              className="h-14 px-8 rounded-3xl border border-[#141b27]/10 bg-white text-lg font-black text-[#172231] hover:bg-slate-100"
+              className="h-14 rounded-3xl border border-[#141b27]/10 bg-white text-lg font-black text-[#172231] hover:bg-slate-100"
             >
               See how it works
             </button>
           </div>
 
-          <div className="mt-4 text-sm text-slate-500 flex flex-wrap gap-x-4">
+          <div className="mt-4 text-xs text-slate-500 flex flex-wrap gap-x-3 justify-center">
             <span>First Tesla free in beta</span>
             <span>Official Tesla Fleet API</span>
             <span>Revoke anytime</span>
