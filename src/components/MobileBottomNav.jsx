@@ -28,30 +28,14 @@ const items = [
 
 const menuSections = [
   {
-    label: 'Core',
+    label: 'Main',
     items: [
-      ['overview', 'Command', 'Owner dashboard'],
-      ['map', 'Map', 'Vehicles and service areas'],
-      ['ai', 'Agent', 'Ask and approve actions'],
-      ['fleet', 'Fleet', 'Vehicles and readiness'],
-      ['finance', 'Money', 'Revenue and ROI'],
-      ['account', 'Account', 'Profile and access'],
-    ],
-  },
-  {
-    label: 'Setup',
-    items: [
-      ['onboarding', 'Setup', 'Connect first Tesla'],
-      ['tesla', 'Tesla', 'Connection status'],
-    ],
-  },
-  {
-    label: 'Advanced',
-    items: [
-      ['health', 'Health', 'Maintenance risk'],
-      ['charging', 'Charging', 'Energy readiness'],
-      ['dispatch', 'Plan', 'Staging and pricing'],
-      ['settings', 'Settings', 'Runtime controls'],
+      ['overview', 'Command', 'Daily plan & actions'],
+      ['map', 'Map', 'Live locations'],
+      ['ai', 'Agent', 'Ask & approve'],
+      ['fleet', 'Fleet', 'Vehicles overview'],
+      ['finance', 'Money', 'Revenue & costs'],
+      ['account', 'Account', 'Profile & Tesla'],
     ],
   },
 ];
