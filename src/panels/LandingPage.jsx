@@ -652,11 +652,10 @@ export default function LandingPage({ onNavigate }) {
         </div>
       </header>
 
-      {/* Hero — Much closer to the visual feel of the mockup you liked (big Tesla picture) */}
+      {/* Hero — Strong visual treatment closer to the mockup you liked */}
       <div className="mx-auto max-w-6xl px-5 pt-6 pb-10">
         <div className="flex flex-col items-center text-center">
-          {/* Big Tesla visual first — the hero of the mockup */}
-          <div className="w-full max-w-[860px]">
+          <div className="w-full max-w-[920px]">
             <img 
               src="/images/roboagent-tesla-rental-hero.png" 
               alt="Tesla vehicle" 
