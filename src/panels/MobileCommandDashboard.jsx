@@ -64,13 +64,24 @@ export default function MobileCommandDashboard({
           </p>
           <h1 className="mt-1 text-2xl font-black tracking-tight text-white">Command</h1>
         </div>
-        <button
-          type="button"
-          onClick={() => onNavigate('account')}
-          className="rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-sm font-black text-slate-200"
-        >
-          Account
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={onSync}
+            disabled={isLoading}
+            className="rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-xs font-black text-sky-300 active:bg-white/10"
+            aria-label="Refresh telemetry"
+          >
+            ↻
+          </button>
+          <button
+            type="button"
+            onClick={() => onNavigate('account')}
+            className="rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-sm font-black text-slate-200"
+          >
+            Account
+          </button>
+        </div>
       </div>
 
       {/* Clean KPIs - less busy */}
