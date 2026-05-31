@@ -1,4 +1,4 @@
-import { TrendingUp, MapPin } from 'lucide-react';
+import { MapPin } from 'lucide-react';
 import { buildMarketRentalAnswer, inferOwnerMarket } from '../services/marketIntelligenceService';
 
 function formatCurrency(value) {

@@ -232,8 +232,8 @@ export default function AccountPanel({ onNavigate }) {
                       try {
                         await disconnectTeslaForUser();
                         setMessage('Tesla access revoked. You can reconnect from onboarding.');
-                        await refreshSession?.();
-                      } catch (e) {
+                        // Session refresh happens via global event in most cases
+                      } catch {
                         setError('Could not disconnect right now. Try again.');
                       } finally {
                         setIsBusy(false);
