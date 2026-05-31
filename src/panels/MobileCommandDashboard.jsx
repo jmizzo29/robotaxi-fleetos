@@ -1,4 +1,5 @@
 import RoboWordmark from '../components/RoboWordmark';
+import BetaBadge from '../components/BetaBadge';
 import { TrendingUp, BatteryCharging, MapPin, DollarSign, RefreshCw, ArrowRight } from 'lucide-react';
 
 function MiniMetric({ label, value, tone, Icon }) {
@@ -73,7 +74,10 @@ export default function MobileCommandDashboard({
             <p className="text-sm">
               <RoboWordmark colorClass="text-sky-300" />
             </p>
-            <h1 className="mt-1 text-2xl font-black tracking-tight text-white">Command</h1>
+            <div className="flex items-center gap-2">
+            <h1 className="text-2xl font-black tracking-tight text-white">Command</h1>
+            <BetaBadge />
+          </div>
           </div>
           <div className="flex items-center gap-2">
             <button

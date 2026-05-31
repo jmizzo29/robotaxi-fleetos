@@ -2,6 +2,7 @@ import { useState } from 'react';
 import RoboLogo from './RoboLogo';
 import RoboWordmark from './RoboWordmark';
 import SignOutButton from './SignOutButton';
+import BetaBadge from './BetaBadge';
 
 export default function Sidebar({
   replayMode,
@@ -36,7 +37,7 @@ export default function Sidebar({
         <h1 className="text-2xl font-semibold leading-tight text-black">
           Fleet OS
           <span className="block text-slate-500">
-            Command Layer
+            Command Layer <BetaBadge className="ml-1 align-middle" />
           </span>
         </h1>
 
