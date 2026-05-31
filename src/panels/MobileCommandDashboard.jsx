@@ -66,32 +66,46 @@ export default function MobileCommandDashboard({
 
   return (
     <section className="space-y-5 lg:hidden">
-      {/* Header */}
-      <div className="flex items-center justify-between pt-1">
-        <div>
-          <p className="text-sm">
-            <RoboWordmark colorClass="text-sky-300" />
-          </p>
-          <h1 className="mt-1 text-2xl font-black tracking-tight text-white">Command</h1>
+      {/* Header + persistent Tesla status (audit mobile: instant visibility on home) */}
+      <div>
+        <div className="flex items-center justify-between pt-1">
+          <div>
+            <p className="text-sm">
+              <RoboWordmark colorClass="text-sky-300" />
+            </p>
+            <h1 className="mt-1 text-2xl font-black tracking-tight text-white">Command</h1>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={onSync}
+              disabled={isLoading}
+              className="flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-xs font-black text-sky-300 active:bg-white/10"
+              aria-label="Refresh telemetry"
+            >
+              <RefreshCw className="h-3.5 w-3.5" />
+              <span>{isLoading ? '...' : 'Sync'}</span>
+            </button>
+            <button
+              type="button"
+              onClick={() => onNavigate('account')}
+              className="rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-sm font-black text-slate-200"
+            >
+              Account
+            </button>
+          </div>
         </div>
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={onSync}
-            disabled={isLoading}
-            className="flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-xs font-black text-sky-300 active:bg-white/10"
-            aria-label="Refresh telemetry"
-          >
-            <RefreshCw className="h-3.5 w-3.5" />
-            <span>{isLoading ? '...' : 'Sync'}</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => onNavigate('account')}
-            className="rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-sm font-black text-slate-200"
-          >
-            Account
-          </button>
+
+        <div className="mt-2 flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs">
+          <div className="flex items-center gap-2 text-slate-300">
+            <span className={`inline-block h-2 w-2 rounded-full ${syncStatus?.state === 'ok' || syncStatus?.state === 'success' ? 'bg-emerald-400' : 'bg-amber-400'}`} />
+            Tesla {syncStatus?.state || 'Not synced'}
+          </div>
+          {primaryTesla && (
+            <div className="font-black text-white">
+              {primaryTesla.battery ? `${Math.round(primaryTesla.battery)}%` : '—'} • {primaryTesla.status || '—'}
+            </div>
+          )}
         </div>
       </div>
 
