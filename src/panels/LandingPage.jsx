@@ -652,6 +652,11 @@ export default function LandingPage({ onNavigate }) {
         </div>
       </header>
 
+      {/* TEMP DEBUG BANNER - Remove after testing */}
+      <div className="bg-red-600 py-2 text-center text-white font-bold text-sm">
+        DEBUG: Homepage v2025-06-01-03 | Commit 8b6a677 | If you see this banner, the latest code is live
+      </div>
+
       {/* Hero - Matching refined mockup 09 + mobile mockup 10 */}
       <div className="mx-auto max-w-6xl px-5 pt-8 pb-12">
         <div className="grid items-center gap-10 lg:grid-cols-2">
