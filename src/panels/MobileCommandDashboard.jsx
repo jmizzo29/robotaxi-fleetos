@@ -101,14 +101,19 @@ export default function MobileCommandDashboard({
           <p className="text-sm font-black text-white">Today’s AI Plan</p>
           <span className="text-[10px] font-black px-2 py-0.5 rounded bg-emerald-400/20 text-emerald-300">3 actions</span>
         </div>
-        <p className="text-sm text-slate-300 leading-snug">
+        <p className="text-sm text-slate-300 leading-snug mb-2">
           Raise Orlando pricing, charge Model Y after 11 PM, clean before pickup.
         </p>
+        <div className="text-[11px] text-slate-400 space-y-0.5 mb-3">
+          <div>• Raise Model Y weekend rate 18%</div>
+          <div>• Charge Model Y 11:30pm–6am (cheap window)</div>
+          <div>• Schedule cleaning for 2:30pm</div>
+        </div>
         <button
           onClick={() => onNavigate('ai')}
-          className="mt-3 w-full rounded-xl bg-white text-[#172231] py-2.5 text-sm font-black active:opacity-90"
+          className="mt-1 w-full rounded-xl bg-white text-[#172231] py-2.5 text-sm font-black active:opacity-90"
         >
-          Approve Plan
+          Review & Approve
         </button>
       </div>
 
