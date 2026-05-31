@@ -14,11 +14,20 @@ export default function SignOutButton({
   const signOut = async () => {
     setIsSigningOut(true);
     try {
+      // Clear local session + compliance state (audit: fix sign-out races and stale consent)
+      try { localStorage.removeItem('fleetos_tesla_consent'); } catch {}
+      try { localStorage.removeItem('fleetos_beta_invite'); } catch {}
+      try { sessionStorage.clear(); } catch {}
+
       await logoutFleetOsAccount().catch(() => {});
       if (window.Clerk?.loaded && typeof window.Clerk.signOut === 'function') {
         await window.Clerk.signOut();
       }
       onSignedOut?.();
+      // Force clean reload to landing to avoid any stale hybrid auth state
+      if (typeof window !== 'undefined') {
+        window.location.href = '/#/landing';
+      }
     } finally {
       setIsSigningOut(false);
       setIsConfirming(false);

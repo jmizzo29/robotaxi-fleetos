@@ -13,11 +13,18 @@ import {
 import { getFleetOsSession } from '../services/sessionService';
 import { getTeslaLoginUrl } from '../services/teslaHealthService';
 
-function StepBadge({ step }) {
+function StepBadge({ step, realProgress = 0 }) {
+  const steps = [1,2,3,4,5];
   return (
-    <div className="whitespace-nowrap rounded-full border border-[#141b27]/10 bg-white px-3 py-2 text-xs font-semibold text-slate-700 shadow-sm sm:px-4 sm:py-1 sm:text-sm">
-      <span className="sm:hidden">Step {step}/5</span>
-      <span className="hidden sm:inline">Step {step} of 5</span>
+    <div className="flex items-center gap-1.5 rounded-full border border-[#141b27]/10 bg-white px-2 py-1 shadow-sm">
+      {steps.map((s) => (
+        <div
+          key={s}
+          className={`h-2 w-2 rounded-full transition ${s === step ? 'bg-[#172231] scale-125' : s < step ? 'bg-emerald-500' : s <= realProgress ? 'bg-emerald-300' : 'bg-slate-300'}`}
+          title={`Step ${s}`}
+        />
+      ))}
+      <span className="ml-1 text-[10px] font-black uppercase tracking-[0.16em] text-slate-500">Step {step}/5</span>
     </div>
   );
 }
@@ -548,7 +555,7 @@ export default function OnboardingPanel({
             <span className="sm:hidden">Back</span>
             <span className="hidden sm:inline">Back Home</span>
           </button>
-          <StepBadge step={activeStep} />
+          <StepBadge step={activeStep} realProgress={realProgressStep} />
         </div>
       </div>
 
@@ -560,6 +567,24 @@ export default function OnboardingPanel({
         }`}
         >
           {error || message}
+        </div>
+      )}
+
+      {/* Clear "Existing setup detected" banner from audit feedback - always visible when ahead of current step */}
+      {realProgressStep > activeStep && (
+        <div className="mx-auto mb-4 w-full max-w-5xl rounded-3xl border border-emerald-200 bg-emerald-50 p-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <p className="text-sm font-black text-emerald-800">You have progress from before.</p>
+              <p className="text-xs text-emerald-700">You are on step {activeStep}. Your last completed step was {realProgressStep}.</p>
+            </div>
+            <button
+              onClick={continueExistingSetup}
+              className="rounded-2xl bg-emerald-700 px-5 py-2.5 text-sm font-black text-white active:bg-emerald-800"
+            >
+              Jump to step {realProgressStep} (continue setup)
+            </button>
+          </div>
         </div>
       )}
 
