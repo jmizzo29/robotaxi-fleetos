@@ -5,6 +5,7 @@ import RoboLogo from '../components/RoboLogo';
 import RoboWordmark from '../components/RoboWordmark';
 import SignOutButton from '../components/SignOutButton';
 import {
+  disconnectTeslaForUser,
   getFleetOsBillingStatus,
   getFleetOsSession,
   updateFleetOsProfile,
@@ -211,6 +212,41 @@ export default function AccountPanel({ onNavigate }) {
                 }}
                 className="w-full rounded-2xl border border-[#141b27]/10 bg-slate-50 px-5 py-4 text-base font-black text-[#172231] transition hover:bg-slate-100"
               />
+
+              {/* Strong Tesla management section (audit priority for Account + Tesla connection clarity) */}
+              <div className="rounded-2xl border border-[#141b27]/10 bg-white p-4">
+                <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-slate-500">
+                  <Car className="h-4 w-4" /> Tesla Connection
+                </div>
+                <p className="mt-2 text-sm font-semibold text-slate-600">Your vehicles are connected via official Tesla Fleet API. You can disconnect anytime.</p>
+                <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+                  <button
+                    onClick={() => onNavigate?.('onboarding')}
+                    className="flex-1 rounded-2xl border border-[#141b27]/10 bg-[#172231] py-2.5 text-sm font-black text-white active:bg-black"
+                  >
+                    Manage / Add Vehicles
+                  </button>
+                  <button
+                    onClick={async () => {
+                      setBusy(true);
+                      try {
+                        await disconnectTeslaForUser();
+                        setMessage('Tesla access revoked. You can reconnect from onboarding.');
+                        // Refresh to reflect change
+                        await refreshSession?.();
+                      } catch (e) {
+                        setError('Could not disconnect right now. Try again.');
+                      } finally {
+                        setBusy(false);
+                      }
+                    }}
+                    disabled={isBusy}
+                    className="flex-1 rounded-2xl border border-rose-200 bg-rose-50 py-2.5 text-sm font-black text-rose-700 active:bg-rose-100 disabled:opacity-60"
+                  >
+                    Disconnect All Teslas
+                  </button>
+                </div>
+              </div>
 
               <details className="rounded-2xl border border-[#141b27]/10 bg-slate-50 p-4">
                 <summary className="cursor-pointer text-sm font-black text-slate-700">Account Details</summary>
