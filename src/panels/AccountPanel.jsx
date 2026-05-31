@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Car, Shield, Bell, CreditCard, LogOut } from 'lucide-react';
+import { Car, Shield } from 'lucide-react';
 import { isClerkConfigured } from '../auth/clerkConfig';
 import RoboLogo from '../components/RoboLogo';
 import RoboWordmark from '../components/RoboWordmark';
@@ -228,16 +228,15 @@ export default function AccountPanel({ onNavigate }) {
                   </button>
                   <button
                     onClick={async () => {
-                      setBusy(true);
+                      setIsBusy(true);
                       try {
                         await disconnectTeslaForUser();
                         setMessage('Tesla access revoked. You can reconnect from onboarding.');
-                        // Refresh to reflect change
                         await refreshSession?.();
                       } catch (e) {
                         setError('Could not disconnect right now. Try again.');
                       } finally {
-                        setBusy(false);
+                        setIsBusy(false);
                       }
                     }}
                     disabled={isBusy}

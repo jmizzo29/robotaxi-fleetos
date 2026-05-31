@@ -1,4 +1,5 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from 'react';
+import ErrorBoundary from './components/ErrorBoundary';
 import { AuthenticateWithRedirectCallback } from '@clerk/react';
 import CommandSafetyModal from './components/CommandSafetyModal';
 import FeedbackButton from './components/FeedbackButton';
@@ -786,7 +787,9 @@ function FleetApp() {
 
       <main className="flex-1 overflow-y-auto bg-[#f7f7f5] p-4 pb-28 sm:p-6 sm:pb-28 lg:p-8">
         <div className="mx-auto max-w-[1900px]">
-          {pages[route] || pages.overview}
+          <ErrorBoundary>
+            {pages[route] || pages.overview}
+          </ErrorBoundary>
         </div>
       </main>
 
