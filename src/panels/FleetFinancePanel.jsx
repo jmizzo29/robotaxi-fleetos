@@ -746,6 +746,35 @@ export default function FleetFinancePanel({ fleet = [], onQueueCommand }) {
 
   return (
     <section className="space-y-5">
+      {/* Strong mobile money summary (one of the 6 core tabs) */}
+      <div className="lg:hidden rounded-3xl bg-[#172231] p-4 text-white border border-white/10">
+        <div className="flex justify-between items-end mb-3">
+          <div>
+            <p className="text-emerald-300 text-xs font-black tracking-[0.2em]">NET THIS PERIOD</p>
+            <p className="text-4xl font-black tracking-tighter">{formatCurrency(totalNet)}</p>
+          </div>
+          <div className="text-right text-xs text-slate-400">
+            ROI {Math.round(avgRoi)}%<br />{finance.length} vehicles
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-2 text-sm">
+          <div className="bg-white/10 rounded-2xl p-3">
+            <div className="text-emerald-300 text-xs">Revenue</div>
+            <div className="font-black text-lg">{formatCurrency(totalRevenue)}</div>
+          </div>
+          <div className="bg-white/10 rounded-2xl p-3">
+            <div className="text-rose-300 text-xs">Costs</div>
+            <div className="font-black text-lg">{formatCurrency(totalCost)}</div>
+          </div>
+        </div>
+        <button
+          onClick={() => onQueueCommand?.('Show me exact ways to increase monthly net profit this quarter', 'HIGH')}
+          className="mt-3 w-full rounded-2xl bg-white py-2.5 text-sm font-black text-[#172231]"
+        >
+          Find profit opportunities
+        </button>
+      </div>
+
       <div className="grid grid-cols-2 gap-3 xl:grid-cols-5">
         <Metric label="Monthly Revenue" value={formatCurrency(totalRevenue)} tone="text-sky-300" />
         <Metric label="Operating Cost" value={formatCurrency(totalCost)} tone="text-amber-300" />
