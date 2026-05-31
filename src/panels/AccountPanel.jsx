@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Car, Shield, Bell, CreditCard, LogOut } from 'lucide-react';
 import { isClerkConfigured } from '../auth/clerkConfig';
 import RoboLogo from '../components/RoboLogo';
 import RoboWordmark from '../components/RoboWordmark';

@@ -31,14 +31,12 @@ export default function CommandSafetyModal({ pendingCommand, onCancel, onConfirm
 
   return (
     <div className="fixed inset-0 z-[80] flex items-end justify-center bg-black/70 p-4 backdrop-blur-sm sm:items-center">
-      <section className="w-full max-w-lg overflow-hidden rounded-2xl border border-white/10 bg-slate-950 shadow-2xl shadow-black/50">
+      <section className="w-full max-w-lg overflow-hidden rounded-3xl border border-white/10 bg-slate-950 shadow-2xl shadow-black/50">
         <div className="border-b border-white/10 p-5">
-          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-sky-300">
-            Command Safety
-          </p>
-          <h2 className="text-2xl font-black tracking-tight text-white">Confirm Operator Action</h2>
+          <p className="mb-1 text-xs font-black uppercase tracking-[0.22em] text-sky-300">COMMAND SAFETY</p>
+          <h2 className="text-2xl font-black tracking-tight text-white">Confirm this action</h2>
           <p className="mt-2 text-sm leading-6 text-slate-400">
-            ROBOAGENT will queue this command, write it to the audit trail, and keep Tesla execution boundaries explicit.
+            This will be queued, audited, and executed only within Tesla-approved boundaries.
           </p>
         </div>
 
@@ -63,16 +61,16 @@ export default function CommandSafetyModal({ pendingCommand, onCancel, onConfirm
           <button
             type="button"
             onClick={onCancel}
-            className="rounded-md border border-white/10 bg-white/5 px-4 py-3 text-sm font-bold text-slate-200 transition hover:bg-white/10"
+            className="rounded-2xl border border-white/10 bg-white/5 py-4 text-base font-black text-slate-200 active:bg-white/10"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={onConfirm}
-            className="rounded-md border border-emerald-400/30 bg-emerald-400/10 px-4 py-3 text-sm font-bold text-emerald-100 transition hover:bg-emerald-400/20"
+            className="rounded-2xl border border-emerald-400/30 bg-emerald-400/10 py-4 text-base font-black text-emerald-100 active:bg-emerald-400/20"
           >
-            Confirm & Queue
+            Confirm &amp; Queue
           </button>
         </div>
       </section>
