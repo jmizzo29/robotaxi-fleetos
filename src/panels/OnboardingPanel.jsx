@@ -3,6 +3,7 @@ import { useSignUp } from '@clerk/react';
 import { isClerkConfigured } from '../auth/clerkConfig';
 import RoboLogo from '../components/RoboLogo';
 import RoboWordmark from '../components/RoboWordmark';
+import { Car, ShieldCheck, ArrowRight, Check } from 'lucide-react';
 import {
   acceptTeslaConsent,
   canUseTeslaTelemetry,
@@ -197,10 +198,12 @@ function TeslaConnectionStep({
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col justify-center py-4">
       <div className="mb-6 text-center">
-        <p className="mb-3 text-xs font-black uppercase tracking-[0.22em] text-slate-500">Tesla Connection</p>
+        <div className="mx-auto mb-3 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700">
+          <ShieldCheck className="h-3.5 w-3.5" /> OFFICIAL TESLA FLEET API
+        </div>
         <h2 className="text-3xl font-semibold tracking-tight text-black">Connect Your Tesla</h2>
         <p className="mx-auto mt-3 max-w-2xl text-base leading-7 text-slate-600">
-          Use Tesla&apos;s secure login. ROBOAGENT never receives your Tesla password.
+          You leave for 30 seconds, approve access on Tesla&apos;s site, then return here. No passwords shared.
         </p>
       </div>
 
@@ -240,17 +243,18 @@ function TeslaConnectionStep({
             <div className="mt-5">
               {!hasAccount ? (
                 <PrimaryButton onClick={() => onNavigate?.('account')} className="py-4 text-base sm:py-5 sm:text-lg">
-                  Create ROBOAGENT Account
+                  Create ROBOAGENT Account First
                 </PrimaryButton>
               ) : teslaConnected ? (
                 <PrimaryButton onClick={onContinue} className="py-4 text-base sm:py-5 sm:text-lg">
-                  Continue to Vehicle Sync
+                  Continue to Vehicle Sync <ArrowRight className="ml-1 inline h-4 w-4" />
                 </PrimaryButton>
               ) : (
                 <a
                   href={getTeslaLoginUrl('onboarding')}
-                  className="flex w-full items-center justify-center gap-3 rounded-3xl bg-white px-5 py-5 text-lg font-black text-black border border-[#141b27]/10 hover:bg-slate-50"
+                  className="flex w-full items-center justify-center gap-3 rounded-3xl border border-[#141b27]/10 bg-[#172231] px-5 py-5 text-lg font-black text-white shadow-sm active:bg-black hover:bg-[#243044]"
                 >
+                  <Car className="h-5 w-5" />
                   Sign in with Tesla
                 </a>
               )}
@@ -259,9 +263,12 @@ function TeslaConnectionStep({
 
           <div className="mt-4 grid gap-3 sm:grid-cols-2">
             {trustItems.map(([title, detail]) => (
-              <div key={title} className="rounded-2xl border border-[#141b27]/10 bg-[#f7f7f5] p-4">
-                <p className="text-sm font-black text-[#141b27]">{title}</p>
-                <p className="mt-1 text-xs font-semibold leading-5 text-slate-600">{detail}</p>
+              <div key={title} className="flex gap-3 rounded-2xl border border-[#141b27]/10 bg-[#f7f7f5] p-4">
+                <div className="mt-0.5 text-emerald-600"><Check className="h-4 w-4" /></div>
+                <div>
+                  <p className="text-sm font-black text-[#141b27]">{title}</p>
+                  <p className="mt-0.5 text-xs font-semibold leading-5 text-slate-600">{detail}</p>
+                </div>
               </div>
             ))}
           </div>

@@ -1,12 +1,11 @@
 import RoboWordmark from '../components/RoboWordmark';
+import { TrendingUp, BatteryCharging, MapPin, DollarSign, RefreshCw, ArrowRight } from 'lucide-react';
 
-function MiniMetric({ label, value, tone, icon }) {
+function MiniMetric({ label, value, tone, Icon }) {
   return (
     <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-2.5 shadow-lg shadow-black/20">
       <div className={`mb-2 flex h-8 w-8 items-center justify-center rounded-full ${tone}`}>
-        <svg viewBox="0 0 24 24" className="h-4 w-4" aria-hidden="true">
-          <path d={icon} fill="currentColor" />
-        </svg>
+        <Icon className="h-4 w-4" />
       </div>
       <p className="text-[11px] font-semibold leading-tight text-slate-300">{label}</p>
       <p className="mt-1 text-xl font-black tracking-tight text-white">{value}</p>
@@ -54,6 +53,17 @@ export default function MobileCommandDashboard({
     : 0;
   const alerts = avgAnomalyRisk > 15 ? 'High' : avgAnomalyRisk > 8 ? 'Med' : 'Low';
 
+  // Simple dynamic-ish plan summary based on live fleet data
+  const planSummary = fleet.length > 0 
+    ? `Raise pricing on ${active} ready vehicles, optimize overnight charging, prep for morning demand.`
+    : 'Connect your first Tesla to get a personalized daily plan.';
+
+  const planActions = [
+    'Review 3 high-confidence actions',
+    utilization > 70 ? 'Protect high utilization streak' : 'Boost utilization 12%',
+    'Charge during cheapest 6-hour window',
+  ];
+
   return (
     <section className="space-y-5 lg:hidden">
       {/* Header */}
@@ -69,10 +79,11 @@ export default function MobileCommandDashboard({
             type="button"
             onClick={onSync}
             disabled={isLoading}
-            className="rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-xs font-black text-sky-300 active:bg-white/10"
+            className="flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-xs font-black text-sky-300 active:bg-white/10"
             aria-label="Refresh telemetry"
           >
-            ↻
+            <RefreshCw className="h-3.5 w-3.5" />
+            <span>{isLoading ? '...' : 'Sync'}</span>
           </button>
           <button
             type="button"
@@ -84,124 +95,127 @@ export default function MobileCommandDashboard({
         </div>
       </div>
 
-      {/* Clean KPIs - less busy */}
+      {/* Clean 3 KPIs */}
       <div className="grid grid-cols-3 gap-3">
         <MiniMetric
           label="Active"
           value={`${active}/${fleet.length || 0}`}
           tone="bg-emerald-400 text-slate-950"
-          icon="M5 11h14l2 5v4h-2a2 2 0 0 1-4 0H9a2 2 0 0 1-4 0H3v-4l2-5Zm2-5h10l2 5H5l2-5Z"
+          Icon={TrendingUp}
         />
         <MiniMetric
           label="Utilization"
           value={`${utilization}%`}
           tone="bg-amber-300 text-slate-950"
-          icon="M13 2 5 13h6l-1 9 8-12h-6l1-8Z"
+          Icon={BatteryCharging}
         />
         <MiniMetric
           label="Risk"
           value={alerts}
           tone="bg-rose-400 text-slate-950"
-          icon="M12 3 2.5 20h19L12 3Zm0 6v5m0 3h.01"
+          Icon={ArrowRight}
         />
       </div>
 
-      {/* Today's AI Plan - prominent but clean */}
-      <div className="rounded-2xl border border-white/10 bg-white/[0.06] p-4">
-        <div className="flex items-center justify-between mb-2">
-          <p className="text-sm font-black text-white">Today’s AI Plan</p>
-          <span className="text-[10px] font-black px-2 py-0.5 rounded bg-emerald-400/20 text-emerald-300">3 actions</span>
+      {/* Today's AI Plan — elevated, actionable */}
+      <div className="rounded-3xl border border-white/10 bg-white/[0.06] p-4">
+        <div className="mb-3 flex items-center justify-between">
+          <div>
+            <p className="text-sm font-black text-white">Today’s AI Plan</p>
+            <p className="text-[11px] text-emerald-300">3 actions • Updated just now</p>
+          </div>
+          <span className="rounded-full bg-emerald-400/10 px-2.5 py-0.5 text-[10px] font-black text-emerald-300">LIVE</span>
         </div>
-        <p className="text-sm text-slate-300 leading-snug mb-2">
-          Raise Orlando pricing, charge Model Y after 11 PM, clean before pickup.
-        </p>
-        <div className="text-[11px] text-slate-400 space-y-0.5 mb-3">
-          <div>• Raise Model Y weekend rate 18%</div>
-          <div>• Charge Model Y 11:30pm–6am (cheap window)</div>
-          <div>• Schedule cleaning for 2:30pm</div>
+        <p className="text-sm leading-snug text-slate-200">{planSummary}</p>
+        
+        <div className="mt-3 space-y-1 text-xs text-slate-300">
+          {planActions.map((a, i) => (
+            <div key={i} className="flex items-center gap-2">→ {a}</div>
+          ))}
         </div>
+
         <button
           onClick={() => onNavigate('ai')}
-          className="mt-1 w-full rounded-xl bg-white text-[#172231] py-2.5 text-sm font-black active:opacity-90"
+          className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-white py-3 text-sm font-black text-[#172231] active:opacity-90"
         >
-          Review & Approve
+          Review & Approve <ArrowRight className="h-4 w-4" />
         </button>
       </div>
 
-      {/* Quick Actions - clean 2x2 */}
+      {/* Quick Actions 2x2 — more useful */}
       <div className="grid grid-cols-2 gap-3">
         <ActionTile
           label={isLoading ? 'Syncing…' : 'Sync Tesla'}
-          detail="Refresh telemetry"
+          detail="Pull latest telemetry"
           tone="border-emerald-400/20 bg-emerald-400/10"
           onClick={onSync}
           disabled={isLoading}
         />
         <ActionTile
-          label="AI Review"
-          detail="Get recommendations"
+          label="AI Agent"
+          detail="Get fresh recommendations"
           tone="border-sky-400/20 bg-sky-400/10"
           onClick={() => onNavigate('ai')}
         />
         <ActionTile
-          label="Map"
-          detail="See live locations"
+          label="Live Map"
+          detail="Vehicle locations + demand"
           tone="border-white/10 bg-white/5"
           onClick={() => onNavigate('map')}
         />
         <ActionTile
           label="Money"
-          detail="Revenue & costs"
+          detail="Revenue & costs today"
           tone="border-white/10 bg-white/5"
           onClick={() => onNavigate('finance')}
         />
       </div>
 
-      {/* Minimal last sync status */}
+      {/* Sync status */}
       {syncStatus && (
         <div className="text-center text-[11px] text-slate-400">
           Last synced {formatTime(syncStatus.lastSyncedAt)} • {syncStatus.state}
         </div>
       )}
 
-      {/* Simple Vehicles at a Glance (clean, not busy) */}
-      <div className="pt-2">
-        <div className="flex items-center justify-between mb-2 px-1">
-          <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">Vehicles</p>
-          <button onClick={() => onNavigate('fleet')} className="text-[11px] text-sky-300 font-bold">See all →</button>
+      {/* Vehicles at a Glance — compact + tappable */}
+      <div>
+        <div className="mb-2 flex items-center justify-between px-1">
+          <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">Your Fleet</p>
+          <button onClick={() => onNavigate('fleet')} className="text-[11px] font-bold text-sky-300">All vehicles →</button>
         </div>
         <div className="space-y-2">
-          {fleet.slice(0, 3).map((v) => (
-            <button
-              key={v.id}
-              onClick={() => onNavigate('fleet')}
-              className="w-full flex items-center justify-between rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 text-left active:bg-white/10"
-            >
-              <div>
-                <p className="text-sm font-black text-white">{v.id}</p>
-                <p className="text-[11px] text-slate-400">{v.city || '—'}</p>
-              </div>
-              <div className="text-right">
-                <p className="text-sm font-black text-white">{v.battery ? `${Math.round(v.battery)}%` : '--'}</p>
-                <p className="text-[10px] text-slate-400">{v.status}</p>
-              </div>
-            </button>
-          ))}
+          {fleet.slice(0, 3).map((v) => {
+            const statusColor = v.status === 'IN SERVICE' || v.status === 'PICKUP' ? 'text-emerald-400' : 'text-amber-300';
+            return (
+              <button
+                key={v.id}
+                onClick={() => onNavigate('fleet')}
+                className="flex w-full items-center justify-between rounded-2xl border border-white/10 bg-white/[0.04] px-3 py-2.5 text-left active:bg-white/10"
+              >
+                <div>
+                  <p className="font-black text-white">{v.id}</p>
+                  <p className="text-[11px] text-slate-400">{v.city || '—'}</p>
+                </div>
+                <div className="text-right text-sm">
+                  <p className="font-black text-white">{v.battery ? `${Math.round(v.battery)}%` : '—'}</p>
+                  <p className={`text-[10px] font-semibold ${statusColor}`}>{v.status}</p>
+                </div>
+              </button>
+            );
+          })}
         </div>
       </div>
 
-      {/* Quick Fleet Readiness Summary */}
+      {/* Readiness footer */}
       <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-3 text-sm">
         <div className="flex justify-between text-slate-300">
           <span>Fleet Ready</span>
           <span className="font-black text-white">{Math.round((active / (fleet.length || 1)) * 100)}%</span>
         </div>
-        <div className="text-[11px] text-slate-400 mt-0.5">
-          {active} vehicles ready for dispatch
-        </div>
+        <div className="mt-0.5 text-[11px] text-slate-400">{active} vehicles ready for dispatch right now</div>
       </div>
 
-      {/* Empty state for new users */}
       {fleet.length === 0 && (
         <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-center">
           <p className="text-sm text-slate-300">No vehicles connected yet.</p>

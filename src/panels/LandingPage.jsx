@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { isClerkConfigured } from '../auth/clerkConfig';
 import RoboLogo from '../components/RoboLogo';
 import RoboWordmark from '../components/RoboWordmark';
+import { TrendingUp, BatteryCharging, Wrench, ListChecks, ArrowRight, Shield, Zap } from 'lucide-react';
 import { buildMarketRentalAnswer, isMarketQuestion } from '../services/marketIntelligenceService';
 
 const demoPrompts = [
@@ -623,7 +624,7 @@ export function HowItWorksPage({ onNavigate }) {
 export default function LandingPage({ onNavigate }) {
   return (
     <div className="min-h-screen bg-[#f7f7f5] text-[#141b27]">
-      {/* Navigation */}
+      {/* Navigation — premium light, clean separation */}
       <header className="mx-auto flex max-w-6xl items-center justify-between px-5 py-5">
         <button onClick={() => onNavigate('landing')} className="flex items-center gap-3">
           <RoboLogo className="h-8 w-8" />
@@ -633,104 +634,126 @@ export default function LandingPage({ onNavigate }) {
         <div className="flex items-center gap-2 text-sm font-semibold">
           <button
             onClick={() => onNavigate('how-it-works')}
-            className="rounded-full px-4 py-2 text-slate-600 hover:bg-white hover:text-[#141b27]"
+            className="hidden sm:block rounded-full px-4 py-2 text-slate-600 hover:bg-white hover:text-[#141b27]"
           >
             How it works
           </button>
           <button
             onClick={() => openDirectSignIn(onNavigate)}
-            className="rounded-full border border-[#141b27]/10 bg-white px-4 py-2 text-[#172231] hover:bg-slate-100"
+            className="rounded-full border border-[#141b27]/10 bg-white px-4 py-2 text-[#172231] hover:bg-slate-100 active:bg-slate-200"
           >
             Sign in
           </button>
           <button
             onClick={() => onNavigate('onboarding')}
-            className="rounded-full bg-[#172231] px-5 py-2 font-bold text-white hover:bg-[#243044]"
+            className="rounded-full bg-[#172231] px-5 py-2 font-bold text-white hover:bg-[#243044] active:bg-black"
           >
             Get started
           </button>
         </div>
       </header>
 
-      {/* Hero — Mobile-first, matching mockup 10 style (clean, big Tesla visual) */}
-      <div className="mx-auto max-w-6xl px-5 pt-6 pb-10">
+      {/* Hero — Clean top layer (Tesla visual dominant) + strong bottom separation */}
+      <div className="mx-auto max-w-6xl px-5 pt-6 pb-12 md:pt-10 md:pb-14">
         <div className="flex flex-col items-center text-center">
-          {/* Tesla visual - prominent on mobile */}
-          <div className="w-full max-w-[820px]">
+          {/* Tesla visual - big, rounded, premium on both mobile + desktop */}
+          <div className="w-full max-w-[860px] overflow-hidden rounded-3xl shadow-2xl ring-1 ring-black/5">
             <img 
               src="/images/roboagent-tesla-rental-hero.png" 
-              alt="Tesla vehicle" 
-              className="w-full rounded-3xl shadow-2xl"
+              alt="Tesla Model Y in rental service" 
+              className="w-full"
             />
           </div>
 
-          <h1 className="mt-6 text-4xl font-semibold tracking-tighter text-black sm:text-5xl md:text-6xl max-w-3xl">
-            Turn your Teslas into a profitable, hands-off business.
-          </h1>
-          <p className="mt-3 text-base text-slate-600 max-w-md sm:text-lg">
-            ROBOAGENT uses AI to handle pricing, charging, maintenance, and daily planning — so your fleet earns more with less work.
-          </p>
+          <div className="mt-8 max-w-3xl">
+            <h1 className="text-4xl font-semibold tracking-tighter text-black sm:text-5xl md:text-[56px] md:leading-[1.05]">
+              Turn your Teslas into a profitable, hands-off business.
+            </h1>
+            <p className="mt-4 text-[15px] leading-relaxed text-slate-600 sm:text-lg max-w-2xl mx-auto">
+              ROBOAGENT uses real Tesla data + AI to handle pricing, charging, maintenance, and daily planning — so your fleet earns more with less work.
+            </p>
+          </div>
 
-          <div className="mt-6 flex flex-col gap-3 w-full max-w-xs">
+          {/* Big thumb-friendly CTAs (mobile first) */}
+          <div className="mt-7 flex w-full max-w-sm flex-col gap-3 sm:max-w-none sm:flex-row sm:gap-4">
             <button
               onClick={() => onNavigate('onboarding')}
-              className="h-14 rounded-3xl bg-[#172231] text-lg font-black text-white shadow-lg hover:bg-[#243044]"
+              className="flex h-14 w-full items-center justify-center rounded-3xl bg-[#172231] text-lg font-black text-white shadow-lg transition active:scale-[0.985] hover:bg-[#243044] sm:w-auto sm:px-10"
             >
               Start free — Add your first Tesla
             </button>
             <button
               onClick={() => onNavigate('how-it-works')}
-              className="h-14 rounded-3xl border border-[#141b27]/10 bg-white text-lg font-black text-[#172231] hover:bg-slate-100"
+              className="flex h-14 w-full items-center justify-center rounded-3xl border border-[#141b27]/15 bg-white text-lg font-black text-[#172231] transition active:scale-[0.985] hover:bg-slate-50 sm:w-auto sm:px-8"
             >
               See how it works
             </button>
           </div>
 
-          <div className="mt-4 text-xs text-slate-500 flex flex-wrap gap-x-3 justify-center">
-            <span>First Tesla free in beta</span>
-            <span>Official Tesla Fleet API</span>
-            <span>Revoke anytime</span>
+          <div className="mt-5 text-xs text-slate-500 flex flex-wrap gap-x-4 gap-y-1 justify-center tracking-wide">
+            <span>✓ First Tesla free in beta</span>
+            <span>✓ Official Tesla Fleet API</span>
+            <span>✓ Revoke access anytime</span>
           </div>
         </div>
       </div>
 
-      {/* Benefits — Clean cards with icons like the mockup you liked */}
-      <div className="border-t border-[#141b27]/10 bg-white py-14">
+      {/* Benefits — Clean premium cards (strong top/bottom layer separation) */}
+      <div className="border-t border-[#141b27]/10 bg-white py-14 md:py-16">
         <div className="mx-auto max-w-6xl px-5">
           <div className="mx-auto max-w-2xl text-center">
             <p className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">What you actually get</p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight">AI that works while your cars earn.</h2>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-black">AI that works while your cars earn.</h2>
+            <p className="mt-3 text-slate-600">Four things ROBOAGENT handles every single day so you don't have to.</p>
           </div>
 
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { icon: "📈", title: "Dynamic Pricing", desc: "Automatically raises and lowers rates based on real demand so you capture more revenue." },
-              { icon: "⚡", title: "Smart Charging", desc: "Plans the cheapest, most efficient charging windows so cars are ready when it matters." },
-              { icon: "🔧", title: "Predictive Maintenance", desc: "Spots tire, brake, and battery issues early using real Tesla telemetry." },
-              { icon: "📋", title: "Daily AI Plans", desc: "Every morning you get a clear, prioritized list of actions ready to approve." },
-            ].map((item) => (
-              <div key={item.title} className="rounded-3xl border border-[#141b27]/10 bg-[#f7f7f5] p-6">
-                <div className="text-2xl mb-3">{item.icon}</div>
-                <h3 className="text-xl font-black">{item.title}</h3>
-                <p className="mt-2 text-[15px] leading-relaxed text-slate-600">{item.desc}</p>
+              { Icon: TrendingUp, title: "Dynamic Pricing", desc: "Automatically raises and lowers rates based on real demand so you capture more revenue." },
+              { Icon: BatteryCharging, title: "Smart Charging", desc: "Plans the cheapest, most efficient charging windows so cars are ready when it matters." },
+              { Icon: Wrench, title: "Predictive Maintenance", desc: "Spots tire, brake, and battery issues early using real Tesla telemetry." },
+              { Icon: ListChecks, title: "Daily AI Plans", desc: "Every morning you get a clear, prioritized list of actions ready to approve." },
+            ].map(({ Icon, title, desc }) => (
+              <div key={title} className="group rounded-3xl border border-[#141b27]/10 bg-white p-6 shadow-sm transition hover:shadow-md hover:border-[#141b27]/20">
+                <div className="mb-4 inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-[#172231]/5 text-[#172231] group-hover:bg-[#172231] group-hover:text-white transition">
+                  <Icon className="h-5 w-5" />
+                </div>
+                <h3 className="text-xl font-black tracking-tight text-black">{title}</h3>
+                <p className="mt-2 text-[15px] leading-relaxed text-slate-600">{desc}</p>
               </div>
             ))}
+          </div>
+
+          {/* Trust row - clean separation */}
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-slate-500">
+            <div className="flex items-center gap-2"><Shield className="h-4 w-4" /> Tesla OAuth only</div>
+            <div className="flex items-center gap-2"><Zap className="h-4 w-4" /> Real-time telemetry</div>
+            <div>Revoke access anytime</div>
+            <div>First vehicle free in beta</div>
           </div>
         </div>
       </div>
 
-      {/* Final CTA */}
-      <div className="py-16 text-center">
-        <div className="mx-auto max-w-md px-5">
-          <h3 className="text-2xl font-semibold tracking-tight">Ready to stop managing your fleet manually?</h3>
-          <p className="mt-2 text-slate-600">Connect your first Tesla in minutes. No credit card required during beta.</p>
+      {/* Final CTA — strong bottom layer */}
+      <div className="border-t border-[#141b27]/10 bg-[#f7f7f5] py-16 text-center">
+        <div className="mx-auto max-w-lg px-5">
+          <h3 className="text-2xl font-semibold tracking-tight text-black">Ready to stop managing your fleet manually?</h3>
+          <p className="mt-3 text-slate-600">Connect your first Tesla in minutes. See the first AI plan before you commit. No card required in beta.</p>
 
-          <button
-            onClick={() => onNavigate('onboarding')}
-            className="mt-7 flex h-14 w-full items-center justify-center rounded-3xl bg-[#172231] text-lg font-black text-white shadow-lg hover:bg-[#243044] sm:mx-auto sm:w-auto sm:px-14"
-          >
-            Start free — Connect your Tesla
-          </button>
+          <div className="mt-7 flex flex-col gap-3 sm:flex-row sm:justify-center">
+            <button
+              onClick={() => onNavigate('onboarding')}
+              className="flex h-14 w-full items-center justify-center rounded-3xl bg-[#172231] px-9 text-lg font-black text-white shadow-lg transition active:scale-[0.985] hover:bg-[#243044] sm:w-auto"
+            >
+              Start free — Add your Tesla
+            </button>
+            <button
+              onClick={() => onNavigate('agent')}
+              className="flex h-14 w-full items-center justify-center rounded-3xl border border-[#141b27]/15 bg-white px-8 text-lg font-black text-[#172231] transition active:scale-[0.985] hover:bg-slate-50 sm:w-auto"
+            >
+              Try the AI Agent first
+            </button>
+          </div>
         </div>
       </div>
     </div>
