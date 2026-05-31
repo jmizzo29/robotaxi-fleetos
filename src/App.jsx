@@ -646,7 +646,7 @@ function FleetApp() {
         <PageHeader
           eyebrow="Account"
           title="Account & Access"
-          description="Create a beta account, sign in, manage profile details, use passwordless magic links, and confirm first-Tesla-free billing status."
+          description="Manage your owner profile, plan, Tesla setup, and this device session."
         />
         <AccountPanel onNavigate={navigate} />
       </>

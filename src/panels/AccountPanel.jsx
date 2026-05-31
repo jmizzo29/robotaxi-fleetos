@@ -2,21 +2,12 @@ import { useEffect, useState } from 'react';
 import { isClerkConfigured } from '../auth/clerkConfig';
 import RoboLogo from '../components/RoboLogo';
 import RoboWordmark from '../components/RoboWordmark';
+import SignOutButton from '../components/SignOutButton';
 import {
   getFleetOsBillingStatus,
   getFleetOsSession,
-  loginFleetOsAccount,
-  logoutFleetOsAccount,
-  registerFleetOsAccount,
   updateFleetOsProfile,
 } from '../services/sessionService';
-
-const emptyRegister = {
-  name: '',
-  email: '',
-  password: '',
-  inviteCode: '',
-};
 
 function TextInput(props) {
   return (
@@ -48,10 +39,7 @@ function Metric({ label, value }) {
 export default function AccountPanel({ onNavigate }) {
   const [session, setSession] = useState(null);
   const [billing, setBilling] = useState(null);
-  const [registerForm, setRegisterForm] = useState(emptyRegister);
-  const [loginForm, setLoginForm] = useState({ email: '', password: '' });
   const [profileName, setProfileName] = useState('');
-  const [authMode, setAuthMode] = useState('signin');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [isBusy, setIsBusy] = useState(false);
@@ -112,7 +100,6 @@ export default function AccountPanel({ onNavigate }) {
   const openClerkAuth = async (mode) => {
     setError('');
     setMessage('');
-    setAuthMode(mode);
 
     if (!window.Clerk?.loaded) {
       setError('Account service is still loading. Try again in a moment.');
@@ -132,23 +119,6 @@ export default function AccountPanel({ onNavigate }) {
     }
 
     await window.Clerk.openSignIn(options);
-  };
-
-  const signOut = async () => {
-    setIsBusy(true);
-    setError('');
-    setMessage('');
-    setSession({ authenticated: false, user: {} });
-    onNavigate?.('landing');
-
-    try {
-      await logoutFleetOsAccount().catch(() => {});
-      if (window.Clerk?.loaded && typeof window.Clerk.signOut === 'function') {
-        await window.Clerk.signOut();
-      }
-    } finally {
-      setIsBusy(false);
-    }
   };
 
   return (
@@ -176,14 +146,14 @@ export default function AccountPanel({ onNavigate }) {
             </h1>
             <p className="mt-2 text-sm font-semibold leading-5 text-slate-500 sm:leading-6">
               {hasRealAccount
-                ? 'Manage this browser session.'
-                : 'Use your account first. Tesla connects after sign in.'}
+                ? 'Manage your owner account, plan, and this device session.'
+                : 'Use your owner account first. Tesla connects after sign in.'}
             </p>
           </div>
 
           {(message || error) && (
             <div className={`mb-5 rounded-2xl border p-4 text-sm font-semibold ${
-              error ? 'border-red-400/30 bg-red-500/10 text-red-200' : 'border-emerald-400/30 bg-emerald-500/10 text-emerald-200'
+              error ? 'border-red-200 bg-red-50 text-red-700' : 'border-emerald-200 bg-emerald-50 text-emerald-800'
             }`}>
               {error || message}
             </div>
@@ -209,77 +179,9 @@ export default function AccountPanel({ onNavigate }) {
                   </button>
                 </>
               ) : (
-                <>
-                  <div className="flex rounded-2xl border border-[#141b27]/10 bg-slate-100 p-1">
-                    {[
-                      ['signin', 'Sign In'],
-                      ['create', 'Create'],
-                    ].map(([mode, label]) => (
-                      <button
-                        key={mode}
-                        type="button"
-                        onClick={() => setAuthMode(mode)}
-                        className={`flex-1 rounded-xl px-4 py-2.5 text-sm font-black transition sm:py-3 ${
-                          authMode === mode ? 'bg-[#172231] text-white shadow-sm' : 'text-slate-500 hover:bg-white hover:text-black'
-                        }`}
-                      >
-                        {label}
-                      </button>
-                    ))}
-                  </div>
-
-                  {authMode === 'signin' ? (
-                    <div className="space-y-3 sm:space-y-4">
-                      <Field label="Email">
-                        <TextInput
-                          type="email"
-                          value={loginForm.email}
-                          onChange={(event) => setLoginForm({ ...loginForm, email: event.target.value })}
-                          placeholder="you@example.com"
-                        />
-                      </Field>
-                      <Field label="Password">
-                        <TextInput
-                          type="password"
-                          value={loginForm.password}
-                          onChange={(event) => setLoginForm({ ...loginForm, password: event.target.value })}
-                          placeholder="Password"
-                        />
-                      </Field>
-                      <button
-                        type="button"
-                        disabled={isBusy}
-                        onClick={() => runAction(() => loginFleetOsAccount(loginForm), 'Signed in successfully.')}
-                        className="w-full rounded-2xl bg-[#172231] px-5 py-3.5 text-base font-black text-white transition hover:bg-[#243044] disabled:cursor-wait disabled:opacity-60 sm:py-4"
-                      >
-                        {isBusy ? 'Signing In...' : 'Sign In'}
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="space-y-3 sm:space-y-4">
-                      <Field label="Name">
-                        <TextInput value={registerForm.name} onChange={(event) => setRegisterForm({ ...registerForm, name: event.target.value })} placeholder="Jane Owner" />
-                      </Field>
-                      <Field label="Email">
-                        <TextInput type="email" value={registerForm.email} onChange={(event) => setRegisterForm({ ...registerForm, email: event.target.value })} placeholder="you@example.com" />
-                      </Field>
-                      <Field label="Password">
-                        <TextInput type="password" value={registerForm.password} onChange={(event) => setRegisterForm({ ...registerForm, password: event.target.value })} placeholder="8+ characters" />
-                      </Field>
-                      <Field label="Invite Code">
-                        <TextInput value={registerForm.inviteCode} onChange={(event) => setRegisterForm({ ...registerForm, inviteCode: event.target.value })} placeholder="Provided beta code" />
-                      </Field>
-                      <button
-                        type="button"
-                        disabled={isBusy}
-                        onClick={() => runAction(() => registerFleetOsAccount(registerForm), 'Account created. This browser is now signed in.')}
-                        className="w-full rounded-2xl bg-[#172231] px-5 py-4 text-base font-black text-white transition hover:bg-[#243044] disabled:cursor-wait disabled:opacity-60"
-                      >
-                        {isBusy ? 'Creating...' : 'Create Account'}
-                      </button>
-                    </div>
-                  )}
-                </>
+                <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-semibold leading-6 text-amber-800">
+                  Secure account sign-in is not configured in this environment. Use the live site with Clerk enabled, or add the Clerk publishable key before testing account creation.
+                </div>
               )}
 
               <p className="text-center text-xs font-semibold leading-5 text-slate-500">
@@ -301,14 +203,13 @@ export default function AccountPanel({ onNavigate }) {
               >
                 Open Dashboard
               </button>
-              <button
-                type="button"
-                disabled={isBusy}
-                onClick={signOut}
-                className="w-full rounded-2xl border border-red-500/15 bg-red-50 px-5 py-4 text-base font-black text-red-700 transition hover:bg-red-100 disabled:cursor-wait disabled:opacity-60"
-              >
-                {isBusy ? 'Signing Out...' : 'Sign Out'}
-              </button>
+              <SignOutButton
+                onSignedOut={() => {
+                  setSession({ authenticated: false, user: {} });
+                  onNavigate?.('landing');
+                }}
+                className="w-full rounded-2xl border border-[#141b27]/10 bg-slate-50 px-5 py-4 text-base font-black text-[#172231] transition hover:bg-slate-100"
+              />
 
               <details className="rounded-2xl border border-[#141b27]/10 bg-slate-50 p-4">
                 <summary className="cursor-pointer text-sm font-black text-slate-700">Account Details</summary>

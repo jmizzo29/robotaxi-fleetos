@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import RoboWordmark from './RoboWordmark';
-import { logoutFleetOsAccount } from '../services/sessionService';
+import SignOutButton from './SignOutButton';
 
 function NavIcon({ type }) {
   const paths = {
@@ -22,7 +22,7 @@ const items = [
   ['overview', 'home', 'Command'],
   ['map', 'map', 'Map'],
   ['ai', 'ai', 'Agent'],
-  ['health', 'fleet', 'Health'],
+  ['fleet', 'fleet', 'Fleet'],
   ['more', 'more', 'More'],
 ];
 
@@ -33,41 +33,31 @@ const menuSections = [
       ['overview', 'Command', 'Owner dashboard'],
       ['map', 'Map', 'Vehicles and service areas'],
       ['ai', 'Agent', 'Ask and approve actions'],
-      ['dispatch', 'Plan', 'Staging and pricing'],
-    ],
-  },
-  {
-    label: 'Fleet',
-    items: [
-      ['fleet', 'Vehicles', 'Registry'],
-      ['health', 'Health', 'Maintenance and risk'],
-      ['charging', 'Charging', 'Energy readiness'],
+      ['fleet', 'Fleet', 'Vehicles and readiness'],
       ['finance', 'Money', 'Revenue and ROI'],
+      ['account', 'Account', 'Profile and access'],
     ],
   },
   {
     label: 'Setup',
     items: [
-      ['onboarding', 'Setup', 'Account and Tesla connect'],
-      ['tesla', 'Tesla', 'API status'],
-      ['integrations', 'Integrations', 'Connected systems'],
-      ['account', 'Account', 'Profile and access'],
+      ['onboarding', 'Setup', 'Connect first Tesla'],
+      ['tesla', 'Tesla', 'Connection status'],
     ],
   },
   {
     label: 'Advanced',
     items: [
-      ['alerts', 'Alerts', 'AI triage'],
-      ['reports', 'Reports', 'Operations review'],
+      ['health', 'Health', 'Maintenance risk'],
+      ['charging', 'Charging', 'Energy readiness'],
+      ['dispatch', 'Plan', 'Staging and pricing'],
       ['settings', 'Settings', 'Runtime controls'],
-      ['admin', 'Admin', 'Beta operations'],
     ],
   },
 ];
 
 export default function MobileBottomNav({ route, onNavigate }) {
   const [isOpen, setIsOpen] = useState(false);
-  const [isSigningOut, setIsSigningOut] = useState(false);
   const primaryRouteIds = new Set(items.map(([id]) => id).filter((id) => id !== 'more'));
   const isMoreActive = !primaryRouteIds.has(route);
 
@@ -79,21 +69,6 @@ export default function MobileBottomNav({ route, onNavigate }) {
 
     setIsOpen(false);
     onNavigate(id);
-  };
-
-  const signOut = async () => {
-    setIsSigningOut(true);
-    setIsOpen(false);
-    onNavigate('landing');
-
-    try {
-      await logoutFleetOsAccount().catch(() => {});
-      if (window.Clerk?.loaded && typeof window.Clerk.signOut === 'function') {
-        await window.Clerk.signOut();
-      }
-    } finally {
-      setIsSigningOut(false);
-    }
   };
 
   return (
@@ -108,14 +83,6 @@ export default function MobileBottomNav({ route, onNavigate }) {
               <h2 className="text-lg font-black text-[#141b27]">Menu</h2>
             </div>
             <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={signOut}
-                disabled={isSigningOut}
-                className="rounded-full border border-red-500/15 bg-red-50 px-3 py-2 text-xs font-black text-red-700 transition hover:bg-red-100 disabled:cursor-wait disabled:opacity-60"
-              >
-                {isSigningOut ? '...' : 'Sign Out'}
-              </button>
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
@@ -152,6 +119,21 @@ export default function MobileBottomNav({ route, onNavigate }) {
                 </div>
               </div>
             ))}
+            <div className="rounded-2xl border border-[#141b27]/10 bg-slate-50 p-3">
+              <p className="mb-2 px-1 text-[10px] font-black uppercase tracking-[0.16em] text-slate-500">
+                Session
+              </p>
+              <SignOutButton
+                compact
+                onSignedOut={() => {
+                  setIsOpen(false);
+                  onNavigate('landing');
+                }}
+                className="w-full rounded-xl border border-[#141b27]/10 bg-white px-3 py-3 text-left text-sm font-black text-[#172231] transition hover:bg-slate-50"
+                confirmClassName="bg-white"
+                label="Sign out of this device"
+              />
+            </div>
           </div>
         </div>
       )}
