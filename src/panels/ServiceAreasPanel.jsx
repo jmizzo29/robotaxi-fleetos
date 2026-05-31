@@ -1,3 +1,4 @@
+import { TrendingUp, MapPin } from 'lucide-react';
 import { buildMarketRentalAnswer, inferOwnerMarket } from '../services/marketIntelligenceService';
 
 function formatCurrency(value) {
@@ -75,6 +76,16 @@ export default function ServiceAreasPanel({ fleet = [], demandZones = [], onQueu
           detail={`${fleet.length} vehicles monitored`}
           tone="sky"
         />
+      </div>
+
+      {/* Extra mobile context for Map tab */}
+      <div className="lg:hidden -mt-2 rounded-3xl border border-white/10 bg-slate-900/70 p-3 text-sm text-slate-200">
+        <div className="flex items-center gap-2 text-emerald-300">
+          <MapPin className="h-4 w-4" /> {readyCount} vehicles in strong zones • Tap map for live positions
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-4">
         <MetricCard
           label="Utilization"
           value={`${avgUtilization}%`}
