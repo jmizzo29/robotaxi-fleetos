@@ -561,148 +561,100 @@ export default function OnboardingPanel({
           <section className="text-center lg:text-left">
             <RoboLogo className="mx-auto mb-3 h-14 w-14 lg:mx-0 sm:mb-4 sm:h-20 sm:w-20" />
             <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">Secure account</p>
-            <h1 className="mt-3 text-3xl font-medium leading-tight text-black sm:text-5xl">
-              Create Your ROBOAGENT Account
+            <h1 className="mt-3 text-3xl font-semibold tracking-tight text-black sm:text-5xl">
+              Create your ROBOAGENT account
             </h1>
-            <p className="mx-auto mt-3 max-w-md text-sm font-semibold leading-6 text-slate-600 sm:mt-4 sm:text-base sm:leading-7 lg:mx-0">
-              One account to manage all your Teslas, rentals, and future Robotaxis
+            <p className="mx-auto mt-3 max-w-md text-base text-slate-600 sm:mt-4 lg:mx-0">
+              One account to manage all your Teslas, rentals, and future robotaxis.
             </p>
-            <div className="mt-6 hidden gap-3 lg:grid">
+
+            <div className="mt-8 hidden gap-3 lg:grid">
               {[
                 ['Private by default', 'Tesla connects only after your ROBOAGENT account is ready.'],
                 ['Fast setup', 'Create the account, approve data use, then connect Tesla.'],
                 ['Owner controlled', 'Sign out, revoke access, or delete data from settings.'],
               ].map(([title, detail]) => (
-                <article key={title} className="rounded-2xl border border-[#141b27]/10 bg-white p-4 shadow-sm">
+                <article key={title} className="rounded-2xl border border-[#141b27]/10 bg-white p-4">
                   <p className="text-sm font-black text-[#141b27]">{title}</p>
-                  <p className="mt-1 text-sm font-semibold leading-5 text-slate-500">{detail}</p>
+                  <p className="mt-1 text-sm font-semibold leading-5 text-slate-600">{detail}</p>
                 </article>
               ))}
             </div>
-            {realProgressStep > 1 && (
-              <div className="mx-auto mt-6 max-w-md rounded-2xl border border-emerald-200 bg-emerald-50 p-4 text-left lg:mx-0">
-                <p className="text-sm font-black text-emerald-900">
-                  Existing setup detected for this browser.
-                </p>
-                <p className="mt-1 text-sm font-semibold leading-6 text-emerald-800">
-                  Continue where you left off, or use the sign-in page to switch accounts before connecting Tesla again.
-                </p>
-                <button
-                  type="button"
-                  onClick={continueExistingSetup}
-                  className="mt-4 w-full rounded-2xl border border-emerald-300 bg-white px-4 py-3 text-sm font-black text-emerald-900 transition hover:bg-emerald-100"
-                >
-                  Continue Existing Setup
-                </button>
-              </div>
-            )}
           </section>
 
-          <section className="mx-auto w-full max-w-md rounded-[1.5rem] border border-[#141b27]/10 bg-white/95 p-4 shadow-2xl shadow-slate-900/10 sm:p-6">
+          <section className="mx-auto w-full max-w-md rounded-3xl border border-[#141b27]/10 bg-white p-6 shadow-sm">
             <div className="mb-5">
               <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">Start free</p>
-              <h2 className="mt-2 text-2xl font-semibold text-black">Create account</h2>
+              <h2 className="mt-1 text-2xl font-semibold text-black">Create account</h2>
             </div>
 
-            <div className="space-y-3">
-            <div>
-              <label htmlFor="onboarding-email" className="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-slate-500">Email Address</label>
-              <input
-                id="onboarding-email"
-                type="email"
-                value={accountForm.email}
-                onChange={(event) => {
-                  setAccountForm((current) => ({ ...current, email: event.target.value }));
-                  setAccountErrors((current) => ({ ...current, email: '' }));
-                }}
-                placeholder="you@email.com"
-                aria-invalid={Boolean(accountErrors.email)}
-                className={`w-full rounded-2xl border bg-white px-5 py-3 text-[#141b27] outline-none transition placeholder:text-slate-400 focus:border-[#172231] ${
-                  accountErrors.email ? 'border-red-400' : 'border-[#141b27]/15'
-                }`}
-              />
-              {accountErrors.email && (
-                <p className="mt-2 text-sm font-semibold text-red-600">{accountErrors.email}</p>
-              )}
-            </div>
-
-            <div>
-              <label htmlFor="onboarding-password" className="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-slate-500">Password</label>
-              <input
-                id="onboarding-password"
-                type="password"
-                value={accountForm.password}
-                onChange={(event) => {
-                  setAccountForm((current) => ({ ...current, password: event.target.value }));
-                  setAccountErrors((current) => ({ ...current, password: '' }));
-                }}
-                placeholder="Create a password"
-                aria-invalid={Boolean(accountErrors.password)}
-                className={`w-full rounded-2xl border bg-white px-5 py-3 text-[#141b27] outline-none transition placeholder:text-slate-400 focus:border-[#172231] ${
-                  accountErrors.password ? 'border-red-400' : 'border-[#141b27]/15'
-                }`}
-              />
-              {accountErrors.password && (
-                <p className="mt-2 text-sm font-semibold text-red-600">{accountErrors.password}</p>
-              )}
-            </div>
-
-            {isClerkConfigured() ? (
-              <ClerkEmailSignUpButton
-                email={accountForm.email.trim()}
-                password={accountForm.password}
-                onValidate={validateAccountForm}
-                onSignedUp={completeClerkAccount}
-              />
-            ) : (
-              <PrimaryButton onClick={createNativeAccount} className="py-3 text-base">
-                Create Free Account
-              </PrimaryButton>
-            )}
-
-            <div className="relative my-1.5">
-              <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-slate-200" />
+            <div className="space-y-4">
+              <div>
+                <label htmlFor="onboarding-email" className="mb-1.5 block text-sm font-semibold text-slate-600">Email Address</label>
+                <input
+                  id="onboarding-email"
+                  type="email"
+                  value={accountForm.email}
+                  onChange={(event) => {
+                    setAccountForm((current) => ({ ...current, email: event.target.value }));
+                    setAccountErrors((current) => ({ ...current, email: '' }));
+                  }}
+                  placeholder="you@email.com"
+                  className={`w-full rounded-2xl border bg-white px-5 py-3 text-[#141b27] outline-none transition placeholder:text-slate-400 focus:border-[#172231] ${
+                    accountErrors.email ? 'border-red-400' : 'border-[#141b27]/15'
+                  }`}
+                />
+                {accountErrors.email && <p className="mt-1 text-sm text-red-600">{accountErrors.email}</p>}
               </div>
-              <div className="relative text-center">
-                <span className="bg-white px-4 text-sm font-semibold text-slate-500">or continue with</span>
-              </div>
-            </div>
 
-            <div className="hidden" aria-hidden="true">
+              <div>
+                <label htmlFor="onboarding-password" className="mb-1.5 block text-sm font-semibold text-slate-600">Password</label>
+                <input
+                  id="onboarding-password"
+                  type="password"
+                  value={accountForm.password}
+                  onChange={(event) => {
+                    setAccountForm((current) => ({ ...current, password: event.target.value }));
+                    setAccountErrors((current) => ({ ...current, password: '' }));
+                  }}
+                  placeholder="Create a password"
+                  className={`w-full rounded-2xl border bg-white px-5 py-3 text-[#141b27] outline-none transition placeholder:text-slate-400 focus:border-[#172231] ${
+                    accountErrors.password ? 'border-red-400' : 'border-[#141b27]/15'
+                  }`}
+                />
+                {accountErrors.password && <p className="mt-1 text-sm text-red-600">{accountErrors.password}</p>}
+              </div>
+
+              {isClerkConfigured() ? (
+                <ClerkEmailSignUpButton
+                  email={accountForm.email.trim()}
+                  password={accountForm.password}
+                  onValidate={validateAccountForm}
+                  onSignedUp={completeClerkAccount}
+                />
+              ) : (
+                <PrimaryButton onClick={createNativeAccount}>Create Free Account</PrimaryButton>
+              )}
+
+              <div className="relative my-2">
+                <div className="absolute inset-0 flex items-center">
+                  <div className="w-full border-t border-slate-200" />
+                </div>
+                <div className="relative text-center">
+                  <span className="bg-white px-3 text-sm text-slate-500">or</span>
+                </div>
+              </div>
+
+              {isClerkConfigured() ? <ClerkOAuthButtons /> : <OAuthFallbackButtons />}
+
               <button
                 type="button"
                 onClick={() => onNavigate?.('account')}
-                className="flex items-center justify-center gap-3 rounded-2xl border border-[#141b27]/10 bg-white py-5 transition hover:bg-slate-50"
+                className="w-full rounded-2xl border border-[#141b27]/10 bg-slate-50 px-5 py-3 text-sm font-bold text-[#172231] hover:bg-white"
               >
-                <span className="text-xl">G</span>
-                Google
-              </button>
-              <button
-                type="button"
-                onClick={() => onNavigate?.('account')}
-                className="flex items-center justify-center gap-3 rounded-2xl border border-[#141b27]/10 bg-white py-5 transition hover:bg-slate-50"
-              >
-                <span className="text-xl"></span>
-                Apple
+                Already have an account? Sign in
               </button>
             </div>
-
-            {isClerkConfigured() ? (
-              <ClerkOAuthButtons />
-            ) : (
-              <OAuthFallbackButtons />
-            )}
-
-            <button
-              type="button"
-              onClick={() => onNavigate?.('account')}
-              className="w-full rounded-2xl border border-[#141b27]/10 bg-slate-50 px-5 py-3 text-sm font-bold text-[#172231] transition hover:bg-slate-100"
-            >
-              Already have an account? Sign in
-            </button>
-            </div>
-
           </section>
         </div>
       )}
