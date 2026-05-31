@@ -1,3 +1,4 @@
+import { Battery, MapPin, Wrench, TrendingUp } from 'lucide-react';
 import LocationIntelligencePanel from '../components/LocationIntelligencePanel';
 import VehicleIdentityPlate from '../components/VehicleIdentityPlate';
 import { getVehicleOwnership } from '../data/vehicleOwnership';
@@ -23,10 +24,13 @@ function formatDate(value) {
   });
 }
 
-function StatCard({ label, value, tone = 'text-slate-100' }) {
+function StatCard({ label, value, tone = 'text-slate-100', icon: Icon }) {
   return (
-    <div className="rounded-lg border border-white/10 bg-slate-950/50 p-4">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">{label}</p>
+    <div className="rounded-2xl border border-white/10 bg-slate-950/50 p-4">
+      <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-slate-500">
+        {Icon && <Icon className="h-3.5 w-3.5" />}
+        {label}
+      </div>
       <p className={`mt-2 truncate text-2xl font-black ${tone}`}>{value}</p>
     </div>
   );
@@ -84,10 +88,10 @@ export default function VehicleDetailPanel({
             <VehicleIdentityPlate vehicle={vehicle} ownership={ownership} className="my-5" />
 
             <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-              <StatCard label="Battery" value={`${battery}%`} tone={battery < 30 ? 'text-amber-300' : 'text-emerald-300'} />
-              <StatCard label="Speed" value={`${Math.round(vehicle.speed || 0)} mph`} tone="text-sky-300" />
-              <StatCard label="Risk" value={`${Math.round(vehicle.anomalyRisk || 0)}%`} tone={(vehicle.anomalyRisk || 0) > 20 ? 'text-rose-300' : 'text-slate-100'} />
-              <StatCard label="Health" value={`${Math.round(vehicle.maintenanceScore || 90)}%`} tone="text-violet-300" />
+              <StatCard label="Battery" value={`${battery}%`} tone={battery < 30 ? 'text-amber-300' : 'text-emerald-300'} icon={Battery} />
+              <StatCard label="Speed" value={`${Math.round(vehicle.speed || 0)} mph`} tone="text-sky-300" icon={MapPin} />
+              <StatCard label="Risk" value={`${Math.round(vehicle.anomalyRisk || 0)}%`} tone={(vehicle.anomalyRisk || 0) > 20 ? 'text-rose-300' : 'text-slate-100'} icon={Wrench} />
+              <StatCard label="Health" value={`${Math.round(vehicle.maintenanceScore || 90)}%`} tone="text-violet-300" icon={TrendingUp} />
             </div>
           </div>
         </div>
@@ -137,30 +141,30 @@ export default function VehicleDetailPanel({
               type="button"
               onClick={onSync}
               disabled={isLoading}
-              className="rounded-md border border-sky-400/30 bg-sky-400/10 px-4 py-3 text-sm font-bold text-sky-100 transition hover:bg-sky-400/20 disabled:cursor-wait disabled:opacity-60"
+              className="rounded-2xl border border-sky-400/30 bg-sky-400/10 py-3.5 text-sm font-black text-sky-100 active:bg-sky-400/20 disabled:cursor-wait disabled:opacity-60"
             >
               {isLoading ? 'Syncing...' : 'Sync Telemetry'}
             </button>
             <button
               type="button"
               onClick={onShowMap}
-              className="rounded-md border border-emerald-400/30 bg-emerald-400/10 px-4 py-3 text-sm font-bold text-emerald-100 transition hover:bg-emerald-400/20"
+              className="rounded-2xl border border-emerald-400/30 bg-emerald-400/10 py-3.5 text-sm font-black text-emerald-100 active:bg-emerald-400/20"
             >
               Show On Map
             </button>
             <button
               type="button"
               onClick={() => onQueueCommand?.(`AI review requested for ${name}`, 'AI')}
-              className="rounded-md border border-violet-400/30 bg-violet-400/10 px-4 py-3 text-sm font-bold text-violet-100 transition hover:bg-violet-400/20"
+              className="rounded-2xl border border-violet-400/30 bg-violet-400/10 py-3.5 text-sm font-black text-violet-100 active:bg-violet-400/20"
             >
-              AI Review
+              AI Review for this vehicle
             </button>
             <button
               type="button"
               onClick={() => onQueueCommand?.(`Schedule service review for ${name}`, 'NORMAL')}
-              className="rounded-md border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm font-bold text-amber-100 transition hover:bg-amber-400/20"
+              className="rounded-2xl border border-amber-400/30 bg-amber-400/10 py-3.5 text-sm font-black text-amber-100 active:bg-amber-400/20"
             >
-              Service Review
+              Schedule Service / Clean
             </button>
           </div>
         </article>
