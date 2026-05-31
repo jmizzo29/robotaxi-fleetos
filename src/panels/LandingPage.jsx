@@ -693,7 +693,7 @@ export default function LandingPage({ onNavigate }) {
         </div>
       </div>
 
-      {/* Benefits */}
+      {/* Benefits — Clean cards with icons like the mockup you liked */}
       <div className="border-t border-[#141b27]/10 bg-white py-14">
         <div className="mx-auto max-w-6xl px-5">
           <div className="mx-auto max-w-2xl text-center">
@@ -703,14 +703,15 @@ export default function LandingPage({ onNavigate }) {
 
           <div className="mt-10 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
             {[
-              { title: "Dynamic Pricing", desc: "Automatically raises and lowers rates based on real demand so you capture more revenue." },
-              { title: "Smart Charging", desc: "Plans the cheapest, most efficient charging windows so cars are ready when it matters." },
-              { title: "Predictive Maintenance", desc: "Spots tire, brake, and battery issues early using real Tesla telemetry." },
-              { title: "Daily AI Plans", desc: "Every morning you get a clear, prioritized list of actions ready to approve." },
+              { icon: "📈", title: "Dynamic Pricing", desc: "Automatically raises and lowers rates based on real demand so you capture more revenue." },
+              { icon: "⚡", title: "Smart Charging", desc: "Plans the cheapest, most efficient charging windows so cars are ready when it matters." },
+              { icon: "🔧", title: "Predictive Maintenance", desc: "Spots tire, brake, and battery issues early using real Tesla telemetry." },
+              { icon: "📋", title: "Daily AI Plans", desc: "Every morning you get a clear, prioritized list of actions ready to approve." },
             ].map((item) => (
               <div key={item.title} className="rounded-3xl border border-[#141b27]/10 bg-[#f7f7f5] p-6">
+                <div className="text-2xl mb-3">{item.icon}</div>
                 <h3 className="text-xl font-black">{item.title}</h3>
-                <p className="mt-3 text-[15px] leading-relaxed text-slate-600">{item.desc}</p>
+                <p className="mt-2 text-[15px] leading-relaxed text-slate-600">{item.desc}</p>
               </div>
             ))}
           </div>
