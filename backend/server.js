@@ -22,14 +22,24 @@ const AI_PROVIDER = (process.env.AI_PROVIDER || '').toLowerCase();
 const AI_MODEL = process.env.AI_MODEL || (AI_PROVIDER === 'xai' ? 'grok-4' : 'claude-sonnet-4-5');
 const DEFAULT_ALLOWED_ORIGINS = [
   'http://localhost:5173',
+  'http://localhost:5174',
+  'http://localhost:5175',
+  'http://localhost:5176',
+  'http://localhost:5177',
   'http://127.0.0.1:5173',
+  'http://127.0.0.1:5174',
+  'http://127.0.0.1:5175',
+  'http://127.0.0.1:5176',
+  'http://127.0.0.1:5177',
   'https://www.autofleeto.com',
   'https://autofleeto.com',
 ];
 const pgPool = process.env.DATABASE_URL
   ? new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: process.env.DATABASE_URL.includes('localhost') ? false : { rejectUnauthorized: false },
+    ssl: {
+      rejectUnauthorized: false,   // or true if you have proper certs
+    },
   })
   : null;
 let fleetSchemaReady;

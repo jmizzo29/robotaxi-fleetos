@@ -7,7 +7,9 @@ const connectionString = process.env.DATABASE_URL;
 export const pool = connectionString
   ? new Pool({
     connectionString,
-    ssl: connectionString.includes('localhost') ? false : { rejectUnauthorized: false },
+    ssl: {
+      rejectUnauthorized: false,   // or true if you have proper certs
+    },
   })
   : null;
 

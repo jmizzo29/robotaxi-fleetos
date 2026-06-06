@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { setAuthTokenProvider } from '../services/authTokenStore';
 import { clerkPublishableKey, isClerkConfigured } from './clerkConfig';
 import { FleetAuthContext } from './FleetAuthContext';
+import { SsoCallbackPage } from '../App';
 
 function ClerkSessionBridge({ children }) {
   const { getToken, isLoaded, isSignedIn } = useAuth();
@@ -30,7 +31,12 @@ function ClerkSessionBridge({ children }) {
 }
 
 export default function ClerkAuthProvider({ children }) {
+  const isSsoCallback = typeof window !== 'undefined' && window.location.pathname === '/sso-callback';
+
   if (!isClerkConfigured()) {
+    if (isSsoCallback) {
+      return <SsoCallbackPage />;
+    }
     return (
       <FleetAuthContext.Provider value={{ isAuthReady: true, isSignedIn: false, authMode: 'native' }}>
         {children}
@@ -89,7 +95,11 @@ export default function ClerkAuthProvider({ children }) {
         },
       }}
     >
-      <ClerkSessionBridge>{children}</ClerkSessionBridge>
+      {isSsoCallback ? (
+        <SsoCallbackPage />
+      ) : (
+        <ClerkSessionBridge>{children}</ClerkSessionBridge>
+      )}
     </ClerkProvider>
   );
 }

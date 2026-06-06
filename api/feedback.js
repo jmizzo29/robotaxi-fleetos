@@ -4,7 +4,9 @@ const { Pool } = pg;
 const pool = process.env.DATABASE_URL
   ? new Pool({
     connectionString: process.env.DATABASE_URL,
-    ssl: process.env.DATABASE_URL.includes('localhost') ? false : { rejectUnauthorized: false },
+    ssl: {
+      rejectUnauthorized: false,   // or true if you have proper certs
+    },
   })
   : null;
 

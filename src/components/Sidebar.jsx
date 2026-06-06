@@ -19,17 +19,20 @@ export default function Sidebar({
   onNavigate = () => {},
 }) {
   return (
-    <aside className="hidden w-20 flex-col border-r border-ink/10 bg-surface p-3 lg:flex">
-      {/* Brand — ultra minimal, logo only */}
-      <div className="mb-8 flex justify-center pt-2">
-        <div className="flex flex-col items-center">
-          <RoboLogo className="h-7 w-7" />
-          <div className="mt-1 text-[9px] font-mono tracking-[1.5px] text-ink-muted">RA</div>
+    <aside className="hidden w-[300px] flex-col border-r border-ink/10 bg-surface p-8 lg:flex">
+      {/* Brand — calm and premium */}
+      <div className="mb-10">
+        <div className="flex items-center gap-3">
+          <RoboLogo className="h-8 w-8" />
+          <div>
+            <RoboWordmark className="text-lg" />
+            <BetaBadge className="mt-0.5" />
+          </div>
         </div>
       </div>
 
-      {/* Navigation — icon-first, calm vertical rail. Extreme simplicity with labels only on active */}
-      <nav className="flex-1 space-y-1 flex flex-col items-center">
+      {/* Navigation — spacious, elegant, labels always visible for clarity and ease of use */}
+      <nav className="flex-1 space-y-1">
         {mainItems.map(({ id, label, icon: Icon }) => {
           const active = route === id;
           return (
@@ -37,36 +40,33 @@ export default function Sidebar({
               key={id}
               type="button"
               onClick={() => onNavigate(id)}
-              className={`group relative flex flex-col items-center justify-center w-12 h-12 rounded-2xl transition-all ${
+              className={`group flex w-full items-center gap-3.5 rounded-2xl px-4 py-[14px] text-left text-[15px] font-medium transition-all border-l-4 ${
                 active
-                  ? 'bg-ink text-white'
-                  : 'text-ink-muted hover:bg-surface-raised hover:text-ink'
+                  ? 'bg-surface-raised text-ink border-ink shadow-sm'
+                  : 'text-ink-muted border-transparent hover:bg-surface-raised hover:text-ink hover:border-ink/20'
               }`}
-              aria-label={label}
             >
-              <Icon className={`h-5 w-5 transition ${active ? 'text-white' : 'group-hover:text-ink'}`} />
-              {active && (
-                <span className="mt-0.5 text-[9px] font-medium tracking-tight">{label}</span>
-              )}
+              <Icon className={`h-5 w-5 shrink-0 transition ${active ? 'text-ink' : 'group-hover:text-ink'}`} />
+              <span>{label}</span>
               {id === 'ai' && commandQueue.length > 0 && (
-                <div className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-full bg-status-caution text-[8px] font-bold flex items-center justify-center text-white">
+                <span className={`ml-auto rounded-full px-2 py-0.5 text-[10px] font-semibold tracking-wider ${
+                  active ? 'bg-ink/20' : 'bg-ink/10'
+                }`}>
                   {commandQueue.length}
-                </div>
+                </span>
               )}
             </button>
           );
         })}
       </nav>
 
-      {/* Bottom — tiny sign out icon only */}
-      <div className="flex justify-center pb-1 pt-4 border-t border-ink/10 mt-2">
+      {/* Bottom — clean sign out */}
+      <div className="pt-6 border-t border-ink/10">
         <SignOutButton
           onSignedOut={() => onNavigate('landing')}
-          className="flex h-9 w-9 items-center justify-center rounded-2xl text-ink-muted hover:bg-surface-raised hover:text-ink"
-          label=""
-        >
-          <User className="h-4 w-4" />
-        </SignOutButton>
+          className="w-full rounded-2xl px-4 py-3 text-left text-sm font-medium text-ink-muted hover:bg-surface-raised hover:text-ink transition"
+          label="Sign out"
+        />
       </div>
     </aside>
   );

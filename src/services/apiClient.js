@@ -5,7 +5,9 @@ export function getApiBase() {
   );
 
   if (isLocalBrowser) {
-    return import.meta.env.VITE_LOCAL_API_BASE || 'http://localhost:3001/api';
+    // Default to relative '/api' so Vite dev proxy can forward to the backend (localhost:3001).
+    // Set VITE_LOCAL_API_BASE=http://localhost:3001/api in .env to bypass proxy and hit backend directly.
+    return import.meta.env.VITE_LOCAL_API_BASE || '/api';
   }
 
   return '/api';

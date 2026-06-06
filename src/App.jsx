@@ -1,6 +1,6 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from 'react';
 import ErrorBoundary from './components/ErrorBoundary';
-import { AuthenticateWithRedirectCallback } from '@clerk/react';
+import { AuthenticateWithRedirectCallback, ClerkProvider } from '@clerk/react';
 import CommandSafetyModal from './components/CommandSafetyModal';
 import FeedbackButton from './components/FeedbackButton';
 import MobileBottomNav from './components/MobileBottomNav';
@@ -22,6 +22,9 @@ import FleetListPanel from './panels/FleetListPanel';
 import IntelligentAlertCenter from './panels/IntelligentAlertCenter';
 import IntegrationsPanel from './panels/IntegrationsPanel';
 import LandingPage, { AgentAboutPage, AgentChatPage, HowItWorksPage } from './panels/LandingPage';
+import Landing from './pages/Landing';
+import Login from './components/Auth/Login';
+import Signup from './components/Auth/Signup';
 import LegalPage from './panels/LegalPage';
 import MemoryEventsPanel from './panels/MemoryEventsPanel';
 import CommandDashboard from './panels/CommandDashboard';
@@ -124,7 +127,7 @@ const initialFleet = [
   },
 ];
 
-function SsoCallbackPage() {
+export function SsoCallbackPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-[#f7f7f5] px-6 text-[#141b27]">
       <AuthenticateWithRedirectCallback />
@@ -141,7 +144,15 @@ function SsoCallbackPage() {
 }
 
 export default function App() {
-  if (window.location.pathname === '/sso-callback') return <SsoCallbackPage />;
+  const [route] = useHashRoute();
+
+  if (window.location.pathname === '/sso-callback' || route === 'sso-callback') {
+    return (
+      <ClerkProvider publishableKey={import.meta.env.VITE_CLERK_PUBLISHABLE_KEY}>
+        <SsoCallbackPage />
+      </ClerkProvider>
+    );
+  }
 
   return <FleetApp />;
 }
@@ -152,6 +163,8 @@ function FleetApp() {
   const [, setComplianceRevision] = useState(0);
   const [route, navigate] = useHashRoute();
   const isPublicRoute = route === 'landing';
+  const isPublicLoginRoute = route === 'login';
+  const isPublicSignupRoute = route === 'signup';
   const isPublicAgentRoute = route === 'agent';
   const isPublicAboutRoute = route === 'about';
   const isPublicHowItWorksRoute = route === 'how-it-works';
@@ -161,6 +174,8 @@ function FleetApp() {
   const teslaConsentReady = canUseTeslaTelemetry();
   const shouldAutoSyncReal = !(
     isPublicRoute ||
+    isPublicLoginRoute ||
+    isPublicSignupRoute ||
     isPublicAgentRoute ||
     isPublicAboutRoute ||
     isPublicHowItWorksRoute ||
@@ -602,8 +617,17 @@ function FleetApp() {
     ),
   };
 
+  // === PUBLIC ROUTES (Landing, Login, Signup) ===
   if (isPublicRoute) {
-    return <LandingPage onNavigate={navigate} />;
+    return <Landing onNavigate={navigate} />;
+  }
+
+  if (isPublicLoginRoute) {
+    return <Login onNavigate={navigate} onLoginSuccess={() => navigate('overview')} />;
+  }
+
+  if (isPublicSignupRoute) {
+    return <Signup onNavigate={navigate} onSignupSuccess={() => navigate('onboarding')} />;
   }
 
   if (isPublicAgentRoute) {
@@ -653,14 +677,12 @@ function FleetApp() {
 
   if (isPublicOnboardingRoute) {
     return (
-      <div className="robo-minimal">
-        <OnboardingPanel
-          realVehicleCount={realVehicles.length}
-          isLoading={isLoadingReal}
-          onSync={refreshRealTesla}
-          onNavigate={navigate}
-        />
-      </div>
+      <OnboardingPanel
+        realVehicleCount={realVehicles.length}
+        isLoading={isLoadingReal}
+        onSync={refreshRealTesla}
+        onNavigate={navigate}
+      />
     );
   }
 
