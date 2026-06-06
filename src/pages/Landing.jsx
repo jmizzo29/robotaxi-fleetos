@@ -27,22 +27,10 @@ export default function Landing({ onNavigate }) {
 
       {/* Mobile version - simple clean layout */}
       <div className="md:hidden min-h-screen flex flex-col bg-[#0a1625]">
-        {/* Simple Top Bar */}
-        <div className="pt-8 px-6 flex justify-center">
-          <div 
-            onClick={() => onNavigate('landing')}
-            className="cursor-pointer"
-          >
-            <div className="font-bold text-6xl tracking-[-3px] bg-gradient-to-r from-amber-300 via-yellow-300 to-amber-400 bg-clip-text text-transparent">
-              RoboAgent
-            </div>
-          </div>
-        </div>
-
-        {/* Main Content - Centered Logo Area */}
+        {/* Main Content - Centered Logo Area (no top bar) */}
         <div className="flex-1 flex items-center justify-center px-6">
           <div className="text-center">
-            <div className="font-bold text-[88px] md:text-[110px] tracking-[-6px] leading-none bg-gradient-to-r from-amber-300 via-yellow-300 to-amber-400 bg-clip-text text-transparent">
+            <div className="font-bold text-[70px] md:text-[88px] tracking-[-6px] leading-none bg-gradient-to-r from-amber-300 via-yellow-300 to-amber-400 bg-clip-text text-transparent">
               RoboAgent
             </div>
           </div>
