@@ -1,31 +1,21 @@
-// src/components/KPIGrid.jsx
+import { Metric } from '../ui';
+
 export default function KPIGrid({
-  totalRevenue = 12480,
-  systemLoad = 87,
-  avgProfitability = 76,
-  avgAnomalyRisk = 12,
-  forecast = { aiConfidence: 94, surgeRisk: "MED" }
+  totalRevenue = 0,
+  systemLoad = 0,
+  avgAnomalyRisk = 0,
+  fleetSize = 0,
+  activeCount = 0,
 }) {
-  const cards = [
-    ['Fleet Revenue', `$${totalRevenue.toLocaleString()}`, 'text-emerald-300'],
-    ['System Load', `${systemLoad}%`, 'text-amber-300'],
-    ['Profitability', `${avgProfitability}%`, 'text-sky-300'],
-    ['AI Confidence', `${forecast.aiConfidence}%`, 'text-emerald-300'],
-    ['Surge Risk', forecast.surgeRisk, 'text-rose-300'],
-    ['Anomaly Risk', `${avgAnomalyRisk}%`, 'text-orange-300'],
-  ];
+  const riskLabel = avgAnomalyRisk > 15 ? 'High' : avgAnomalyRisk > 8 ? 'Medium' : 'Low';
+  const riskTone = avgAnomalyRisk > 15 ? 'critical' : avgAnomalyRisk > 8 ? 'warning' : 'success';
 
   return (
-    <div className="mb-6 grid grid-cols-3 gap-3 sm:mb-8 sm:gap-4 xl:grid-cols-6">
-      {cards.map(([label, value, color], index) => (
-        <div 
-          key={label} 
-          className={`min-w-0 rounded-lg border border-white/[0.12] bg-[linear-gradient(145deg,rgba(30,41,59,0.78),rgba(17,17,17,0.82))] p-3 shadow-lg shadow-black/10 sm:p-4 ${index > 3 ? 'hidden xl:block' : ''}`}
-        >
-          <p className="mb-2 truncate text-[9px] font-semibold uppercase tracking-[0.14em] text-slate-400 sm:text-[11px] sm:tracking-[0.18em]">{label}</p>
-          <h2 className={`truncate text-2xl font-black tracking-tight sm:text-3xl ${color}`}>{value}</h2>
-        </div>
-      ))}
+    <div className="mb-6 grid grid-cols-2 gap-3 sm:grid-cols-4 sm:gap-4">
+      <Metric label="Revenue" value={`$${totalRevenue.toLocaleString()}`} tone="success" />
+      <Metric label="Fleet load" value={`${systemLoad}%`} tone="warning" />
+      <Metric label="Ready" value={`${activeCount}/${fleetSize}`} tone="info" />
+      <Metric label="Risk" value={riskLabel} tone={riskTone} />
     </div>
-  )
+  );
 }

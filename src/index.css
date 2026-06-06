@@ -1,13 +1,56 @@
 @import "tailwindcss";
 
+@theme {
+  --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
+
+  --color-surface: #f7f7f5;
+  --color-surface-raised: #ffffff;
+  --color-ink: #141b27;
+  --color-ink-muted: #64748b;
+  --color-ink-subtle: #94a3b8;
+  --color-accent: #172231;
+  --color-accent-hover: #243044;
+
+  --color-status-ready: #10b981;
+  --color-status-caution: #f59e0b;
+  --color-status-critical: #ef4444;
+  --color-status-active: #0ea5e9;
+
+  --radius-card: 1rem;
+  --shadow-soft: 0 8px 30px rgba(20, 27, 39, 0.06);
+}
+
 html,
 body,
 #root {
   margin: 0;
   padding: 0;
   min-height: 100%;
-  background: #f7f7f5;
-  font-family: Inter, sans-serif;
+  background: var(--color-surface);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  animation: fade-up 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-fade-up {
+    animation: none;
+  }
 }
 
 .robo-minimal {
@@ -144,6 +187,16 @@ body,
 .cl-formHeaderTitle,
 .cl-formHeaderSubtitle {
   color: #141b27 !important;
+}
+
+.cl-headerTitle,
+.cl-formHeaderTitle {
+  font-weight: 600 !important;
+  letter-spacing: -0.01em !important;
+}
+
+.cl-formButtonPrimary {
+  font-weight: 600 !important;
 }
 
 .cl-headerSubtitle,

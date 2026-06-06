@@ -3,7 +3,6 @@ import ErrorBoundary from './components/ErrorBoundary';
 import { AuthenticateWithRedirectCallback } from '@clerk/react';
 import CommandSafetyModal from './components/CommandSafetyModal';
 import FeedbackButton from './components/FeedbackButton';
-import KPIGrid from './components/KPIGrid';
 import MobileBottomNav from './components/MobileBottomNav';
 import PageHeader from './components/PageHeader';
 import RoboLogo from './components/RoboLogo';
@@ -12,36 +11,26 @@ import Sidebar from './components/Sidebar';
 import Timeline from './components/Timeline';
 import AIRecommendationPanel from './panels/AIRecommendationPanel';
 import AccountPanel from './panels/AccountPanel';
-import AgentOrchestrationPanel from './panels/AgentOrchestrationPanel';
 import AssetManagementPanel from './panels/AssetManagementPanel';
 import BetaAdminPanel from './panels/BetaAdminPanel';
 import ChargingReadinessPanel from './panels/ChargingReadinessPanel';
-import CommandCenter from './panels/CommandCenter';
-import CommandInboxPanel from './panels/CommandInboxPanel';
 import DispatchPlannerPanel from './panels/DispatchPlannerPanel';
 import DriverlessReadinessPanel from './panels/DriverlessReadinessPanel';
 import FleetFinancePanel from './panels/FleetFinancePanel';
 import FleetHealthDashboard from './panels/FleetHealthDashboard';
-import ForecastPanel from './panels/ForecastPanel';
 import FleetListPanel from './panels/FleetListPanel';
 import IntelligentAlertCenter from './panels/IntelligentAlertCenter';
 import IntegrationsPanel from './panels/IntegrationsPanel';
 import LandingPage, { AgentAboutPage, AgentChatPage, HowItWorksPage } from './panels/LandingPage';
 import LegalPage from './panels/LegalPage';
 import MemoryEventsPanel from './panels/MemoryEventsPanel';
-import MobileCommandDashboard from './panels/MobileCommandDashboard';
+import CommandDashboard from './panels/CommandDashboard';
 import OnboardingPanel from './panels/OnboardingPanel';
 import OperationsReportPanel from './panels/OperationsReportPanel';
-import OwnerValueDashboard from './panels/OwnerValueDashboard';
-import QuickActionGrid from './panels/QuickActionGrid';
 import RoboAgentAskPanel from './panels/RoboAgentAskPanel';
 import SettingsPanel from './panels/SettingsPanel';
-import ServiceAreasPanel from './panels/ServiceAreasPanel';
 import TeslaCapabilitiesPanel from './panels/TeslaCapabilitiesPanel';
-import TeslaSyncHealthPanel from './panels/TeslaSyncHealthPanel';
-import TeslaTelemetryPanel from './panels/TeslaTelemetryPanel';
 import VehicleDetailPanel from './panels/VehicleDetailPanel';
-import VehicleShowcasePanel from './panels/VehicleShowcasePanel';
 import chargingStations from './data/chargingStations';
 import demandZones from './data/demandZones';
 import weatherZones from './data/weatherZones';
@@ -189,8 +178,6 @@ function FleetApp() {
   const {
     fleet,
     timelineEvents,
-    forecast,
-    systemLoad,
     replayMode,
     setReplayMode,
     commandQueue,
@@ -208,11 +195,6 @@ function FleetApp() {
 
   const totalRevenue = useMemo(
     () => fleet.reduce((sum, vehicle) => sum + (vehicle.revenue || 0), 0),
-    [fleet],
-  );
-
-  const avgProfitability = useMemo(
-    () => Math.round(fleet.reduce((sum, vehicle) => sum + vehicle.profitability, 0) / fleet.length),
     [fleet],
   );
 
@@ -295,82 +277,19 @@ function FleetApp() {
 
   const pages = {
     overview: (
-      <>
-        <div className="md:hidden">
-          <MobileCommandDashboard
-            fleet={fleet}
-            primaryTesla={primaryTesla}
-            totalRevenue={totalRevenue}
-            avgAnomalyRisk={avgAnomalyRisk}
-            onSync={refreshRealTesla}
-            onExecute={requestCommand}
-            onNavigate={navigate}
-            isLoading={isLoadingReal}
-            syncStatus={realSyncStatus}
-          />
-          <div className="mt-5">
-            <OwnerValueDashboard
-              fleet={fleet}
-              onQueueCommand={requestCommand}
-            />
-          </div>
-        </div>
-        <div className="hidden md:block">
-          <PageHeader
-            eyebrow="Live Operations"
-            title={<><RoboWordmark className="text-inherit" colorClass="text-black" /><span className="block text-slate-500">Command Center</span></>}
-            description="The main owner dashboard after sign-in: AI plans, Tesla telemetry, pricing, charging, maintenance, and profitability."
-            action={operationsStatus}
-          />
-          <CommandCenter
-            replayMode={replayMode}
-            setReplayMode={setReplayMode}
-            fleet={fleet}
-            enqueueCommand={requestCommand}
-          />
-          <KPIGrid
-            totalRevenue={totalRevenue}
-            systemLoad={systemLoad}
-            avgProfitability={avgProfitability}
-            avgAnomalyRisk={avgAnomalyRisk}
-            forecast={forecast}
-          />
-          <OwnerValueDashboard
-            fleet={fleet}
-            onQueueCommand={requestCommand}
-          />
-          <TeslaTelemetryPanel
-            vehicle={primaryTesla}
-            syncStatus={realSyncStatus}
-            isLoading={isLoadingReal}
-            onSync={refreshRealTesla}
-          />
-          <TeslaSyncHealthPanel
-            vehicle={primaryTesla}
-            realSyncStatus={realSyncStatus}
-            isLoading={isLoadingReal}
-            onSync={refreshRealTesla}
-          />
-          <VehicleShowcasePanel
-            vehicle={primaryTesla}
-            fleet={fleet}
-            onSync={refreshRealTesla}
-            isLoading={isLoadingReal}
-          />
-          <AgentOrchestrationPanel
-            analysis={aiAnalysis}
-            isAnalyzing={isAnalyzing}
-            realVehicleCount={realVehicles.length}
-            commandCount={commandQueue.length}
-          />
-          <QuickActionGrid
-            onSync={refreshRealTesla}
-            onExecute={requestCommand}
-            isLoading={isLoadingReal}
-          />
-          <ForecastPanel forecast={forecast} />
-        </div>
-      </>
+      <CommandDashboard
+        fleet={fleet}
+        primaryTesla={primaryTesla}
+        totalRevenue={totalRevenue}
+        avgAnomalyRisk={avgAnomalyRisk}
+        commandQueue={commandQueue}
+        onSync={refreshRealTesla}
+        onExecute={requestCommand}
+        onNavigate={navigate}
+        onSelectVehicle={setSelectedVehicle}
+        isLoading={isLoadingReal}
+        syncStatus={realSyncStatus}
+      />
     ),
     onboarding: (
       <>
@@ -388,44 +307,30 @@ function FleetApp() {
       </>
     ),
     map: (
-      <>
-        <PageHeader
-          eyebrow="Fleet Map"
-          title="My Tesla Vehicle Map"
-          description="See your own Teslas first: real-time location, status, battery, health score, and next rental context. Service-area demand layers are secondary."
-          action={operationsStatus}
-        />
-        <Suspense
-          fallback={(
-            <div className="flex h-[430px] items-center justify-center rounded-lg border border-[#141b27]/10 bg-white/80 text-sm font-bold text-slate-500 shadow-xl shadow-slate-900/10 sm:h-[520px] lg:h-[900px]">
-              Loading fleet map...
-            </div>
-          )}
-        >
-          <FleetMap
-            fleet={fleet}
-            selectedVehicle={selectedVehicle}
-            setSelectedVehicle={setSelectedVehicle}
-            weatherZones={weatherZones}
-            demandZones={demandZones}
-            chargingStations={chargingStations}
-          />
-        </Suspense>
-        <ServiceAreasPanel
+      <Suspense
+        fallback={(
+          <div className="flex h-[70vh] min-h-[460px] items-center justify-center rounded-2xl border border-[#141b27]/10 bg-white/80 text-sm font-medium text-slate-500 shadow-sm lg:h-[calc(100vh-8rem)]">
+            Loading fleet map...
+          </div>
+        )}
+      >
+        <FleetMap
           fleet={fleet}
+          selectedVehicle={selectedVehicle}
+          setSelectedVehicle={setSelectedVehicle}
+          weatherZones={weatherZones}
           demandZones={demandZones}
+          chargingStations={chargingStations}
           onQueueCommand={requestCommand}
+          onShowDetail={(vehicle) => {
+            setSelectedVehicle(vehicle);
+            navigate('vehicle');
+          }}
         />
-      </>
+      </Suspense>
     ),
     fleet: (
       <>
-        <PageHeader
-          eyebrow="Fleet Registry"
-          title="Vehicles"
-          description="Separate observed Tesla telemetry from the simulated fleet layer and inspect vehicle readiness."
-          action={operationsStatus}
-        />
         <FleetListPanel
           fleet={fleet}
           onSelect={(vehicle) => {
@@ -438,9 +343,8 @@ function FleetApp() {
     vehicle: (
       <>
         <PageHeader
-          eyebrow="Vehicle Detail"
-          title={activeVehicle ? activeVehicle.name || activeVehicle.display_name || activeVehicle.id : 'Vehicle Detail'}
-          description="Inspect telemetry, readiness, controls, and AI actions for the selected fleet vehicle."
+          eyebrow="Fleet"
+          title="Vehicle Detail"
           action={operationsStatus}
         />
         <VehicleDetailPanel
@@ -542,25 +446,21 @@ function FleetApp() {
     ),
     ai: (
       <>
-        <PageHeader
-          eyebrow="AI Command"
-          title="AI Operations"
-          description="Review next best actions, confidence scores, and one-click execution recommendations from the ROBOAGENT AI layer."
-          action={operationsStatus}
-        />
+        {commandQueue.length > 0 && (
+          <div className="mb-4 rounded-2xl border border-status-caution/20 bg-status-caution/8 px-4 py-3 text-sm text-ink">
+            <p className="font-medium">
+              {commandQueue.length} action{commandQueue.length === 1 ? '' : 's'} in queue — approve from chat responses below.
+            </p>
+          </div>
+        )}
         <RoboAgentAskPanel onQueueCommand={requestCommand} />
-        <AIRecommendationPanel
-          recommendations={aiAnalysis.recommendations}
-          isAnalyzing={isAnalyzing}
-          onExecute={requestCommand}
-        />
-        <CommandInboxPanel commandQueue={commandQueue} />
-        <CommandCenter
-          replayMode={replayMode}
-          setReplayMode={setReplayMode}
-          fleet={fleet}
-          enqueueCommand={requestCommand}
-        />
+        <div className="mt-4 hidden lg:block">
+          <AIRecommendationPanel
+            recommendations={aiAnalysis.recommendations}
+            isAnalyzing={isAnalyzing}
+            onExecute={requestCommand}
+          />
+        </div>
       </>
     ),
     alerts: (
@@ -777,10 +677,7 @@ function FleetApp() {
   return (
     <div className="robo-minimal flex min-h-screen bg-[#f7f7f5] text-[#141b27]">
       <Sidebar
-        replayMode={replayMode}
-        setReplayMode={setReplayMode}
         commandQueue={commandQueue}
-        demandZones={demandZones}
         route={route}
         onNavigate={navigate}
       />
@@ -793,7 +690,7 @@ function FleetApp() {
         </div>
       </main>
 
-      <MobileBottomNav route={route} onNavigate={navigate} />
+      <MobileBottomNav route={route} onNavigate={navigate} pendingCount={commandQueue.length} />
       <CommandSafetyModal
         pendingCommand={pendingCommand}
         onCancel={() => setPendingCommand(null)}

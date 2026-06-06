@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Car, Shield } from 'lucide-react';
+import { ArrowRight, Car, ChevronDown, Loader2 } from 'lucide-react';
 import { isClerkConfigured } from '../auth/clerkConfig';
 import RoboLogo from '../components/RoboLogo';
 import RoboWordmark from '../components/RoboWordmark';
 import SignOutButton from '../components/SignOutButton';
+import { Button, Card } from '../ui';
 import {
   disconnectTeslaForUser,
   getFleetOsBillingStatus,
@@ -11,40 +12,47 @@ import {
   updateFleetOsProfile,
 } from '../services/sessionService';
 
-function TextInput(props) {
-  return (
-    <input
-      {...props}
-      className="w-full rounded-2xl border border-[#141b27]/15 bg-white px-4 py-3 text-sm font-semibold text-[#141b27] outline-none transition placeholder:text-slate-400 focus:border-[#172231] sm:py-4"
-    />
-  );
+function Spinner({ className = '' }) {
+  return <Loader2 className={`h-4 w-4 animate-spin ${className}`} aria-hidden="true" />;
 }
 
-function Field({ label, children }) {
+function Notice({ tone = 'success', children }) {
+  const styles = {
+    success: 'border-status-ready/20 bg-status-ready/5 text-status-ready',
+    error: 'border-status-critical/20 bg-status-critical/5 text-status-critical',
+    warning: 'border-status-caution/25 bg-status-caution/8 text-status-caution',
+  };
+  const assertive = tone === 'error' || tone === 'warning';
   return (
-    <label className="block">
-      <span className="mb-2 block text-xs font-black uppercase tracking-[0.16em] text-slate-500">{label}</span>
+    <div
+      role={assertive ? 'alert' : 'status'}
+      aria-live={assertive ? 'assertive' : 'polite'}
+      className={`rounded-2xl border px-4 py-3 text-sm font-medium leading-relaxed ${styles[tone]}`}
+    >
       {children}
-    </label>
+    </div>
   );
 }
 
-function Metric({ label, value }) {
+function MiniMetric({ label, value }) {
   return (
-    <div className="rounded-2xl border border-[#141b27]/10 bg-slate-50 p-4">
-      <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">{label}</p>
-      <p className="mt-2 text-2xl font-black text-[#141b27]">{value}</p>
+    <div className="rounded-2xl border border-ink/8 bg-surface p-3">
+      <p className="text-[11px] font-medium text-ink-muted">{label}</p>
+      <p className="mt-1 text-xl font-semibold tracking-tight text-ink">{value}</p>
     </div>
   );
 }
 
 export default function AccountPanel({ onNavigate }) {
   const [session, setSession] = useState(null);
+  const [sessionLoaded, setSessionLoaded] = useState(false);
   const [billing, setBilling] = useState(null);
   const [profileName, setProfileName] = useState('');
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
   const [isBusy, setIsBusy] = useState(false);
+  const [authBusy, setAuthBusy] = useState('');
+  const [confirmDisconnect, setConfirmDisconnect] = useState(false);
 
   const clerkReady = isClerkConfigured();
   const user = session?.user || {};
@@ -75,11 +83,16 @@ export default function AccountPanel({ onNavigate }) {
         billingRequired: false,
       });
     }
+
+    setSessionLoaded(true);
   };
 
   useEffect(() => {
     const timer = window.setTimeout(() => {
-      refresh().catch((refreshError) => setError(refreshError.message));
+      refresh().catch(() => {
+        setSession({ authenticated: false, user: {} });
+        setSessionLoaded(true);
+      });
     }, 0);
     return () => window.clearTimeout(timer);
   }, []);
@@ -93,7 +106,7 @@ export default function AccountPanel({ onNavigate }) {
       await refresh();
       setMessage(success);
     } catch (actionError) {
-      setError(actionError.message);
+      setError(actionError.message || 'Something went wrong. Please try again.');
     } finally {
       setIsBusy(false);
     }
@@ -108,182 +121,226 @@ export default function AccountPanel({ onNavigate }) {
       return;
     }
 
-    const redirectUrl = `${window.location.origin}/#/onboarding`;
-    const options = {
-      fallbackRedirectUrl: redirectUrl,
-      signInFallbackRedirectUrl: redirectUrl,
-      signUpFallbackRedirectUrl: redirectUrl,
-    };
+    setAuthBusy(mode);
+    try {
+      const redirectUrl = `${window.location.origin}/#/onboarding`;
+      const options = {
+        fallbackRedirectUrl: redirectUrl,
+        signInFallbackRedirectUrl: redirectUrl,
+        signUpFallbackRedirectUrl: redirectUrl,
+      };
 
-    if (mode === 'create') {
-      await window.Clerk.openSignUp(options);
-      return;
+      if (mode === 'create') {
+        await window.Clerk.openSignUp(options);
+      } else {
+        await window.Clerk.openSignIn(options);
+      }
+    } catch (authError) {
+      setError(authError?.message || 'Could not open the secure account window. Please try again.');
+    } finally {
+      setAuthBusy('');
     }
+  };
 
-    await window.Clerk.openSignIn(options);
+  const disconnectTesla = async () => {
+    setIsBusy(true);
+    setError('');
+    setMessage('');
+    try {
+      await disconnectTeslaForUser();
+      setMessage('Tesla access revoked. You can reconnect anytime from onboarding.');
+      setConfirmDisconnect(false);
+    } catch {
+      setError('Could not disconnect right now. Please try again.');
+    } finally {
+      setIsBusy(false);
+    }
   };
 
   return (
-    <div className="min-h-screen bg-[#f7f7f5] px-4 py-5 text-[#141b27]">
-      <header className="mx-auto flex max-w-3xl items-center justify-between">
-        <button type="button" onClick={() => onNavigate?.('landing')} className="flex items-center gap-3">
-          <RoboLogo className="h-9 w-9" />
-          <RoboWordmark className="text-lg" />
-        </button>
+    <div className="min-h-screen bg-surface px-4 py-5 text-ink">
+      <header className="mx-auto flex max-w-xl items-center justify-between">
         <button
           type="button"
           onClick={() => onNavigate?.('landing')}
-          className="rounded-full border border-[#141b27]/10 bg-white px-4 py-2 text-sm font-black text-[#172231] shadow-sm transition hover:bg-slate-100"
+          className="flex items-center gap-2.5 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-status-active/30"
         >
-          Home
+          <RoboLogo className="h-8 w-8" />
+          <RoboWordmark className="text-base" />
         </button>
+        <Button variant="ghost" size="sm" onClick={() => onNavigate?.('landing')}>Home</Button>
       </header>
 
-      <main className="mx-auto grid min-h-[calc(100vh-92px)] max-w-3xl place-items-center py-5 sm:py-8">
-        <section className="w-full max-w-[480px] rounded-[1.5rem] border border-[#141b27]/10 bg-white/90 p-4 shadow-2xl shadow-slate-900/10 sm:p-6">
-          <div className="mb-5 sm:mb-6">
-            <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">Account</p>
-            <h1 className="mt-2 text-2xl font-semibold text-black sm:text-3xl">
-              {hasRealAccount ? 'You are signed in' : 'Sign in to ROBOAGENT'}
-            </h1>
-            <p className="mt-2 text-sm font-semibold leading-5 text-slate-500 sm:leading-6">
-              {hasRealAccount
-                ? 'Manage your owner account, plan, and this device session.'
-                : 'Use your owner account first. Tesla connects after sign in.'}
-            </p>
-          </div>
-
-          {(message || error) && (
-            <div className={`mb-5 rounded-2xl border p-4 text-sm font-semibold ${
-              error ? 'border-red-200 bg-red-50 text-red-700' : 'border-emerald-200 bg-emerald-50 text-emerald-800'
-            }`}>
-              {error || message}
+      <main className="mx-auto grid min-h-[calc(100vh-92px)] max-w-xl place-items-center py-5">
+        {!sessionLoaded ? (
+          <Card padding="p-6 sm:p-7" className="w-full animate-fade-up">
+            <div className="flex items-center justify-center gap-3 py-10 text-sm text-ink-muted" role="status" aria-live="polite">
+              <Spinner className="h-5 w-5 text-ink-muted" />
+              Loading your account…
             </div>
-          )}
-
-          {!hasRealAccount ? (
-            <div className="space-y-4">
-              {clerkReady ? (
-                <>
-                  <button
-                    type="button"
-                    onClick={() => openClerkAuth('signin')}
-                    className="w-full rounded-2xl bg-[#172231] px-5 py-4 text-base font-black text-white transition hover:bg-[#243044]"
-                  >
-                    Sign In
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => openClerkAuth('create')}
-                    className="w-full rounded-2xl border border-[#141b27]/10 bg-slate-100 px-5 py-4 text-base font-black text-[#141b27] transition hover:bg-slate-200"
-                  >
-                    Create Account
-                  </button>
-                </>
-              ) : (
-                <div className="rounded-2xl border border-amber-200 bg-amber-50 p-4 text-sm font-semibold leading-6 text-amber-800">
-                  Secure account sign-in is not configured in this environment. Use the live site with Clerk enabled, or add the Clerk publishable key before testing account creation.
-                </div>
-              )}
-
-              <p className="text-center text-xs font-semibold leading-5 text-slate-500">
-                Tesla login is separate and comes next.
+          </Card>
+        ) : (
+          <Card padding="p-6 sm:p-7" className="w-full animate-fade-up">
+            <div className="mb-5">
+              <h1 className="text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
+                {hasRealAccount ? 'You are signed in' : 'Sign in to ROBOAGENT'}
+              </h1>
+              <p className="mt-2 text-sm leading-relaxed text-ink-muted">
+                {hasRealAccount
+                  ? 'Manage your owner account, plan, and Tesla connection.'
+                  : 'Use your owner account first. Tesla connects right after.'}
               </p>
             </div>
-          ) : (
-            <div className="space-y-4">
-              <div className="rounded-2xl border border-[#141b27]/10 bg-slate-50 p-4">
-                <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-500">Signed In</p>
-                <p className="mt-2 text-lg font-black text-[#141b27]">{user.name || 'ROBOAGENT Owner'}</p>
-                <p className="mt-1 truncate text-sm font-semibold text-slate-500">{user.email}</p>
+
+            {(message || error) && (
+              <div className="mb-5">
+                <Notice tone={error ? 'error' : 'success'}>{error || message}</Notice>
               </div>
+            )}
 
-              <button
-                type="button"
-                onClick={() => onNavigate?.('overview')}
-                className="w-full rounded-2xl bg-[#172231] px-5 py-4 text-base font-black text-white transition hover:bg-[#243044]"
-              >
-                Open Dashboard
-              </button>
-              <SignOutButton
-                onSignedOut={() => {
-                  setSession({ authenticated: false, user: {} });
-                  onNavigate?.('landing');
-                }}
-                className="w-full rounded-2xl border border-[#141b27]/10 bg-slate-50 px-5 py-4 text-base font-black text-[#172231] transition hover:bg-slate-100"
-              />
+            {!hasRealAccount ? (
+              <div className="space-y-3">
+                {clerkReady ? (
+                  <>
+                    <Button
+                      size="lg"
+                      className="w-full"
+                      onClick={() => openClerkAuth('signin')}
+                      disabled={Boolean(authBusy)}
+                      aria-busy={authBusy === 'signin'}
+                    >
+                      {authBusy === 'signin' && <Spinner />}
+                      {authBusy === 'signin' ? 'Opening…' : 'Sign in'}
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      size="lg"
+                      className="w-full"
+                      onClick={() => openClerkAuth('create')}
+                      disabled={Boolean(authBusy)}
+                      aria-busy={authBusy === 'create'}
+                    >
+                      {authBusy === 'create' && <Spinner />}
+                      {authBusy === 'create' ? 'Opening…' : 'Create account'}
+                    </Button>
+                  </>
+                ) : (
+                  <Notice tone="warning">
+                    Secure account sign-in is not configured in this environment. Use the live site with Clerk enabled, or add the Clerk publishable key before testing account creation.
+                  </Notice>
+                )}
 
-              {/* Strong Tesla management section (audit priority for Account + Tesla connection clarity) */}
-              <div className="rounded-2xl border border-[#141b27]/10 bg-white p-4">
-                <div className="flex items-center gap-2 text-xs font-black uppercase tracking-[0.16em] text-slate-500">
-                  <Car className="h-4 w-4" /> Tesla Connection
-                </div>
-                <p className="mt-2 text-sm font-semibold text-slate-600">Your vehicles are connected via official Tesla Fleet API. You can disconnect anytime.</p>
-                <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-                  <button
-                    onClick={() => onNavigate?.('onboarding')}
-                    className="flex-1 rounded-2xl border border-[#141b27]/10 bg-[#172231] py-2.5 text-sm font-black text-white active:bg-black"
-                  >
-                    Manage / Add Vehicles
-                  </button>
-                  <button
-                    onClick={async () => {
-                      setIsBusy(true);
-                      try {
-                        await disconnectTeslaForUser();
-                        setMessage('Tesla access revoked. You can reconnect from onboarding.');
-                        // Session refresh happens via global event in most cases
-                      } catch {
-                        setError('Could not disconnect right now. Try again.');
-                      } finally {
-                        setIsBusy(false);
-                      }
-                    }}
-                    disabled={isBusy}
-                    className="flex-1 rounded-2xl border border-rose-200 bg-rose-50 py-2.5 text-sm font-black text-rose-700 active:bg-rose-100 disabled:opacity-60"
-                  >
-                    Disconnect All Teslas
-                  </button>
-                </div>
+                <p className="pt-1 text-center text-xs text-ink-subtle">
+                  Tesla login is separate and comes next.
+                </p>
               </div>
+            ) : (
+              <div className="space-y-4">
+                <div className="rounded-2xl border border-ink/8 bg-surface p-4">
+                  <p className="text-[11px] font-medium text-ink-muted">Signed in</p>
+                  <p className="mt-1 text-lg font-semibold text-ink">{user.name || 'ROBOAGENT Owner'}</p>
+                  <p className="mt-0.5 truncate text-sm text-ink-muted">{user.email}</p>
+                </div>
 
-              <details className="rounded-2xl border border-[#141b27]/10 bg-slate-50 p-4">
-                <summary className="cursor-pointer text-sm font-black text-slate-700">Account Details</summary>
-                <div className="mt-4 space-y-4">
-                  <div className="grid gap-3 sm:grid-cols-3">
-                    <Metric label="Plan" value="Free" />
-                    <Metric label="Included" value={`${billing?.includedVehicles || 1} Tesla`} />
-                    <Metric label="Synced" value={billing?.vehicleCount || 0} />
+                <Button size="lg" className="w-full" onClick={() => onNavigate?.('overview')}>
+                  Open dashboard
+                  <ArrowRight className="h-4 w-4" />
+                </Button>
+                <SignOutButton
+                  label="Sign out"
+                  onSignedOut={() => {
+                    setSession({ authenticated: false, user: {} });
+                    onNavigate?.('landing');
+                  }}
+                  className="w-full rounded-2xl border border-ink/12 bg-surface-raised px-5 py-3.5 text-center text-sm font-semibold text-ink-muted transition hover:bg-white hover:text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-status-active/30"
+                />
+
+                <div className="rounded-2xl border border-ink/8 bg-surface-raised p-4">
+                  <div className="flex items-center gap-2 text-sm font-medium text-ink">
+                    <Car className="h-4 w-4 text-ink-muted" /> Tesla connection
                   </div>
-                  <Field label="Display Name">
-                    <div className="flex flex-col gap-3 sm:flex-row">
-                      <TextInput
-                        value={profileName}
-                        onChange={(event) => setProfileName(event.target.value)}
-                        placeholder="Display name"
-                      />
-                      <button
-                        type="button"
+                  <p className="mt-1.5 text-sm leading-relaxed text-ink-muted">
+                    Vehicles connect via the official Tesla Fleet API. You can disconnect anytime.
+                  </p>
+                  <div className="mt-3 flex flex-col gap-2 sm:flex-row">
+                    <Button className="flex-1" onClick={() => onNavigate?.('onboarding')}>
+                      Manage / add vehicles
+                    </Button>
+                    {confirmDisconnect ? (
+                      <div className="flex flex-1 gap-2">
+                        <Button
+                          variant="secondary"
+                          className="flex-1"
+                          disabled={isBusy}
+                          onClick={() => setConfirmDisconnect(false)}
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          variant="danger"
+                          className="flex-1"
+                          disabled={isBusy}
+                          aria-busy={isBusy}
+                          onClick={disconnectTesla}
+                        >
+                          {isBusy && <Spinner />}
+                          {isBusy ? 'Disconnecting…' : 'Confirm'}
+                        </Button>
+                      </div>
+                    ) : (
+                      <Button
+                        variant="danger"
+                        className="flex-1"
                         disabled={isBusy}
-                        onClick={() => runAction(() => updateFleetOsProfile({ name: profileName }), 'Profile updated.')}
-                        className="rounded-2xl border border-[#141b27]/10 bg-white px-5 py-4 text-sm font-black text-[#141b27] transition hover:bg-slate-100 disabled:cursor-wait disabled:opacity-60"
+                        onClick={() => setConfirmDisconnect(true)}
                       >
-                        Save
-                      </button>
-                    </div>
-                  </Field>
-                  <button
-                    type="button"
-                    onClick={() => onNavigate?.('onboarding')}
-                    className="w-full rounded-2xl border border-[#172231]/15 bg-slate-100 px-5 py-4 text-sm font-black text-[#172231] transition hover:bg-slate-200"
-                  >
-                    Connect Tesla
-                  </button>
+                        Disconnect all Teslas
+                      </Button>
+                    )}
+                  </div>
                 </div>
-              </details>
-            </div>
-          )}
-        </section>
+
+                <details className="group rounded-2xl border border-ink/8 bg-surface-raised p-4">
+                  <summary className="flex cursor-pointer list-none items-center justify-between rounded-xl text-sm font-medium text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-status-active/30">
+                    Account details
+                    <ChevronDown className="h-4 w-4 text-ink-muted transition group-open:rotate-180" />
+                  </summary>
+                  <div className="mt-4 space-y-4">
+                    <div className="grid grid-cols-3 gap-3">
+                      <MiniMetric label="Plan" value="Free" />
+                      <MiniMetric label="Included" value={`${billing?.includedVehicles || 1} Tesla`} />
+                      <MiniMetric label="Synced" value={billing?.vehicleCount || 0} />
+                    </div>
+                    <div>
+                      <label htmlFor="account-display-name" className="mb-1.5 block text-sm font-medium text-ink-muted">
+                        Display name
+                      </label>
+                      <div className="flex flex-col gap-2 sm:flex-row">
+                        <input
+                          id="account-display-name"
+                          value={profileName}
+                          onChange={(event) => setProfileName(event.target.value)}
+                          placeholder="Display name"
+                          enterKeyHint="done"
+                          className="w-full rounded-2xl border border-ink/12 bg-white px-4 py-3 text-sm text-ink outline-none transition placeholder:text-ink-subtle focus:border-status-active/60 focus:ring-2 focus:ring-status-active/20"
+                        />
+                        <Button
+                          variant="secondary"
+                          disabled={isBusy}
+                          aria-busy={isBusy}
+                          onClick={() => runAction(() => updateFleetOsProfile({ name: profileName }), 'Profile updated.')}
+                        >
+                          {isBusy && <Spinner />}
+                          {isBusy ? 'Saving…' : 'Save'}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </details>
+              </div>
+            )}
+          </Card>
+        )}
       </main>
     </div>
   );

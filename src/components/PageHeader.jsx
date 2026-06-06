@@ -1,20 +1,16 @@
-export default function PageHeader({ eyebrow = 'fleetos', title, description, action }) {
+export default function PageHeader({ eyebrow, title, description, action }) {
   return (
-    <header className="mb-5 sm:mb-8">
-      <div className="mb-2 flex items-center gap-3 sm:mb-3">
-        <div className="h-2.5 w-2.5 rounded-full bg-[#172231]" />
-        <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500 sm:text-xs">
-          {eyebrow}
-        </span>
-      </div>
-
-      <div className="flex flex-wrap items-start justify-between gap-5">
+    <header className="mb-5 animate-fade-up sm:mb-6">
+      <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0">
-          <h1 className="mb-2 text-2xl font-semibold leading-tight text-black sm:mb-4 sm:text-4xl xl:text-5xl">
+          {eyebrow && (
+            <p className="mb-1 text-xs font-medium text-ink-muted">{eyebrow}</p>
+          )}
+          <h1 className="text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
             {title}
           </h1>
           {description && (
-            <p className="max-w-3xl text-sm leading-6 text-slate-600 sm:text-lg sm:leading-8">
+            <p className="mt-2 max-w-2xl text-sm leading-6 text-ink-muted sm:text-base">
               {description}
             </p>
           )}
