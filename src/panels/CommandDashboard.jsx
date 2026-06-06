@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import SignOutButton from '../components/SignOutButton';
 import Logo from '../components/Logo';
+import LiveDataPanel from './LiveDataPanel';
 
 export default function CommandDashboard({ onNavigate = () => {}, route = 'overview', fleet = [] }) {
   const totalVehicles = fleet.length;
@@ -133,6 +134,11 @@ export default function CommandDashboard({ onNavigate = () => {}, route = 'overv
               />
               <button className="bg-white text-black px-8 py-3 rounded-2xl font-medium">Send</button>
             </div>
+          </div>
+
+          {/* Live Data Overview - Charts & Stats */}
+          <div className="mt-12">
+            <LiveDataPanel fleet={fleet} />
           </div>
 
           {/* Public Tracker Integration (example calling external robotaxi data) */}
