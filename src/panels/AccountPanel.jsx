@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { ArrowRight, Car, ChevronDown, Loader2 } from 'lucide-react';
+import { ArrowRight, Battery, Car, CreditCard, Loader2, User } from 'lucide-react';
 import { isClerkConfigured } from '../auth/clerkConfig';
 import RoboLogo from '../components/RoboLogo';
 import RoboWordmark from '../components/RoboWordmark';
 import SignOutButton from '../components/SignOutButton';
-import { Button, Card } from '../ui';
+import { Button, Card, Chip, Metric, StatusDot } from '../ui';
 import {
   disconnectTeslaForUser,
   getFleetOsBillingStatus,
@@ -34,16 +34,287 @@ function Notice({ tone = 'success', children }) {
   );
 }
 
-function MiniMetric({ label, value }) {
+function initials(name, email) {
+  const source = (name || email || '?').trim();
+  const parts = source.split(/\s+/).filter(Boolean);
+  if (parts.length >= 2) return `${parts[0][0]}${parts[1][0]}`.toUpperCase();
+  return source.slice(0, 2).toUpperCase();
+}
+
+function teslaStatusTone(session, billing) {
+  if (!session?.teslaConnected) return 'offline';
+  if ((billing?.vehicleCount || 0) > 0) return 'ready';
+  return 'caution';
+}
+
+function teslaStatusLabel(session, billing) {
+  if (!session?.teslaConnected) return 'Not connected';
+  const count = billing?.vehicleCount || 0;
+  if (count === 0) return 'Connected · awaiting first sync';
+  return `Connected · ${count} vehicle${count === 1 ? '' : 's'} synced`;
+}
+
+function formatConnectedAt(value) {
+  if (!value) return null;
+  try {
+    return new Date(value).toLocaleDateString([], { month: 'short', day: 'numeric', year: 'numeric' });
+  } catch {
+    return null;
+  }
+}
+
+function LoadingState() {
   return (
-    <div className="rounded-2xl border border-ink/8 bg-surface p-3">
-      <p className="text-[11px] font-medium text-ink-muted">{label}</p>
-      <p className="mt-1 text-xl font-semibold tracking-tight text-ink">{value}</p>
+    <Card padding="p-6 sm:p-7" className="animate-fade-up">
+      <div
+        className="flex items-center justify-center gap-3 py-12 text-sm text-ink-muted"
+        role="status"
+        aria-live="polite"
+      >
+        <Spinner className="h-5 w-5 text-ink-muted" />
+        Loading your account…
+      </div>
+    </Card>
+  );
+}
+
+function SignedOutView({ clerkReady, authBusy, error, message, onSignIn, onCreateAccount }) {
+  return (
+    <div className="mx-auto w-full max-w-md animate-fade-up">
+      <div className="flex flex-col items-center py-6 text-center sm:py-10">
+        <RoboLogo className="h-14 w-14" />
+        <h1 className="mt-6 text-3xl font-semibold tracking-tight text-ink">
+          Sign in to RoboAgent
+        </h1>
+        <p className="mt-3 max-w-xs text-sm leading-relaxed text-ink-muted">
+          One account for your fleet. Tesla connects right after.
+        </p>
+      </div>
+
+      {(message || error) && (
+        <div className="mb-5">
+          <Notice tone={error ? 'error' : 'success'}>{error || message}</Notice>
+        </div>
+      )}
+
+      <Card padding="p-6 sm:p-7">
+        {clerkReady ? (
+          <div className="space-y-3">
+            <Button
+              size="lg"
+              className="w-full"
+              onClick={onSignIn}
+              disabled={Boolean(authBusy)}
+              aria-busy={authBusy === 'signin'}
+            >
+              {authBusy === 'signin' && <Spinner />}
+              {authBusy === 'signin' ? 'Opening…' : 'Get started'}
+            </Button>
+            <Button
+              variant="ghost"
+              size="md"
+              className="w-full"
+              onClick={onCreateAccount}
+              disabled={Boolean(authBusy)}
+              aria-busy={authBusy === 'create'}
+            >
+              {authBusy === 'create' ? 'Opening…' : 'Create account'}
+            </Button>
+          </div>
+        ) : (
+          <Notice tone="warning">
+            Secure sign-in is not configured here. Use the live site with Clerk enabled, or add your Clerk publishable key.
+          </Notice>
+        )}
+      </Card>
+
+      <p className="mt-6 text-center text-xs text-ink-subtle">
+        Tesla login is separate and comes next.
+      </p>
     </div>
   );
 }
 
-export default function AccountPanel({ onNavigate }) {
+function ProfileSection({ user, profileName, isBusy, onProfileNameChange, onSaveProfile, onOpenDashboard }) {
+  return (
+    <Card padding="p-5 sm:p-6" className="animate-fade-up">
+      <div className="flex items-start gap-4">
+        <div
+          className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-ink/5 text-sm font-semibold text-ink-muted"
+          aria-hidden="true"
+        >
+          {initials(user.name, user.email)}
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="text-sm font-semibold text-ink">{user.name || 'RoboAgent owner'}</p>
+          <p className="mt-0.5 truncate text-sm text-ink-muted">{user.email}</p>
+          <Chip active className="mt-2 pointer-events-none">Signed in</Chip>
+        </div>
+      </div>
+
+      <div className="mt-5 border-t border-ink/8 pt-5">
+        <label htmlFor="account-display-name" className="mb-1.5 block text-xs font-medium text-ink-muted">
+          Display name
+        </label>
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <input
+            id="account-display-name"
+            value={profileName}
+            onChange={(event) => onProfileNameChange(event.target.value)}
+            placeholder="Your name"
+            enterKeyHint="done"
+            className="w-full rounded-2xl border border-ink/12 bg-white px-4 py-3 text-sm text-ink outline-none transition placeholder:text-ink-subtle focus:border-status-active/60 focus:ring-2 focus:ring-status-active/20"
+          />
+          <Button
+            variant="secondary"
+            disabled={isBusy}
+            aria-busy={isBusy}
+            onClick={onSaveProfile}
+            className="shrink-0 sm:px-5"
+          >
+            {isBusy && <Spinner />}
+            {isBusy ? 'Saving…' : 'Save'}
+          </Button>
+        </div>
+      </div>
+
+      <Button size="lg" className="mt-5 w-full" onClick={onOpenDashboard}>
+        Open dashboard
+        <ArrowRight className="h-4 w-4" />
+      </Button>
+    </Card>
+  );
+}
+
+function TeslaSection({
+  session,
+  billing,
+  isBusy,
+  confirmDisconnect,
+  onManage,
+  onConfirmDisconnect,
+  onCancelDisconnect,
+  onDisconnect,
+}) {
+  const tone = teslaStatusTone(session, billing);
+  const label = teslaStatusLabel(session, billing);
+  const connectedAt = formatConnectedAt(session?.teslaConnectedAt);
+
+  return (
+    <Card padding="p-5 sm:p-6" className="animate-fade-up">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex items-center gap-2">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-ink/5 text-ink-muted">
+            <Car className="h-4 w-4" />
+          </div>
+          <div>
+            <p className="text-sm font-semibold text-ink">Tesla connection</p>
+            <p className="mt-0.5 text-xs text-ink-subtle">Official Fleet API · read-only</p>
+          </div>
+        </div>
+        <StatusDot tone={tone} />
+      </div>
+
+      <div className="mt-4 flex flex-wrap items-center gap-2">
+        <span className="text-sm font-medium text-ink">{label}</span>
+        {connectedAt && (
+          <span className="text-xs text-ink-subtle">· since {connectedAt}</span>
+        )}
+      </div>
+
+      {(billing?.vehicleCount || 0) > 0 && (
+        <div className="mt-3 flex items-center gap-2 text-sm text-ink-muted">
+          <Battery className="h-3.5 w-3.5" />
+          <span>{billing.vehicleCount} vehicle{billing.vehicleCount === 1 ? '' : 's'} on your plan</span>
+        </div>
+      )}
+
+      <div className="mt-5 flex flex-col gap-2 sm:flex-row">
+        <Button className="flex-1" onClick={onManage}>
+          {session?.teslaConnected ? 'Manage vehicles' : 'Connect Tesla'}
+        </Button>
+        {session?.teslaConnected && (
+          confirmDisconnect ? (
+            <div className="flex flex-1 gap-2">
+              <Button variant="secondary" className="flex-1" disabled={isBusy} onClick={onCancelDisconnect}>
+                Cancel
+              </Button>
+              <Button
+                variant="danger"
+                className="flex-1"
+                disabled={isBusy}
+                aria-busy={isBusy}
+                onClick={onDisconnect}
+              >
+                {isBusy && <Spinner />}
+                {isBusy ? 'Disconnecting…' : 'Confirm'}
+              </Button>
+            </div>
+          ) : (
+            <Button variant="danger" className="flex-1" disabled={isBusy} onClick={onConfirmDisconnect}>
+              Disconnect
+            </Button>
+          )
+        )}
+      </div>
+    </Card>
+  );
+}
+
+function PlanSection({ billing }) {
+  if (!billing) return null;
+
+  const planLabel = billing.billingRequired ? 'Upgrade needed' : 'Free beta';
+  const planTone = billing.billingRequired ? 'warning' : 'success';
+
+  return (
+    <Card padding="p-5 sm:p-6" className="animate-fade-up">
+      <div className="mb-4 flex items-center gap-2">
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-ink/5 text-ink-muted">
+          <CreditCard className="h-4 w-4" />
+        </div>
+        <p className="text-sm font-semibold text-ink">Plan & billing</p>
+      </div>
+
+      <div className="grid grid-cols-3 gap-3">
+        <Metric label="Plan" value={planLabel} tone={planTone} />
+        <Metric label="Included" value={billing.includedVehicles || 1} hint="Teslas" />
+        <Metric label="Synced" value={billing.vehicleCount || 0} tone="info" icon={Car} />
+      </div>
+
+      {billing.billingRequired && (
+        <p className="mt-4 text-sm leading-relaxed text-ink-muted">
+          You have {billing.billableVehicles || 0} billable vehicle{(billing.billableVehicles || 0) === 1 ? '' : 's'} beyond your included limit.
+        </p>
+      )}
+    </Card>
+  );
+}
+
+function SessionSection({ onSignedOut }) {
+  return (
+    <Card padding="p-5 sm:p-6" className="animate-fade-up">
+      <div className="flex items-center gap-2">
+        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-ink/5 text-ink-muted">
+          <User className="h-4 w-4" />
+        </div>
+        <div>
+          <p className="text-sm font-semibold text-ink">Session</p>
+          <p className="mt-0.5 text-xs text-ink-subtle">Sign out of this device</p>
+        </div>
+      </div>
+
+      <SignOutButton
+        label="Sign out"
+        onSignedOut={onSignedOut}
+        className="mt-5 w-full rounded-2xl border border-ink/12 bg-surface px-5 py-3.5 text-center text-sm font-semibold text-ink-muted transition hover:bg-white hover:text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-status-active/30"
+        confirmClassName="mt-5 rounded-2xl border border-status-caution/20 bg-status-caution/5"
+      />
+    </Card>
+  );
+}
+
+export default function AccountPanel({ onNavigate, embedded = false }) {
   const [session, setSession] = useState(null);
   const [sessionLoaded, setSessionLoaded] = useState(false);
   const [billing, setBilling] = useState(null);
@@ -148,6 +419,7 @@ export default function AccountPanel({ onNavigate }) {
     setMessage('');
     try {
       await disconnectTeslaForUser();
+      await refresh();
       setMessage('Tesla access revoked. You can reconnect anytime from onboarding.');
       setConfirmDisconnect(false);
     } catch {
@@ -157,8 +429,62 @@ export default function AccountPanel({ onNavigate }) {
     }
   };
 
+  const handleSignedOut = () => {
+    setSession({ authenticated: false, user: {} });
+    onNavigate?.('landing');
+  };
+
+  const content = !sessionLoaded ? (
+    <LoadingState />
+  ) : !hasRealAccount ? (
+    <SignedOutView
+      clerkReady={clerkReady}
+      authBusy={authBusy}
+      error={error}
+      message={message}
+      onSignIn={() => openClerkAuth('signin')}
+      onCreateAccount={() => openClerkAuth('create')}
+    />
+  ) : (
+    <div className="space-y-4 sm:space-y-5">
+      {(message || error) && (
+        <Notice tone={error ? 'error' : 'success'}>{error || message}</Notice>
+      )}
+
+      <ProfileSection
+        user={user}
+        profileName={profileName}
+        isBusy={isBusy}
+        onProfileNameChange={setProfileName}
+        onSaveProfile={() => runAction(() => updateFleetOsProfile({ name: profileName }), 'Profile updated.')}
+        onOpenDashboard={() => onNavigate?.('overview')}
+      />
+
+      <TeslaSection
+        session={session}
+        billing={billing}
+        isBusy={isBusy}
+        confirmDisconnect={confirmDisconnect}
+        onManage={() => onNavigate?.('onboarding')}
+        onConfirmDisconnect={() => setConfirmDisconnect(true)}
+        onCancelDisconnect={() => setConfirmDisconnect(false)}
+        onDisconnect={disconnectTesla}
+      />
+
+      <PlanSection billing={billing} />
+
+      <SessionSection onSignedOut={handleSignedOut} />
+    </div>
+  );
+
+  if (embedded) {
+    return content;
+  }
+
+  const centerSignedOut = sessionLoaded && !hasRealAccount;
+
   return (
-    <div className="min-h-screen bg-surface px-4 py-5 text-ink">
+    <div className="min-h-screen bg-surface px-4 py-5 text-ink sm:px-6">
       <header className="mx-auto flex max-w-xl items-center justify-between">
         <button
           type="button"
@@ -168,179 +494,17 @@ export default function AccountPanel({ onNavigate }) {
           <RoboLogo className="h-8 w-8" />
           <RoboWordmark className="text-base" />
         </button>
-        <Button variant="ghost" size="sm" onClick={() => onNavigate?.('landing')}>Home</Button>
+        <Button variant="ghost" size="sm" onClick={() => onNavigate?.('landing')}>
+          Home
+        </Button>
       </header>
 
-      <main className="mx-auto grid min-h-[calc(100vh-92px)] max-w-xl place-items-center py-5">
-        {!sessionLoaded ? (
-          <Card padding="p-6 sm:p-7" className="w-full animate-fade-up">
-            <div className="flex items-center justify-center gap-3 py-10 text-sm text-ink-muted" role="status" aria-live="polite">
-              <Spinner className="h-5 w-5 text-ink-muted" />
-              Loading your account…
-            </div>
-          </Card>
-        ) : (
-          <Card padding="p-6 sm:p-7" className="w-full animate-fade-up">
-            <div className="mb-5">
-              <h1 className="text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
-                {hasRealAccount ? 'You are signed in' : 'Sign in to ROBOAGENT'}
-              </h1>
-              <p className="mt-2 text-sm leading-relaxed text-ink-muted">
-                {hasRealAccount
-                  ? 'Manage your owner account, plan, and Tesla connection.'
-                  : 'Use your owner account first. Tesla connects right after.'}
-              </p>
-            </div>
-
-            {(message || error) && (
-              <div className="mb-5">
-                <Notice tone={error ? 'error' : 'success'}>{error || message}</Notice>
-              </div>
-            )}
-
-            {!hasRealAccount ? (
-              <div className="space-y-3">
-                {clerkReady ? (
-                  <>
-                    <Button
-                      size="lg"
-                      className="w-full"
-                      onClick={() => openClerkAuth('signin')}
-                      disabled={Boolean(authBusy)}
-                      aria-busy={authBusy === 'signin'}
-                    >
-                      {authBusy === 'signin' && <Spinner />}
-                      {authBusy === 'signin' ? 'Opening…' : 'Sign in'}
-                    </Button>
-                    <Button
-                      variant="secondary"
-                      size="lg"
-                      className="w-full"
-                      onClick={() => openClerkAuth('create')}
-                      disabled={Boolean(authBusy)}
-                      aria-busy={authBusy === 'create'}
-                    >
-                      {authBusy === 'create' && <Spinner />}
-                      {authBusy === 'create' ? 'Opening…' : 'Create account'}
-                    </Button>
-                  </>
-                ) : (
-                  <Notice tone="warning">
-                    Secure account sign-in is not configured in this environment. Use the live site with Clerk enabled, or add the Clerk publishable key before testing account creation.
-                  </Notice>
-                )}
-
-                <p className="pt-1 text-center text-xs text-ink-subtle">
-                  Tesla login is separate and comes next.
-                </p>
-              </div>
-            ) : (
-              <div className="space-y-4">
-                <div className="rounded-2xl border border-ink/8 bg-surface p-4">
-                  <p className="text-[11px] font-medium text-ink-muted">Signed in</p>
-                  <p className="mt-1 text-lg font-semibold text-ink">{user.name || 'ROBOAGENT Owner'}</p>
-                  <p className="mt-0.5 truncate text-sm text-ink-muted">{user.email}</p>
-                </div>
-
-                <Button size="lg" className="w-full" onClick={() => onNavigate?.('overview')}>
-                  Open dashboard
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-                <SignOutButton
-                  label="Sign out"
-                  onSignedOut={() => {
-                    setSession({ authenticated: false, user: {} });
-                    onNavigate?.('landing');
-                  }}
-                  className="w-full rounded-2xl border border-ink/12 bg-surface-raised px-5 py-3.5 text-center text-sm font-semibold text-ink-muted transition hover:bg-white hover:text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-status-active/30"
-                />
-
-                <div className="rounded-2xl border border-ink/8 bg-surface-raised p-4">
-                  <div className="flex items-center gap-2 text-sm font-medium text-ink">
-                    <Car className="h-4 w-4 text-ink-muted" /> Tesla connection
-                  </div>
-                  <p className="mt-1.5 text-sm leading-relaxed text-ink-muted">
-                    Vehicles connect via the official Tesla Fleet API. You can disconnect anytime.
-                  </p>
-                  <div className="mt-3 flex flex-col gap-2 sm:flex-row">
-                    <Button className="flex-1" onClick={() => onNavigate?.('onboarding')}>
-                      Manage / add vehicles
-                    </Button>
-                    {confirmDisconnect ? (
-                      <div className="flex flex-1 gap-2">
-                        <Button
-                          variant="secondary"
-                          className="flex-1"
-                          disabled={isBusy}
-                          onClick={() => setConfirmDisconnect(false)}
-                        >
-                          Cancel
-                        </Button>
-                        <Button
-                          variant="danger"
-                          className="flex-1"
-                          disabled={isBusy}
-                          aria-busy={isBusy}
-                          onClick={disconnectTesla}
-                        >
-                          {isBusy && <Spinner />}
-                          {isBusy ? 'Disconnecting…' : 'Confirm'}
-                        </Button>
-                      </div>
-                    ) : (
-                      <Button
-                        variant="danger"
-                        className="flex-1"
-                        disabled={isBusy}
-                        onClick={() => setConfirmDisconnect(true)}
-                      >
-                        Disconnect all Teslas
-                      </Button>
-                    )}
-                  </div>
-                </div>
-
-                <details className="group rounded-2xl border border-ink/8 bg-surface-raised p-4">
-                  <summary className="flex cursor-pointer list-none items-center justify-between rounded-xl text-sm font-medium text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-status-active/30">
-                    Account details
-                    <ChevronDown className="h-4 w-4 text-ink-muted transition group-open:rotate-180" />
-                  </summary>
-                  <div className="mt-4 space-y-4">
-                    <div className="grid grid-cols-3 gap-3">
-                      <MiniMetric label="Plan" value="Free" />
-                      <MiniMetric label="Included" value={`${billing?.includedVehicles || 1} Tesla`} />
-                      <MiniMetric label="Synced" value={billing?.vehicleCount || 0} />
-                    </div>
-                    <div>
-                      <label htmlFor="account-display-name" className="mb-1.5 block text-sm font-medium text-ink-muted">
-                        Display name
-                      </label>
-                      <div className="flex flex-col gap-2 sm:flex-row">
-                        <input
-                          id="account-display-name"
-                          value={profileName}
-                          onChange={(event) => setProfileName(event.target.value)}
-                          placeholder="Display name"
-                          enterKeyHint="done"
-                          className="w-full rounded-2xl border border-ink/12 bg-white px-4 py-3 text-sm text-ink outline-none transition placeholder:text-ink-subtle focus:border-status-active/60 focus:ring-2 focus:ring-status-active/20"
-                        />
-                        <Button
-                          variant="secondary"
-                          disabled={isBusy}
-                          aria-busy={isBusy}
-                          onClick={() => runAction(() => updateFleetOsProfile({ name: profileName }), 'Profile updated.')}
-                        >
-                          {isBusy && <Spinner />}
-                          {isBusy ? 'Saving…' : 'Save'}
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </details>
-              </div>
-            )}
-          </Card>
-        )}
+      <main
+        className={`mx-auto max-w-xl py-6 ${
+          centerSignedOut ? 'flex min-h-[calc(100vh-92px)] items-center' : 'pb-10'
+        }`}
+      >
+        {content}
       </main>
     </div>
   );

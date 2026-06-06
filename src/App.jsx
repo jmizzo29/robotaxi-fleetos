@@ -549,7 +549,7 @@ function FleetApp() {
           title="Account & Access"
           description="Manage your owner profile, plan, Tesla setup, and this device session."
         />
-        <AccountPanel onNavigate={navigate} />
+        <AccountPanel onNavigate={navigate} embedded />
       </>
     ),
     settings: (
