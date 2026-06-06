@@ -11,7 +11,7 @@ export default function Landing({ onNavigate }) {
   };
 
   return (
-    <div className="min-h-screen text-white flex flex-col relative bg-[#0a0a0a]">
+    <div className="min-h-screen text-white flex flex-col relative bg-[#0a1625] md:bg-[#0a0a0a]">
       {/* Full screen background image shaping the entire screen */}
       <div 
         className="fixed inset-0 bg-cover bg-center bg-no-repeat z-0 hidden md:block"
@@ -77,13 +77,13 @@ export default function Landing({ onNavigate }) {
       <div className="md:hidden px-4 pb-8 flex flex-col gap-4">
         <button
           onClick={() => onNavigate('login')}
-          className="w-full py-4 border border-white text-white font-semibold rounded-2xl text-lg active:scale-[0.985] transition"
+          className="w-full py-4 bg-[#E8B923] text-black font-semibold rounded-2xl text-lg active:scale-[0.985] transition"
         >
           Sign In
         </button>
         <button
           onClick={() => onNavigate('signup')}
-          className="w-full py-4 bg-white text-black font-semibold rounded-2xl text-lg active:scale-[0.985] transition"
+          className="w-full py-4 bg-black text-white font-semibold rounded-2xl text-lg active:scale-[0.985] transition border border-white"
         >
           Create Account
         </button>
