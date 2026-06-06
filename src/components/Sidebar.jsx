@@ -22,12 +22,8 @@ export default function Sidebar({
     <aside className="hidden w-72 flex-col border-r border-white/10 bg-[#0a0a0a] text-white lg:flex">
       <div className="p-6 flex-1">
         {/* Brand — matches dashboard */}
-        <div className="flex items-center gap-3 mb-10 pb-6 border-b border-white/10">
-          <div className="font-bold text-3xl tracking-[-2.5px] text-white">RA</div>
-          <div>
-            <div className="text-2xl font-semibold tracking-[-0.8px]">RoboAgent</div>
-            <div className="text-[10px] text-emerald-400 -mt-1">TESLA FLEET OS</div>
-          </div>
+        <div className="flex items-center mb-10">
+          <div className="text-2xl font-semibold tracking-[-0.8px]">RoboAgent</div>
         </div>
 
         {/* Navigation — exact match to dashboard pills */}

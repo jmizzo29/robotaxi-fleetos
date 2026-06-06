@@ -20,13 +20,29 @@ export default function Login({ onNavigate, onLoginSuccess }) {
     else onNavigate('overview');
   };
 
-  const handleTeslaLogin = () => {
+  const handleTeslaLogin = async () => {
     setIsTeslaLoading(true);
-    // Trigger real Tesla OAuth (same as Signup and Onboarding)
     verifyBetaInvite('RoboAgent-BETA');
     acceptTeslaConsent();
+
+    // Use Clerk's direct social auth for Tesla if available (this can launch the OAuth directly without the full sign-in form on many setups).
+    // With the dark appearance configured, any Clerk UI will match the app's dark theme instead of white.
+    try {
+      if (window.Clerk?.signIn?.authenticateWithRedirect) {
+        await window.Clerk.signIn.authenticateWithRedirect({
+          strategy: 'oauth_tesla', // <-- Update this to the exact strategy name from your Clerk dashboard (check under Social connections or OAuth providers; often 'oauth_tesla' or a custom name)
+          redirectUrl: window.location.origin + '/#/sso-callback',
+          signInFallbackRedirectUrl: window.location.origin + '/#/overview',
+        });
+        return;
+      }
+    } catch (err) {
+      console.warn('Clerk Tesla social direct failed (strategy may not be configured or not available on mobile), falling back to custom backend Tesla Fleet flow', err);
+    }
+
+    // Fallback to pure custom backend Tesla Fleet API OAuth (for vehicle data / telemetry consent)
     const url = getTeslaLoginUrl('overview');
-    console.log('Redirecting to Tesla OAuth from login:', url);
+    console.log('Redirecting to Tesla OAuth from login (custom flow):', url);
     window.location.replace(url);
   };
 
@@ -41,9 +57,8 @@ export default function Login({ onNavigate, onLoginSuccess }) {
           Back to Home
         </button>
 
-        <div className="flex items-center gap-3 mb-10">
-          <div className="font-bold text-4xl tracking-[-3px] text-white">RA</div>
-          <div className="text-3xl font-semibold tracking-[-1px]">RoboAgent</div>
+        <div className="flex items-center mb-10">
+          <div className="text-3xl font-semibold tracking-[-0.8px]">RoboAgent</div>
         </div>
 
         <div className="mb-10">

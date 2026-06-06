@@ -32,9 +32,8 @@ export default function OnboardingPanel({ onNavigate }) {
             </button>
 
             {/* Logo */}
-            <div className="flex items-center gap-3 mb-10">
-              <div className="font-bold text-4xl tracking-[-3px] text-white">RA</div>
-              <div className="text-3xl font-semibold tracking-[-1px]">RoboAgent</div>
+            <div className="flex items-center mb-10">
+              <div className="text-3xl font-semibold tracking-[-0.8px]">RoboAgent</div>
             </div>
 
             {/* Progress */}
@@ -67,10 +66,26 @@ export default function OnboardingPanel({ onNavigate }) {
             </div>
 
             <button
-              onClick={() => {
-                // Trigger the existing working Tesla OAuth flow
+              onClick={async () => {
+                // Record consents first
                 verifyBetaInvite('RoboAgent-BETA');
                 acceptTeslaConsent();
+
+                // Try Clerk direct social for Tesla (can be seamless/direct on many setups; appearance is dark-themed)
+                try {
+                  if (window.Clerk?.signIn?.authenticateWithRedirect) {
+                    await window.Clerk.signIn.authenticateWithRedirect({
+                      strategy: 'oauth_tesla', // Update to match your Clerk dashboard provider/strategy name if different
+                      redirectUrl: window.location.origin + '/#/sso-callback',
+                      signInFallbackRedirectUrl: window.location.origin + '/#/onboarding',
+                    });
+                    return;
+                  }
+                } catch (err) {
+                  console.warn('Clerk direct Tesla failed, falling back to custom Fleet API flow', err);
+                }
+
+                // Custom backend Tesla Fleet API flow
                 const url = getTeslaLoginUrl('onboarding');
                 console.log('Redirecting to Tesla OAuth:', url);
                 // Use replace to clear history and avoid chrome-error frame issues from previous failed attempts

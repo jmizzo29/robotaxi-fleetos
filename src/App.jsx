@@ -30,6 +30,7 @@ import LegalPage from './panels/LegalPage';
 import MemoryEventsPanel from './panels/MemoryEventsPanel';
 import CommandDashboard from './panels/CommandDashboard';
 import OnboardingPanel from './panels/OnboardingPanel';
+import AddVehiclePanel from './panels/AddVehiclePanel';
 import OperationsReportPanel from './panels/OperationsReportPanel';
 import RoboAgentAskPanel from './panels/RoboAgentAskPanel';
 import SettingsPanel from './panels/SettingsPanel';
@@ -184,9 +185,8 @@ function EmailSignupFlow({ onNavigate, onSignupSuccess }) {
           <ArrowLeft className="w-4 h-4" /> Back to Home
         </button>
 
-        <div className="flex items-center gap-3 mb-12">
-          <div className="font-bold text-4xl tracking-[-3px] text-white">RA</div>
-          <div className="text-3xl font-semibold tracking-[-1px]">RoboAgent</div>
+        <div className="flex items-center mb-12">
+          <div className="text-3xl font-semibold tracking-[-0.8px]">RoboAgent</div>
         </div>
 
         <h1 className="text-5xl font-semibold tracking-[-2px] mb-4">Create your account</h1>
@@ -270,6 +270,7 @@ function FleetApp() {
   const isPublicHowItWorksRoute = route === 'how-it-works';
   const isPublicLegalRoute = route === 'privacy' || route === 'terms';
   const isPublicOnboardingRoute = route === 'onboarding';
+  const isPublicAddVehicleRoute = route === 'add-vehicle';
   const isPublicAccountRoute = route === 'account';
   const teslaConsentReady = canUseTeslaTelemetry();
   const shouldAutoSyncReal = !(
@@ -282,6 +283,7 @@ function FleetApp() {
     isPublicHowItWorksRoute ||
     isPublicLegalRoute ||
     isPublicOnboardingRoute ||
+    isPublicAddVehicleRoute ||
     isPublicAccountRoute
   );
 
@@ -743,11 +745,7 @@ function FleetApp() {
   }
 
   if (isPublicHowItWorksRoute) {
-    return (
-      <div className="robo-minimal">
-        <HowItWorksPage onNavigate={navigate} />
-      </div>
-    );
+    return <HowItWorksPage onNavigate={navigate} />;
   }
 
   if (isPublicLegalRoute) {
@@ -780,6 +778,10 @@ function FleetApp() {
         onNavigate={navigate}
       />
     );
+  }
+
+  if (isPublicAddVehicleRoute) {
+    return <AddVehiclePanel onNavigate={navigate} />;
   }
 
   if (isPublicAccountRoute) {

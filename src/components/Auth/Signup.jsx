@@ -6,15 +6,29 @@ import { getTeslaLoginUrl } from '../../services/teslaHealthService';
 export default function Signup({ onNavigate, onSignupSuccess }) {
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleTeslaSignup = () => {
+  const handleTeslaSignup = async () => {
     setIsLoading(true);
-    // Real Tesla OAuth — same flow as the onboarding panel.
-    // We record consent + beta access, then redirect to backend which will come back to the app.
     verifyBetaInvite('RoboAgent-BETA');
     acceptTeslaConsent();
 
+    // Use Clerk's direct social auth for Tesla if available (this can launch the OAuth directly without the full sign-in form on many setups).
+    // With the dark appearance configured, any Clerk UI will match the app's dark theme instead of white.
+    try {
+      if (window.Clerk?.signIn?.authenticateWithRedirect) {
+        await window.Clerk.signIn.authenticateWithRedirect({
+          strategy: 'oauth_tesla', // <-- Update this to the exact strategy name from your Clerk dashboard (check under Social connections or OAuth providers; often 'oauth_tesla' or a custom name)
+          redirectUrl: window.location.origin + '/#/sso-callback',
+          signInFallbackRedirectUrl: window.location.origin + '/#/onboarding',
+        });
+        return;
+      }
+    } catch (err) {
+      console.warn('Clerk Tesla social direct failed (strategy may not be configured or not available on mobile), falling back to custom backend Tesla Fleet flow', err);
+    }
+
+    // Fallback to pure custom backend Tesla Fleet API OAuth (for vehicle data / telemetry consent)
     const url = getTeslaLoginUrl('onboarding'); // after success, lands on onboarding which auto-jumps to success
-    console.log('Starting Tesla OAuth from signup:', url);
+    console.log('Starting Tesla OAuth from signup (custom flow):', url);
 
     // Use replace so the user doesn't have the intermediate signup in history
     window.location.replace(url);
@@ -30,9 +44,8 @@ export default function Signup({ onNavigate, onSignupSuccess }) {
           <ArrowLeft className="w-4 h-4" /> Back to Home
         </button>
 
-        <div className="flex items-center gap-3 mb-12">
-          <div className="font-bold text-4xl tracking-[-3px] text-white">RA</div>
-          <div className="text-3xl font-semibold tracking-[-1px]">RoboAgent</div>
+        <div className="flex items-center mb-12">
+          <div className="text-3xl font-semibold tracking-[-0.8px]">RoboAgent</div>
         </div>
 
         <h1 className="text-5xl font-semibold tracking-[-2px] mb-4">Get started with your Teslas</h1>

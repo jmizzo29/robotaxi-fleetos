@@ -20,6 +20,7 @@ const DEFAULT_SCOPES = process.env.TESLA_SCOPES || 'openid offline_access user_d
 const TESLA_PARTNER_DOMAIN = process.env.TESLA_PARTNER_DOMAIN || '';
 const AI_PROVIDER = (process.env.AI_PROVIDER || '').toLowerCase();
 const AI_MODEL = process.env.AI_MODEL || (AI_PROVIDER === 'xai' ? 'grok-4' : 'claude-sonnet-4-5');
+const { calculateDynamicPrice } = require('./src/services/pricingEngine');
 const DEFAULT_ALLOWED_ORIGINS = [
   'http://localhost:5173',
   'http://localhost:5174',
@@ -211,6 +212,15 @@ function buildHeuristicFleetAnalysis(fleet = [], context = {}) {
       rationale: 'Battery and utilization distribution suggests charging should be staggered rather than clustered.',
       actionLabel: 'Optimize Charging',
       command: 'Charging Optimization Triggered',
+    },
+    {
+      id: 'event-surge-pricing',
+      title: 'Event-Specific Surge Pricing',
+      confidence: 82,
+      impact: 'Applies intelligent price caps per event type (concerts/festivals capped lower, sports higher) while using PredictHQ demand signals.',
+      rationale: 'Prevents over-surging on big events while still capturing upside. Uses calculateDynamicPrice with event-aware caps.',
+      actionLabel: 'Calculate Surges',
+      command: 'Run dynamic pricing with event caps for next 5 days',
     },
   ];
 

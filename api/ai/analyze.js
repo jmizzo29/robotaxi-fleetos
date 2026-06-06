@@ -1,5 +1,6 @@
 import { getSession } from '../_lib/auth.js';
 import { buildFleetContextSignals, buildPricingSignalSummary, getExternalContextForVehicle } from '../_lib/externalContext.js';
+import { calculateDynamicPrice } from '../_lib/pricingEngine.js';
 
 const AI_PROVIDER = (process.env.AI_PROVIDER || '').toLowerCase();
 const AI_MODEL = process.env.AI_MODEL || (AI_PROVIDER === 'xai' ? 'grok-4' : 'claude-sonnet-4-5');
@@ -95,8 +96,8 @@ function buildHeuristicFleetAnalysis(fleet = [], context = {}) {
         id: 'turo-demand-pricing',
         title: 'Turo Demand Pricing',
         confidence: pricingSignals.confidence || (pricingPressure === 'elevated' ? 84 : 76),
-        impact: `${pricingSignals.suggestedLift > 0 ? 'Raise' : pricingSignals.suggestedLift < 0 ? 'Lower' : 'Hold'} prices by ${Math.abs(pricingSignals.suggestedLift || 0)}% where vehicle readiness supports it.`,
-        rationale: `Pricing agent considered utilization (${pricingSignals.avgUtilization}%), health (${pricingSignals.avgHealth}/100), ${pricingSignals.eventSignal}, and ${pricingSignals.weatherSignal}. Current pricing pressure is ${pricingPressure}.`,
+        impact: `${pricingSignals.suggestedLift > 0 ? 'Raise' : pricingSignals.suggestedLift < 0 ? 'Lower' : 'Hold'} prices by ${Math.abs(pricingSignals.suggestedLift || 0)}% where vehicle readiness supports it. (Uses PredictHQ event caps for intelligent limits.)`,
+        rationale: `Pricing agent considered utilization (${pricingSignals.avgUtilization}%), health (${pricingSignals.avgHealth}/100), ${pricingSignals.eventSignal}, and ${pricingSignals.weatherSignal}. Current pricing pressure is ${pricingPressure}. See calculateDynamicPrice in _lib/pricingEngine.js for event-specific caps (concerts 85%, sports up to 120%).`,
         actionLabel: 'Review Price Lift',
         command: 'Review Turo demand-based pricing suggestions for the next 7 days',
       },
@@ -113,8 +114,8 @@ function buildHeuristicFleetAnalysis(fleet = [], context = {}) {
         id: 'event-driven-opportunities',
         title: 'Event-Driven Opportunities',
         confidence: 77,
-        impact: 'Identifies demand spikes from concerts, sports, holidays, airports, and local gatherings.',
-        rationale: 'Event-aware pricing and staging can help vehicles be available where renters and riders are likely to need them.',
+        impact: 'Identifies demand spikes from concerts, sports, holidays, airports, and local gatherings. Uses PredictHQ with event-specific price caps (e.g. concerts capped at 85% surge, sports up to 120%).',
+        rationale: 'Event-aware pricing and staging can help vehicles be available where renters and riders are likely to need them. Intelligent caps prevent over-surging while capturing upside (see backend/src/services/pricingEngine.js).',
         actionLabel: 'Find Event Upside',
         command: 'Find event-driven pricing and staging opportunities for this weekend',
       },

@@ -9,29 +9,27 @@ export default function Landing({ onNavigate }) {
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <div 
             onClick={() => onNavigate('landing')}
-            className="flex items-center gap-3 cursor-pointer hover:opacity-90 transition"
+            className="flex items-center cursor-pointer hover:opacity-90 transition"
           >
-            <div className="font-bold text-3xl tracking-[-2.5px] text-white">RA</div>
-            <div className="text-2xl font-semibold tracking-[-0.6px]">RoboAgent</div>
+            <div className="text-2xl font-semibold tracking-[-0.8px]">RoboAgent</div>
           </div>
 
           <div className="hidden md:flex items-center gap-8 text-sm">
-            <a href="#product" className="text-white/70 hover:text-white transition">Product</a>
             <a href="#how" className="text-white/70 hover:text-white transition">How it works</a>
           </div>
 
-          <div className="flex items-center gap-4">
-            <button
-              onClick={() => onNavigate('signup')}
-              className="bg-white text-black px-6 py-2.5 rounded-full font-semibold hover:bg-white/90 transition active:scale-[0.98]"
-            >
-              Get Started Free
-            </button>
+          <div className="flex items-center gap-4 text-sm font-medium">
             <button 
               onClick={() => onNavigate('login')}
-              className="px-6 py-2 text-sm text-white/80 hover:text-white transition"
+              className="px-8 py-3 text-white/90 hover:text-white hover:bg-white/10 rounded-2xl transition"
             >
               Log in
+            </button>
+            <button 
+              onClick={() => onNavigate('signup')}
+              className="px-8 py-3 bg-white text-black font-semibold rounded-2xl hover:bg-white/90 active:scale-[0.985] transition"
+            >
+              Get Started Free
             </button>
           </div>
         </div>
@@ -65,20 +63,50 @@ export default function Landing({ onNavigate }) {
         </div>
       </div>
 
-      {/* Product anchor for navbar */}
-      <div id="product" />
-
       {/* New About / How it Works Section */}
       <div id="how">
-        <div className="max-w-4xl mx-auto px-6 py-20 text-center">
-          <h2 className="text-5xl font-semibold tracking-[-2px] mb-6">How RoboAgent Works with Tesla Robotaxi</h2>
+        <div className="max-w-5xl mx-auto px-6 py-20">
+          <div className="text-center mb-16">
+            <h2 className="text-5xl font-semibold tracking-[-2px] mb-6">How RoboAgent Works with Tesla Robotaxi</h2>
+            <p className="text-xl text-white/70 mb-8 max-w-2xl mx-auto">
+              In 2026, Tesla is opening its Robotaxi network to individual owners.
+              You can now put your Tesla (or future Cybercab) to work earning money autonomously.
+            </p>
+          </div>
 
-          <p className="text-xl text-white/70 mb-16 max-w-2xl mx-auto">
-            In 2026, Tesla is opening its Robotaxi network to individual owners.
-            You can now put your Tesla (or future Cybercab) to work earning money autonomously.
-          </p>
+          {/* Telemetry Section */}
+          <div className="bg-zinc-900 rounded-3xl p-12 mb-16">
+            <h3 className="text-2xl font-semibold mb-8">What Telemetry We Fetch from Tesla</h3>
+            
+            <div className="grid md:grid-cols-2 gap-x-16 gap-y-10">
+              <div>
+                <strong className="text-emerald-400">Real-time Data:</strong>
+                <ul className="mt-4 space-y-3 text-white/80">
+                  <li>• Battery level &amp; range</li>
+                  <li>• Current location &amp; speed</li>
+                  <li>• Charging status &amp; power</li>
+                  <li>• Vehicle status (driving, parked, charging)</li>
+                </ul>
+              </div>
+              <div>
+                <strong className="text-emerald-400">Fleet &amp; Health Data:</strong>
+                <ul className="mt-4 space-y-3 text-white/80">
+                  <li>• Energy consumption &amp; efficiency</li>
+                  <li>• Software version &amp; update status</li>
+                  <li>• Tire pressure &amp; basic diagnostics</li>
+                  <li>• Odometer &amp; trip history</li>
+                </ul>
+              </div>
+            </div>
 
-          <div className="grid md:grid-cols-3 gap-8 text-left">
+            <p className="mt-12 text-white/70 text-center text-lg">
+              All data is fetched securely through Tesla’s official Fleet API.<br />
+              Your credentials never leave Tesla’s servers.
+            </p>
+          </div>
+
+          {/* Process Steps */}
+          <div className="grid md:grid-cols-3 gap-8 text-left mb-16">
             <div className="bg-zinc-900 rounded-3xl p-8">
               <div className="text-emerald-400 text-4xl mb-4">1</div>
               <h3 className="text-2xl font-semibold mb-3">Connect Your Tesla</h3>
@@ -98,7 +126,38 @@ export default function Landing({ onNavigate }) {
             </div>
           </div>
 
-          <p className="mt-16 text-white/60 text-lg">
+          {/* Scenarios */}
+          <div className="grid md:grid-cols-2 gap-12">
+            {/* Individual Owner */}
+            <div className="bg-zinc-900 rounded-3xl p-10">
+              <h3 className="text-2xl font-semibold mb-6">Individual Owner (1–5 vehicles)</h3>
+              <p className="text-white/70 mb-8">
+                Use your Tesla on Turo or for personal use, then let it earn on the Robotaxi network when idle.
+              </p>
+              <div className="text-emerald-400 text-sm font-medium">RoboAgent helps you:</div>
+              <ul className="mt-4 space-y-2 text-white/70">
+                <li>• Balance personal use vs. robotaxi earnings</li>
+                <li>• Get smart charging and pricing suggestions</li>
+                <li>• Track total income from both Turo and Robotaxi</li>
+              </ul>
+            </div>
+
+            {/* Fleet Owner */}
+            <div className="bg-zinc-900 rounded-3xl p-10">
+              <h3 className="text-2xl font-semibold mb-6">Fleet Owner (10+ Cybercabs)</h3>
+              <p className="text-white/70 mb-8">
+                Run a professional operation with multiple vehicles working 24/7.
+              </p>
+              <div className="text-emerald-400 text-sm font-medium">RoboAgent helps you:</div>
+              <ul className="mt-4 space-y-2 text-white/70">
+                <li>• AI-powered dispatching and routing</li>
+                <li>• Centralized charging and maintenance scheduling</li>
+                <li>• Detailed earnings analytics and optimization</li>
+              </ul>
+            </div>
+          </div>
+
+          <p className="mt-16 text-center text-white/60 text-lg">
             RoboAgent is built specifically for Tesla owners who want to maximize earnings with minimal effort in the new Robotaxi economy.
           </p>
         </div>

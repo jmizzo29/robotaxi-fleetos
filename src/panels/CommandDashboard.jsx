@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import SignOutButton from '../components/SignOutButton';
 
 export default function CommandDashboard({ onNavigate = () => {}, route = 'overview', fleet = [] }) {
@@ -20,6 +20,7 @@ export default function CommandDashboard({ onNavigate = () => {}, route = 'overv
     { label: "Home", route: 'overview' },
     { label: "Live Map", route: 'map' },
     { label: "Fleet", route: 'fleet' },
+    { label: "Add Vehicle", route: 'add-vehicle' },
     { label: "AI Agent", route: 'ai' },
     { label: "Earnings", route: 'finance' },
     { label: "Charging", route: 'charging' },
@@ -35,17 +36,29 @@ export default function CommandDashboard({ onNavigate = () => {}, route = 'overv
     onNavigate(itemRoute);
   };
 
+  const [publicTrackerData, setPublicTrackerData] = useState(null);
+  const [publicTrackerLoading, setPublicTrackerLoading] = useState(false);
+
+  const loadPublicTracker = async () => {
+    setPublicTrackerLoading(true);
+    try {
+      const res = await fetch('/api/public-tracker?provider=tesla&area=austin');
+      const data = await res.json();
+      setPublicTrackerData(data);
+    } catch (e) {
+      setPublicTrackerData({ error: 'Failed to load public tracker data', details: e.message });
+    } finally {
+      setPublicTrackerLoading(false);
+    }
+  };
+
   return (
     <div className="flex min-h-screen bg-[#0a0a0a] text-white">
       {/* Left Sidebar - Kept */}
       <div className="w-72 border-r border-white/10 bg-[#0a0a0a] flex-shrink-0 flex flex-col">
         <div className="p-6 flex-1">
-          <div className="flex items-center gap-3 mb-10 pb-6 border-b border-white/10">
-            <div className="font-bold text-3xl tracking-[-2.5px] text-white">RA</div>
-            <div>
-              <div className="text-2xl font-semibold tracking-[-0.8px]">RoboAgent</div>
-              <div className="text-[10px] text-emerald-400 -mt-1">TESLA FLEET OS</div>
-            </div>
+          <div className="flex items-center mb-10">
+            <div className="text-2xl font-semibold tracking-[-0.8px]">RoboAgent</div>
           </div>
 
           <nav className="space-y-1">
@@ -121,6 +134,40 @@ export default function CommandDashboard({ onNavigate = () => {}, route = 'overv
             </div>
           </div>
 
+          {/* Public Tracker Integration (example calling external robotaxi data) */}
+          <div className="mt-12">
+            <h2 className="text-2xl font-semibold mb-4">Public Live Tracker</h2>
+            <div className="bg-zinc-900 rounded-3xl p-6">
+              <p className="text-white/70 mb-4">Example integration: Public real-time Tesla robotaxi sightings (Austin area via community trackers like robotaxitracker.com). Data is fetched server-side via our /api to avoid CORS.</p>
+
+              <button
+                onClick={loadPublicTracker}
+                disabled={publicTrackerLoading}
+                className="px-6 py-3 bg-white text-black font-semibold rounded-2xl hover:bg-white/90 active:scale-[0.985] transition disabled:opacity-50"
+              >
+                {publicTrackerLoading ? 'Loading...' : 'Load Austin Tesla Tracker Data'}
+              </button>
+
+              {publicTrackerData && (
+                <div className="mt-6 p-4 bg-[#0a0a0a] rounded-2xl border border-white/10 text-sm">
+                  {publicTrackerData.error ? (
+                    <div className="text-red-400">Error: {publicTrackerData.error} — {publicTrackerData.details}</div>
+                  ) : (
+                    <>
+                      <div className="font-mono text-emerald-400">{publicTrackerData.title}</div>
+                      <div className="mt-1 text-white/70">{publicTrackerData.note}</div>
+                      {publicTrackerData.vehicleHint && (
+                        <div className="mt-2 text-white/80">Hint: ~{publicTrackerData.vehicleHint}</div>
+                      )}
+                      <a href={publicTrackerData.url} target="_blank" rel="noopener noreferrer" className="mt-3 inline-block text-emerald-400 hover:underline">Open full interactive map on robotaxitracker.com →</a>
+                      <div className="mt-2 text-[10px] text-white/40">Fetched at {publicTrackerData.fetchedAt}</div>
+                    </>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+
           {/* Fleet Cards - show all vehicles */}
           <div className="mt-12">
             <h2 className="text-2xl font-semibold mb-6">Your Fleet</h2>
@@ -148,18 +195,27 @@ export default function CommandDashboard({ onNavigate = () => {}, route = 'overv
                     <div 
                       key={vehicle.id || i} 
                       onClick={() => onNavigate('fleet')}
-                      className="bg-zinc-900 rounded-3xl p-8 hover:bg-zinc-800 transition cursor-pointer"
+                      className="group bg-zinc-900 rounded-3xl p-8 hover:bg-zinc-800 transition-all duration-300 hover:scale-[1.03] hover:shadow-2xl hover:shadow-emerald-500/10 border border-transparent hover:border-white/20 cursor-pointer"
                     >
                       <div className="flex justify-between items-start">
                         <div>
-                          <div className="font-mono text-xl">{name}</div>
-                          <div className={`${statusColor} text-sm mt-1`}>● {statusText}</div>
+                          <div className="font-mono text-xl tracking-tight">{name}</div>
+                          <div className={`inline-flex items-center gap-1.5 text-sm mt-2 ${statusColor}`}>
+                            ● {statusText}
+                          </div>
                         </div>
                         <div className="text-right">
-                          <div className="text-4xl font-semibold">{battery}<span className="text-sm">%</span></div>
+                          <div className="text-5xl font-semibold tabular-nums">{battery}<span className="text-base align-super">%</span></div>
                         </div>
                       </div>
-                      <div className="mt-8 text-3xl font-medium">{formatDollars(earnings)} today</div>
+
+                      <div className="mt-10 flex justify-between items-end">
+                        <div>
+                          <div className="text-3xl font-medium">{formatDollars(earnings)}</div>
+                          <div className="text-white/60 text-sm">today</div>
+                        </div>
+                        <div className="text-xs text-white/40">Tap for details</div>
+                      </div>
                     </div>
                   );
                 })
@@ -167,6 +223,20 @@ export default function CommandDashboard({ onNavigate = () => {}, route = 'overv
                 <div className="col-span-full text-white/60">No vehicles yet. Connect your first Tesla.</div>
               )}
             </div>
+          </div>
+
+          {/* Add Another Vehicle */}
+          <div className="mt-8">
+            <button
+              onClick={() => onNavigate('add-vehicle')}
+              className="w-full flex items-center justify-center gap-3 bg-white/10 border border-white/30 hover:bg-white/20 px-6 py-4 rounded-2xl text-lg font-medium transition"
+            >
+              <span className="text-2xl">+</span>
+              Add Another Tesla / Cybercab
+            </button>
+            <p className="text-center text-white/50 text-sm mt-3">
+              Tesla allows multiple vehicles under one account. You'll go through the same secure OAuth flow.
+            </p>
           </div>
         </div>
       </div>
