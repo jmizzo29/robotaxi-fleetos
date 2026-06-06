@@ -26,3 +26,11 @@ dist-ssr
 .env.local
 backend/.env
 backend/.env.local
+
+# QA artifacts and design mockups (generated during UX audits)
+qa/reports/*.html
+qa/reports/*.json
+qa/reports/*.png
+design/
+*.png
+src/assets/*mockup*.png
