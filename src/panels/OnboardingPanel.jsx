@@ -1,7 +1,7 @@
 ﻿import React, { useEffect, useState } from 'react';
-import { ArrowLeft } from 'lucide-react';
 import { acceptTeslaConsent, canUseTeslaTelemetry, verifyBetaInvite } from '../services/betaCompliance';
 import { getTeslaLoginUrl } from '../services/teslaHealthService';
+import Logo from '../components/Logo';
 
 export default function OnboardingPanel({ onNavigate }) {
   const [step, setStep] = useState(1);
@@ -18,23 +18,48 @@ export default function OnboardingPanel({ onNavigate }) {
   }, []); // only on initial mount
 
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white flex items-center justify-center px-6 py-12">
+    <div className="min-h-screen bg-[#0a0a0a] text-white">
+      {/* Navbar — 3 menus with RoboAgent brand exactly in the middle */}
+      <nav className="fixed top-0 z-50 w-full border-b border-white/10 bg-[#0a0a0a]/95 backdrop-blur-xl">
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center relative">
+          {/* Left: one menu */}
+          <button 
+            onClick={() => onNavigate('how-it-works')}
+            className="text-sm sm:text-[13px] font-medium uppercase tracking-[0.5px] text-white/90 hover:text-white transition"
+          >
+            HOW IT WORKS
+          </button>
+
+          {/* EXACT MIDDLE: RoboAgent (you will provide the file) */}
+          <div 
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer hover:opacity-90 transition"
+            onClick={() => onNavigate('landing')}
+          >
+            <Logo className="h-7 sm:h-8" />
+          </div>
+
+          {/* Right: the other two menus */}
+          <div className="ml-auto flex items-center gap-8 sm:gap-10 text-sm sm:text-[13px] font-medium uppercase tracking-[0.5px] text-white/90">
+            <button 
+              onClick={() => onNavigate('login')}
+              className="hover:text-white transition"
+            >
+              SIGN IN
+            </button>
+            <button 
+              onClick={() => onNavigate('about')}
+              className="hover:text-white transition"
+            >
+              ABOUT
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <div className="pt-16 flex items-center justify-center px-6 py-12">
       <div className="w-full max-w-[480px]">
         {step < 3 && (
           <>
-            {/* Back to Home */}
-            <button
-              onClick={() => onNavigate('landing')}
-              className="flex items-center gap-2 text-white/70 hover:text-white mb-12 transition text-sm"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Back to Home
-            </button>
-
-            {/* Logo */}
-            <div className="flex items-center mb-10">
-              <div className="text-3xl font-semibold tracking-[-0.8px]">RoboAgent</div>
-            </div>
 
             {/* Progress */}
             <div className="flex items-center gap-3 mb-8">
@@ -151,6 +176,7 @@ export default function OnboardingPanel({ onNavigate }) {
             </p>
           </div>
         )}
+      </div>
       </div>
     </div>
   );

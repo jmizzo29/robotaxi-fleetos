@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { verifyBetaInvite, acceptTeslaConsent } from '../services/betaCompliance';
 import { getTeslaLoginUrl } from '../services/teslaHealthService';
+import Logo from '../components/Logo';
 
 export default function AddVehiclePanel({ onNavigate }) {
   return (
@@ -16,9 +17,9 @@ export default function AddVehiclePanel({ onNavigate }) {
           Back to Dashboard
         </button>
 
-        {/* Logo - just RoboAgent (no RA per latest request) */}
+        {/* Logo */}
         <div className="flex items-center mb-10">
-          <div className="text-3xl font-semibold tracking-[-0.8px]">RoboAgent</div>
+          <Logo className="h-10" onClick={() => onNavigate('overview')} />
         </div>
 
         <div className="mb-10">

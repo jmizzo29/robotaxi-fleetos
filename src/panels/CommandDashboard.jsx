@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import SignOutButton from '../components/SignOutButton';
+import Logo from '../components/Logo';
 
 export default function CommandDashboard({ onNavigate = () => {}, route = 'overview', fleet = [] }) {
   const totalVehicles = fleet.length;
@@ -15,16 +16,16 @@ export default function CommandDashboard({ onNavigate = () => {}, route = 'overv
     return '$' + num.toLocaleString();
   };
 
-  // Sidebar nav items with route mapping for integration
+  // Sidebar nav items - placeholders at top for the menus
   const navItems = [
-    { label: "Home", route: 'overview' },
-    { label: "Live Map", route: 'map' },
-    { label: "Fleet", route: 'fleet' },
-    { label: "Add Vehicle", route: 'add-vehicle' },
-    { label: "AI Agent", route: 'ai' },
-    { label: "Earnings", route: 'finance' },
-    { label: "Charging", route: 'charging' },
-    { label: "Settings", route: 'settings' },
+    { label: "Menu 1", route: 'overview' },
+    { label: "Menu 2", route: 'map' },
+    { label: "Menu 3", route: 'fleet' },
+    { label: "Menu 4", route: 'add-vehicle' },
+    { label: "Menu 5", route: 'ai' },
+    { label: "Menu 6", route: 'finance' },
+    { label: "Menu 7", route: 'charging' },
+    { label: "Menu 8", route: 'settings' },
   ];
 
   const isActive = (itemRoute) => {
@@ -58,7 +59,7 @@ export default function CommandDashboard({ onNavigate = () => {}, route = 'overv
       <div className="w-72 border-r border-white/10 bg-[#0a0a0a] flex-shrink-0 flex flex-col">
         <div className="p-6 flex-1">
           <div className="flex items-center mb-10">
-            <div className="text-2xl font-semibold tracking-[-0.8px]">RoboAgent</div>
+            <Logo className="h-8" onClick={() => onNavigate('overview')} />
           </div>
 
           <nav className="space-y-1">

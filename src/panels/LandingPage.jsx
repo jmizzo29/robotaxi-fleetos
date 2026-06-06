@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { isClerkConfigured } from '../auth/clerkConfig';
 import RoboLogo from '../components/RoboLogo';
 import RoboWordmark from '../components/RoboWordmark';
+import Logo from '../components/Logo';
 import { Button, Card } from '../ui';
 import {
   TrendingUp,
@@ -560,37 +561,38 @@ function MobileHeroCta({ onNavigate, onSeeMore, isMoreOpen }) {
 export function HowItWorksPage({ onNavigate }) {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white">
-      {/* Dark Header */}
+      {/* Navbar — 3 menus with RoboAgent brand exactly in the middle */}
       <header className="sticky top-0 z-50 border-b border-white/10 bg-[#0a0a0a]/95 backdrop-blur-xl">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-3.5">
-          <button onClick={() => onNavigate('landing')} className="flex items-center gap-2.5" aria-label="ROBOAGENT home">
-            <div className="text-2xl font-semibold tracking-[-0.8px]">RoboAgent</div>
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center relative">
+          {/* Left: one menu */}
+          <button 
+            onClick={() => onNavigate('how-it-works')}
+            className="text-sm sm:text-[13px] font-medium uppercase tracking-[0.5px] text-white/90 hover:text-white transition"
+          >
+            HOW IT WORKS
           </button>
 
-          <nav className="hidden items-center gap-1 md:flex">
-            {[
-              ['how-it-works', 'How it works'],
-              ['agent', 'AI agent'],
-              ['about', 'About'],
-            ].map(([target, label]) => (
-              <button
-                key={target}
-                onClick={() => onNavigate(target)}
-                className={`rounded-full px-3.5 py-2 text-sm font-medium transition ${
-                  target === 'how-it-works' ? 'text-white' : 'text-white/70 hover:text-white'
-                }`}
-              >
-                {label}
-              </button>
-            ))}
-          </nav>
+          {/* EXACT MIDDLE: RoboAgent (you will provide the file) */}
+          <div 
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer hover:opacity-90 transition"
+            onClick={() => onNavigate('landing')}
+          >
+            <Logo className="h-7 sm:h-8" />
+          </div>
 
-          <div className="flex items-center gap-2">
-            <button onClick={() => onNavigate('login')} className="px-5 py-2 text-sm text-white/80 hover:text-white transition">
-              Log in
+          {/* Right: the other two menus */}
+          <div className="ml-auto flex items-center gap-8 sm:gap-10 text-sm sm:text-[13px] font-medium uppercase tracking-[0.5px] text-white/90">
+            <button 
+              onClick={() => onNavigate('login')}
+              className="hover:text-white transition"
+            >
+              SIGN IN
             </button>
-            <button onClick={() => onNavigate('onboarding')} className="rounded-2xl bg-white px-5 py-2 text-sm font-semibold text-black hover:bg-white/90 transition">
-              Get started
+            <button 
+              onClick={() => onNavigate('about')}
+              className="hover:text-white transition"
+            >
+              ABOUT
             </button>
           </div>
         </div>
@@ -728,7 +730,7 @@ export function HowItWorksPage({ onNavigate }) {
       <footer className="border-t border-white/10 bg-[#0a0a0a]">
         <div className="mx-auto flex max-w-6xl flex-col gap-4 px-5 py-8 sm:flex-row sm:items-center sm:justify-between">
           <button onClick={() => onNavigate('landing')} className="flex items-center gap-2.5 text-sm" aria-label="ROBOAGENT home">
-            <div className="text-xl font-semibold tracking-tight">RoboAgent</div>
+            <Logo className="h-7" />
           </button>
           <nav className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-white/60">
             {[
@@ -751,42 +753,40 @@ export function HowItWorksPage({ onNavigate }) {
   );
 }
 
-export function PublicHeader({ onNavigate, active }) {
-  const links = [
-    ['how-it-works', 'How it works'],
-    ['agent', 'AI agent'],
-    ['about', 'About'],
-  ];
-
+export function PublicHeader({ onNavigate }) {
   return (
-    <header className="sticky top-0 z-50 border-b border-ink/8 bg-surface/80 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-5 py-3.5">
-        <button onClick={() => onNavigate('landing')} className="flex items-center gap-2.5" aria-label="ROBOAGENT home">
-          <RoboLogo className="h-8 w-8" />
-          <RoboWordmark className="text-base tracking-tight" />
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-[#0a0a0a]/95 backdrop-blur-xl">
+      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center relative">
+        {/* Left: one menu */}
+        <button 
+          onClick={() => onNavigate('how-it-works')}
+          className="text-sm sm:text-[13px] font-medium uppercase tracking-[0.5px] text-white/90 hover:text-white transition"
+        >
+          HOW IT WORKS
         </button>
 
-        <nav className="hidden items-center gap-1 md:flex">
-          {links.map(([target, label]) => (
-            <button
-              key={target}
-              onClick={() => onNavigate(target)}
-              className={`rounded-full px-3.5 py-2 text-sm font-medium transition ${
-                active === target ? 'text-ink' : 'text-ink-muted hover:text-ink'
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-        </nav>
+        {/* EXACT MIDDLE: RoboAgent (you will provide the file) */}
+        <div 
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer hover:opacity-90 transition"
+          onClick={() => onNavigate('landing')}
+        >
+          <Logo className="h-7 sm:h-8" />
+        </div>
 
-        <div className="flex items-center gap-2">
-          <Button variant="ghost" size="sm" onClick={() => openDirectSignIn(onNavigate)} className="hidden sm:inline-flex">
-            Sign in
-          </Button>
-          <Button size="sm" onClick={() => onNavigate('onboarding')} className="rounded-full px-4">
-            Get started
-          </Button>
+        {/* Right: the other two menus */}
+        <div className="ml-auto flex items-center gap-8 sm:gap-10 text-sm sm:text-[13px] font-medium uppercase tracking-[0.5px] text-white/90">
+          <button 
+            onClick={() => onNavigate('login')}
+            className="hover:text-white transition"
+          >
+            SIGN IN
+          </button>
+          <button 
+            onClick={() => onNavigate('about')}
+            className="hover:text-white transition"
+          >
+            ABOUT
+          </button>
         </div>
       </div>
     </header>

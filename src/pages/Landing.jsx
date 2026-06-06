@@ -1,166 +1,72 @@
 import React from 'react';
-import { ArrowRight } from 'lucide-react';
+import { getTeslaLoginUrl } from '../services/teslaHealthService';
+import { verifyBetaInvite, acceptTeslaConsent } from '../services/betaCompliance';
 
 export default function Landing({ onNavigate }) {
+  const handleTeslaAuth = () => {
+    verifyBetaInvite('RoboAgent-BETA');
+    acceptTeslaConsent();
+    const url = getTeslaLoginUrl('overview');
+    window.location.replace(url);
+  };
+
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white overflow-hidden">
-      {/* Navbar */}
-      <nav className="fixed top-0 z-50 w-full border-b border-white/10 bg-[#0a0a0a]/95 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <div 
-            onClick={() => onNavigate('landing')}
-            className="flex items-center cursor-pointer hover:opacity-90 transition"
-          >
-            <div className="text-2xl font-semibold tracking-[-0.8px]">RoboAgent</div>
-          </div>
+    <div className="min-h-screen text-white flex flex-col relative">
+      {/* Full screen background image shaping the entire screen */}
+      <div 
+        className="fixed inset-0 bg-cover bg-center bg-no-repeat z-0"
+        style={{ backgroundImage: "url('/landingpage.png')" }}
+      />
 
-          <div className="hidden md:flex items-center gap-8 text-sm">
-            <a href="#how" className="text-white/70 hover:text-white transition">How it works</a>
-          </div>
+      {/* Navbar - no banner, transparent over background */}
+      <nav className="fixed top-0 z-50 w-full">
+        {/* RoboAgent in far left top corner */}
+        <div 
+          onClick={() => onNavigate('landing')}
+          className="absolute left-0 top-0 h-[3.85rem] md:h-[6.05rem] flex items-center pl-[1.1rem] md:pl-[1.815rem] cursor-pointer hover:opacity-90 transition text-[1.2375rem] md:text-[1.5125rem] font-semibold tracking-[-0.5px] z-10"
+        >
+          RoboAgent
+        </div>
 
-          <div className="flex items-center gap-4 text-sm font-medium">
+        <div className="max-w-7xl mx-auto px-[1.1rem] md:px-[1.815rem] h-[3.85rem] md:h-[6.05rem] flex items-center relative">
+          {/* Centered menus */}
+          <div className="absolute left-1/2 -translate-x-1/2 flex items-center gap-[0.825rem] md:gap-[2.42rem] text-[0.825rem] md:text-[1.05875rem] font-medium">
+            <button 
+              onClick={() => onNavigate('about')}
+              className="hover:text-white/70 transition"
+            >
+              About
+            </button>
+            <button 
+              onClick={() => onNavigate('how-it-works')}
+              className="hover:text-white/70 transition"
+            >
+              How it Works
+            </button>
             <button 
               onClick={() => onNavigate('login')}
-              className="px-8 py-3 text-white/90 hover:text-white hover:bg-white/10 rounded-2xl transition"
+              className="hover:text-white/70 transition"
             >
-              Log in
-            </button>
-            <button 
-              onClick={() => onNavigate('signup')}
-              className="px-8 py-3 bg-white text-black font-semibold rounded-2xl hover:bg-white/90 active:scale-[0.985] transition"
-            >
-              Get Started Free
+              Sign
             </button>
           </div>
+        </div>
+
+        {/* Circle with T in far right top corner */}
+        <div className="absolute right-0 top-0 h-[3.85rem] md:h-[6.05rem] flex items-center pr-[1.1rem] md:pr-[1.815rem] z-10">
+          <button
+            onClick={handleTeslaAuth}
+            className="w-[1.65rem] h-[1.65rem] md:w-[2.42rem] md:h-[2.42rem] rounded-full border border-red-500 hover:border-red-400 hover:bg-white/10 transition flex items-center justify-center"
+            aria-label="Authenticate with Tesla"
+          >
+            <span className="text-[9.9px] md:text-[12.1px] font-bold text-white/80">T</span>
+          </button>
         </div>
       </nav>
 
-      {/* Hero */}
-      <div className="pt-28 pb-24 px-6 flex items-center min-h-[90vh] relative">
-        <div className="max-w-3xl mx-auto text-center">
-          <div className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-950 px-6 py-1.5 mb-10 text-sm text-emerald-400 font-medium tracking-wider">
-            READY FOR 2026 ROBOTAXI LAUNCH
-          </div>
-
-          <h1 className="text-6xl md:text-7xl lg:text-[82px] font-semibold tracking-[-3.8px] leading-none mb-8">
-            Turn your Teslas<br />into a Robotaxi fleet.
-          </h1>
-
-          <p className="text-2xl text-white/70 mb-12 max-w-2xl mx-auto">
-            Tesla now allows owners to add their vehicles to the Robotaxi network.<br />
-            Sign up with your Tesla account in one click and start earning.
-          </p>
-
-          <button
-            onClick={() => onNavigate('signup')}
-            className="group flex items-center justify-center gap-3 bg-white text-black px-12 py-6 rounded-2xl text-2xl font-semibold hover:bg-white/90 active:scale-[0.985] transition-all mx-auto shadow-xl shadow-black/50"
-          >
-            Get Started Free with Tesla
-            <ArrowRight className="group-hover:translate-x-1 transition" />
-          </button>
-
-          <p className="mt-8 text-sm text-white/50">First 3 vehicles free • No password required</p>
-        </div>
-      </div>
-
-      {/* New About / How it Works Section */}
-      <div id="how">
-        <div className="max-w-5xl mx-auto px-6 py-20">
-          <div className="text-center mb-16">
-            <h2 className="text-5xl font-semibold tracking-[-2px] mb-6">How RoboAgent Works with Tesla Robotaxi</h2>
-            <p className="text-xl text-white/70 mb-8 max-w-2xl mx-auto">
-              In 2026, Tesla is opening its Robotaxi network to individual owners.
-              You can now put your Tesla (or future Cybercab) to work earning money autonomously.
-            </p>
-          </div>
-
-          {/* Telemetry Section */}
-          <div className="bg-zinc-900 rounded-3xl p-12 mb-16">
-            <h3 className="text-2xl font-semibold mb-8">What Telemetry We Fetch from Tesla</h3>
-            
-            <div className="grid md:grid-cols-2 gap-x-16 gap-y-10">
-              <div>
-                <strong className="text-emerald-400">Real-time Data:</strong>
-                <ul className="mt-4 space-y-3 text-white/80">
-                  <li>• Battery level &amp; range</li>
-                  <li>• Current location &amp; speed</li>
-                  <li>• Charging status &amp; power</li>
-                  <li>• Vehicle status (driving, parked, charging)</li>
-                </ul>
-              </div>
-              <div>
-                <strong className="text-emerald-400">Fleet &amp; Health Data:</strong>
-                <ul className="mt-4 space-y-3 text-white/80">
-                  <li>• Energy consumption &amp; efficiency</li>
-                  <li>• Software version &amp; update status</li>
-                  <li>• Tire pressure &amp; basic diagnostics</li>
-                  <li>• Odometer &amp; trip history</li>
-                </ul>
-              </div>
-            </div>
-
-            <p className="mt-12 text-white/70 text-center text-lg">
-              All data is fetched securely through Tesla’s official Fleet API.<br />
-              Your credentials never leave Tesla’s servers.
-            </p>
-          </div>
-
-          {/* Process Steps */}
-          <div className="grid md:grid-cols-3 gap-8 text-left mb-16">
-            <div className="bg-zinc-900 rounded-3xl p-8">
-              <div className="text-emerald-400 text-4xl mb-4">1</div>
-              <h3 className="text-2xl font-semibold mb-3">Connect Your Tesla</h3>
-              <p className="text-white/70">One-click secure connection using Tesla Fleet API. Your credentials never leave Tesla.</p>
-            </div>
-
-            <div className="bg-zinc-900 rounded-3xl p-8">
-              <div className="text-emerald-400 text-4xl mb-4">2</div>
-              <h3 className="text-2xl font-semibold mb-3">Opt into Robotaxi Network</h3>
-              <p className="text-white/70">Tesla handles the autonomous driving. You decide when your car is available to earn.</p>
-            </div>
-
-            <div className="bg-zinc-900 rounded-3xl p-8">
-              <div className="text-emerald-400 text-4xl mb-4">3</div>
-              <h3 className="text-2xl font-semibold mb-3">RoboAgent Manages Everything</h3>
-              <p className="text-white/70">AI dispatching, charging optimization, earnings tracking, maintenance alerts — all in one place.</p>
-            </div>
-          </div>
-
-          {/* Scenarios */}
-          <div className="grid md:grid-cols-2 gap-12">
-            {/* Individual Owner */}
-            <div className="bg-zinc-900 rounded-3xl p-10">
-              <h3 className="text-2xl font-semibold mb-6">Individual Owner (1–5 vehicles)</h3>
-              <p className="text-white/70 mb-8">
-                Use your Tesla on Turo or for personal use, then let it earn on the Robotaxi network when idle.
-              </p>
-              <div className="text-emerald-400 text-sm font-medium">RoboAgent helps you:</div>
-              <ul className="mt-4 space-y-2 text-white/70">
-                <li>• Balance personal use vs. robotaxi earnings</li>
-                <li>• Get smart charging and pricing suggestions</li>
-                <li>• Track total income from both Turo and Robotaxi</li>
-              </ul>
-            </div>
-
-            {/* Fleet Owner */}
-            <div className="bg-zinc-900 rounded-3xl p-10">
-              <h3 className="text-2xl font-semibold mb-6">Fleet Owner (10+ Cybercabs)</h3>
-              <p className="text-white/70 mb-8">
-                Run a professional operation with multiple vehicles working 24/7.
-              </p>
-              <div className="text-emerald-400 text-sm font-medium">RoboAgent helps you:</div>
-              <ul className="mt-4 space-y-2 text-white/70">
-                <li>• AI-powered dispatching and routing</li>
-                <li>• Centralized charging and maintenance scheduling</li>
-                <li>• Detailed earnings analytics and optimization</li>
-              </ul>
-            </div>
-          </div>
-
-          <p className="mt-16 text-center text-white/60 text-lg">
-            RoboAgent is built specifically for Tesla owners who want to maximize earnings with minimal effort in the new Robotaxi economy.
-          </p>
-        </div>
+      {/* Minimal Hero - empty, background is the entire screen */}
+      <div className="flex-1 flex items-center justify-center px-[1.1rem] md:px-[1.815rem] pt-[3.85rem] md:pt-[6.05rem] text-center relative z-10">
+        <div />
       </div>
     </div>
   );

@@ -1,4 +1,5 @@
 import SignOutButton from './SignOutButton';
+import Logo from './Logo';
 
 export default function Sidebar({
   commandQueue = [],
@@ -6,14 +7,15 @@ export default function Sidebar({
   onNavigate = () => {},
 }) {
   // Match the exact look and feel of the dashboard sidebar (dark premium, clean text-only nav)
+  // Placeholders at top for the menus
   const navItems = [
-    { id: 'overview', label: 'Home' },
-    { id: 'map', label: 'Live Map' },
-    { id: 'fleet', label: 'Fleet' },
-    { id: 'ai', label: 'AI Agent' },
-    { id: 'finance', label: 'Earnings' },
-    { id: 'charging', label: 'Charging' },
-    { id: 'settings', label: 'Settings' },
+    { id: 'overview', label: 'Menu 1' },
+    { id: 'map', label: 'Menu 2' },
+    { id: 'fleet', label: 'Menu 3' },
+    { id: 'ai', label: 'Menu 4' },
+    { id: 'finance', label: 'Menu 5' },
+    { id: 'charging', label: 'Menu 6' },
+    { id: 'settings', label: 'Menu 7' },
   ];
 
   const isActive = (id) => route === id;
@@ -23,7 +25,7 @@ export default function Sidebar({
       <div className="p-6 flex-1">
         {/* Brand — matches dashboard */}
         <div className="flex items-center mb-10">
-          <div className="text-2xl font-semibold tracking-[-0.8px]">RoboAgent</div>
+          <Logo className="h-8" onClick={() => onNavigate('overview')} />
         </div>
 
         {/* Navigation — exact match to dashboard pills */}

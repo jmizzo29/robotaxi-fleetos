@@ -8,6 +8,7 @@ import MobileBottomNav from './components/MobileBottomNav';
 import PageHeader from './components/PageHeader';
 import RoboLogo from './components/RoboLogo';
 import RoboWordmark from './components/RoboWordmark';
+import Logo from './components/Logo';
 import Sidebar from './components/Sidebar';
 import Timeline from './components/Timeline';
 import AIRecommendationPanel from './panels/AIRecommendationPanel';
@@ -186,7 +187,7 @@ function EmailSignupFlow({ onNavigate, onSignupSuccess }) {
         </button>
 
         <div className="flex items-center mb-12">
-          <div className="text-3xl font-semibold tracking-[-0.8px]">RoboAgent</div>
+          <Logo className="h-10" onClick={() => onNavigate('landing')} />
         </div>
 
         <h1 className="text-5xl font-semibold tracking-[-2px] mb-4">Create your account</h1>

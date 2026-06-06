@@ -24,7 +24,7 @@ export default async function handler(req, res) {
           <h1>Tesla connection was not started correctly</h1>
           <p>This callback URL must be opened by Tesla after you click Connect Tesla inside ROBOAGENT.</p>
           <p>Go back to ROBOAGENT onboarding, sign in, then click Connect Tesla again.</p>
-          <p><a style="color: #7dd3fc;" href="/#/onboarding">Return to ROBOAGENT onboarding</a></p>
+          <p><a style="color: #7dd3fc;" href="/#/overview">Return to ROBOAGENT</a></p>
         </body>
       </html>
     `);
@@ -47,7 +47,7 @@ export default async function handler(req, res) {
           <h1>Tesla connection expired</h1>
           <p>The Tesla authorization state was invalid or expired. This can happen if the callback URL was opened directly, the browser session changed, or the redirect URI pointed at an old localhost callback.</p>
           <p>Please return to ROBOAGENT and start Connect Tesla again.</p>
-          <p><a style="color: #7dd3fc;" href="/#/onboarding">Return to ROBOAGENT onboarding</a></p>
+          <p><a style="color: #7dd3fc;" href="/#/overview">Return to ROBOAGENT</a></p>
         </body>
       </html>
     `);
