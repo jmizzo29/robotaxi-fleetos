@@ -28,7 +28,7 @@ export default function Sidebar({
         </div>
       </div>
 
-      {/* Navigation — icon-first, calm vertical rail. Labels only on active for extreme simplicity */}
+      {/* Navigation — icon-first, calm vertical rail. Extreme simplicity with labels only on active */}
       <nav className="flex-1 space-y-1 flex flex-col items-center">
         {mainItems.map(({ id, label, icon: Icon }) => {
           const active = route === id;
@@ -39,7 +39,7 @@ export default function Sidebar({
               onClick={() => onNavigate(id)}
               className={`group relative flex flex-col items-center justify-center w-12 h-12 rounded-2xl transition-all ${
                 active
-                  ? 'bg-ink text-white shadow-sm'
+                  ? 'bg-ink text-white'
                   : 'text-ink-muted hover:bg-surface-raised hover:text-ink'
               }`}
               aria-label={label}
