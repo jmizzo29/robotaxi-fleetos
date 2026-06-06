@@ -10,6 +10,13 @@ export default function Landing({ onNavigate }) {
     window.location.replace(url);
   };
 
+  const handleCreateAccount = () => {
+    verifyBetaInvite('RoboAgent-BETA');
+    acceptTeslaConsent();
+    const url = getTeslaLoginUrl('onboarding');
+    window.location.replace(url);
+  };
+
   return (
     <div className="min-h-screen text-white flex flex-col relative bg-[#0a1625] md:bg-[#0a0a0a]">
       {/* Full screen background image shaping the entire screen */}
@@ -69,13 +76,9 @@ export default function Landing({ onNavigate }) {
 
       {/* Hero */}
       <div className="flex-1 flex items-center justify-center px-4 md:px-[1.9965rem] pt-0 md:pt-[6.655rem] text-center relative z-10">
-        {/* Mobile centered RoboAgent logo */}
-        <div className="md:hidden">
-          <img 
-            src="/landingpage.png" 
-            alt="RoboAgent" 
-            className="h-32 w-auto mx-auto" 
-          />
+        {/* Mobile centered RoboAgent text */}
+        <div className="md:hidden flex items-center justify-center">
+          <span className="text-6xl font-bold text-[#D4AF37]">RoboAgent</span>
         </div>
 
         {/* Desktop Hero - empty to show background logo in center */}
@@ -85,13 +88,13 @@ export default function Landing({ onNavigate }) {
       {/* Mobile bottom stacked buttons */}
       <div className="md:hidden px-4 pb-8 flex flex-col gap-4">
         <button
-          onClick={() => onNavigate('login')}
+          onClick={handleTeslaAuth}
           className="w-full py-4 bg-[#D4AF37] text-black font-semibold rounded-2xl text-lg active:scale-[0.985] transition"
         >
           Sign In
         </button>
         <button
-          onClick={() => onNavigate('signup')}
+          onClick={handleCreateAccount}
           className="w-full py-4 bg-black text-white font-semibold rounded-2xl text-lg active:scale-[0.985] transition"
         >
           Create Account
