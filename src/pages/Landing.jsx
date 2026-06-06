@@ -69,6 +69,15 @@ export default function Landing({ onNavigate }) {
 
       {/* Hero */}
       <div className="flex-1 flex items-center justify-center px-4 md:px-[1.9965rem] pt-0 md:pt-[6.655rem] text-center relative z-10">
+        {/* Mobile centered RoboAgent logo */}
+        <div className="md:hidden">
+          <img 
+            src="/landingpage.png" 
+            alt="RoboAgent" 
+            className="h-32 w-auto mx-auto" 
+          />
+        </div>
+
         {/* Desktop Hero - empty to show background logo in center */}
         <div className="hidden md:block" />
       </div>
@@ -77,13 +86,13 @@ export default function Landing({ onNavigate }) {
       <div className="md:hidden px-4 pb-8 flex flex-col gap-4">
         <button
           onClick={() => onNavigate('login')}
-          className="w-full py-4 bg-[#E8B923] text-black font-semibold rounded-2xl text-lg active:scale-[0.985] transition"
+          className="w-full py-4 bg-[#D4AF37] text-black font-semibold rounded-2xl text-lg active:scale-[0.985] transition"
         >
           Sign In
         </button>
         <button
           onClick={() => onNavigate('signup')}
-          className="w-full py-4 bg-black text-white font-semibold rounded-2xl text-lg active:scale-[0.985] transition border border-white"
+          className="w-full py-4 bg-black text-white font-semibold rounded-2xl text-lg active:scale-[0.985] transition"
         >
           Create Account
         </button>
