@@ -3,7 +3,6 @@ import RoboLogo from './RoboLogo';
 import RoboWordmark from './RoboWordmark';
 import SignOutButton from './SignOutButton';
 import BetaBadge from './BetaBadge';
-import { StatusDot } from '../ui';
 
 const mainItems = [
   { id: 'overview', label: 'Home', icon: Home },
@@ -20,19 +19,17 @@ export default function Sidebar({
   onNavigate = () => {},
 }) {
   return (
-    <aside className="hidden w-[248px] flex-col border-r border-ink/10 bg-surface p-4 lg:flex xl:w-[260px]">
-      <div className="mb-8 px-1">
-        <div className="mb-3 flex items-center gap-2.5">
-          <RoboLogo className="h-7 w-7 shrink-0" />
-          <RoboWordmark className="text-sm" />
+    <aside className="hidden w-20 flex-col border-r border-ink/10 bg-surface p-3 lg:flex">
+      {/* Brand — ultra minimal, logo only */}
+      <div className="mb-8 flex justify-center pt-2">
+        <div className="flex flex-col items-center">
+          <RoboLogo className="h-7 w-7" />
+          <div className="mt-1 text-[9px] font-mono tracking-[1.5px] text-ink-muted">RA</div>
         </div>
-        <h1 className="text-lg font-semibold text-ink">
-          RoboAgent
-          <BetaBadge className="ml-1.5 align-middle" />
-        </h1>
       </div>
 
-      <nav className="flex-1 space-y-1">
+      {/* Navigation — icon-first, calm vertical rail. Labels only on active for extreme simplicity */}
+      <nav className="flex-1 space-y-1 flex flex-col items-center">
         {mainItems.map(({ id, label, icon: Icon }) => {
           const active = route === id;
           return (
@@ -40,49 +37,37 @@ export default function Sidebar({
               key={id}
               type="button"
               onClick={() => onNavigate(id)}
-              className={`flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left text-sm font-medium transition ${
+              className={`group relative flex flex-col items-center justify-center w-12 h-12 rounded-2xl transition-all ${
                 active
-                  ? 'bg-accent text-white shadow-sm'
+                  ? 'bg-ink text-white'
                   : 'text-ink-muted hover:bg-surface-raised hover:text-ink'
               }`}
+              aria-label={label}
             >
-              <Icon className="h-4 w-4 shrink-0" />
-              <span>{label}</span>
+              <Icon className={`h-5 w-5 transition ${active ? 'text-white' : 'group-hover:text-ink'}`} />
+              {active && (
+                <span className="mt-0.5 text-[9px] font-medium tracking-tight">{label}</span>
+              )}
               {id === 'ai' && commandQueue.length > 0 && (
-                <span className={`ml-auto rounded-full px-2 py-0.5 text-[10px] font-semibold ${
-                  active ? 'bg-white/15 text-white' : 'bg-status-caution/15 text-status-caution'
-                }`}>
+                <div className="absolute -top-0.5 -right-0.5 h-4 w-4 rounded-full bg-status-caution text-[8px] font-bold flex items-center justify-center text-white">
                   {commandQueue.length}
-                </span>
+                </div>
               )}
             </button>
           );
         })}
       </nav>
 
-      {commandQueue.length > 0 && (
-        <div className="mb-4 rounded-2xl border border-ink/10 bg-surface-raised p-3">
-          <div className="mb-2 flex items-center gap-2">
-            <StatusDot tone="caution" pulse />
-            <p className="text-xs font-medium text-ink-muted">
-              {commandQueue.length} pending {commandQueue.length === 1 ? 'action' : 'actions'}
-            </p>
-          </div>
-          <button
-            type="button"
-            onClick={() => onNavigate('ai')}
-            className="text-xs font-medium text-status-active transition hover:text-ink"
-          >
-            Review in Agent →
-          </button>
-        </div>
-      )}
-
-      <SignOutButton
-        onSignedOut={() => onNavigate('landing')}
-        className="w-full rounded-xl border border-ink/10 bg-surface-raised px-3 py-2.5 text-left text-sm font-medium text-ink-muted transition hover:text-ink"
-        label="Sign out"
-      />
+      {/* Bottom — tiny sign out icon only */}
+      <div className="flex justify-center pb-2">
+        <SignOutButton
+          onSignedOut={() => onNavigate('landing')}
+          className="flex h-9 w-9 items-center justify-center rounded-2xl text-ink-muted hover:bg-surface-raised hover:text-ink"
+          label=""
+        >
+          <User className="h-4 w-4" />
+        </SignOutButton>
+      </div>
     </aside>
   );
 }

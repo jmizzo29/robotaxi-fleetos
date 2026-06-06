@@ -1,45 +1,16 @@
-import { ArrowRight, Battery, Bot, Car, Map, RefreshCw, Sparkles, TrendingUp } from 'lucide-react';
+import { ArrowRight, BatteryCharging, Bot, Car, MapPin, RefreshCw } from 'lucide-react';
 import RoboWordmark from '../components/RoboWordmark';
 import BetaBadge from '../components/BetaBadge';
-import { Button, Card, Chip, Metric, StatusDot } from '../ui';
+import { Button, Card } from '../ui';
 
-function formatTime(value) {
-  if (!value) return 'Not synced';
-  return new Date(value).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
-}
-
-function syncTone(state) {
-  if (state === 'ok' || state === 'success') return 'ready';
-  if (!state) return 'offline';
-  return 'caution';
-}
-
-function VehicleChip({ vehicle, onSelect }) {
-  const name = vehicle.name || vehicle.display_name || vehicle.id;
-  const battery = vehicle.battery ? `${Math.round(vehicle.battery)}%` : '—';
-  const isReady = ['IN SERVICE', 'PICKUP', 'EN ROUTE', 'REPOSITIONING', 'online'].includes(vehicle.status);
-
-  return (
-    <button
-      type="button"
-      onClick={() => onSelect?.(vehicle)}
-      className="flex min-w-[148px] shrink-0 flex-col rounded-2xl border border-ink/10 bg-surface-raised p-3 text-left transition hover:border-ink/15 active:scale-[0.98]"
-    >
-      <div className="flex items-center justify-between gap-2">
-        <p className="truncate text-sm font-semibold text-ink">{name}</p>
-        <StatusDot tone={isReady ? 'ready' : 'caution'} />
-      </div>
-      <p className="mt-1 text-xs text-ink-muted">{vehicle.city || vehicle.status || '—'}</p>
-      <p className="mt-2 text-lg font-semibold text-ink">{battery}</p>
-    </button>
-  );
-}
-
+/**
+ * Radically calm, premium, delightful Dashboard.
+ * Ease of use is everything. One primary action: Review the plan.
+ * Everything else supports that feeling of control and calm.
+ */
 export default function CommandDashboard({
   fleet = [],
   primaryTesla,
-  totalRevenue = 0,
-  avgAnomalyRisk = 0,
   commandQueue = [],
   onSync,
   onExecute,
@@ -48,165 +19,107 @@ export default function CommandDashboard({
   isLoading = false,
   syncStatus,
 }) {
-  const active = fleet.filter((vehicle) => vehicle.status !== 'OFFLINE').length;
-  const utilization = fleet.length
-    ? Math.round(fleet.reduce((sum, vehicle) => sum + (vehicle.utilization || 0), 0) / fleet.length)
+  const activeCount = fleet.filter(v => v.status !== 'OFFLINE').length;
+  const total = fleet.length || 0;
+  const utilization = total
+    ? Math.round(fleet.reduce((sum, v) => sum + (v.utilization || 0), 0) / total)
     : 0;
-  const riskLabel = avgAnomalyRisk > 15 ? 'High' : avgAnomalyRisk > 8 ? 'Medium' : 'Low';
-  const riskTone = avgAnomalyRisk > 15 ? 'critical' : avgAnomalyRisk > 8 ? 'warning' : 'success';
-  const pendingActions = commandQueue.length || 3;
 
-  const planSummary = fleet.length
-    ? `${active} vehicles ready. Review ${pendingActions} AI recommendations, optimize overnight charging, and protect morning demand.`
-    : 'Connect your first Tesla to unlock your daily fleet plan.';
+  const hasPlan = fleet.length > 0;
+  const pendingCount = commandQueue.length || 2;
+
+  // One beautiful, calm sentence that tells the owner exactly what matters
+  const statusLine = hasPlan
+    ? `${activeCount} of ${total} vehicles ready • ${utilization}% utilization`
+    : 'Connect your first Tesla to get started';
 
   return (
-    <section className="animate-fade-up space-y-5 lg:space-y-6">
-      <header className="flex flex-wrap items-start justify-between gap-4">
+    <div className="mx-auto max-w-[820px] px-6 pt-6 pb-16">
+      {/* Ultra minimal header */}
+      <div className="mb-8 flex items-center justify-between">
         <div>
-          <p className="text-sm text-ink-muted">
-            <RoboWordmark />
-          </p>
-          <div className="mt-1 flex items-center gap-2">
-            <h1 className="text-2xl font-semibold tracking-tight text-ink sm:text-3xl">Home</h1>
-            <BetaBadge />
-          </div>
-          <div className="mt-2 flex items-center gap-2 text-sm text-ink-muted">
-            <StatusDot tone={syncTone(syncStatus?.state)} pulse={isLoading} />
-            <span>
-              {fleet.length ? `${active} of ${fleet.length} ready` : 'No vehicles connected'}
-              {syncStatus?.lastSyncedAt ? ` · Synced ${formatTime(syncStatus.lastSyncedAt)}` : ''}
-            </span>
-          </div>
+          <div className="text-[13px] tracking-[2px] text-ink-muted font-mono">ROBOAGENT</div>
+          <div className="text-4xl font-semibold tracking-[-1px] text-ink mt-1">Good morning.</div>
         </div>
-
-        <div className="flex items-center gap-2">
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={onSync}
-            disabled={isLoading}
-            className="gap-1.5"
-          >
-            <RefreshCw className={`h-3.5 w-3.5 ${isLoading ? 'animate-spin' : ''}`} />
-            {isLoading ? 'Syncing' : 'Sync'}
-          </Button>
-          <Button variant="ghost" size="sm" onClick={() => onNavigate('account')}>
-            Account
-          </Button>
-        </div>
-      </header>
-
-      <div className="grid grid-cols-3 gap-3">
-        <Metric label="Ready" value={`${active}/${fleet.length || 0}`} tone="success" icon={Car} />
-        <Metric label="Utilization" value={`${utilization}%`} tone="warning" icon={TrendingUp} />
-        <Metric label="Risk" value={riskLabel} tone={riskTone} icon={Battery} />
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onSync}
+          disabled={isLoading}
+          className="text-xs"
+        >
+          <RefreshCw className={`h-3 w-3 ${isLoading ? 'animate-spin' : ''}`} />
+          SYNC
+        </Button>
       </div>
 
-      <div className="grid gap-5 lg:grid-cols-[1.15fr_0.85fr]">
-        <Card className="relative overflow-hidden">
-          <div className="pointer-events-none absolute -right-8 -top-8 h-32 w-32 rounded-full bg-status-ready/10 blur-2xl" />
-          <div className="relative">
-            <div className="mb-3 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2">
-                <Sparkles className="h-4 w-4 text-status-ready" />
-                <p className="text-sm font-semibold text-ink">Today&apos;s plan</p>
-              </div>
-              <Chip active className="pointer-events-none">Live</Chip>
-            </div>
-            <p className="text-sm leading-relaxed text-ink-muted">{planSummary}</p>
-            {primaryTesla && (
-              <p className="mt-3 text-xs text-ink-subtle">
-                Primary vehicle · {Math.round(primaryTesla.battery || 0)}% · {primaryTesla.status || '—'}
-              </p>
-            )}
-            <Button className="mt-4 w-full sm:w-auto" onClick={() => onNavigate('ai')}>
-              Review & approve
-              <ArrowRight className="h-4 w-4" />
-            </Button>
-          </div>
-        </Card>
-
-        <Card>
-          <p className="mb-3 text-sm font-semibold text-ink">Quick actions</p>
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 lg:grid-cols-1">
-            <Button
-              variant="secondary"
-              className="w-full justify-start"
-              onClick={onSync}
-              disabled={isLoading}
-            >
-              <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
-              Sync Tesla
-            </Button>
-            <Button variant="secondary" className="w-full justify-start" onClick={() => onNavigate('map')}>
-              <Map className="h-4 w-4" />
-              Open map
-            </Button>
-            <Button variant="secondary" className="w-full justify-start" onClick={() => onNavigate('ai')}>
-              <Bot className="h-4 w-4" />
-              Ask agent
-            </Button>
-          </div>
-          <button
-            type="button"
-            onClick={() => onExecute?.('Build optimal charging plan for tonight across the fleet', 'HIGH')}
-            className="mt-3 w-full text-left text-xs font-medium text-status-active transition hover:text-ink"
-          >
-            Schedule overnight charging →
-          </button>
-        </Card>
+      {/* One-line calm status — everything else stripped */}
+      <div className="mb-10 text-base text-ink-muted flex items-center gap-3">
+        <div className={`h-2 w-2 rounded-full ${isLoading ? 'bg-status-caution' : 'bg-status-ready'}`} />
+        {statusLine}
       </div>
 
-      <div>
-        <div className="mb-3 flex items-center justify-between px-0.5">
-          <p className="text-sm font-semibold text-ink">Your fleet</p>
-          <button
-            type="button"
-            onClick={() => onNavigate('fleet')}
-            className="text-xs font-medium text-status-active transition hover:text-ink"
-          >
-            View all
-          </button>
+      {/* MASSIVE HERO — the only thing that matters. Extreme focus. */}
+      <div className="mb-12">
+        <div className="text-xs tracking-[2px] text-status-ready font-medium mb-3 flex items-center gap-2">
+          <Bot className="h-3.5 w-3.5" /> TODAY’S PLAN
         </div>
 
-        {fleet.length === 0 ? (
-          <Card className="text-center">
-            <p className="text-sm text-ink-muted">No vehicles connected yet.</p>
-            <Button className="mt-3" onClick={() => onNavigate('onboarding')}>
-              Connect Tesla
-            </Button>
-          </Card>
-        ) : (
-          <div className="-mx-1 flex gap-3 overflow-x-auto px-1 pb-1">
-            {fleet.slice(0, 6).map((vehicle) => (
-              <VehicleChip
-                key={vehicle.id}
-                vehicle={vehicle}
-                onSelect={(item) => {
-                  onSelectVehicle?.(item);
-                  onNavigate('vehicle');
-                }}
-              />
-            ))}
+        <div className="text-[42px] leading-[1.05] font-semibold tracking-[-1.2px] text-ink mb-8 pr-4">
+          {hasPlan
+            ? `Review ${pendingCount} actions.<br />Protect earnings.`
+            : 'Connect your Tesla<br />to begin.'}
+        </div>
+
+        {hasPlan && (
+          <div className="space-y-4 mb-8 text-xl text-ink pl-1">
+            <div>1. Raise Model Y weekend rate 18%</div>
+            <div>2. Charge overnight in cheapest window</div>
+            <div>3. Clean Vehicle 2 before morning</div>
           </div>
         )}
+
+        <div className="flex items-center gap-4">
+          <Button size="lg" onClick={() => onNavigate('ai')} className="px-10 text-base">
+            Review plan
+          </Button>
+          <button onClick={() => onNavigate('ai')} className="text-sm text-ink-muted hover:text-ink underline-offset-4 hover:underline">
+            or ask the Agent
+          </button>
+        </div>
       </div>
 
-      <Card className="hidden sm:block">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div>
-            <p className="text-sm font-semibold text-ink">Earnings snapshot</p>
-            <p className="mt-1 text-2xl font-semibold text-status-ready">
-              ${totalRevenue.toLocaleString()}
-            </p>
-            <p className="mt-1 text-xs text-ink-muted">Fleet revenue · tap Money for full breakdown</p>
-          </div>
-          <Button variant="secondary" onClick={() => onNavigate('finance')}>
-            Open Money
-          </Button>
+      {/* One primary vehicle only — extreme reduction */}
+      {primaryTesla && (
+        <div>
+          <div className="text-xs tracking-[2px] text-ink-muted font-medium mb-3">PRIMARY</div>
+          <button
+            onClick={() => {
+              onSelectVehicle?.(primaryTesla);
+              onNavigate('vehicle');
+            }}
+            className="w-full text-left p-6 rounded-3xl border border-ink/10 bg-surface-raised hover:border-ink/20 active:bg-white transition flex justify-between items-center"
+          >
+            <div>
+              <div className="text-2xl font-semibold tracking-tight">{primaryTesla.name || primaryTesla.id}</div>
+              <div className="text-sm text-ink-muted mt-0.5">{primaryTesla.city || primaryTesla.status}</div>
+            </div>
+            <div className="text-right">
+              <div className="text-5xl font-semibold tabular-nums tracking-[-1px] text-status-ready">
+                {Math.round(primaryTesla.battery || 0)}
+                <span className="text-2xl align-super">%</span>
+              </div>
+              <div className="text-xs text-ink-subtle -mt-1">battery</div>
+            </div>
+          </button>
         </div>
-      </Card>
-    </section>
+      )}
+
+      {total === 0 && (
+        <div className="mt-12 text-center">
+          <Button onClick={() => onNavigate('onboarding')} size="lg">Connect first Tesla</Button>
+        </div>
+      )}
+    </div>
   );
 }

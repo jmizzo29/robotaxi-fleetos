@@ -1,6 +1,6 @@
 import RoboWordmark from '../components/RoboWordmark';
 import BetaBadge from '../components/BetaBadge';
-import { TrendingUp, BatteryCharging, MapPin, DollarSign, RefreshCw, ArrowRight } from 'lucide-react';
+import { Bot, RefreshCw, ArrowRight } from 'lucide-react';
 
 function MiniMetric({ label, value, tone, Icon }) {
   return (
