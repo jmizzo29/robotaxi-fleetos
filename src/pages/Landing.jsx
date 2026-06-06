@@ -40,14 +40,14 @@ export default function Landing({ onNavigate }) {
         <div className="px-6 pb-12 space-y-4">
           <button
             onClick={handleCreateAccount}
-            className="w-full bg-white text-black py-5 rounded-3xl text-xl font-semibold active:scale-[0.985] transition"
+            className="w-full bg-black text-white py-5 rounded-3xl text-xl font-semibold active:scale-[0.985] transition"
           >
             Create Free Account
           </button>
 
           <button
             onClick={handleTeslaAuth}
-            className="w-full border border-white/40 text-white py-5 rounded-3xl text-xl font-semibold active:scale-[0.985] transition"
+            className="w-full bg-amber-300 text-black py-5 rounded-3xl text-xl font-semibold active:scale-[0.985] transition"
           >
             Sign In
           </button>
