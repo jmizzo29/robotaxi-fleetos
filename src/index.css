@@ -56,6 +56,10 @@ body,
 .robo-minimal {
   background: #f7f7f5;
   color: #141b27;
+  /* calmer command surfaces */
+}
+.robo-minimal main {
+  background: #f7f7f5;
 }
 
 .robo-minimal [class*="bg-slate-900"],
