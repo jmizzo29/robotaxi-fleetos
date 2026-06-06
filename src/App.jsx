@@ -719,13 +719,13 @@ function FleetApp() {
   }
 
   if (isPublicSignupRoute) {
-    return <Signup onNavigate={navigate} onSignupSuccess={() => navigate('onboarding')} />;
+    return <Signup onNavigate={navigate} onSignupSuccess={() => navigate('overview')} />;
   }
 
   if (isPublicSignupEmailRoute) {
     // Minimal email signup (secondary path). Tesla OAuth remains the primary fast path.
     return (
-      <EmailSignupFlow onNavigate={navigate} onSignupSuccess={() => navigate('onboarding')} />
+      <EmailSignupFlow onNavigate={navigate} onSignupSuccess={() => navigate('overview')} />
     );
   }
 

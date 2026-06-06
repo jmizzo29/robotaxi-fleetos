@@ -19,7 +19,7 @@ export default function Signup({ onNavigate, onSignupSuccess }) {
         await window.Clerk.signIn.authenticateWithRedirect({
           strategy: 'oauth_tesla', // <-- Update this to the exact strategy name from your Clerk dashboard (check under Social connections or OAuth providers; often 'oauth_tesla' or a custom name)
           redirectUrl: window.location.origin + '/#/sso-callback',
-          signInFallbackRedirectUrl: window.location.origin + '/#/onboarding',
+          signInFallbackRedirectUrl: window.location.origin + '/#/overview',
         });
         return;
       }
@@ -28,7 +28,7 @@ export default function Signup({ onNavigate, onSignupSuccess }) {
     }
 
     // Fallback to pure custom backend Tesla Fleet API OAuth (for vehicle data / telemetry consent)
-    const url = getTeslaLoginUrl('onboarding'); // after success, lands on onboarding which auto-jumps to success
+    const url = getTeslaLoginUrl('overview'); // after success, lands straight on dashboard
     console.log('Starting Tesla OAuth from signup (custom flow):', url);
 
     // Use replace so the user doesn't have the intermediate signup in history

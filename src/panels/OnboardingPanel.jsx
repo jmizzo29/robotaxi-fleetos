@@ -102,7 +102,7 @@ export default function OnboardingPanel({ onNavigate }) {
                     await window.Clerk.signIn.authenticateWithRedirect({
                       strategy: 'oauth_tesla', // Update to match your Clerk dashboard provider/strategy name if different
                       redirectUrl: window.location.origin + '/#/sso-callback',
-                      signInFallbackRedirectUrl: window.location.origin + '/#/onboarding',
+                      signInFallbackRedirectUrl: window.location.origin + '/#/overview',
                     });
                     return;
                   }
@@ -111,7 +111,7 @@ export default function OnboardingPanel({ onNavigate }) {
                 }
 
                 // Custom backend Tesla Fleet API flow
-                const url = getTeslaLoginUrl('onboarding');
+                const url = getTeslaLoginUrl('overview');
                 console.log('Redirecting to Tesla OAuth:', url);
                 // Use replace to clear history and avoid chrome-error frame issues from previous failed attempts
                 window.location.replace(url);
