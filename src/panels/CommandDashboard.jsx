@@ -34,53 +34,44 @@ export default function CommandDashboard({
     : 'Connect your first Tesla to get started';
 
   return (
-    <div className="mx-auto max-w-[680px] px-5 pt-10 pb-24">
-      {/* Dead simple, almost nothing header */}
-      <div className="mb-6">
-        <div className="text-[10px] tracking-[4px] text-ink-muted font-mono mb-1">ROBOAGENT</div>
-        <div className="text-[56px] leading-[0.95] font-semibold tracking-[-2.5px] text-ink">Good morning.</div>
+    <div className="mx-auto max-w-[580px] px-4 pt-14 pb-20">
+      {/* Extremely restrained header */}
+      <div className="mb-5">
+        <div className="text-[8px] tracking-[4px] text-ink-muted/60 font-mono">ROBOAGENT</div>
+        <div className="text-[64px] leading-[0.88] font-semibold tracking-[-3.2px] text-ink mt-1">Good morning.</div>
       </div>
 
-      {/* One single status line */}
-      <div className="mb-14 text-[15px] text-ink-muted flex items-center gap-2">
-        <span className={`h-[5px] w-[5px] rounded-full inline-block ${isLoading ? 'bg-amber-400' : 'bg-emerald-500'}`} />
+      {/* The absolute minimum status */}
+      <div className="mb-16 text-[13px] text-ink-muted flex items-center gap-2">
+        <span className={`h-1 w-1 rounded-full ${isLoading ? 'bg-amber-400' : 'bg-emerald-500'}`} />
         {statusLine}
       </div>
 
-      {/* THE ENTIRE INTERFACE — one calm, huge, focused block. This is it. */}
+      {/* PURE FOCUS — this is the entire calm, premium, delightful experience */}
       <div>
-        <div className="uppercase tracking-[2.5px] text-xs text-emerald-600 font-medium mb-2">TODAY’S AI PLAN</div>
+        <div className="text-[10px] tracking-[2.5px] text-emerald-600 font-medium mb-2">TODAY’S AI PLAN</div>
 
-        <div className="text-[44px] leading-none font-semibold tracking-[-1.8px] text-ink mb-7">
+        <div className="text-[52px] leading-[0.92] font-semibold tracking-[-2.4px] text-ink mb-6">
           {hasPlan
             ? `Review ${pendingCount} actions.<br />Protect earnings.`
-            : 'Connect Tesla<br />to begin.'}
+            : 'Connect your Tesla<br />to begin.'}
         </div>
 
         {hasPlan && (
-          <div className="text-[17px] leading-tight text-ink mb-8 pl-0.5 space-y-[3px]">
+          <div className="text-[19px] leading-tight text-ink mb-10 space-y-1 pl-px">
             <div>Raise Model Y weekend pricing</div>
             <div>Charge in the cheapest overnight window</div>
             <div>Clean Vehicle 2 before morning</div>
           </div>
         )}
 
-        <Button 
-          size="lg" 
+        <Button
+          size="lg"
           onClick={() => onNavigate('ai')}
-          className="w-full text-[17px] py-5 rounded-3xl tracking-[-0.2px]"
+          className="w-full text-lg py-6 rounded-3xl tracking-[-0.3px]"
         >
           Review &amp; approve plan
         </Button>
-
-        <div className="text-center mt-4">
-          <button 
-            onClick={() => onNavigate('ai')} 
-            className="text-sm text-ink-muted hover:text-ink"
-          >
-            Ask the Agent instead
-          </button>
-        </div>
       </div>
     </div>
   );

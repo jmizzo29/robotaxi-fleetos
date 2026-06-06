@@ -39,7 +39,7 @@ export default function Sidebar({
               onClick={() => onNavigate(id)}
               className={`group relative flex flex-col items-center justify-center w-12 h-12 rounded-2xl transition-all ${
                 active
-                  ? 'bg-ink text-white'
+                  ? 'bg-ink text-white shadow-sm'
                   : 'text-ink-muted hover:bg-surface-raised hover:text-ink'
               }`}
               aria-label={label}
