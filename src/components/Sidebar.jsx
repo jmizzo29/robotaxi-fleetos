@@ -59,7 +59,7 @@ export default function Sidebar({
       </nav>
 
       {/* Bottom — tiny sign out icon only */}
-      <div className="flex justify-center pb-2">
+      <div className="flex justify-center pb-1 pt-4 border-t border-ink/10 mt-2">
         <SignOutButton
           onSignedOut={() => onNavigate('landing')}
           className="flex h-9 w-9 items-center justify-center rounded-2xl text-ink-muted hover:bg-surface-raised hover:text-ink"
