@@ -34,92 +34,54 @@ export default function CommandDashboard({
     : 'Connect your first Tesla to get started';
 
   return (
-    <div className="mx-auto max-w-[820px] px-6 pt-6 pb-16">
-      {/* Ultra minimal header */}
-      <div className="mb-8 flex items-center justify-between">
-        <div>
-          <div className="text-[13px] tracking-[2px] text-ink-muted font-mono">ROBOAGENT</div>
-          <div className="text-4xl font-semibold tracking-[-1px] text-ink mt-1">Good morning.</div>
-        </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onSync}
-          disabled={isLoading}
-          className="text-xs"
-        >
-          <RefreshCw className={`h-3 w-3 ${isLoading ? 'animate-spin' : ''}`} />
-          SYNC
-        </Button>
+    <div className="mx-auto max-w-[680px] px-5 pt-10 pb-24">
+      {/* Dead simple, almost nothing header */}
+      <div className="mb-6">
+        <div className="text-[10px] tracking-[4px] text-ink-muted font-mono mb-1">ROBOAGENT</div>
+        <div className="text-[56px] leading-[0.95] font-semibold tracking-[-2.5px] text-ink">Good morning.</div>
       </div>
 
-      {/* One-line calm status — everything else stripped */}
-      <div className="mb-10 text-base text-ink-muted flex items-center gap-3">
-        <div className={`h-2 w-2 rounded-full ${isLoading ? 'bg-status-caution' : 'bg-status-ready'}`} />
+      {/* One single status line */}
+      <div className="mb-14 text-[15px] text-ink-muted flex items-center gap-2">
+        <span className={`h-[5px] w-[5px] rounded-full inline-block ${isLoading ? 'bg-amber-400' : 'bg-emerald-500'}`} />
         {statusLine}
       </div>
 
-      {/* MASSIVE HERO — the only thing that matters. Extreme focus. */}
-      <div className="mb-12">
-        <div className="text-xs tracking-[2px] text-status-ready font-medium mb-3 flex items-center gap-2">
-          <Bot className="h-3.5 w-3.5" /> TODAY’S PLAN
-        </div>
+      {/* THE ENTIRE INTERFACE — one calm, huge, focused block. This is it. */}
+      <div>
+        <div className="uppercase tracking-[2.5px] text-xs text-emerald-600 font-medium mb-2">TODAY’S AI PLAN</div>
 
-        <div className="text-[42px] leading-[1.05] font-semibold tracking-[-1.2px] text-ink mb-8 pr-4">
+        <div className="text-[44px] leading-none font-semibold tracking-[-1.8px] text-ink mb-7">
           {hasPlan
             ? `Review ${pendingCount} actions.<br />Protect earnings.`
-            : 'Connect your Tesla<br />to begin.'}
+            : 'Connect Tesla<br />to begin.'}
         </div>
 
         {hasPlan && (
-          <div className="space-y-4 mb-8 text-xl text-ink pl-1">
-            <div>1. Raise Model Y weekend rate 18%</div>
-            <div>2. Charge overnight in cheapest window</div>
-            <div>3. Clean Vehicle 2 before morning</div>
+          <div className="text-[17px] leading-tight text-ink mb-8 pl-0.5 space-y-[3px]">
+            <div>Raise Model Y weekend pricing</div>
+            <div>Charge in the cheapest overnight window</div>
+            <div>Clean Vehicle 2 before morning</div>
           </div>
         )}
 
-        <div className="flex items-center gap-4">
-          <Button size="lg" onClick={() => onNavigate('ai')} className="px-10 text-base">
-            Review plan
-          </Button>
-          <button onClick={() => onNavigate('ai')} className="text-sm text-ink-muted hover:text-ink underline-offset-4 hover:underline">
-            or ask the Agent
+        <Button 
+          size="lg" 
+          onClick={() => onNavigate('ai')}
+          className="w-full text-[17px] py-5 rounded-3xl tracking-[-0.2px]"
+        >
+          Review &amp; approve plan
+        </Button>
+
+        <div className="text-center mt-4">
+          <button 
+            onClick={() => onNavigate('ai')} 
+            className="text-sm text-ink-muted hover:text-ink"
+          >
+            Ask the Agent instead
           </button>
         </div>
       </div>
-
-      {/* One primary vehicle only — extreme reduction */}
-      {primaryTesla && (
-        <div>
-          <div className="text-xs tracking-[2px] text-ink-muted font-medium mb-3">PRIMARY</div>
-          <button
-            onClick={() => {
-              onSelectVehicle?.(primaryTesla);
-              onNavigate('vehicle');
-            }}
-            className="w-full text-left p-6 rounded-3xl border border-ink/10 bg-surface-raised hover:border-ink/20 active:bg-white transition flex justify-between items-center"
-          >
-            <div>
-              <div className="text-2xl font-semibold tracking-tight">{primaryTesla.name || primaryTesla.id}</div>
-              <div className="text-sm text-ink-muted mt-0.5">{primaryTesla.city || primaryTesla.status}</div>
-            </div>
-            <div className="text-right">
-              <div className="text-5xl font-semibold tabular-nums tracking-[-1px] text-status-ready">
-                {Math.round(primaryTesla.battery || 0)}
-                <span className="text-2xl align-super">%</span>
-              </div>
-              <div className="text-xs text-ink-subtle -mt-1">battery</div>
-            </div>
-          </button>
-        </div>
-      )}
-
-      {total === 0 && (
-        <div className="mt-12 text-center">
-          <Button onClick={() => onNavigate('onboarding')} size="lg">Connect first Tesla</Button>
-        </div>
-      )}
     </div>
   );
 }
