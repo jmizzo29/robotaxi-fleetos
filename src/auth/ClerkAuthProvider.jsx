@@ -1,4 +1,4 @@
-import { ClerkProvider, useAuth } from '@clerk/react';
+import { ClerkProvider, useAuth, AuthenticateWithRedirectCallback } from '@clerk/react';
 import { useEffect } from 'react';
 import { setAuthTokenProvider } from '../services/authTokenStore';
 import { clerkPublishableKey, isClerkConfigured } from './clerkConfig';
@@ -96,7 +96,10 @@ export default function ClerkAuthProvider({ children }) {
       }}
     >
       {isSsoCallback ? (
-        <SsoCallbackPage />
+        <>
+          <AuthenticateWithRedirectCallback />
+          <SsoCallbackPage />
+        </>
       ) : (
         <ClerkSessionBridge>{children}</ClerkSessionBridge>
       )}

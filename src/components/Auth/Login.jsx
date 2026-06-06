@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { Loader2, ArrowLeft } from 'lucide-react';
+import { verifyBetaInvite, acceptTeslaConsent } from '../../services/betaCompliance';
+import { getTeslaLoginUrl } from '../../services/teslaHealthService';
 
 export default function Login({ onNavigate, onLoginSuccess }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [isTeslaLoading, setIsTeslaLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleSubmit = async (e) => {
@@ -17,10 +20,19 @@ export default function Login({ onNavigate, onLoginSuccess }) {
     else onNavigate('overview');
   };
 
+  const handleTeslaLogin = () => {
+    setIsTeslaLoading(true);
+    // Trigger real Tesla OAuth (same as Signup and Onboarding)
+    verifyBetaInvite('RoboAgent-BETA');
+    acceptTeslaConsent();
+    const url = getTeslaLoginUrl('overview');
+    console.log('Redirecting to Tesla OAuth from login:', url);
+    window.location.replace(url);
+  };
+
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white flex items-center justify-center px-6 py-12">
       <div className="w-full max-w-[440px]">
-        {/* Back to Home */}
         <button
           onClick={() => onNavigate('landing')}
           className="flex items-center gap-2 text-white/70 hover:text-white mb-12 transition text-sm"
@@ -29,20 +41,41 @@ export default function Login({ onNavigate, onLoginSuccess }) {
           Back to Home
         </button>
 
-        {/* Logo */}
-        <div
-          onClick={() => onNavigate('landing')}
-          className="flex items-center gap-3 mb-10 cursor-pointer hover:opacity-90 transition"
-        >
+        <div className="flex items-center gap-3 mb-10">
           <div className="font-bold text-4xl tracking-[-3px] text-white">RA</div>
           <div className="text-3xl font-semibold tracking-[-1px]">RoboAgent</div>
         </div>
 
         <div className="mb-10">
           <h1 className="text-4xl font-semibold tracking-[-1.5px]">Welcome back</h1>
-          <p className="mt-3 text-xl text-white/70">Sign in to manage your fleet.</p>
+          <p className="mt-3 text-xl text-white/70">
+            Sign in with your Tesla account or email.
+          </p>
         </div>
 
+        {/* Primary Tesla Login */}
+        <button
+          onClick={handleTeslaLogin}
+          disabled={isTeslaLoading}
+          className="w-full bg-white text-black py-5 rounded-2xl text-lg font-semibold hover:bg-white/90 active:scale-[0.985] transition mb-8 flex items-center justify-center gap-3"
+        >
+          {isTeslaLoading ? (
+            <Loader2 className="w-5 h-5 animate-spin" />
+          ) : (
+            "Continue with Tesla Account"
+          )}
+        </button>
+
+        <div className="relative my-8">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-white/10"></div>
+          </div>
+          <div className="relative text-center">
+            <span className="bg-[#0a0a0a] px-4 text-white/50 text-sm">or</span>
+          </div>
+        </div>
+
+        {/* Secondary Email Login */}
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label className="block text-xs tracking-[1px] text-white/60 mb-2">EMAIL ADDRESS</label>
@@ -73,35 +106,16 @@ export default function Login({ onNavigate, onLoginSuccess }) {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-white text-black py-5 rounded-2xl text-lg font-semibold hover:bg-white/90 active:scale-[0.985] transition disabled:opacity-70"
+            className="w-full bg-white/10 border border-white/30 text-white py-5 rounded-2xl text-lg font-semibold hover:bg-white/5 active:scale-[0.985] transition"
           >
-            {isLoading ? (
-              <>
-                <Loader2 className="h-5 w-5 animate-spin inline mr-2" />
-                Signing in...
-              </>
-            ) : (
-              'Sign In'
-            )}
+            {isLoading ? 'Signing in...' : 'Sign In with Email'}
           </button>
         </form>
 
-        <div className="mt-6">
-          <button
-            onClick={() => onNavigate('login')} // change to real Tesla login later
-            className="w-full border border-white/30 hover:bg-white/5 py-5 rounded-2xl text-lg font-semibold transition active:scale-[0.985]"
-          >
-            Continue with Tesla Account
-          </button>
-        </div>
-
         <div className="mt-10 text-center text-sm text-white/60">
-          Don't have an account?{' '}
-          <button
-            onClick={() => onNavigate('signup')}
-            className="text-white hover:underline"
-          >
-            Create one
+          Don’t have an account?{' '}
+          <button onClick={() => onNavigate('signup')} className="text-white hover:underline">
+            Create one free
           </button>
         </div>
       </div>

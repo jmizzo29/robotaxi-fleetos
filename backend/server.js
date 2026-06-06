@@ -431,7 +431,6 @@ async function exchangeAuthorizationCode(code, redirectUri = DEFAULT_REDIRECT_UR
 
 function buildTeslaAuthorizeUrl(redirectUri = DEFAULT_REDIRECT_URI) {
   const state = crypto.randomBytes(24).toString('hex');
-  pendingAuthStates.set(state, redirectUri);
 
   const url = new URL(TESLA_AUTHORIZE_URL);
   url.searchParams.set('response_type', 'code');
@@ -812,7 +811,14 @@ app.get('/api/tesla/login', (req, res) => {
   }
 
   const redirectUri = getRedirectUriFromRequest(req);
-  const { url } = buildTeslaAuthorizeUrl(redirectUri);
+  const returnTo = req.query.returnTo || `${req.protocol}://${req.get('host')}/#/overview`;
+
+  const { state, url } = buildTeslaAuthorizeUrl(redirectUri);
+
+  // Store both the Tesla callback redirectUri and the desired frontend returnTo
+  pendingAuthStates.set(state, { redirectUri, returnTo });
+
+  console.log('[Tesla OAuth] Starting login. Will return user to:', returnTo);
 
   res.redirect(url.toString());
 });
@@ -834,19 +840,39 @@ async function handleTeslaCallback(req, res) {
     return;
   }
 
-  const redirectUri = pendingAuthStates.get(state);
+  // Support both new object storage { redirectUri, returnTo } and legacy string storage
+  const storedValue = pendingAuthStates.get(state);
   pendingAuthStates.delete(state);
+
+  let redirectUri;
+  let returnTo = '/#/overview';
+
+  if (storedValue) {
+    if (typeof storedValue === 'object' && storedValue !== null) {
+      redirectUri = storedValue.redirectUri;
+      returnTo = storedValue.returnTo || returnTo;
+    } else {
+      // legacy storage was just the redirectUri string
+      redirectUri = storedValue;
+    }
+  }
+
+  // Make sure returnTo is a usable URL (convert relative hash to full origin if needed)
+  if (returnTo && !/^https?:\/\//i.test(returnTo)) {
+    // Fallback: build a best-effort full URL using the request host (may be backend host)
+    const host = req.get('host') || 'localhost:5173';
+    const proto = req.protocol || 'http';
+    returnTo = `${proto}://${host}${returnTo.startsWith('/') ? '' : '/'}${returnTo}`;
+  }
 
   try {
     await exchangeAuthorizationCode(code, redirectUri);
-    res.send(`
-      <html>
-        <body style="font-family: system-ui; background: #050816; color: white; padding: 32px;">
-          <h1>Tesla connected</h1>
-          <p>ROBOAGENT saved your refresh token in backend/.env. You can close this tab and refresh the dashboard.</p>
-        </body>
-      </html>
-    `);
+
+    console.log('[Tesla OAuth] Success. Redirecting browser back to SPA:', returnTo);
+
+    // Automatically redirect the browser straight back into the React app (SPA).
+    // This gives the seamless "back into the app" experience instead of a static success page.
+    res.redirect(returnTo);
   } catch (callbackError) {
     console.error('Tesla authorization code exchange failed:', callbackError.response?.data || callbackError.message);
     res.status(callbackError.status || callbackError.response?.status || 500).send(

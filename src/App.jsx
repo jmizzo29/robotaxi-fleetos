@@ -1,4 +1,5 @@
 import { Suspense, lazy, useEffect, useMemo, useState } from 'react';
+import { ArrowLeft, Loader2 } from 'lucide-react';
 import ErrorBoundary from './components/ErrorBoundary';
 import { AuthenticateWithRedirectCallback, ClerkProvider } from '@clerk/react';
 import CommandSafetyModal from './components/CommandSafetyModal';
@@ -34,6 +35,7 @@ import RoboAgentAskPanel from './panels/RoboAgentAskPanel';
 import SettingsPanel from './panels/SettingsPanel';
 import TeslaCapabilitiesPanel from './panels/TeslaCapabilitiesPanel';
 import VehicleDetailPanel from './panels/VehicleDetailPanel';
+import DeleteAccountButton from './components/DeleteAccountButton';
 import chargingStations from './data/chargingStations';
 import demandZones from './data/demandZones';
 import weatherZones from './data/weatherZones';
@@ -127,17 +129,113 @@ const initialFleet = [
   },
 ];
 
-export function SsoCallbackPage() {
+export function SsoCallbackPage({ onNavigate }) {
+  useEffect(() => {
+    // Immediate redirect back into the app. No interstitial screen.
+    // We want the user to land directly in the authenticated experience after Tesla/Clerk auth.
+    const timer = setTimeout(() => {
+      if (onNavigate) {
+        onNavigate('overview');
+      } else {
+        window.location.hash = '#overview';
+      }
+    }, 0);
+
+    return () => clearTimeout(timer);
+  }, [onNavigate]);
+
+  // Render nothing (or an extremely minimal loader) so the transition feels automatic.
+  // The Clerk AuthenticateWithRedirectCallback above us handles the session establishment.
   return (
-    <div className="flex min-h-screen items-center justify-center bg-[#f7f7f5] px-6 text-[#141b27]">
-      <AuthenticateWithRedirectCallback />
-      <div className="text-center">
-        <RoboLogo className="mx-auto h-16 w-16" />
-        <p className="mt-3 text-xl">
-          <RoboWordmark />
+    <div className="min-h-screen bg-[#0a0a0a] text-white flex items-center justify-center">
+      <div className="flex items-center gap-3 text-white/60 text-sm">
+        <Loader2 className="w-4 h-4 animate-spin" />
+        Returning to app...
+      </div>
+    </div>
+  );
+}
+
+// Minimal email signup flow for the secondary "Sign up with Email" path from the Tesla-first Signup screen.
+// Keeps the overall experience password-free in messaging and very lightweight.
+function EmailSignupFlow({ onNavigate, onSignupSuccess }) {
+  const [isLoading, setIsLoading] = useState(false);
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!email) return;
+    setIsLoading(true);
+    setTimeout(() => {
+      setIsLoading(false);
+      if (onSignupSuccess) onSignupSuccess();
+      else onNavigate('onboarding');
+    }, 650);
+  };
+
+  return (
+    <div className="min-h-screen bg-[#0a0a0a] text-white flex items-center justify-center px-6 py-12">
+      <div className="w-full max-w-[440px]">
+        <button
+          onClick={() => onNavigate('landing')}
+          className="flex items-center gap-2 text-white/70 hover:text-white mb-12 transition text-sm"
+        >
+          <ArrowLeft className="w-4 h-4" /> Back to Home
+        </button>
+
+        <div className="flex items-center gap-3 mb-12">
+          <div className="font-bold text-4xl tracking-[-3px] text-white">RA</div>
+          <div className="text-3xl font-semibold tracking-[-1px]">RoboAgent</div>
+        </div>
+
+        <h1 className="text-5xl font-semibold tracking-[-2px] mb-4">Create your account</h1>
+        <p className="text-2xl text-white/70 mb-10">We'll use email for now. You can connect Tesla anytime.</p>
+
+        <form onSubmit={handleSubmit} className="space-y-5">
+          <div>
+            <label className="block text-xs tracking-[1px] text-white/60 mb-2">FULL NAME</label>
+            <input
+              type="text"
+              value={fullName}
+              onChange={(e) => setFullName(e.target.value)}
+              placeholder="Alex Rivera"
+              className="w-full rounded-2xl border border-white/20 bg-zinc-900 px-6 py-5 text-lg placeholder:text-white/40 focus:border-emerald-500 focus:outline-none transition"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs tracking-[1px] text-white/60 mb-2">EMAIL ADDRESS</label>
+            <input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@teslaowner.com"
+              className="w-full rounded-2xl border border-white/20 bg-zinc-900 px-6 py-5 text-lg placeholder:text-white/40 focus:border-emerald-500 focus:outline-none transition"
+              required
+            />
+          </div>
+
+          <button
+            type="submit"
+            disabled={isLoading || !email}
+            className="w-full bg-white text-black py-5 rounded-2xl text-lg font-semibold hover:bg-white/90 active:scale-[0.985] transition disabled:opacity-60 disabled:cursor-not-allowed mt-4"
+          >
+            {isLoading ? 'Creating account...' : 'Create Account'}
+          </button>
+        </form>
+
+        <p className="mt-8 text-center text-sm text-white/50">
+          No password required. You'll connect your Tesla next.
         </p>
-        <h1 className="mt-3 text-3xl font-black">Finishing secure sign in...</h1>
-        <p className="mt-3 text-sm text-slate-500">You will return to onboarding automatically.</p>
+
+        <button
+          onClick={() => onNavigate('signup')}
+          className="mt-6 w-full text-sm text-white/60 hover:text-white transition"
+        >
+          ← Prefer to sign up with Tesla instead
+        </button>
       </div>
     </div>
   );
@@ -149,6 +247,7 @@ export default function App() {
   if (window.location.pathname === '/sso-callback' || route === 'sso-callback') {
     return (
       <ClerkProvider publishableKey={import.meta.env.VITE_CLERK_PUBLISHABLE_KEY}>
+        <AuthenticateWithRedirectCallback />
         <SsoCallbackPage />
       </ClerkProvider>
     );
@@ -165,6 +264,7 @@ function FleetApp() {
   const isPublicRoute = route === 'landing';
   const isPublicLoginRoute = route === 'login';
   const isPublicSignupRoute = route === 'signup';
+  const isPublicSignupEmailRoute = route === 'signup-email';
   const isPublicAgentRoute = route === 'agent';
   const isPublicAboutRoute = route === 'about';
   const isPublicHowItWorksRoute = route === 'how-it-works';
@@ -176,6 +276,7 @@ function FleetApp() {
     isPublicRoute ||
     isPublicLoginRoute ||
     isPublicSignupRoute ||
+    isPublicSignupEmailRoute ||
     isPublicAgentRoute ||
     isPublicAboutRoute ||
     isPublicHowItWorksRoute ||
@@ -292,19 +393,7 @@ function FleetApp() {
 
   const pages = {
     overview: (
-      <CommandDashboard
-        fleet={fleet}
-        primaryTesla={primaryTesla}
-        totalRevenue={totalRevenue}
-        avgAnomalyRisk={avgAnomalyRisk}
-        commandQueue={commandQueue}
-        onSync={refreshRealTesla}
-        onExecute={requestCommand}
-        onNavigate={navigate}
-        onSelectVehicle={setSelectedVehicle}
-        isLoading={isLoadingReal}
-        syncStatus={realSyncStatus}
-      />
+      <CommandDashboard onNavigate={navigate} fleet={fleet} />
     ),
     onboarding: (
       <>
@@ -630,6 +719,13 @@ function FleetApp() {
     return <Signup onNavigate={navigate} onSignupSuccess={() => navigate('onboarding')} />;
   }
 
+  if (isPublicSignupEmailRoute) {
+    // Minimal email signup (secondary path). Tesla OAuth remains the primary fast path.
+    return (
+      <EmailSignupFlow onNavigate={navigate} onSignupSuccess={() => navigate('onboarding')} />
+    );
+  }
+
   if (isPublicAgentRoute) {
     return (
       <div className="robo-minimal">
@@ -694,6 +790,12 @@ function FleetApp() {
     );
   }
 
+  // New premium dark dashboard (matches Landing + Auth + Onboarding style)
+  // Includes its own clean sidebar for the full dark experience
+  if (route === 'overview') {
+    return <CommandDashboard onNavigate={navigate} route={route} fleet={fleet} />;
+  }
+
   return (
     <div className="robo-minimal flex min-h-screen bg-[#f7f7f5] text-[#141b27]">
       <Sidebar
@@ -717,6 +819,7 @@ function FleetApp() {
         onConfirm={confirmCommand}
       />
       <FeedbackButton route={route} />
+      <DeleteAccountButton />
     </div>
   );
 }

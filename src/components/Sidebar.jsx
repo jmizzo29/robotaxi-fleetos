@@ -1,71 +1,63 @@
-import { Bot, Car, Home, Map, User, Wallet } from 'lucide-react';
-import RoboLogo from './RoboLogo';
-import RoboWordmark from './RoboWordmark';
 import SignOutButton from './SignOutButton';
-import BetaBadge from './BetaBadge';
-
-const mainItems = [
-  { id: 'overview', label: 'Home', icon: Home },
-  { id: 'map', label: 'Map', icon: Map },
-  { id: 'ai', label: 'Agent', icon: Bot },
-  { id: 'fleet', label: 'Fleet', icon: Car },
-  { id: 'finance', label: 'Money', icon: Wallet },
-  { id: 'account', label: 'Account', icon: User },
-];
 
 export default function Sidebar({
   commandQueue = [],
   route = 'overview',
   onNavigate = () => {},
 }) {
+  // Match the exact look and feel of the dashboard sidebar (dark premium, clean text-only nav)
+  const navItems = [
+    { id: 'overview', label: 'Home' },
+    { id: 'map', label: 'Live Map' },
+    { id: 'fleet', label: 'Fleet' },
+    { id: 'ai', label: 'AI Agent' },
+    { id: 'finance', label: 'Earnings' },
+    { id: 'charging', label: 'Charging' },
+    { id: 'settings', label: 'Settings' },
+  ];
+
+  const isActive = (id) => route === id;
+
   return (
-    <aside className="hidden w-[300px] flex-col border-r border-ink/10 bg-surface p-8 lg:flex">
-      {/* Brand — calm and premium */}
-      <div className="mb-10">
-        <div className="flex items-center gap-3">
-          <RoboLogo className="h-8 w-8" />
+    <aside className="hidden w-72 flex-col border-r border-white/10 bg-[#0a0a0a] text-white lg:flex">
+      <div className="p-6 flex-1">
+        {/* Brand — matches dashboard */}
+        <div className="flex items-center gap-3 mb-10 pb-6 border-b border-white/10">
+          <div className="font-bold text-3xl tracking-[-2.5px] text-white">RA</div>
           <div>
-            <RoboWordmark className="text-lg" />
-            <BetaBadge className="mt-0.5" />
+            <div className="text-2xl font-semibold tracking-[-0.8px]">RoboAgent</div>
+            <div className="text-[10px] text-emerald-400 -mt-1">TESLA FLEET OS</div>
           </div>
         </div>
-      </div>
 
-      {/* Navigation — spacious, elegant, labels always visible for clarity and ease of use */}
-      <nav className="flex-1 space-y-1">
-        {mainItems.map(({ id, label, icon: Icon }) => {
-          const active = route === id;
-          return (
-            <button
-              key={id}
-              type="button"
-              onClick={() => onNavigate(id)}
-              className={`group flex w-full items-center gap-3.5 rounded-2xl px-4 py-[14px] text-left text-[15px] font-medium transition-all border-l-4 ${
-                active
-                  ? 'bg-surface-raised text-ink border-ink shadow-sm'
-                  : 'text-ink-muted border-transparent hover:bg-surface-raised hover:text-ink hover:border-ink/20'
+        {/* Navigation — exact match to dashboard pills */}
+        <nav className="space-y-1">
+          {navItems.map((item) => (
+            <div
+              key={item.id}
+              onClick={() => onNavigate(item.id)}
+              className={`px-5 py-3.5 rounded-2xl text-lg font-medium cursor-pointer transition ${
+                isActive(item.id) ? 'bg-white text-black' : 'hover:bg-white/5'
               }`}
             >
-              <Icon className={`h-5 w-5 shrink-0 transition ${active ? 'text-ink' : 'group-hover:text-ink'}`} />
-              <span>{label}</span>
-              {id === 'ai' && commandQueue.length > 0 && (
-                <span className={`ml-auto rounded-full px-2 py-0.5 text-[10px] font-semibold tracking-wider ${
-                  active ? 'bg-ink/20' : 'bg-ink/10'
-                }`}>
+              {item.label}
+              {item.id === 'ai' && commandQueue.length > 0 && (
+                <span className="ml-2 rounded-full bg-emerald-400 text-black text-[10px] font-semibold tracking-wider px-1.5 py-0.5">
                   {commandQueue.length}
                 </span>
               )}
-            </button>
-          );
-        })}
-      </nav>
+            </div>
+          ))}
+        </nav>
+      </div>
 
-      {/* Bottom — clean sign out */}
-      <div className="pt-6 border-t border-ink/10">
+      {/* Sign out — matches dashboard */}
+      <div className="p-6 border-t border-white/10">
         <SignOutButton
           onSignedOut={() => onNavigate('landing')}
-          className="w-full rounded-2xl px-4 py-3 text-left text-sm font-medium text-ink-muted hover:bg-surface-raised hover:text-ink transition"
+          className="w-full text-left text-sm text-white/60 hover:text-white hover:bg-white/5 rounded-2xl px-5 py-3 transition"
           label="Sign out"
+          compact
         />
       </div>
     </aside>
