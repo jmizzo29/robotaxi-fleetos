@@ -40,205 +40,85 @@ function ActionTile({ label, detail, tone, onClick, disabled = false }) {
 export default function MobileCommandDashboard({
   fleet = [],
   primaryTesla,
-  totalRevenue,
-  avgAnomalyRisk,
   onSync,
-  onExecute,
   onNavigate,
   isLoading,
   syncStatus,
 }) {
   const active = fleet.filter((vehicle) => vehicle.status !== 'OFFLINE').length;
-  const utilization = fleet.length
-    ? Math.round(fleet.reduce((sum, vehicle) => sum + (vehicle.utilization || 0), 0) / fleet.length)
+  const total = fleet.length || 0;
+  const utilization = total
+    ? Math.round(fleet.reduce((sum, vehicle) => sum + (vehicle.utilization || 0), 0) / total)
     : 0;
-  const alerts = avgAnomalyRisk > 15 ? 'High' : avgAnomalyRisk > 8 ? 'Med' : 'Low';
 
-  // Simple dynamic-ish plan summary based on live fleet data
-  const planSummary = fleet.length > 0 
-    ? `Raise pricing on ${active} ready vehicles, optimize overnight charging, prep for morning demand.`
-    : 'Connect your first Tesla to get a personalized daily plan.';
+  const hasPlan = total > 0;
+  const pendingCount = 3; // calm fixed number for focus
 
-  const planActions = [
-    'Review 3 high-confidence actions',
-    utilization > 70 ? 'Protect high utilization streak' : 'Boost utilization 12%',
-    'Charge during cheapest 6-hour window',
-  ];
+  const statusLine = hasPlan
+    ? `${active} of ${total} ready • ${utilization}% utilization`
+    : 'Connect your first Tesla to get started';
 
   return (
-    <section className="space-y-5 lg:hidden">
-      {/* Header + persistent Tesla status (audit mobile: instant visibility on home) */}
+    <section className="px-4 pt-8 pb-16 space-y-8 lg:hidden">
+      {/* Dead simple mobile header */}
       <div>
-        <div className="flex items-center justify-between pt-1">
-          <div>
-            <p className="text-sm">
-              <RoboWordmark colorClass="text-sky-300" />
-            </p>
-            <div className="flex items-center gap-2">
-            <h1 className="text-2xl font-black tracking-tight text-white">Command</h1>
-            <BetaBadge />
-          </div>
-          </div>
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={onSync}
-              disabled={isLoading}
-              className="flex items-center gap-1 rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-xs font-black text-sky-300 active:bg-white/10"
-              aria-label="Refresh telemetry"
-            >
-              <RefreshCw className="h-3.5 w-3.5" />
-              <span>{isLoading ? '...' : 'Sync'}</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => onNavigate('account')}
-              className="rounded-full border border-white/10 bg-white/[0.06] px-4 py-2 text-sm font-black text-slate-200"
-            >
-              Account
-            </button>
-          </div>
-        </div>
-
-        <div className="mt-2 flex items-center justify-between rounded-2xl border border-white/10 bg-white/[0.04] px-3 py-1.5 text-xs">
-          <div className="flex items-center gap-2 text-slate-300">
-            <span className={`inline-block h-2 w-2 rounded-full ${syncStatus?.state === 'ok' || syncStatus?.state === 'success' ? 'bg-emerald-400' : 'bg-amber-400'}`} />
-            Tesla {syncStatus?.state || 'Not synced'}
-          </div>
-          {primaryTesla && (
-            <div className="font-black text-white">
-              {primaryTesla.battery ? `${Math.round(primaryTesla.battery)}%` : '—'} • {primaryTesla.status || '—'}
-            </div>
-          )}
-        </div>
+        <div className="text-[8px] tracking-[3px] text-white/60 font-mono">ROBOAGENT</div>
+        <div className="text-[42px] leading-[0.9] font-semibold tracking-[-1.8px] text-white mt-1">Good morning.</div>
       </div>
 
-      {/* Clean 3 KPIs */}
-      <div className="grid grid-cols-3 gap-3">
-        <MiniMetric
-          label="Active"
-          value={`${active}/${fleet.length || 0}`}
-          tone="bg-emerald-400 text-slate-950"
-          Icon={TrendingUp}
-        />
-        <MiniMetric
-          label="Utilization"
-          value={`${utilization}%`}
-          tone="bg-amber-300 text-slate-950"
-          Icon={BatteryCharging}
-        />
-        <MiniMetric
-          label="Risk"
-          value={alerts}
-          tone="bg-rose-400 text-slate-950"
-          Icon={ArrowRight}
-        />
+      {/* One calm status */}
+      <div className="text-sm text-white/70 flex items-center gap-2">
+        <span className={`h-1 w-1 rounded-full ${isLoading ? 'bg-amber-400' : 'bg-emerald-500'}`} />
+        {statusLine}
       </div>
 
-      {/* Today's AI Plan — elevated, actionable */}
-      <div className="rounded-3xl border border-white/10 bg-white/[0.06] p-4">
-        <div className="mb-3 flex items-center justify-between">
-          <div>
-            <p className="text-sm font-black text-white">Today’s AI Plan</p>
-            <p className="text-[11px] text-emerald-300">3 actions • Updated just now</p>
+      {/* The only thing — huge calm plan hero for mobile */}
+      <div>
+        <div className="text-[9px] tracking-[2px] text-emerald-400 font-medium mb-1.5">TODAY’S AI PLAN</div>
+        <div className="text-[32px] leading-tight font-semibold tracking-[-1.2px] text-white mb-5">
+          {hasPlan
+            ? `Review ${pendingCount} actions.<br />Protect earnings.`
+            : 'Connect Tesla<br />to begin.'}
+        </div>
+
+        {hasPlan && (
+          <div className="text-base leading-snug text-white/90 mb-6 space-y-0.5">
+            <div>Raise Model Y weekend pricing</div>
+            <div>Charge in the cheapest overnight window</div>
+            <div>Clean Vehicle 2 before morning</div>
           </div>
-          <span className="rounded-full bg-emerald-400/10 px-2.5 py-0.5 text-[10px] font-black text-emerald-300">LIVE</span>
-        </div>
-        <p className="text-sm leading-snug text-slate-200">{planSummary}</p>
-        
-        <div className="mt-3 space-y-1 text-xs text-slate-300">
-          {planActions.map((a, i) => (
-            <div key={i} className="flex items-center gap-2">→ {a}</div>
-          ))}
-        </div>
+        )}
 
         <button
           onClick={() => onNavigate('ai')}
-          className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-white py-3 text-sm font-black text-[#172231] active:opacity-90"
+          className="w-full rounded-2xl bg-white py-4 text-base font-semibold text-[#172231] active:bg-white/90"
         >
-          Review & Approve <ArrowRight className="h-4 w-4" />
+          Review &amp; approve plan
         </button>
       </div>
 
-      {/* Quick Actions 2x2 — wired to real commands */}
-      <div className="grid grid-cols-2 gap-3">
-        <ActionTile
-          label={isLoading ? 'Syncing…' : 'Sync Tesla'}
-          detail="Pull latest telemetry"
-          tone="border-emerald-400/20 bg-emerald-400/10"
-          onClick={onSync}
-          disabled={isLoading}
-        />
-        <ActionTile
-          label="Ask Agent"
-          detail="Get fresh recommendations"
-          tone="border-sky-400/20 bg-sky-400/10"
-          onClick={() => onNavigate('ai')}
-        />
-        <ActionTile
-          label="Charge Plan"
-          detail="Smart overnight window"
-          tone="border-violet-400/20 bg-violet-400/10"
-          onClick={() => onExecute?.('Build optimal charging plan for tonight across the fleet', 'HIGH')}
-        />
-        <ActionTile
-          label="Money"
-          detail="Revenue & costs today"
-          tone="border-white/10 bg-white/5"
-          onClick={() => onNavigate('finance')}
-        />
-      </div>
-
-      {/* Sync status */}
-      {syncStatus && (
-        <div className="text-center text-[11px] text-slate-400">
-          Last synced {formatTime(syncStatus.lastSyncedAt)} • {syncStatus.state}
-        </div>
+      {/* One primary car, nothing else */}
+      {primaryTesla && (
+        <button onClick={() => onNavigate('vehicle')} className="w-full text-left">
+          <div className="text-[8px] tracking-[1.5px] text-white/50 mb-1">YOUR CAR</div>
+          <div className="flex justify-between rounded-2xl bg-white/5 p-4 border border-white/10">
+            <div>
+              <div className="font-semibold text-white">{primaryTesla.name || primaryTesla.id}</div>
+              <div className="text-xs text-white/60">{primaryTesla.city || primaryTesla.status}</div>
+            </div>
+            <div className="text-right">
+              <div className="text-4xl font-semibold tabular-nums tracking-tighter text-emerald-400">
+                {Math.round(primaryTesla.battery || 0)}%
+              </div>
+            </div>
+          </div>
+        </button>
       )}
 
-      {/* Vehicles at a Glance — compact + tappable */}
-      <div>
-        <div className="mb-2 flex items-center justify-between px-1">
-          <p className="text-xs font-black uppercase tracking-[0.16em] text-slate-400">Your Fleet</p>
-          <button onClick={() => onNavigate('fleet')} className="text-[11px] font-bold text-sky-300">All vehicles →</button>
-        </div>
-        <div className="space-y-2">
-          {fleet.slice(0, 3).map((v) => {
-            const statusColor = v.status === 'IN SERVICE' || v.status === 'PICKUP' ? 'text-emerald-400' : 'text-amber-300';
-            return (
-              <button
-                key={v.id}
-                onClick={() => onNavigate('fleet')}
-                className="flex w-full items-center justify-between rounded-2xl border border-white/10 bg-white/[0.04] px-3 py-2.5 text-left active:bg-white/10"
-              >
-                <div>
-                  <p className="font-black text-white">{v.id}</p>
-                  <p className="text-[11px] text-slate-400">{v.city || '—'}</p>
-                </div>
-                <div className="text-right text-sm">
-                  <p className="font-black text-white">{v.battery ? `${Math.round(v.battery)}%` : '—'}</p>
-                  <p className={`text-[10px] font-semibold ${statusColor}`}>{v.status}</p>
-                </div>
-              </button>
-            );
-          })}
-        </div>
-      </div>
-
-      {/* Readiness footer */}
-      <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-3 text-sm">
-        <div className="flex justify-between text-slate-300">
-          <span>Fleet Ready</span>
-          <span className="font-black text-white">{Math.round((active / (fleet.length || 1)) * 100)}%</span>
-        </div>
-        <div className="mt-0.5 text-[11px] text-slate-400">{active} vehicles ready for dispatch right now</div>
-      </div>
-
-      {fleet.length === 0 && (
-        <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-center">
-          <p className="text-sm text-slate-300">No vehicles connected yet.</p>
-          <button onClick={() => onNavigate('onboarding')} className="mt-3 text-sm font-black text-sky-300">Connect your first Tesla →</button>
-        </div>
+      {total === 0 && (
+        <button onClick={() => onNavigate('onboarding')} className="w-full rounded-2xl bg-white py-4 text-base font-semibold text-[#172231]">
+          Connect first Tesla
+        </button>
       )}
     </section>
   );
