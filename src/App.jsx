@@ -666,10 +666,8 @@ function FleetApp() {
 
   if (isPublicAccountRoute) {
     return (
-      <div className="robo-minimal min-h-screen bg-[#f7f7f5] text-[#141b27]">
-        <main>
-          <AccountPanel onNavigate={navigate} />
-        </main>
+      <div className="min-h-screen bg-surface text-ink">
+        <AccountPanel onNavigate={navigate} />
       </div>
     );
   }

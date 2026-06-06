@@ -1,5 +1,17 @@
 import { useEffect, useState } from 'react';
-import { ArrowRight, Battery, Car, CreditCard, Loader2, User } from 'lucide-react';
+import {
+  ArrowRight,
+  Battery,
+  Car,
+  CreditCard,
+  Gauge,
+  Loader2,
+  MapPin,
+  Shield,
+  Sparkles,
+  TrendingUp,
+  User,
+} from 'lucide-react';
 import { isClerkConfigured } from '../auth/clerkConfig';
 import RoboLogo from '../components/RoboLogo';
 import RoboWordmark from '../components/RoboWordmark';
@@ -78,59 +90,193 @@ function LoadingState() {
   );
 }
 
-function SignedOutView({ clerkReady, authBusy, error, message, onSignIn, onCreateAccount }) {
+function PreviewGlowDot({ left, top, tone = 'ready', delay = '0s' }) {
+  const color = tone === 'ready' ? '#10b981' : '#f59e0b';
   return (
-    <div className="mx-auto w-full max-w-md animate-fade-up">
-      <div className="flex flex-col items-center py-6 text-center sm:py-10">
-        <RoboLogo className="h-14 w-14" />
-        <h1 className="mt-6 text-3xl font-semibold tracking-tight text-ink">
-          Sign in to RoboAgent
-        </h1>
-        <p className="mt-3 max-w-xs text-sm leading-relaxed text-ink-muted">
-          One account for your fleet. Tesla connects right after.
-        </p>
+    <span className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left, top }}>
+      <span
+        className="absolute inset-0 animate-ping rounded-full opacity-60"
+        style={{ backgroundColor: color, animationDelay: delay }}
+      />
+      <span
+        className="relative block h-2 w-2 rounded-full"
+        style={{ backgroundColor: color, boxShadow: `0 0 10px 3px ${color}99` }}
+      />
+    </span>
+  );
+}
+
+function FleetPreviewCard() {
+  const gridStyle = {
+    backgroundImage:
+      'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)',
+    backgroundSize: '24px 24px',
+  };
+
+  return (
+    <div className="relative w-full">
+      <div className="pointer-events-none absolute -inset-4 -z-10 rounded-[2rem] bg-status-ready/12 blur-3xl" />
+      <div className="overflow-hidden rounded-2xl border border-white/10 bg-[#0d1117] shadow-2xl shadow-ink/30">
+        <div className="flex items-center justify-between gap-3 border-b border-white/10 bg-gradient-to-b from-[#161d2b] to-[#0d1117] px-4 py-3">
+          <div className="flex items-center gap-2">
+            <RoboLogo className="h-6 w-6 text-white" />
+            <div className="leading-tight">
+              <p className="text-sm font-medium text-white">Fleet Command</p>
+              <p className="text-[10px] text-white/40">3 vehicles · live sync</p>
+            </div>
+          </div>
+          <span className="inline-flex items-center gap-1.5 rounded-full border border-status-ready/30 bg-status-ready/10 px-2.5 py-1 text-[10px] font-medium text-status-ready">
+            <StatusDot tone="ready" pulse />
+            Live
+          </span>
+        </div>
+
+        <div className="relative min-h-[168px] overflow-hidden bg-[#0a0e16] sm:min-h-[200px]">
+          <div className="absolute inset-0" style={gridStyle} />
+          <div className="pointer-events-none absolute left-1/2 top-1/2 h-36 w-36 -translate-x-1/2 -translate-y-1/2 rounded-full bg-status-ready/15 blur-3xl" />
+          <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+            <path
+              d="M18 38 Q38 48 56 54 T78 32"
+              fill="none"
+              stroke="rgba(16,185,129,0.35)"
+              strokeWidth="1.5"
+              strokeDasharray="4 5"
+              vectorEffect="non-scaling-stroke"
+            />
+          </svg>
+          <PreviewGlowDot left="24%" top="36%" delay="0s" />
+          <PreviewGlowDot left="52%" top="54%" delay="0.5s" />
+          <PreviewGlowDot left="72%" top="30%" tone="caution" delay="1s" />
+          <div className="absolute bottom-3 left-3 inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-black/40 px-2.5 py-1 text-[10px] font-medium text-white/60 backdrop-blur-sm">
+            <MapPin className="h-3 w-3 text-status-ready" />
+            Orlando metro
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2 border-t border-white/10 p-3">
+          <div className="rounded-xl border border-white/10 bg-white/[0.04] p-3">
+            <div className="flex items-center gap-1.5 text-white/45">
+              <TrendingUp className="h-3 w-3" />
+              <span className="text-[9px] font-medium uppercase tracking-[0.12em]">Earnings</span>
+            </div>
+            <p className="mt-1 text-lg font-semibold tracking-tight text-white">$12.4k</p>
+            <p className="text-[10px] font-medium text-status-ready">+18% week</p>
+          </div>
+          <div className="rounded-xl border border-white/10 bg-white/[0.04] p-3">
+            <div className="flex items-center gap-1.5 text-white/45">
+              <Gauge className="h-3 w-3" />
+              <span className="text-[9px] font-medium uppercase tracking-[0.12em]">Ready</span>
+            </div>
+            <p className="mt-1 text-lg font-semibold tracking-tight text-white">82%</p>
+            <p className="text-[10px] font-medium text-status-ready">all vehicles</p>
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2.5 border-t border-white/10 bg-status-ready/[0.06] px-3 py-2.5">
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg bg-status-ready/15 text-status-ready">
+            <Sparkles className="h-3.5 w-3.5" />
+          </span>
+          <p className="min-w-0 flex-1 truncate text-xs text-white/80">
+            AI plan ready — charge Fleet 2 at 2:15 AM
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const TRUST_LINES = [
+  { Icon: Shield, text: 'Official Tesla Fleet API — your password stays with Tesla' },
+  { Icon: Car, text: 'One owner account for every vehicle you connect' },
+  { Icon: Sparkles, text: 'Free beta — no card required to start' },
+];
+
+function SignedOutView({
+  clerkReady,
+  authBusy,
+  error,
+  message,
+  onSignIn,
+  onCreateAccount,
+  onContinueToOnboarding,
+}) {
+  return (
+    <div className="animate-fade-up">
+      <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,0.95fr)] lg:items-center lg:gap-14">
+        <div>
+          <span className="inline-flex items-center gap-2 rounded-full border border-ink/10 bg-surface-raised/80 px-3 py-1.5 text-xs font-medium text-ink-muted shadow-sm backdrop-blur-sm">
+            <Shield className="h-3.5 w-3.5 text-status-ready" />
+            Tesla Fleet API · Privacy-first · Beta
+          </span>
+
+          <h1 className="mt-6 text-[2rem] font-semibold leading-[1.06] tracking-tight text-ink sm:text-5xl">
+            Your fleet.
+            <span className="mt-1 block text-ink-muted">One login.</span>
+          </h1>
+
+          <p className="mt-4 max-w-md text-base leading-relaxed text-ink-muted sm:text-lg">
+            Run your Teslas from one place — connect, sync, and manage without jumping between apps.
+          </p>
+
+          {(message || error) && (
+            <div className="mt-5 max-w-md">
+              <Notice tone={error ? 'error' : 'success'}>{error || message}</Notice>
+            </div>
+          )}
+
+          <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+            {clerkReady ? (
+              <>
+                <Button
+                  size="lg"
+                  className="rounded-full px-8"
+                  onClick={onCreateAccount}
+                  disabled={Boolean(authBusy)}
+                  aria-busy={authBusy === 'create'}
+                >
+                  {authBusy === 'create' && <Spinner />}
+                  {authBusy === 'create' ? 'Opening…' : 'Get started'}
+                  {authBusy !== 'create' && <ArrowRight className="h-4 w-4" />}
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="md"
+                  onClick={onSignIn}
+                  disabled={Boolean(authBusy)}
+                  aria-busy={authBusy === 'signin'}
+                >
+                  {authBusy === 'signin' ? 'Opening…' : 'Sign in'}
+                </Button>
+              </>
+            ) : (
+              <Button size="lg" className="rounded-full px-8" onClick={onContinueToOnboarding}>
+                Get started
+                <ArrowRight className="h-4 w-4" />
+              </Button>
+            )}
+          </div>
+
+          <ul className="mt-8 max-w-md space-y-3 border-t border-ink/8 pt-6">
+            {TRUST_LINES.map(({ Icon, text }) => (
+              <li key={text} className="flex items-start gap-2.5 text-sm text-ink-muted">
+                <Icon className="mt-0.5 h-4 w-4 shrink-0 text-status-ready/80" aria-hidden="true" />
+                <span>{text}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div className="lg:pl-2">
+          <FleetPreviewCard />
+        </div>
       </div>
 
-      {(message || error) && (
-        <div className="mb-5">
-          <Notice tone={error ? 'error' : 'success'}>{error || message}</Notice>
-        </div>
+      {import.meta.env.DEV && !clerkReady && (
+        <p className="mt-10 text-center text-[11px] leading-relaxed text-ink-subtle">
+          Dev: add <span className="font-mono">VITE_CLERK_PUBLISHABLE_KEY</span> to{' '}
+          <span className="font-mono">.env</span> for secure sign-in.
+        </p>
       )}
-
-      <Card padding="p-6 sm:p-7">
-        {clerkReady ? (
-          <div className="space-y-3">
-            <Button
-              size="lg"
-              className="w-full"
-              onClick={onSignIn}
-              disabled={Boolean(authBusy)}
-              aria-busy={authBusy === 'signin'}
-            >
-              {authBusy === 'signin' && <Spinner />}
-              {authBusy === 'signin' ? 'Opening…' : 'Get started'}
-            </Button>
-            <Button
-              variant="ghost"
-              size="md"
-              className="w-full"
-              onClick={onCreateAccount}
-              disabled={Boolean(authBusy)}
-              aria-busy={authBusy === 'create'}
-            >
-              {authBusy === 'create' ? 'Opening…' : 'Create account'}
-            </Button>
-          </div>
-        ) : (
-          <Notice tone="warning">
-            Secure sign-in is not configured here. Use the live site with Clerk enabled, or add your Clerk publishable key.
-          </Notice>
-        )}
-      </Card>
-
-      <p className="mt-6 text-center text-xs text-ink-subtle">
-        Tesla login is separate and comes next.
-      </p>
     </div>
   );
 }
@@ -444,6 +590,7 @@ export default function AccountPanel({ onNavigate, embedded = false }) {
       message={message}
       onSignIn={() => openClerkAuth('signin')}
       onCreateAccount={() => openClerkAuth('create')}
+      onContinueToOnboarding={() => onNavigate?.('onboarding')}
     />
   ) : (
     <div className="space-y-4 sm:space-y-5">
@@ -481,27 +628,36 @@ export default function AccountPanel({ onNavigate, embedded = false }) {
     return content;
   }
 
-  const centerSignedOut = sessionLoaded && !hasRealAccount;
+  const isSignedOut = sessionLoaded && !hasRealAccount;
 
   return (
-    <div className="min-h-screen bg-surface px-4 py-5 text-ink sm:px-6">
-      <header className="mx-auto flex max-w-xl items-center justify-between">
-        <button
-          type="button"
-          onClick={() => onNavigate?.('landing')}
-          className="flex items-center gap-2.5 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-status-active/30"
-        >
-          <RoboLogo className="h-8 w-8" />
-          <RoboWordmark className="text-base" />
-        </button>
-        <Button variant="ghost" size="sm" onClick={() => onNavigate?.('landing')}>
-          Home
-        </Button>
+    <div className="relative min-h-screen overflow-hidden bg-surface text-ink">
+      <div className="pointer-events-none absolute inset-0" aria-hidden="true">
+        <div className="absolute -left-32 -top-32 h-[420px] w-[420px] rounded-full bg-status-ready/8 blur-3xl" />
+        <div className="absolute -right-20 top-1/4 h-[320px] w-[320px] rounded-full bg-status-active/6 blur-3xl" />
+        <div className="absolute bottom-0 left-1/4 h-[260px] w-[380px] rounded-full bg-accent/5 blur-3xl" />
+      </div>
+
+      <header className="relative sticky top-0 z-50 border-b border-ink/8 bg-surface/80 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-4 py-3.5 sm:px-6">
+          <button
+            type="button"
+            onClick={() => onNavigate?.('landing')}
+            className="flex items-center gap-2.5 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-status-active/30"
+            aria-label="RoboAgent home"
+          >
+            <RoboLogo className="h-8 w-8" />
+            <RoboWordmark variant="calm" className="text-base" colorClass="text-ink" />
+          </button>
+          <Button variant="ghost" size="sm" onClick={() => onNavigate?.('landing')}>
+            Home
+          </Button>
+        </div>
       </header>
 
       <main
-        className={`mx-auto max-w-xl py-6 ${
-          centerSignedOut ? 'flex min-h-[calc(100vh-92px)] items-center' : 'pb-10'
+        className={`relative mx-auto px-4 py-8 sm:px-6 sm:py-10 ${
+          isSignedOut ? 'max-w-6xl' : 'max-w-xl pb-10'
         }`}
       >
         {content}
