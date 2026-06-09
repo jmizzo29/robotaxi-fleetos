@@ -54,8 +54,8 @@ export default async function handler(req, res) {
     session = null;
   }
 
-  if (!session?.user?.email) {
-    res.status(401).send('Sign in to ROBOAGENT before connecting Tesla.');
+  if (!session?.id) {
+    res.status(503).send('Unable to start Tesla connection. Please try again.');
     return;
   }
   const redirectUri = redirectUriFromRequest(req);

@@ -23,7 +23,7 @@ export default async function handler(req, res) {
         <body style="font-family: system-ui; background: #0b1120; color: white; padding: 32px; line-height: 1.5;">
           <h1>Tesla connection was not started correctly</h1>
           <p>This callback URL must be opened by Tesla after you click Connect Tesla inside ROBOAGENT.</p>
-          <p>Go back to ROBOAGENT onboarding, sign in, then click Connect Tesla again.</p>
+          <p>Go back to ROBOAGENT onboarding and click Connect Tesla again.</p>
           <p><a style="color: #7dd3fc;" href="/#/overview">Return to ROBOAGENT</a></p>
         </body>
       </html>

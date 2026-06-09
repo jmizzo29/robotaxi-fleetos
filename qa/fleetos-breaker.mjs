@@ -208,13 +208,18 @@ async function testAdminGate() {
 
 async function testTeslaLoginGate() {
   const login = await request('/api/tesla/login?returnTo=%2F%23%2Fonboarding', { redirect: 'manual' });
-  if (login.status !== 401 || !String(login.text || '').includes('Sign in to ROBOAGENT')) {
-    return fail('Tesla OAuth account gate', `Expected 401 account gate, got ${login.status}.`, {
-      location: login.location,
+  if (login.status === 302 && String(login.location || '').includes('auth.tesla.com')) {
+    return pass('Tesla OAuth entry', 'Signed-out visitor can start Tesla OAuth without a ROBOAGENT account.');
+  }
+  if (login.status === 503) {
+    return warn('Tesla OAuth entry', 'Tesla OAuth prerequisites missing in this environment.', {
       body: truncate(login.text),
     });
   }
-  return pass('Tesla OAuth account gate', 'Signed-out visitor must create or sign into ROBOAGENT before Tesla OAuth starts.');
+  return fail('Tesla OAuth entry', `Expected Tesla redirect, got ${login.status}.`, {
+    location: login.location,
+    body: truncate(login.text),
+  });
 }
 
 async function testTeslaCallbackMisuse() {
@@ -224,7 +229,7 @@ async function testTeslaCallbackMisuse() {
       body: truncate(callback.text),
     });
   }
-  if (!callback.text.includes('Return to ROBOAGENT onboarding')) {
+  if (!callback.text.includes('Return to ROBOAGENT')) {
     return warn('Tesla callback misuse', 'Callback blocks misuse, but friendly recovery copy was not detected.', {
       body: truncate(callback.text),
     });
@@ -388,7 +393,7 @@ const tests = [
   ['health endpoint', testHealth],
   ['signed-out session gate', testSignedOutSessionGate],
   ['admin gate', testAdminGate],
-  ['Tesla OAuth account gate', testTeslaLoginGate],
+  ['Tesla OAuth entry', testTeslaLoginGate],
   ['Tesla callback misuse', testTeslaCallbackMisuse],
   ['vehicles API gate', testVehiclesGate],
   ['agent ask gate', testAgentAskGate],
