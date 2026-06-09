@@ -3,18 +3,18 @@ import { TrendingUp, Wrench, Layers } from 'lucide-react';
 const cards = [
   {
     Icon: TrendingUp,
-    title: 'Profitability',
-    desc: 'Know exactly which vehicles make money.',
+    title: 'Profit Per Vehicle',
+    desc: 'See actual profit after charging, maintenance, insurance, and financing costs.',
   },
   {
     Icon: Wrench,
-    title: 'Operations',
-    desc: 'Track charging, maintenance, utilization, and downtime.',
+    title: 'Operations On Autopilot',
+    desc: 'Monitor charging, utilization, downtime, and maintenance from live Tesla telemetry.',
   },
   {
     Icon: Layers,
-    title: 'Growth',
-    desc: 'Scale from one Tesla to an entire fleet.',
+    title: 'Scale With Confidence',
+    desc: 'Understand which vehicles generate the highest ROI before expanding your fleet.',
   },
 ];
 

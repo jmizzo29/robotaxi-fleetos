@@ -7,8 +7,9 @@ export default function IndustryPositioningSection() {
           The Next Generation of Fleet Owners
         </h2>
         <p className="mt-6 text-lg leading-relaxed text-white/60 md:text-xl">
-          The first generation of robotaxi owners will build some of the largest independent vehicle fleets in history.
-          AutoFleeto helps you operate them.
+          Works for Turo owners today and robotaxi operators tomorrow — not robotaxi-only.
+          The first generation of robotaxi owners will build some of the largest independent vehicle
+          fleets in history. AutoFleeto helps you operate them.
         </p>
       </div>
     </section>

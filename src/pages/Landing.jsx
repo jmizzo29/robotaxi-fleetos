@@ -5,6 +5,15 @@ import DashboardPreview from '../components/DashboardPreview';
 import BuiltForOwnersSection from '../components/landing/BuiltForOwnersSection';
 import IndustryPositioningSection from '../components/landing/IndustryPositioningSection';
 import PricingValueSection from '../components/landing/PricingValueSection';
+import DailyPlanSection from '../components/landing/DailyPlanSection';
+import LandingFooter from '../components/landing/LandingFooter';
+
+const trustItems = [
+  'Secure Tesla OAuth',
+  'Your password stays with Tesla',
+  'You approve every action',
+  'Revoke access anytime',
+];
 
 export default function Landing({ onNavigate }) {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -15,14 +24,6 @@ export default function Landing({ onNavigate }) {
     startTeslaOAuth('overview');
   };
 
-  const handleWatchDemo = () => {
-    setMenuOpen(false);
-    const el = document.getElementById('dashboard-preview');
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  };
-
   return (
     <div className="min-h-screen bg-black text-white flex flex-col">
 
@@ -31,9 +32,14 @@ export default function Landing({ onNavigate }) {
           <button
             type="button"
             onClick={() => onNavigate('landing')}
-            className="font-brand text-lg font-semibold tracking-[-0.3px] text-white transition hover:opacity-90 md:absolute md:left-0 md:top-0 md:flex md:h-[6.655rem] md:items-center md:pl-8 md:text-[1.66375rem] md:tracking-[-0.5px]"
+            className="text-left transition hover:opacity-90 md:absolute md:left-0 md:top-0 md:flex md:h-[6.655rem] md:flex-col md:justify-center md:pl-8"
           >
-            AutoFleeto
+            <span className="font-brand text-lg font-semibold tracking-[-0.3px] text-white md:text-[1.66375rem] md:tracking-[-0.5px]">
+              AutoFleeto
+            </span>
+            <span className="text-[10px] font-medium uppercase tracking-[0.14em] text-white/40 md:text-[11px]">
+              Powered by ROBOAGENT
+            </span>
           </button>
 
           <div className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-10 text-[1.05rem] font-medium md:flex">
@@ -45,24 +51,6 @@ export default function Landing({ onNavigate }) {
             </button>
             <button type="button" onClick={() => onNavigate('login')} className="transition hover:text-white/70">
               Sign In
-            </button>
-          </div>
-
-          <div className="absolute right-0 top-0 hidden h-[6.655rem] items-center pr-8 md:flex">
-            <button
-              type="button"
-              onClick={handleTeslaAuth}
-              disabled={isTeslaLoading}
-              className="rounded-full bg-blue-500 px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-blue-400 disabled:opacity-60"
-            >
-              {isTeslaLoading ? (
-                <span className="inline-flex items-center gap-2">
-                  <Loader2 size={16} className="animate-spin" />
-                  Connecting…
-                </span>
-              ) : (
-                'Continue with Tesla'
-              )}
             </button>
           </div>
 
@@ -87,18 +75,10 @@ export default function Landing({ onNavigate }) {
           </button>
           <button
             type="button"
-            onClick={() => { setMenuOpen(false); handleTeslaAuth(); }}
-            disabled={isTeslaLoading}
-            className="text-4xl font-semibold transition active:opacity-60 disabled:opacity-60"
-          >
-            {isTeslaLoading ? 'Connecting to Tesla…' : 'Continue with Tesla'}
-          </button>
-          <button
-            type="button"
-            onClick={handleWatchDemo}
+            onClick={() => { setMenuOpen(false); onNavigate('login'); }}
             className="text-4xl font-semibold text-white/70 transition active:opacity-60"
           >
-            Watch Demo
+            Sign In
           </button>
         </div>
       )}
@@ -106,16 +86,22 @@ export default function Landing({ onNavigate }) {
       {/* Hero */}
       <section className="flex flex-col items-center justify-center gap-8 px-6 pb-12 pt-28 text-center md:gap-10 md:px-16 md:pb-16 md:pt-36">
         <div className="mx-auto w-full max-w-4xl">
+          <p className="mb-5 text-xs font-semibold uppercase tracking-[0.18em] text-white/45 sm:mb-6">
+            Powered by ROBOAGENT
+          </p>
           <h1 className="font-brand text-[2.25rem] font-bold leading-[1.08] tracking-[-1.5px] text-white sm:text-5xl md:text-6xl md:tracking-[-2px] lg:text-7xl">
-            The Operating System for Tesla Fleet Owners
+            Run your Tesla like a business — even with one car.
           </h1>
           <p className="mx-auto mt-5 max-w-2xl text-base leading-relaxed text-white/60 md:mt-6 md:text-xl">
-            Track profit, utilization, charging, maintenance, and growth across your entire fleet.
-            Connect your Tesla account and start managing your business in minutes.
+            Track real profit, utilization, charging, and maintenance from live Tesla data.
+            Get a daily action plan so your car earns more while you manage less.
+          </p>
+          <p className="mx-auto mt-4 max-w-xl text-sm text-white/45">
+            Works for Turo owners today and robotaxi operators tomorrow.
           </p>
         </div>
 
-        <div className="flex w-full max-w-md flex-col gap-3 sm:flex-row sm:items-center sm:justify-center sm:gap-4">
+        <div className="flex w-full max-w-md flex-col items-center">
           <button
             type="button"
             onClick={handleTeslaAuth}
@@ -128,16 +114,24 @@ export default function Landing({ onNavigate }) {
                 Connecting…
               </span>
             ) : (
-              'Continue with Tesla'
+              'Connect Your Tesla Free'
             )}
           </button>
-          <button
-            type="button"
-            onClick={handleWatchDemo}
-            className="w-full rounded-full border border-white/30 bg-black/40 py-[1.1rem] text-base font-semibold text-white transition hover:bg-white/10 active:scale-[0.985] sm:w-auto sm:px-8 sm:py-4"
+          <p className="mt-3 text-sm text-white/45">
+            First Tesla Free During Beta · No Credit Card Required
+          </p>
+
+          <ul
+            className="mt-6 flex w-full flex-wrap justify-center gap-x-5 gap-y-2 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-xs text-white/55 sm:gap-x-6 sm:text-sm"
+            aria-label="Tesla connection security"
           >
-            Watch Demo
-          </button>
+            {trustItems.map((item) => (
+              <li key={item} className="inline-flex items-center gap-1.5">
+                <span className="text-emerald-400/90" aria-hidden="true">✓</span>
+                {item}
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
@@ -151,9 +145,11 @@ export default function Landing({ onNavigate }) {
         </div>
       </section>
 
+      <DailyPlanSection />
       <BuiltForOwnersSection />
       <IndustryPositioningSection />
       <PricingValueSection onContinueWithTesla={handleTeslaAuth} isTeslaLoading={isTeslaLoading} />
+      <LandingFooter onNavigate={onNavigate} />
 
     </div>
   );
