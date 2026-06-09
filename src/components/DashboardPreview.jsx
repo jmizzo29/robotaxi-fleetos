@@ -1,9 +1,10 @@
 import RoboLogo from './RoboLogo';
 import {
   TrendingUp,
+  DollarSign,
+  Gauge,
   Car,
   Sparkles,
-  Gauge,
   MapPin,
 } from 'lucide-react';
 
@@ -31,7 +32,7 @@ function DarkKpi({ label, value, sub, Icon }) {
         <span className="text-[10px] font-medium uppercase tracking-[0.12em]">{label}</span>
       </div>
       <p className="mt-1.5 text-xl font-semibold tracking-tight text-white">{value}</p>
-      <p className="mt-0.5 text-[11px] font-medium text-status-ready">{sub}</p>
+      {sub && <p className="mt-0.5 text-[11px] font-medium text-status-ready">{sub}</p>}
     </div>
   );
 }
@@ -48,10 +49,6 @@ export default function DashboardPreview() {
     backgroundImage:
       'linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px)',
     backgroundSize: '30px 30px',
-  };
-
-  const donutStyle = {
-    background: 'conic-gradient(#10b981 0% 82%, rgba(255,255,255,0.08) 82% 100%)',
   };
 
   return (
@@ -76,10 +73,17 @@ export default function DashboardPreview() {
           </span>
         </div>
 
-        {/* Body: map + KPIs */}
-        <div className="grid gap-3 p-3 sm:p-4 lg:grid-cols-[1.5fr_1fr]">
-          {/* Glowing dark map */}
-          <div className="relative min-h-[200px] overflow-hidden rounded-xl border border-white/10 bg-[#0a0e16] sm:min-h-[240px]">
+        {/* KPI row */}
+        <div className="grid grid-cols-2 gap-3 p-3 sm:grid-cols-4 sm:p-4">
+          <DarkKpi label="Today's Revenue" value="$847" sub="+12% vs yesterday" Icon={TrendingUp} />
+          <DarkKpi label="Today's Profit" value="$312" sub="+$48 vs yesterday" Icon={DollarSign} />
+          <DarkKpi label="Fleet Utilization" value="82%" sub="+6% this week" Icon={Gauge} />
+          <DarkKpi label="Vehicles Online" value="3 / 3" sub="all operational" Icon={Car} />
+        </div>
+
+        {/* Map */}
+        <div className="px-3 pb-3 sm:px-4 sm:pb-4">
+          <div className="relative min-h-[180px] overflow-hidden rounded-xl border border-white/10 bg-[#0a0e16] sm:min-h-[220px]">
             <div className="absolute inset-0" style={gridStyle} />
             <div className="pointer-events-none absolute left-1/2 top-1/2 h-48 w-48 -translate-x-1/2 -translate-y-1/2 rounded-full bg-status-ready/15 blur-3xl" />
             <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
@@ -100,39 +104,15 @@ export default function DashboardPreview() {
               Orlando · Tampa metro
             </div>
           </div>
-
-          {/* KPI column */}
-          <div className="flex flex-col gap-3">
-            <div className="grid grid-cols-2 gap-3">
-              <DarkKpi label="Earnings" value="$12,480" sub="+18% week" Icon={TrendingUp} />
-              <DarkKpi label="Active" value="3 / 3" sub="all ready" Icon={Car} />
-            </div>
-            <div className="flex items-center gap-4 rounded-xl border border-white/10 bg-white/[0.04] p-4">
-              <div className="relative h-[72px] w-[72px] shrink-0 rounded-full" style={donutStyle}>
-                <div className="absolute inset-[9px] flex flex-col items-center justify-center rounded-full bg-[#0d1117]">
-                  <span className="text-base font-semibold leading-none text-white">82%</span>
-                  <span className="mt-0.5 text-[9px] text-white/40">ready</span>
-                </div>
-              </div>
-              <div className="min-w-0">
-                <div className="flex items-center gap-1.5 text-white/45">
-                  <Gauge className="h-3.5 w-3.5" />
-                  <span className="text-[10px] font-medium uppercase tracking-[0.12em]">Utilization</span>
-                </div>
-                <p className="mt-1 text-2xl font-semibold tracking-tight text-white">82%</p>
-                <p className="text-[11px] font-medium text-status-ready">+6% vs last week</p>
-              </div>
-            </div>
-          </div>
         </div>
 
-        {/* AI recommendation strip */}
+        {/* Operations insight strip */}
         <div className="flex items-center gap-3 border-t border-white/10 bg-status-ready/[0.06] px-4 py-3 sm:px-5">
           <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-status-ready/15 text-status-ready">
             <Sparkles className="h-4 w-4" />
           </span>
           <div className="min-w-0 flex-1">
-            <p className="text-[10px] font-medium uppercase tracking-[0.14em] text-status-ready">AI agent recommendation</p>
+            <p className="text-[10px] font-medium uppercase tracking-[0.14em] text-status-ready">Charging optimization</p>
             <p className="truncate text-sm text-white/85">Charge Fleet 2 &amp; 3 to 87% at 2:15 AM — save $9 tonight.</p>
           </div>
           <button
