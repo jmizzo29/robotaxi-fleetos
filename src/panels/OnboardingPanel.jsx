@@ -1,6 +1,6 @@
 ﻿import React, { useEffect, useState } from 'react';
-import { acceptTeslaConsent, canUseTeslaTelemetry, verifyBetaInvite } from '../services/betaCompliance';
-import { getTeslaLoginUrl } from '../services/teslaHealthService';
+import { canUseTeslaTelemetry } from '../services/betaCompliance';
+import { startTeslaOAuth } from '../services/teslaHealthService';
 import Logo from '../components/Logo';
 
 export default function OnboardingPanel({ onNavigate }) {
@@ -91,31 +91,7 @@ export default function OnboardingPanel({ onNavigate }) {
             </div>
 
             <button
-              onClick={async () => {
-                // Record consents first
-                verifyBetaInvite('RoboAgent-BETA');
-                acceptTeslaConsent();
-
-                // Try Clerk direct social for Tesla (can be seamless/direct on many setups; appearance is dark-themed)
-                try {
-                  if (window.Clerk?.signIn?.authenticateWithRedirect) {
-                    await window.Clerk.signIn.authenticateWithRedirect({
-                      strategy: 'oauth_tesla', // Update to match your Clerk dashboard provider/strategy name if different
-                      redirectUrl: window.location.origin + '/#/sso-callback',
-                      signInFallbackRedirectUrl: window.location.origin + '/#/overview',
-                    });
-                    return;
-                  }
-                } catch (err) {
-                  console.warn('Clerk direct Tesla failed, falling back to custom Fleet API flow', err);
-                }
-
-                // Custom backend Tesla Fleet API flow
-                const url = getTeslaLoginUrl('overview');
-                console.log('Redirecting to Tesla OAuth:', url);
-                // Use replace to clear history and avoid chrome-error frame issues from previous failed attempts
-                window.location.replace(url);
-              }}
+              onClick={() => startTeslaOAuth('overview')}
               className="w-full bg-white text-black py-5 rounded-2xl text-lg font-semibold hover:bg-white/90 active:scale-[0.985] transition flex items-center justify-center gap-3"
             >
               Connect Tesla Account

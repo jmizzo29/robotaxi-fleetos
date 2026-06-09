@@ -53,6 +53,17 @@ body,
   }
 }
 
+.font-brand {
+  font-family: 'Orbitron', sans-serif;
+}
+
+.brand-glow {
+  text-shadow:
+    0 0 20px rgba(59, 130, 246, 0.95),
+    0 0 50px rgba(59, 130, 246, 0.7),
+    0 0 90px rgba(37, 99, 235, 0.45);
+}
+
 .robo-minimal {
   background: #f7f7f5;
   color: #141b27;

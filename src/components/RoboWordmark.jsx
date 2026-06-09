@@ -5,14 +5,14 @@ export default function RoboWordmark({
 }) {
   if (variant === 'calm') {
     return (
-      <span className={`font-semibold tracking-tight ${colorClass} ${className}`}>
+      <span className={`font-brand font-semibold tracking-tight ${colorClass} ${className}`}>
         RoboAgent
       </span>
     );
   }
 
   return (
-    <span className={`font-bold uppercase ${colorClass} ${className}`}>
+    <span className={`font-brand font-bold uppercase ${colorClass} ${className}`}>
       ROBOAGENT
     </span>
   );

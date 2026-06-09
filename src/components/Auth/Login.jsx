@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Loader2 } from 'lucide-react';
-import { verifyBetaInvite, acceptTeslaConsent } from '../../services/betaCompliance';
-import { getTeslaLoginUrl } from '../../services/teslaHealthService';
+import { startTeslaOAuth } from '../../services/teslaHealthService';
 import Logo from '../Logo';
 
 export default function Login({ onNavigate, onLoginSuccess }) {
@@ -21,30 +20,9 @@ export default function Login({ onNavigate, onLoginSuccess }) {
     else onNavigate('overview');
   };
 
-  const handleTeslaLogin = async () => {
+  const handleTeslaLogin = () => {
     setIsTeslaLoading(true);
-    verifyBetaInvite('RoboAgent-BETA');
-    acceptTeslaConsent();
-
-    // Use Clerk's direct social auth for Tesla if available (this can launch the OAuth directly without the full sign-in form on many setups).
-    // With the dark appearance configured, any Clerk UI will match the app's dark theme instead of white.
-    try {
-      if (window.Clerk?.signIn?.authenticateWithRedirect) {
-        await window.Clerk.signIn.authenticateWithRedirect({
-          strategy: 'oauth_tesla', // <-- Update this to the exact strategy name from your Clerk dashboard (check under Social connections or OAuth providers; often 'oauth_tesla' or a custom name)
-          redirectUrl: window.location.origin + '/#/sso-callback',
-          signInFallbackRedirectUrl: window.location.origin + '/#/overview',
-        });
-        return;
-      }
-    } catch (err) {
-      console.warn('Clerk Tesla social direct failed (strategy may not be configured or not available on mobile), falling back to custom backend Tesla Fleet flow', err);
-    }
-
-    // Fallback to pure custom backend Tesla Fleet API OAuth (for vehicle data / telemetry consent)
-    const url = getTeslaLoginUrl('overview');
-    console.log('Redirecting to Tesla OAuth from login (custom flow):', url);
-    window.location.replace(url);
+    startTeslaOAuth('overview');
   };
 
   return (

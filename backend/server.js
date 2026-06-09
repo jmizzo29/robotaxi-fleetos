@@ -52,6 +52,23 @@ let tokenCache = {
 };
 const pendingAuthStates = new Map();
 
+function isPrivateLanHostname(hostname = '') {
+  const host = String(hostname).toLowerCase();
+  return /^192\.168\.\d{1,3}\.\d{1,3}$/.test(host)
+    || /^10\.\d{1,3}\.\d{1,3}\.\d{1,3}$/.test(host)
+    || /^172\.(1[6-9]|2\d|3[01])\.\d{1,3}\.\d{1,3}$/.test(host);
+}
+
+function isDevBrowserOrigin(origin = '') {
+  try {
+    const { hostname, port } = new URL(origin);
+    const devPort = ['5173', '5174', '5175', '5176', '5177', String(PORT)].includes(port);
+    return devPort && (isLocalHostname(hostname) || isPrivateLanHostname(hostname));
+  } catch {
+    return false;
+  }
+}
+
 function getAllowedOrigins() {
   const configured = (process.env.CORS_ORIGIN || '')
     .split(',')
@@ -63,7 +80,7 @@ function getAllowedOrigins() {
 
 app.use(cors({
   origin(origin, callback) {
-    if (!origin || getAllowedOrigins().includes(origin)) {
+    if (!origin || getAllowedOrigins().includes(origin) || isDevBrowserOrigin(origin)) {
       callback(null, true);
       return;
     }
@@ -109,6 +126,16 @@ function updateLocalEnv(updates) {
   });
 
   fs.writeFileSync(ENV_PATH, `${lines.join('\n')}\n`);
+}
+
+function scheduleLocalEnvUpdate(updates) {
+  setImmediate(() => {
+    try {
+      updateLocalEnv(updates);
+    } catch (error) {
+      console.warn('[Tesla OAuth] Failed to persist token env:', error.message);
+    }
+  });
 }
 
 function hasRefreshConfig() {
@@ -378,6 +405,7 @@ async function refreshTeslaAccessToken() {
 
   const { data } = await axios.post(TESLA_AUTH_URL, form, {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    timeout: 15000,
   });
 
   tokenCache = {
@@ -386,7 +414,7 @@ async function refreshTeslaAccessToken() {
     expiresAt: Date.now() + Math.max((data.expires_in || 3600) - 90, 60) * 1000,
   };
 
-  updateLocalEnv({
+  scheduleLocalEnvUpdate({
     TESLA_CLIENT_ID: process.env.TESLA_CLIENT_ID,
     TESLA_CLIENT_SECRET: process.env.TESLA_CLIENT_SECRET,
     TESLA_REFRESH_TOKEN: tokenCache.refreshToken,
@@ -415,6 +443,7 @@ async function exchangeAuthorizationCode(code, redirectUri = DEFAULT_REDIRECT_UR
 
   const { data } = await axios.post(TESLA_AUTH_URL, form, {
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    timeout: 15000,
   });
 
   tokenCache = {
@@ -423,7 +452,7 @@ async function exchangeAuthorizationCode(code, redirectUri = DEFAULT_REDIRECT_UR
     expiresAt: Date.now() + Math.max((data.expires_in || 3600) - 90, 60) * 1000,
   };
 
-  updateLocalEnv({
+  scheduleLocalEnvUpdate({
     PORT,
     CORS_ORIGIN: process.env.CORS_ORIGIN || 'http://127.0.0.1:5173',
     TESLA_API_BASE: DEFAULT_FLEET_API_BASE,
@@ -453,6 +482,76 @@ function buildTeslaAuthorizeUrl(redirectUri = DEFAULT_REDIRECT_URI) {
   return { state, redirectUri, url };
 }
 
+function isLocalHostname(value = '') {
+  return /localhost|127\.0\.0\.1/.test(String(value));
+}
+
+function parseTrustedClientOrigin(value = '') {
+  try {
+    const url = new URL(String(value));
+    if (!['http:', 'https:'].includes(url.protocol)) return null;
+    if (isLocalHostname(url.hostname) || isPrivateLanHostname(url.hostname)) {
+      return url.origin;
+    }
+  } catch {
+    return null;
+  }
+  return null;
+}
+
+function refererOriginFromRequest(req) {
+  const referer = req.headers.referer || req.headers.referrer;
+  if (!referer) return null;
+  try {
+    return new URL(String(referer)).origin;
+  } catch {
+    return null;
+  }
+}
+
+function getCallbackPathFromConfigured(configured = process.env.TESLA_REDIRECT_URI || '') {
+  try {
+    const pathname = new URL(configured).pathname;
+    if (pathname && pathname !== '/') return pathname;
+  } catch {
+    // fall through to default callback path
+  }
+  return '/api/tesla/callback';
+}
+
+// Resolve the origin the user's browser actually reached us on. When the Vite
+// dev server proxies /api with xfwd enabled, x-forwarded-host carries the real
+// front-end host (e.g. a phone hitting http://192.168.1.50:5173), which we need
+// so the OAuth redirect lands on a host the phone can actually reach.
+function originFromRequest(req) {
+  if (process.env.APP_PUBLIC_ORIGIN) {
+    return process.env.APP_PUBLIC_ORIGIN.replace(/\/$/, '');
+  }
+
+  const clientOrigin = parseTrustedClientOrigin(req.query.clientOrigin);
+  if (clientOrigin) return clientOrigin;
+
+  const forwardedHost = req.headers['x-forwarded-host'];
+  if (forwardedHost) {
+    const forwardedProto = req.headers['x-forwarded-proto'] || 'http';
+    return `${forwardedProto}://${forwardedHost}`;
+  }
+
+  const refererOrigin = refererOriginFromRequest(req);
+  if (refererOrigin && isDevBrowserOrigin(refererOrigin)) {
+    return refererOrigin;
+  }
+
+  const host = req.get('host') || `localhost:${PORT}`;
+  const proto = isLocalHostname(host) ? 'http' : (req.protocol || 'http');
+  return `${proto}://${host}`;
+}
+
+function buildDerivedRedirectUri(origin) {
+  const callbackPath = getCallbackPathFromConfigured();
+  return `${origin.replace(/\/$/, '')}${callbackPath}`;
+}
+
 function getRedirectUriFromRequest(req) {
   if (req.query.redirect_uri) {
     return String(req.query.redirect_uri);
@@ -468,10 +567,43 @@ function getRedirectUriFromRequest(req) {
   }
 
   if (req.query.host === '127') {
-    return `http://127.0.0.1:${PORT}/api/tesla/callback`;
+    return `http://127.0.0.1:${PORT}${getCallbackPathFromConfigured()}`;
   }
 
-  return DEFAULT_REDIRECT_URI;
+  // A configured TESLA_REDIRECT_URI wins, EXCEPT when it points at localhost
+  // while the browser reached us on a non-local host (a phone/tablet on the LAN
+  // or a tunnel). In that case localhost would be unreachable from the device,
+  // so we derive the callback from the origin the browser actually used. Vite
+  // proxies both /api/tesla/callback and /callback back to this server.
+  const origin = originFromRequest(req);
+  const configured = process.env.TESLA_REDIRECT_URI || '';
+  const configuredIsLocal = isLocalHostname(configured);
+  const originIsLocal = isLocalHostname(origin);
+
+  if (configured && !(configuredIsLocal && !originIsLocal)) {
+    return configured;
+  }
+
+  return buildDerivedRedirectUri(origin);
+}
+
+function getMobileRedirectSetupHint(redirectUri, origin) {
+  if (process.env.APP_PUBLIC_ORIGIN) return null;
+
+  let hostname = '';
+  try {
+    hostname = new URL(redirectUri).hostname;
+  } catch {
+    return null;
+  }
+
+  if (!isPrivateLanHostname(hostname)) return null;
+
+  return {
+    redirectUri,
+    origin,
+    message: 'Mobile/LAN Tesla OAuth needs the exact redirect URI registered in your Tesla developer app, or an HTTPS tunnel via APP_PUBLIC_ORIGIN.',
+  };
 }
 
 async function getTeslaAccessToken() {
@@ -804,12 +936,16 @@ app.get('/api/tesla/auth-url', (req, res) => {
     return;
   }
 
+  const origin = originFromRequest(req);
   const redirectUri = getRedirectUriFromRequest(req);
   const { url } = buildTeslaAuthorizeUrl(redirectUri);
 
   res.json({
     url: url.toString(),
     redirectUri,
+    origin,
+    callbackPath: getCallbackPathFromConfigured(),
+    mobileSetupRequired: Boolean(getMobileRedirectSetupHint(redirectUri, origin)),
     scopes: DEFAULT_SCOPES,
   });
 });
@@ -820,15 +956,24 @@ app.get('/api/tesla/login', (req, res) => {
     return;
   }
 
+  const origin = originFromRequest(req);
   const redirectUri = getRedirectUriFromRequest(req);
-  const returnTo = req.query.returnTo || `${req.protocol}://${req.get('host')}/#/overview`;
+  const returnTo = req.query.returnTo || `${origin}/#/overview`;
+  const mobileHint = getMobileRedirectSetupHint(redirectUri, origin);
+
+  if (mobileHint) {
+    console.warn(
+      '[Tesla OAuth] Mobile/LAN redirect URI must be registered in Tesla portal (or use APP_PUBLIC_ORIGIN HTTPS tunnel):',
+      redirectUri,
+    );
+  }
 
   const { state, url } = buildTeslaAuthorizeUrl(redirectUri);
 
   // Store both the Tesla callback redirectUri and the desired frontend returnTo
   pendingAuthStates.set(state, { redirectUri, returnTo });
 
-  console.log('[Tesla OAuth] Starting login. Will return user to:', returnTo);
+  console.log('[Tesla OAuth] Starting login. redirect_uri:', redirectUri, 'returnTo:', returnTo);
 
   res.redirect(url.toString());
 });
@@ -869,10 +1014,10 @@ async function handleTeslaCallback(req, res) {
 
   // Make sure returnTo is a usable URL (convert relative hash to full origin if needed)
   if (returnTo && !/^https?:\/\//i.test(returnTo)) {
-    // Fallback: build a best-effort full URL using the request host (may be backend host)
-    const host = req.get('host') || 'localhost:5173';
-    const proto = req.protocol || 'http';
-    returnTo = `${proto}://${host}${returnTo.startsWith('/') ? '' : '/'}${returnTo}`;
+    // Fallback: build a best-effort full URL using the origin the browser reached
+    // us on (honours x-forwarded-host so a phone lands back on the LAN/tunnel host).
+    const origin = originFromRequest(req);
+    returnTo = `${origin}${returnTo.startsWith('/') ? '' : '/'}${returnTo}`;
   }
 
   try {

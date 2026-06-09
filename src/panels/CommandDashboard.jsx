@@ -1,7 +1,41 @@
 import React, { useState } from 'react';
+import { useUser } from '@clerk/react';
+import { isClerkConfigured } from '../auth/clerkConfig';
 import SignOutButton from '../components/SignOutButton';
 import Logo from '../components/Logo';
 import LiveDataPanel from './LiveDataPanel';
+
+function getGreeting() {
+  const h = new Date().getHours();
+  if (h < 12) return 'Good morning';
+  if (h < 18) return 'Good afternoon';
+  return 'Good evening';
+}
+
+function ClerkGreetingHeader() {
+  const { user } = useUser();
+  const firstName = user?.firstName || user?.username || 'there';
+
+  return (
+    <>
+      <h1 className="text-4xl lg:text-5xl font-semibold tracking-[-2px] mb-2">
+        {getGreeting()}, {firstName}
+      </h1>
+      <p className="text-white/70 text-base lg:text-xl">Here's what's happening with your fleet today.</p>
+    </>
+  );
+}
+
+function GreetingHeader({ firstName = 'there' }) {
+  return (
+    <>
+      <h1 className="text-4xl lg:text-5xl font-semibold tracking-[-2px] mb-2">
+        {getGreeting()}, {firstName}
+      </h1>
+      <p className="text-white/70 text-base lg:text-xl">Here's what's happening with your fleet today.</p>
+    </>
+  );
+}
 
 export default function CommandDashboard({ onNavigate = () => {}, route = 'overview', fleet = [] }) {
   const totalVehicles = fleet.length;
@@ -17,16 +51,16 @@ export default function CommandDashboard({ onNavigate = () => {}, route = 'overv
     return '$' + num.toLocaleString();
   };
 
-  // Sidebar nav items - placeholders at top for the menus
+  // Sidebar nav items
   const navItems = [
-    { label: "Menu 1", route: 'overview' },
-    { label: "Menu 2", route: 'map' },
-    { label: "Menu 3", route: 'fleet' },
-    { label: "Menu 4", route: 'add-vehicle' },
-    { label: "Menu 5", route: 'ai' },
-    { label: "Menu 6", route: 'finance' },
-    { label: "Menu 7", route: 'charging' },
-    { label: "Menu 8", route: 'settings' },
+    { label: "Home", route: 'overview' },
+    { label: "Map", route: 'map' },
+    { label: "Fleet", route: 'fleet' },
+    { label: "Add Vehicle", route: 'add-vehicle' },
+    { label: "AI Agent", route: 'ai' },
+    { label: "Finance", route: 'finance' },
+    { label: "Charging", route: 'charging' },
+    { label: "Settings", route: 'settings' },
   ];
 
   const isActive = (itemRoute) => {
@@ -56,8 +90,8 @@ export default function CommandDashboard({ onNavigate = () => {}, route = 'overv
 
   return (
     <div className="flex min-h-screen bg-[#0a0a0a] text-white">
-      {/* Left Sidebar - Kept */}
-      <div className="w-72 border-r border-white/10 bg-[#0a0a0a] flex-shrink-0 flex flex-col">
+      {/* Left Sidebar — hidden on mobile, visible on lg+ */}
+      <div className="hidden lg:flex w-72 border-r border-white/10 bg-[#0a0a0a] flex-shrink-0 flex-col">
         <div className="p-6 flex-1">
           <div className="flex items-center mb-10">
             <Logo className="h-8" onClick={() => onNavigate('overview')} />
@@ -90,49 +124,53 @@ export default function CommandDashboard({ onNavigate = () => {}, route = 'overv
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-8 lg:p-12">
+      <div className="flex-1 p-5 lg:p-12 overflow-hidden pb-24 lg:pb-12">
         <div className="max-w-screen-2xl mx-auto">
-          <h1 className="text-5xl font-semibold tracking-[-2px] mb-2">Good morning, John</h1>
-          <p className="text-white/70 text-xl">Here's what's happening with your fleet today.</p>
+          {/* Greeting — useUser only when ClerkProvider is active (local dev without API key) */}
+          {isClerkConfigured() ? <ClerkGreetingHeader /> : <GreetingHeader />}
 
-          {/* Quick Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mt-10">
-            <div className="bg-zinc-900 rounded-3xl p-8">
-              <div className="text-emerald-400 text-sm">TODAY'S EARNINGS</div>
-              <div className="text-5xl font-semibold mt-3">
-                {formatDollars(totalEarnings)}
+          {/* KPI Cards — horizontal scroll on mobile, 4-col grid on lg */}
+          <div className="mt-8 lg:mt-10">
+            <div className="flex lg:grid lg:grid-cols-4 gap-4 lg:gap-6 overflow-x-auto snap-x snap-mandatory pb-2 -mx-5 px-5 lg:mx-0 lg:px-0 scrollbar-none">
+              <div className="bg-zinc-900 rounded-2xl lg:rounded-3xl p-6 lg:p-8 flex-shrink-0 snap-start w-[72vw] sm:w-[48vw] lg:w-auto">
+                <div className="text-emerald-400 text-xs lg:text-sm font-medium tracking-widest">TODAY'S EARNINGS</div>
+                <div className="text-4xl lg:text-5xl font-semibold mt-3 tabular-nums">
+                  {formatDollars(totalEarnings)}
+                </div>
               </div>
-            </div>
-            <div className="bg-zinc-900 rounded-3xl p-8">
-              <div className="text-emerald-400 text-sm">VEHICLES ONLINE</div>
-              <div className="text-5xl font-semibold mt-3">
-                {onlineVehicles}/{totalVehicles}
+              <div className="bg-zinc-900 rounded-2xl lg:rounded-3xl p-6 lg:p-8 flex-shrink-0 snap-start w-[72vw] sm:w-[48vw] lg:w-auto">
+                <div className="text-emerald-400 text-xs lg:text-sm font-medium tracking-widest">VEHICLES ONLINE</div>
+                <div className="text-4xl lg:text-5xl font-semibold mt-3 tabular-nums">
+                  {onlineVehicles}/{totalVehicles}
+                </div>
               </div>
-            </div>
-            <div className="bg-zinc-900 rounded-3xl p-8">
-              <div className="text-emerald-400 text-sm">AVG BATTERY</div>
-              <div className="text-5xl font-semibold mt-3">
-                {fleet.length > 0 
-                  ? Math.round(fleet.reduce((sum, v) => sum + (v.battery || v.battery_level || 0), 0) / fleet.length)
-                  : 0}%
+              <div className="bg-zinc-900 rounded-2xl lg:rounded-3xl p-6 lg:p-8 flex-shrink-0 snap-start w-[72vw] sm:w-[48vw] lg:w-auto">
+                <div className="text-emerald-400 text-xs lg:text-sm font-medium tracking-widest">AVG BATTERY</div>
+                <div className="text-4xl lg:text-5xl font-semibold mt-3 tabular-nums">
+                  {fleet.length > 0
+                    ? Math.round(fleet.reduce((sum, v) => sum + (v.battery || v.battery_level || 0), 0) / fleet.length)
+                    : 0}%
+                </div>
               </div>
-            </div>
-            <div className="bg-zinc-900 rounded-3xl p-8">
-              <div className="text-emerald-400 text-sm">AI ACTIONS</div>
-              <div className="text-5xl font-semibold mt-3">3</div>
+              <div className="bg-zinc-900 rounded-2xl lg:rounded-3xl p-6 lg:p-8 flex-shrink-0 snap-start w-[72vw] sm:w-[48vw] lg:w-auto">
+                <div className="text-emerald-400 text-xs lg:text-sm font-medium tracking-widest">AI ACTIONS</div>
+                <div className="text-4xl lg:text-5xl font-semibold mt-3 tabular-nums">3</div>
+              </div>
             </div>
           </div>
 
           {/* AI Bar */}
-          <div className="mt-12 bg-zinc-900 rounded-3xl p-2">
-            <div className="flex items-center gap-4 bg-[#0a0a0a] rounded-3xl px-6 py-5">
-              <div className="text-emerald-400">✦</div>
-              <input 
-                type="text" 
-                placeholder="Ask anything... e.g. 'What's the best charging plan for tonight?'" 
-                className="flex-1 bg-transparent outline-none text-lg placeholder:text-white/50"
+          <div className="mt-8 lg:mt-12 bg-zinc-900 rounded-2xl lg:rounded-3xl p-2">
+            <div className="flex items-center gap-3 bg-[#0a0a0a] rounded-xl lg:rounded-3xl px-4 lg:px-6 py-3.5 lg:py-5">
+              <div className="text-emerald-400 flex-shrink-0">✦</div>
+              <input
+                type="text"
+                placeholder="Ask anything about your fleet…"
+                className="flex-1 bg-transparent outline-none text-base lg:text-lg placeholder:text-white/40"
               />
-              <button className="bg-white text-black px-8 py-3 rounded-2xl font-medium">Send</button>
+              <button className="flex-shrink-0 bg-white text-black px-5 lg:px-8 py-2.5 lg:py-3 rounded-xl lg:rounded-2xl font-medium text-sm lg:text-base">
+                Send
+              </button>
             </div>
           </div>
 

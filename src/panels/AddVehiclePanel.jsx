@@ -1,7 +1,6 @@
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
-import { verifyBetaInvite, acceptTeslaConsent } from '../services/betaCompliance';
-import { getTeslaLoginUrl } from '../services/teslaHealthService';
+import { startTeslaOAuth } from '../services/teslaHealthService';
 import Logo from '../components/Logo';
 
 export default function AddVehiclePanel({ onNavigate }) {
@@ -43,15 +42,7 @@ export default function AddVehiclePanel({ onNavigate }) {
         </div>
 
         <button
-          onClick={() => {
-            // Trigger the Tesla OAuth flow for additional vehicle
-            // (Tesla allows multiple vehicles under one account)
-            verifyBetaInvite('RoboAgent-BETA');
-            acceptTeslaConsent();
-            const url = getTeslaLoginUrl('overview'); // return to dark dashboard; fleet will include the new vehicle
-            console.log('Redirecting to Tesla OAuth for additional vehicle:', url);
-            window.location.replace(url);
-          }}
+          onClick={() => startTeslaOAuth('overview')}
           className="w-full bg-white text-black py-5 rounded-2xl text-lg font-semibold hover:bg-white/90 active:scale-[0.985] transition flex items-center justify-center gap-3"
         >
           Connect Another Tesla

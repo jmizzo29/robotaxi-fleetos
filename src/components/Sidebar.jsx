@@ -7,15 +7,15 @@ export default function Sidebar({
   onNavigate = () => {},
 }) {
   // Match the exact look and feel of the dashboard sidebar (dark premium, clean text-only nav)
-  // Placeholders at top for the menus
   const navItems = [
-    { id: 'overview', label: 'Menu 1' },
-    { id: 'map', label: 'Menu 2' },
-    { id: 'fleet', label: 'Menu 3' },
-    { id: 'ai', label: 'Menu 4' },
-    { id: 'finance', label: 'Menu 5' },
-    { id: 'charging', label: 'Menu 6' },
-    { id: 'settings', label: 'Menu 7' },
+    { id: 'overview', label: 'Home' },
+    { id: 'map', label: 'Map' },
+    { id: 'fleet', label: 'Fleet' },
+    { id: 'add-vehicle', label: 'Add Vehicle' },
+    { id: 'ai', label: 'AI Agent' },
+    { id: 'finance', label: 'Finance' },
+    { id: 'charging', label: 'Charging' },
+    { id: 'settings', label: 'Settings' },
   ];
 
   const isActive = (id) => route === id;

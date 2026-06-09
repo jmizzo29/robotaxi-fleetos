@@ -1,9 +1,12 @@
 import { ClerkProvider, useAuth, AuthenticateWithRedirectCallback } from '@clerk/react';
 import { useEffect } from 'react';
+import useHashRoute from '../hooks/useHashRoute';
 import { setAuthTokenProvider } from '../services/authTokenStore';
 import { clerkPublishableKey, isClerkConfigured } from './clerkConfig';
 import { FleetAuthContext } from './FleetAuthContext';
 import { SsoCallbackPage } from '../App';
+
+const PUBLIC_AUTH_ROUTES = new Set(['landing', 'login', 'signup', 'onboarding', 'add-vehicle']);
 
 function ClerkSessionBridge({ children }) {
   const { getToken, isLoaded, isSignedIn } = useAuth();
@@ -31,15 +34,12 @@ function ClerkSessionBridge({ children }) {
 }
 
 export default function ClerkAuthProvider({ children }) {
+  const [route] = useHashRoute();
   const isSsoCallback = typeof window !== 'undefined' && window.location.pathname === '/sso-callback';
 
-  // Detect public auth routes (login, signup, onboarding) based on hash routing
-  // These use custom dark Tesla-first flows and must bypass Clerk entirely to avoid
-  // the white "Sign in to RoboAgent" screen (especially on mobile).
-  const currentHash = typeof window !== 'undefined' ? window.location.hash : '';
-  const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
-  const route = currentHash.replace('#/', '') || currentPath.replace('/', '');
-  const isPublicAuthRoute = ['login', 'signup', 'onboarding'].includes(route);
+  // Public Tesla-first routes bypass Clerk entirely to avoid the white Clerk UI and
+  // keep mobile auth on the fast direct backend OAuth redirect path.
+  const isPublicAuthRoute = PUBLIC_AUTH_ROUTES.has(route);
 
   if (isPublicAuthRoute) {
     // Render custom dark auth pages completely outside ClerkProvider.
