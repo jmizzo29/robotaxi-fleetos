@@ -293,7 +293,7 @@ function ProfileSection({ user, profileName, isBusy, onProfileNameChange, onSave
         </div>
         <div className="min-w-0 flex-1">
           <p className="text-sm font-semibold text-ink">{user.name || 'RoboAgent owner'}</p>
-          <p className="mt-0.5 truncate text-sm text-ink-muted">{user.email}</p>
+          <p className="mt-0.5 truncate text-sm text-ink-muted">{user.email || 'Signed in with Tesla'}</p>
           <Chip active className="mt-2 pointer-events-none">Signed in</Chip>
         </div>
       </div>
@@ -476,7 +476,9 @@ export default function AccountPanel({ onNavigate, embedded = false }) {
 
   const clerkReady = isClerkConfigured();
   const user = session?.user || {};
-  const hasRealAccount = Boolean(user.email);
+  // A valid session is signed in regardless of email — Tesla OAuth sessions
+  // intentionally have user.email = null but must still reach account controls.
+  const isSignedIn = Boolean(session?.authenticated);
 
   const refresh = async () => {
     const [sessionResult, billingResult] = await Promise.allSettled([
@@ -585,7 +587,7 @@ export default function AccountPanel({ onNavigate, embedded = false }) {
 
   const content = !sessionLoaded ? (
     <LoadingState />
-  ) : !hasRealAccount ? (
+  ) : !isSignedIn ? (
     <SignedOutView
       clerkReady={clerkReady}
       authBusy={authBusy}
@@ -632,7 +634,7 @@ export default function AccountPanel({ onNavigate, embedded = false }) {
     return content;
   }
 
-  const isSignedOut = sessionLoaded && !hasRealAccount;
+  const isSignedOut = sessionLoaded && !isSignedIn;
 
   return (
     <div className="relative min-h-screen overflow-hidden bg-surface text-ink">

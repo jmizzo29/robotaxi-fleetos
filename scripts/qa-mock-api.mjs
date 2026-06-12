@@ -16,9 +16,11 @@ const server = http.createServer((req, res) => {
       res.statusCode = 401;
       res.end(JSON.stringify({ authenticated: false, error: 'LOGIN_REQUIRED', message: 'Sign in to continue.' }));
     } else {
+      // email:null matches a real Tesla-OAuth anonymous session (this shape
+      // previously masked the AccountPanel signed-out bug).
       res.end(JSON.stringify({
         authenticated: true,
-        user: { id: 'qa-user', email: 'qa@example.com', name: 'QA Tester' },
+        user: { id: 'qa-user', email: null, name: null, role: 'owner' },
         billing: { vehicleCount: 2, includedVehicles: 1, coveredVehicles: 1, billableVehicles: 1, billingRequired: mode === 'billing' },
         teslaConnected: true,
         teslaConnectedAt: new Date().toISOString(),
