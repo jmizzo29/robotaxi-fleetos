@@ -3,22 +3,8 @@ import { Loader2 } from 'lucide-react';
 import { startTeslaOAuth } from '../../services/teslaHealthService';
 import Logo from '../Logo';
 
-export default function Login({ onNavigate, onLoginSuccess }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+export default function Login({ onNavigate }) {
   const [isTeslaLoading, setIsTeslaLoading] = useState(false);
-  const [error, setError] = useState('');
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-    setIsLoading(true);
-    await new Promise(resolve => setTimeout(resolve, 800));
-    setIsLoading(false);
-    if (onLoginSuccess) onLoginSuccess();
-    else onNavigate('overview');
-  };
 
   const handleTeslaLogin = () => {
     setIsTeslaLoading(true);
@@ -70,7 +56,7 @@ export default function Login({ onNavigate, onLoginSuccess }) {
         <div className="mb-10">
           <h1 className="text-4xl font-semibold tracking-[-1.5px]">Welcome back</h1>
           <p className="mt-3 text-xl text-white/70">
-            Sign in with your Tesla account or email.
+            Sign in with your Tesla account.
           </p>
         </div>
 
@@ -87,51 +73,10 @@ export default function Login({ onNavigate, onLoginSuccess }) {
           )}
         </button>
 
-        <div className="relative my-8">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-white/10"></div>
-          </div>
-          <div className="relative text-center">
-            <span className="bg-[#0a0a0a] px-4 text-white/50 text-sm">or</span>
-          </div>
-        </div>
-
-        {/* Secondary Email Login */}
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label className="block text-xs tracking-[1px] text-white/60 mb-2">EMAIL ADDRESS</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@teslaowner.com"
-              className="w-full rounded-2xl border border-white/20 bg-zinc-900 px-6 py-5 text-lg placeholder:text-white/40 focus:border-emerald-500 focus:outline-none transition"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs tracking-[1px] text-white/60 mb-2">PASSWORD</label>
-            <input
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              className="w-full rounded-2xl border border-white/20 bg-zinc-900 px-6 py-5 text-lg placeholder:text-white/40 focus:border-emerald-500 focus:outline-none transition"
-              required
-            />
-          </div>
-
-          {error && <div className="text-red-400 text-sm py-2">{error}</div>}
-
-          <button
-            type="submit"
-            disabled={isLoading}
-            className="w-full bg-white/10 border border-white/30 text-white py-5 rounded-2xl text-lg font-semibold hover:bg-white/5 active:scale-[0.985] transition"
-          >
-            {isLoading ? 'Signing in...' : 'Sign In with Email'}
-          </button>
-        </form>
+        {/* Email sign-in is disabled during beta — Tesla OAuth is the only authentication method. */}
+        <p className="text-center text-sm text-white/50">
+          During beta, sign-in uses your Tesla account. Email sign-in is coming soon.
+        </p>
 
         <div className="mt-10 text-center text-sm text-white/60">
           Don’t have an account?{' '}

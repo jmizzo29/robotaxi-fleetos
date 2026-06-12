@@ -590,9 +590,10 @@ export async function teslaRequestForSession(req, res, path, options = {}) {
 export async function disconnectTesla(req, res) {
   const session = await getSession(req, res);
   if (!session) return false;
+  // Clear both tokens so a "disconnect" fully severs Tesla access.
   await query(
     `update fleetos_tesla_connections
-     set revoked_at = now(), access_token_enc = null, refresh_token_enc = refresh_token_enc, updated_at = now()
+     set revoked_at = now(), access_token_enc = null, refresh_token_enc = null, updated_at = now()
      where user_id = $1 and provider = 'tesla'`,
     [session.userId],
   );

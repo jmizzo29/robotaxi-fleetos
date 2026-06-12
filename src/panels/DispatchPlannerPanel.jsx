@@ -179,7 +179,10 @@ export default function DispatchPlannerPanel({
   onQueueCommand,
   onShowMap,
 }) {
-  const plans = fleet
+  // Demo/simulated vehicles are excluded from dispatch plans and revenue projections.
+  const realFleet = fleet.filter((vehicle) => vehicle.isReal);
+  const demoCount = fleet.length - realFleet.length;
+  const plans = realFleet
     .map((vehicle) => planForVehicle(vehicle, demandZones, chargingStations))
     .sort((a, b) => b.expectedRevenue - a.expectedRevenue);
 
@@ -199,6 +202,12 @@ export default function DispatchPlannerPanel({
 
   return (
     <section className="space-y-5">
+      {demoCount > 0 && (
+        <div className="rounded-lg border border-amber-400/25 bg-amber-400/10 p-4 text-sm font-semibold text-amber-100">
+          {demoCount} demo vehicle{demoCount === 1 ? ' is' : 's are'} excluded from dispatch plans and revenue projections.
+          {realFleet.length === 0 && ' Connect a Tesla to generate a dispatch plan.'}
+        </div>
+      )}
       <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
         <Metric label="Projected Revenue" value={formatCurrency(totalRevenue)} tone="text-emerald-300" />
         <Metric label="Charge First" value={chargeFirst} tone={chargeFirst ? 'text-amber-300' : 'text-slate-100'} />

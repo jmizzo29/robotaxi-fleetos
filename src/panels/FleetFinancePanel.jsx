@@ -733,7 +733,10 @@ export default function FleetFinancePanel({ fleet = [], onQueueCommand }) {
     };
   }, []);
 
-  const finance = fleet.map((vehicle) => vehicleFinance(vehicle, revenueRecords));
+  // Demo/simulated vehicles are excluded from all financial calculations.
+  const realFleet = fleet.filter((vehicle) => vehicle.isReal);
+  const demoCount = fleet.length - realFleet.length;
+  const finance = realFleet.map((vehicle) => vehicleFinance(vehicle, revenueRecords));
   const totalRevenue = finance.reduce((sum, item) => sum + item.revenue, 0);
   const totalCost = finance.reduce((sum, item) => sum + item.operatingCost, 0);
   const totalNet = finance.reduce((sum, item) => sum + item.netProfit, 0);
@@ -741,11 +744,17 @@ export default function FleetFinancePanel({ fleet = [], onQueueCommand }) {
   const avgRoi = finance.length
     ? finance.reduce((sum, item) => sum + item.roi, 0) / finance.length
     : 0;
-  const pricingRecommendations = buildPricingRecommendations({ fleet, revenueRecords, market: marketInputs });
+  const pricingRecommendations = buildPricingRecommendations({ fleet: realFleet, revenueRecords, market: marketInputs });
   const pricingSummary = buildFleetPricingSummary(pricingRecommendations);
 
   return (
     <section className="space-y-5">
+      {demoCount > 0 && (
+        <div className="rounded-lg border border-amber-400/25 bg-amber-400/10 p-4 text-sm font-semibold text-amber-100">
+          {demoCount} demo vehicle{demoCount === 1 ? ' is' : 's are'} excluded from all financial calculations.
+          {realFleet.length === 0 && ' Connect a Tesla to see real fleet economics.'}
+        </div>
+      )}
       {/* Strong mobile money summary (one of the 6 core tabs) */}
       <div className="lg:hidden rounded-3xl bg-[#172231] p-4 text-white border border-white/10">
         <div className="flex justify-between items-end mb-3">
@@ -800,7 +809,7 @@ export default function FleetFinancePanel({ fleet = [], onQueueCommand }) {
       />
 
       <RevenueTracker
-        fleet={fleet}
+        fleet={realFleet}
         records={revenueRecords}
         onRecordsChanged={() => setRevenueRecords(readRevenueRecords())}
       />

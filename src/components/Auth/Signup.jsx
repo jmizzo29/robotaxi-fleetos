@@ -3,7 +3,7 @@ import { Loader2 } from 'lucide-react';
 import { startTeslaOAuth } from '../../services/teslaHealthService';
 import Logo from '../Logo';
 
-export default function Signup({ onNavigate, onSignupSuccess }) {
+export default function Signup({ onNavigate }) {
   const [isLoading, setIsLoading] = useState(false);
 
   const handleTeslaSignup = () => {
@@ -69,20 +69,10 @@ export default function Signup({ onNavigate, onSignupSuccess }) {
           )}
         </button>
 
-        <div className="relative my-8">
-          <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-white/10" />
-          </div>
-          <div className="relative text-center text-white/50 text-sm">or continue with email</div>
-        </div>
-
-        {/* Secondary Email Option (smaller) */}
-        <button
-          onClick={() => onNavigate('signup-email')} // or handle email form
-          className="w-full border border-white/30 hover:bg-white/5 py-5 rounded-2xl text-lg font-medium transition"
-        >
-          Sign up with Email
-        </button>
+        {/* Email sign-up is disabled during beta — Tesla OAuth is the only authentication method. */}
+        <p className="text-center text-sm text-white/50">
+          During beta, accounts are created with your Tesla account. Email sign-up is coming soon.
+        </p>
       </div>
       </div>
     </div>

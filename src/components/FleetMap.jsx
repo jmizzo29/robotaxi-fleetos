@@ -18,9 +18,12 @@ function getMarkerColor(vehicle) {
 
 function getEarningsDisplay(vehicle) {
   const raw = Number(vehicle?.earnings ?? vehicle?.revenue ?? 0);
-  // Show a plausible "today" figure (simulation revenue is cumulative-style)
-  const today = Math.max(180, Math.round(raw / 12));
-  return today;
+  if (vehicle?.isReal) {
+    // Real Tesla vehicles show actual tracked revenue — never a fabricated figure.
+    return Math.max(0, Math.round(raw));
+  }
+  // Demo vehicles show a modeled "today" figure (simulation revenue is cumulative-style)
+  return Math.max(180, Math.round(raw / 12));
 }
 
 export default function FleetMap({ fleet = [], onShowDetail }) {
@@ -110,13 +113,20 @@ export default function FleetMap({ fleet = [], onShowDetail }) {
               offset={14}
             >
               <div className="min-w-[248px] p-3 bg-white text-[#111] rounded-2xl shadow-xl">
-                <div className="font-semibold text-[17px] tracking-[-0.2px]">{getVehicleName(selectedVehicle)}</div>
+                <div className="flex items-center gap-2">
+                  <div className="font-semibold text-[17px] tracking-[-0.2px]">{getVehicleName(selectedVehicle)}</div>
+                  {!selectedVehicle.isReal && (
+                    <span className="rounded-full bg-black/10 px-2 py-0.5 text-[10px] font-semibold tracking-wider text-black/60">
+                      DEMO
+                    </span>
+                  )}
+                </div>
                 <div className="text-emerald-600 text-sm mt-0.5">
                   ● {selectedVehicle.status || selectedVehicle.state || 'ONLINE'} • {Math.round(Number(selectedVehicle.battery) || 0)}% battery
                 </div>
 
                 <div className="mt-3 text-sm text-black/70">
-                  ${getEarningsDisplay(selectedVehicle)} earned today
+                  ${getEarningsDisplay(selectedVehicle)} {selectedVehicle.isReal ? 'earned today' : 'demo earnings'}
                 </div>
 
                 <button

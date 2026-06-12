@@ -61,6 +61,18 @@ export function canUseTeslaTelemetry() {
   return hasBetaAccess() && hasTeslaConsent();
 }
 
+// Clears local beta access + consent flags (e.g. on sign-out) without
+// touching the server-side Tesla connection.
+export function clearLocalComplianceState() {
+  try {
+    localStorage.removeItem(ACCESS_KEY);
+    localStorage.removeItem(CONSENT_KEY);
+  } catch {
+    // Storage may be unavailable (private browsing); nothing to clear.
+  }
+  window.dispatchEvent(new CustomEvent('fleetos-compliance-updated'));
+}
+
 export async function deleteUserData() {
   DATA_KEYS.forEach((key) => localStorage.removeItem(key));
   const apiBase = getApiBase();

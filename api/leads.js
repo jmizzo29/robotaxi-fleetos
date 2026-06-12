@@ -1,4 +1,5 @@
 import pg from 'pg';
+import { requireAdmin } from './_lib/security.js';
 
 const { Pool } = pg;
 const pool = process.env.DATABASE_URL
@@ -77,6 +78,13 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'GET') {
+    // Leads contain names and emails — admin only.
+    try {
+      await requireAdmin(req, res);
+    } catch (error) {
+      res.status(error.status || 401).json({ error: 'ADMIN_REQUIRED', message: error.message });
+      return;
+    }
     const leads = await listLeads();
     res.status(200).json({
       count: leads.length,

@@ -139,12 +139,21 @@ export default function FleetHealthDashboard({ fleet = [], onQueueCommand }) {
     return () => window.removeEventListener('fleetos-revenue-updated', refresh);
   }, []);
 
-  const summary = useMemo(() => buildFleetHealthSummary(fleet, revenueRecords), [fleet, revenueRecords]);
-  const maintenancePlan = useMemo(() => buildCleaningMaintenancePlan(fleet, revenueRecords), [fleet, revenueRecords]);
-  const insights = useMemo(() => buildOperationalInsights(fleet, revenueRecords), [fleet, revenueRecords]);
+  // Demo/simulated vehicles are excluded from earnings estimates and health KPIs.
+  const realFleet = useMemo(() => fleet.filter((vehicle) => vehicle.isReal), [fleet]);
+  const demoCount = fleet.length - realFleet.length;
+  const summary = useMemo(() => buildFleetHealthSummary(realFleet, revenueRecords), [realFleet, revenueRecords]);
+  const maintenancePlan = useMemo(() => buildCleaningMaintenancePlan(realFleet, revenueRecords), [realFleet, revenueRecords]);
+  const insights = useMemo(() => buildOperationalInsights(realFleet, revenueRecords), [realFleet, revenueRecords]);
 
   return (
     <section className="space-y-5">
+      {demoCount > 0 && (
+        <div className="rounded-lg border border-amber-400/25 bg-amber-400/10 p-4 text-sm font-semibold text-amber-100">
+          {demoCount} demo vehicle{demoCount === 1 ? ' is' : 's are'} excluded from earnings estimates and health scores.
+          {realFleet.length === 0 && ' Connect a Tesla to see real fleet health.'}
+        </div>
+      )}
       <div className="grid grid-cols-2 gap-3 xl:grid-cols-5">
         <Metric label="Smart Gross" value={formatCurrency(summary.totalMonthly)} tone="text-sky-300" helper="Monthly estimate" />
         <Metric label="Smart Net" value={formatCurrency(summary.totalNet)} tone={summary.totalNet >= 0 ? 'text-emerald-300' : 'text-rose-300'} />
@@ -169,9 +178,13 @@ export default function FleetHealthDashboard({ fleet = [], onQueueCommand }) {
             AI Insights & Alerts
           </p>
           <div className="grid grid-cols-1 gap-3">
-            {insights.alerts.map((alert) => (
-              <InsightCard key={alert.title} alert={alert} />
-            ))}
+            {realFleet.length > 0 ? (
+              insights.alerts.map((alert) => (
+                <InsightCard key={alert.title} alert={alert} />
+              ))
+            ) : (
+              <p className="text-sm text-slate-400">Insights become available once a real Tesla is connected.</p>
+            )}
           </div>
         </article>
 

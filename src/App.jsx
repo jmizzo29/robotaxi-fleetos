@@ -158,24 +158,9 @@ export function SsoCallbackPage({ onNavigate }) {
   );
 }
 
-// Minimal email signup flow for the secondary "Sign up with Email" path from the Tesla-first Signup screen.
-// Keeps the overall experience password-free in messaging and very lightweight.
-function EmailSignupFlow({ onNavigate, onSignupSuccess }) {
-  const [isLoading, setIsLoading] = useState(false);
-  const [fullName, setFullName] = useState('');
-  const [email, setEmail] = useState('');
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (!email) return;
-    setIsLoading(true);
-    setTimeout(() => {
-      setIsLoading(false);
-      if (onSignupSuccess) onSignupSuccess();
-      else onNavigate('onboarding');
-    }, 650);
-  };
-
+// Email sign-up is disabled during beta. Tesla OAuth is the only authentication method,
+// so this route now points users to the Tesla-first signup screen instead of a fake form.
+function EmailSignupFlow({ onNavigate }) {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-white flex items-center justify-center px-6 py-12">
       <div className="w-full max-w-[440px]">
@@ -190,52 +175,16 @@ function EmailSignupFlow({ onNavigate, onSignupSuccess }) {
           <Logo className="h-10" onClick={() => onNavigate('landing')} />
         </div>
 
-        <h1 className="text-5xl font-semibold tracking-[-2px] mb-4">Create your account</h1>
-        <p className="text-2xl text-white/70 mb-10">We'll use email for now. You can connect Tesla anytime.</p>
-
-        <form onSubmit={handleSubmit} className="space-y-5">
-          <div>
-            <label className="block text-xs tracking-[1px] text-white/60 mb-2">FULL NAME</label>
-            <input
-              type="text"
-              value={fullName}
-              onChange={(e) => setFullName(e.target.value)}
-              placeholder="Alex Rivera"
-              className="w-full rounded-2xl border border-white/20 bg-zinc-900 px-6 py-5 text-lg placeholder:text-white/40 focus:border-emerald-500 focus:outline-none transition"
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-xs tracking-[1px] text-white/60 mb-2">EMAIL ADDRESS</label>
-            <input
-              type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@teslaowner.com"
-              className="w-full rounded-2xl border border-white/20 bg-zinc-900 px-6 py-5 text-lg placeholder:text-white/40 focus:border-emerald-500 focus:outline-none transition"
-              required
-            />
-          </div>
-
-          <button
-            type="submit"
-            disabled={isLoading || !email}
-            className="w-full bg-white text-black py-5 rounded-2xl text-lg font-semibold hover:bg-white/90 active:scale-[0.985] transition disabled:opacity-60 disabled:cursor-not-allowed mt-4"
-          >
-            {isLoading ? 'Creating account...' : 'Create Account'}
-          </button>
-        </form>
-
-        <p className="mt-8 text-center text-sm text-white/50">
-          No password required. You'll connect your Tesla next.
+        <h1 className="text-5xl font-semibold tracking-[-2px] mb-4">Email sign-up is coming soon</h1>
+        <p className="text-2xl text-white/70 mb-10">
+          During beta, accounts are created with your Tesla account. It's the fastest and most secure way to connect your fleet.
         </p>
 
         <button
           onClick={() => onNavigate('signup')}
-          className="mt-6 w-full text-sm text-white/60 hover:text-white transition"
+          className="w-full bg-white text-black py-5 rounded-2xl text-lg font-semibold hover:bg-white/90 active:scale-[0.985] transition"
         >
-          ← Prefer to sign up with Tesla instead
+          Continue with Tesla Account
         </button>
       </div>
     </div>
@@ -313,7 +262,7 @@ function FleetApp() {
   });
 
   const totalRevenue = useMemo(
-    () => fleet.reduce((sum, vehicle) => sum + (vehicle.revenue || 0), 0),
+    () => fleet.reduce((sum, vehicle) => (vehicle.isReal ? sum + (vehicle.revenue || 0) : sum), 0),
     [fleet],
   );
 
@@ -715,18 +664,16 @@ function FleetApp() {
   }
 
   if (isPublicLoginRoute) {
-    return <Login onNavigate={navigate} onLoginSuccess={() => navigate('overview')} />;
+    return <Login onNavigate={navigate} />;
   }
 
   if (isPublicSignupRoute) {
-    return <Signup onNavigate={navigate} onSignupSuccess={() => navigate('overview')} />;
+    return <Signup onNavigate={navigate} />;
   }
 
   if (isPublicSignupEmailRoute) {
-    // Minimal email signup (secondary path). Tesla OAuth remains the primary fast path.
-    return (
-      <EmailSignupFlow onNavigate={navigate} onSignupSuccess={() => navigate('overview')} />
-    );
+    // Email sign-up is disabled during beta; this route points users to Tesla OAuth.
+    return <EmailSignupFlow onNavigate={navigate} />;
   }
 
   if (isPublicAgentRoute) {
@@ -796,7 +743,12 @@ function FleetApp() {
   // New premium dark dashboard (matches Landing + Auth + Onboarding style)
   // Includes its own clean sidebar for the full dark experience
   if (route === 'overview') {
-    return <CommandDashboard onNavigate={navigate} route={route} fleet={fleet} />;
+    return (
+      <>
+        <CommandDashboard onNavigate={navigate} route={route} fleet={fleet} />
+        <MobileBottomNav route={route} onNavigate={navigate} pendingCount={commandQueue.length} />
+      </>
+    );
   }
 
   return (

@@ -267,7 +267,7 @@ export default function VehicleDetailPanel({
   const ownership = vehicle.ownership || getVehicleOwnership(vehicle) || {};
   const battery = Number.isFinite(vehicle.battery) ? Math.round(vehicle.battery) : 0;
   const status = deriveStatus(vehicle);
-  const modelLine = [ownership.modelYear, ownership.model || (vehicle.isReal ? 'Tesla Vehicle' : 'Fleet Vehicle')]
+  const modelLine = [ownership.modelYear, ownership.model || (vehicle.isReal ? 'Tesla Vehicle' : 'Demo Vehicle')]
     .filter(Boolean)
     .join(' · ');
   const insight = buildInsight(vehicle, name);
@@ -282,7 +282,7 @@ export default function VehicleDetailPanel({
           <div className="flex flex-wrap items-start justify-between gap-4">
             <div className="min-w-0">
               <div className="flex items-center gap-2 text-xs font-medium text-ink-muted">
-                <Chip className="pointer-events-none">{vehicle.isReal ? 'Live Tesla' : 'Fleet Asset'}</Chip>
+                <Chip className="pointer-events-none">{vehicle.isReal ? 'Live Tesla' : 'Demo Vehicle'}</Chip>
                 {vehicle.vin && <span className="truncate">{maskVin(vehicle.vin)}</span>}
               </div>
               <h2 className="mt-3 truncate text-2xl font-semibold tracking-tight text-ink sm:text-3xl">{name}</h2>

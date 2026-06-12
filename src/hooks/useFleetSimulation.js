@@ -242,7 +242,7 @@ export function useFleetSimulation({
     timelineEvents,
     forecast: buildForecast(fleet),
     systemLoad: Math.min(99, Math.max(45, average(fleet, 'utilization'))),
-    totalRevenue: fleet.reduce((sum, vehicle) => sum + (vehicle.revenue || 0), 0),
+    totalRevenue: fleet.reduce((sum, vehicle) => (vehicle.isReal ? sum + (vehicle.revenue || 0) : sum), 0),
     avgProfitability: average(fleet, 'profitability'),
     avgAnomalyRisk: average(fleet, 'anomalyRisk'),
     replayMode,

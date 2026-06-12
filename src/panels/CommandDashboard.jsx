@@ -44,7 +44,10 @@ export default function CommandDashboard({ onNavigate = () => {}, route = 'overv
     return !s.includes('OFFLINE');
   }).length || totalVehicles;
 
-  const totalEarnings = fleet.reduce((sum, v) => sum + (v.revenue || 0), 0);
+  // Financial KPIs only count real Tesla vehicles — demo/simulated vehicles are excluded.
+  const realFleet = fleet.filter(v => v.isReal);
+  const demoCount = fleet.length - realFleet.length;
+  const totalEarnings = realFleet.reduce((sum, v) => sum + (v.revenue || 0), 0);
 
   const formatDollars = (amount) => {
     const num = Math.round(amount || 0);
@@ -137,6 +140,9 @@ export default function CommandDashboard({ onNavigate = () => {}, route = 'overv
                 <div className="text-4xl lg:text-5xl font-semibold mt-3 tabular-nums">
                   {formatDollars(totalEarnings)}
                 </div>
+                <div className="text-white/40 text-xs mt-2">
+                  {realFleet.length > 0 ? 'Real Tesla vehicles only' : 'Connect a Tesla to track earnings'}
+                </div>
               </div>
               <div className="bg-zinc-900 rounded-2xl lg:rounded-3xl p-6 lg:p-8 flex-shrink-0 snap-start w-[72vw] sm:w-[48vw] lg:w-auto">
                 <div className="text-emerald-400 text-xs lg:text-sm font-medium tracking-widest">VEHICLES ONLINE</div>
@@ -215,7 +221,13 @@ export default function CommandDashboard({ onNavigate = () => {}, route = 'overv
 
           {/* Fleet Cards - show all vehicles */}
           <div className="mt-12">
-            <h2 className="text-2xl font-semibold mb-6">Your Fleet</h2>
+            <h2 className="text-2xl font-semibold mb-2">Your Fleet</h2>
+            {demoCount > 0 && (
+              <p className="text-white/50 text-sm mb-6">
+                Includes {demoCount} demo vehicle{demoCount === 1 ? '' : 's'} for preview — demo data is excluded from earnings.
+              </p>
+            )}
+            {demoCount === 0 && <div className="mb-6" />}
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
               {fleet.length > 0 ? (
                 fleet.map((vehicle, i) => {
@@ -244,7 +256,14 @@ export default function CommandDashboard({ onNavigate = () => {}, route = 'overv
                     >
                       <div className="flex justify-between items-start">
                         <div>
-                          <div className="font-mono text-xl tracking-tight">{name}</div>
+                          <div className="flex items-center gap-2">
+                            <div className="font-mono text-xl tracking-tight">{name}</div>
+                            {!vehicle.isReal && (
+                              <span className="rounded-full border border-white/20 bg-white/10 px-2 py-0.5 text-[10px] font-semibold tracking-wider text-white/60">
+                                DEMO
+                              </span>
+                            )}
+                          </div>
                           <div className={`inline-flex items-center gap-1.5 text-sm mt-2 ${statusColor}`}>
                             ● {statusText}
                           </div>
@@ -257,7 +276,7 @@ export default function CommandDashboard({ onNavigate = () => {}, route = 'overv
                       <div className="mt-10 flex justify-between items-end">
                         <div>
                           <div className="text-3xl font-medium">{formatDollars(earnings)}</div>
-                          <div className="text-white/60 text-sm">today</div>
+                          <div className="text-white/60 text-sm">{vehicle.isReal ? 'today' : 'demo data'}</div>
                         </div>
                         <div className="text-xs text-white/40">Tap for details</div>
                       </div>

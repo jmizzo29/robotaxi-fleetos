@@ -94,14 +94,23 @@ export default function AssetManagementPanel({
     }))
     .filter((asset) => asset.ownership);
 
-  const totalAcquisition = assets.reduce((sum, asset) => sum + (asset.ownership.pricePaid || 0), 0);
-  const totalBalance = assets.reduce((sum, asset) => sum + (asset.ownership.currentBalance || 0), 0);
-  const monthlyPayments = assets.reduce((sum, asset) => sum + (asset.ownership.monthlyPayment || 0), 0);
+  // Financial summary totals only include real Tesla vehicles — demo fixtures are excluded.
+  const realAssets = assets.filter((asset) => asset.vehicle.isReal);
+  const demoAssetCount = assets.length - realAssets.length;
+  const totalAcquisition = realAssets.reduce((sum, asset) => sum + (asset.ownership.pricePaid || 0), 0);
+  const totalBalance = realAssets.reduce((sum, asset) => sum + (asset.ownership.currentBalance || 0), 0);
+  const monthlyPayments = realAssets.reduce((sum, asset) => sum + (asset.ownership.monthlyPayment || 0), 0);
   const equity = Math.max(0, totalAcquisition - totalBalance);
 
   return (
     <section className="space-y-4">
       <VehicleOnboardingPanel fleet={fleet} isLoading={isLoading} onSync={onSync} />
+
+      {demoAssetCount > 0 && (
+        <div className="rounded-lg border border-amber-400/25 bg-amber-400/10 p-4 text-sm font-semibold text-amber-100">
+          {demoAssetCount} demo vehicle{demoAssetCount === 1 ? ' is' : 's are'} excluded from the financial summary below.
+        </div>
+      )}
 
       <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
         <SummaryCard label="Acquisition Cost" value={formatCurrency(totalAcquisition)} tone="text-sky-300" />
@@ -184,7 +193,7 @@ function EditableAssetCard({ vehicle, ownership, onSaved }) {
           </div>
         </div>
         <span className="rounded-full border border-white/10 bg-slate-950/70 px-3 py-1 text-xs font-black uppercase text-slate-300">
-          {vehicle.isReal ? 'Real' : 'Sim'}
+          {vehicle.isReal ? 'Real' : 'Demo'}
         </span>
       </div>
 

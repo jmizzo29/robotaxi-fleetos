@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { clearLocalComplianceState } from '../services/betaCompliance';
 import { logoutFleetOsAccount } from '../services/sessionService';
 
 export default function SignOutButton({
@@ -14,9 +15,9 @@ export default function SignOutButton({
   const signOut = async () => {
     setIsSigningOut(true);
     try {
-      // Clear local session + compliance state (audit: fix sign-out races and stale consent)
-      try { localStorage.removeItem('fleetos_tesla_consent'); } catch {}
-      try { localStorage.removeItem('fleetos_beta_invite'); } catch {}
+      // Clear local session + compliance state (audit: fix sign-out races and stale consent).
+      // Uses the canonical keys from betaCompliance instead of legacy key names.
+      clearLocalComplianceState();
       try { sessionStorage.clear(); } catch {}
 
       await logoutFleetOsAccount().catch(() => {});
