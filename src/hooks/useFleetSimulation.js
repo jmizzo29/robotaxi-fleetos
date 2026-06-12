@@ -200,6 +200,8 @@ export function useFleetSimulation({
       setRealSyncStatus({
         state: 'error',
         lastSyncedAt: null,
+        code: error.code,
+        httpStatus: error.status,
         message: error.message || 'Tesla telemetry sync failed.',
       });
     } finally {

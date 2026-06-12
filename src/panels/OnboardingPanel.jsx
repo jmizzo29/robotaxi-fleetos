@@ -1,4 +1,5 @@
 ﻿import React, { useEffect, useState } from 'react';
+import { Check } from 'lucide-react';
 import { canUseTeslaTelemetry } from '../services/betaCompliance';
 import { startTeslaOAuth } from '../services/teslaHealthService';
 import Logo from '../components/Logo';
@@ -128,7 +129,7 @@ export default function OnboardingPanel({ onNavigate }) {
         {step === 3 && (
           <div className="max-w-md text-center mx-auto">
             <div className="mx-auto mb-10 flex h-28 w-28 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-cyan-400">
-              <span className="text-7xl"></span>
+              <Check className="h-16 w-16 text-black" strokeWidth={3} aria-hidden="true" />
             </div>
 
             <h1 className="text-5xl font-semibold tracking-[-2px] mb-6">You're all set!</h1>

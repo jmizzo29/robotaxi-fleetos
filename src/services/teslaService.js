@@ -15,33 +15,37 @@ export async function getTeslaVehicles() {
     return null;
   }
 
+  let response;
   try {
     const token = await getAuthToken();
-    const response = await fetch(`${API_BASE}/vehicles?ts=${Date.now()}`, {
+    response = await fetch(`${API_BASE}/vehicles?ts=${Date.now()}`, {
       cache: 'no-store',
       credentials: 'include',
       headers: token ? { Authorization: `Bearer ${token}` } : {},
     });
-    if (!response.ok) {
-      const detail = await readJsonResponse(response);
-      console.warn('Backend returned an error, using simulation only:', detail.message || response.status);
-      return null;
-    }
-
-    const data = await readJsonResponse(response, { response: [] });
-    const vehicles = data.response || data;
-    if (Array.isArray(vehicles)) {
-      vehicles.syncMeta = {
-        cached: Boolean(data.cached),
-        warnings: data.warnings || [],
-        cacheTtlSeconds: data.cacheTtlSeconds,
-      };
-    }
-    return vehicles;
   } catch (error) {
     console.warn('Could not connect to backend, using simulation only:', error.message);
     return null;
   }
+
+  if (!response.ok) {
+    const detail = await readJsonResponse(response);
+    const error = new Error(detail.message || `Tesla vehicle sync failed with status ${response.status}.`);
+    error.status = response.status;
+    error.code = detail.error || (response.status === 402 ? 'BILLING_REQUIRED' : undefined);
+    throw error;
+  }
+
+  const data = await readJsonResponse(response, { response: [] });
+  const vehicles = data.response || data;
+  if (Array.isArray(vehicles)) {
+    vehicles.syncMeta = {
+      cached: Boolean(data.cached),
+      warnings: data.warnings || [],
+      cacheTtlSeconds: data.cacheTtlSeconds,
+    };
+  }
+  return vehicles;
 }
 
 export async function wakeTeslaVehicle(vehicle) {

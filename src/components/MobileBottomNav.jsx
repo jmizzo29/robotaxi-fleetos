@@ -1,10 +1,11 @@
-import { Home, Map, Cpu, Car } from 'lucide-react';
+import { Home, Map, Cpu, Car, User } from 'lucide-react';
 
 const items = [
-  { id: 'overview', label: 'Home',  Icon: Home },
-  { id: 'map',      label: 'Map',   Icon: Map  },
-  { id: 'ai',       label: 'AI',    Icon: Cpu  },
-  { id: 'fleet',    label: 'Fleet', Icon: Car  },
+  { id: 'overview', label: 'Home',    Icon: Home },
+  { id: 'map',      label: 'Map',     Icon: Map  },
+  { id: 'ai',       label: 'AI',      Icon: Cpu  },
+  { id: 'fleet',    label: 'Fleet',   Icon: Car  },
+  { id: 'account',  label: 'Account', Icon: User },
 ];
 
 export default function MobileBottomNav({ route, onNavigate, pendingCount = 0 }) {
@@ -14,7 +15,7 @@ export default function MobileBottomNav({ route, onNavigate, pendingCount = 0 })
       aria-label="Primary navigation"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
-      <div className="grid grid-cols-4">
+      <div className="grid grid-cols-5">
         {items.map(({ id, label, Icon }) => {
           const active = route === id;
           const badge = id === 'ai' && pendingCount > 0 ? pendingCount : null;

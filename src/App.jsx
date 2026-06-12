@@ -44,7 +44,9 @@ import weatherZones from './data/weatherZones';
 import useAiFleetAnalysis from './hooks/useAiFleetAnalysis';
 import useHashRoute from './hooks/useHashRoute';
 import { useFleetSimulation } from './hooks/useFleetSimulation';
+import { useFleetAuthStatus } from './auth/FleetAuthContext';
 import { canUseTeslaTelemetry } from './services/betaCompliance';
+import { getFleetOsSession } from './services/sessionService';
 
 const FleetMap = lazy(() => import('./components/FleetMap'));
 
@@ -236,12 +238,52 @@ function FleetApp() {
     isPublicAddVehicleRoute ||
     isPublicAccountRoute
   );
+  // Every non-public route requires an authenticated session.
+  const isProtectedRoute = shouldAutoSyncReal;
 
   useEffect(() => {
     const refreshCompliance = () => setComplianceRevision((current) => current + 1);
     window.addEventListener('fleetos-compliance-updated', refreshCompliance);
     return () => window.removeEventListener('fleetos-compliance-updated', refreshCompliance);
   }, []);
+
+  // === AUTH ROUTE GUARD ===
+  // Verify an active session before rendering protected pages. Logged-out users
+  // who type #/overview etc. are redirected to the landing page.
+  const { isAuthReady, isSignedIn } = useFleetAuthStatus();
+  const [sessionCheck, setSessionCheck] = useState('checking'); // 'checking' | 'authed' | 'guest'
+  // Clerk-signed-in users are authenticated without a server round trip.
+  const sessionAllowed = isSignedIn || sessionCheck === 'authed';
+
+  useEffect(() => {
+    if (!isProtectedRoute || !isAuthReady || isSignedIn) return undefined;
+    let cancelled = false;
+    // Reset a stale 'guest' verdict to 'checking' so a user who just completed
+    // Tesla OAuth is not bounced to landing before the fresh check resolves.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setSessionCheck((current) => (current === 'authed' ? current : 'checking'));
+    getFleetOsSession()
+      .then((session) => {
+        if (!cancelled) setSessionCheck(session?.authenticated ? 'authed' : 'guest');
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        // Only an explicit 401 proves the user is signed out. Network or server
+        // hiccups fail open so flaky connections don't eject signed-in users.
+        setSessionCheck(error.status === 401 ? 'guest' : 'authed');
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [isProtectedRoute, isAuthReady, isSignedIn, route]);
+
+  useEffect(() => {
+    if (isProtectedRoute && !isSignedIn && sessionCheck === 'guest') {
+      navigate('landing');
+    }
+    // navigate is stable in behavior (sets window.location.hash); intentionally omitted.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isProtectedRoute, isSignedIn, sessionCheck]);
 
   const {
     fleet,
@@ -345,7 +387,13 @@ function FleetApp() {
 
   const pages = {
     overview: (
-      <CommandDashboard onNavigate={navigate} fleet={fleet} />
+      <CommandDashboard
+        onNavigate={navigate}
+        fleet={fleet}
+        realSyncStatus={realSyncStatus}
+        isLoadingReal={isLoadingReal}
+        onRetrySync={refreshRealTesla}
+      />
     ),
     onboarding: (
       <>
@@ -734,8 +782,24 @@ function FleetApp() {
 
   if (isPublicAccountRoute) {
     return (
-      <div className="min-h-screen bg-surface text-ink">
+      <div className="min-h-screen bg-surface text-ink pb-20 lg:pb-0">
         <AccountPanel onNavigate={navigate} />
+        <MobileBottomNav route={route} onNavigate={navigate} pendingCount={commandQueue.length} />
+        <FeedbackButton route={route} />
+      </div>
+    );
+  }
+
+  // === AUTH ROUTE GUARD ===
+  // All routes below are protected. Block rendering until the session check
+  // passes; guests are redirected to #/landing by the guard effect above.
+  if (!sessionAllowed) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#0a0a0a] text-white">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="h-6 w-6 animate-spin text-white/60" />
+          <p className="text-sm text-white/60">Checking your session...</p>
+        </div>
       </div>
     );
   }
@@ -745,8 +809,16 @@ function FleetApp() {
   if (route === 'overview') {
     return (
       <>
-        <CommandDashboard onNavigate={navigate} route={route} fleet={fleet} />
+        <CommandDashboard
+          onNavigate={navigate}
+          route={route}
+          fleet={fleet}
+          realSyncStatus={realSyncStatus}
+          isLoadingReal={isLoadingReal}
+          onRetrySync={refreshRealTesla}
+        />
         <MobileBottomNav route={route} onNavigate={navigate} pendingCount={commandQueue.length} />
+        <FeedbackButton route={route} />
       </>
     );
   }

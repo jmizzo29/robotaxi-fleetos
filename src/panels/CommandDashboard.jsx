@@ -37,7 +37,113 @@ function GreetingHeader({ firstName = 'there' }) {
   );
 }
 
-export default function CommandDashboard({ onNavigate = () => {}, route = 'overview', fleet = [] }) {
+function lastSyncedLabel(isoTimestamp) {
+  if (!isoTimestamp) return null;
+  const elapsedMs = Date.now() - new Date(isoTimestamp).getTime();
+  if (Number.isNaN(elapsedMs)) return null;
+  const minutes = Math.floor(elapsedMs / 60000);
+  if (minutes < 1) return 'Last synced just now';
+  if (minutes === 1) return 'Last synced 1 minute ago';
+  if (minutes < 60) return `Last synced ${minutes} minutes ago`;
+  const hours = Math.floor(minutes / 60);
+  return `Last synced ${hours} hour${hours === 1 ? '' : 's'} ago`;
+}
+
+function TeslaSyncStatusBanner({ realSyncStatus, isLoadingReal, onRetrySync, onNavigate, hasRealVehicles, demoCount }) {
+  if (!realSyncStatus) return null;
+
+  const state = isLoadingReal ? 'loading' : realSyncStatus.state;
+  const isBillingError = realSyncStatus.code === 'BILLING_REQUIRED' || realSyncStatus.httpStatus === 402;
+
+  if (state === 'loading') {
+    return (
+      <div className="mt-6 flex items-center gap-3 rounded-2xl border border-white/15 bg-zinc-900 px-5 py-4" role="status">
+        <span className="h-2.5 w-2.5 flex-shrink-0 animate-pulse rounded-full bg-amber-400" aria-hidden="true" />
+        <p className="text-sm text-white/80">Connecting to Tesla...</p>
+      </div>
+    );
+  }
+
+  if (state === 'success') {
+    const syncedLabel = lastSyncedLabel(realSyncStatus.lastSyncedAt);
+    return (
+      <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-2xl border border-emerald-500/25 bg-emerald-500/10 px-5 py-4" role="status">
+        <span className="h-2.5 w-2.5 flex-shrink-0 rounded-full bg-emerald-400" aria-hidden="true" />
+        <p className="text-sm font-medium text-emerald-300">Tesla connected successfully</p>
+        {syncedLabel && <p className="text-sm text-white/60">{syncedLabel}</p>}
+      </div>
+    );
+  }
+
+  if (state === 'error') {
+    return (
+      <div className="mt-6 rounded-2xl border border-red-500/25 bg-red-500/10 px-5 py-4" role="alert">
+        <div className="flex items-start gap-3">
+          <span className="mt-1.5 h-2.5 w-2.5 flex-shrink-0 rounded-full bg-red-400" aria-hidden="true" />
+          <div className="min-w-0 flex-1">
+            <p className="text-sm font-medium text-red-300">
+              {isBillingError
+                ? 'Additional Tesla vehicles require an upgraded AutoFleeto plan.'
+                : 'Tesla connected but vehicle sync failed'}
+            </p>
+            {realSyncStatus.message && (
+              <p className="mt-1 text-sm text-white/60">{realSyncStatus.message}</p>
+            )}
+            {!hasRealVehicles && demoCount > 0 && (
+              <p className="mt-1 text-sm text-white/60">
+                No Tesla vehicles are currently connected. Demo vehicles are shown below.
+              </p>
+            )}
+            <div className="mt-3 flex flex-wrap gap-2">
+              {isBillingError && (
+                <button
+                  type="button"
+                  onClick={() => onNavigate('account')}
+                  className="rounded-xl bg-white px-4 py-2.5 text-sm font-semibold text-black transition hover:bg-white/90"
+                >
+                  View Plans
+                </button>
+              )}
+              <button
+                type="button"
+                onClick={onRetrySync}
+                className="rounded-xl border border-white/25 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/20"
+              >
+                Retry Sync
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // idle — sync has not been attempted yet (e.g. telemetry consent missing)
+  return (
+    <div className="mt-6 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/15 bg-zinc-900 px-5 py-4" role="status">
+      <div className="flex items-center gap-3">
+        <span className="h-2.5 w-2.5 flex-shrink-0 rounded-full bg-white/40" aria-hidden="true" />
+        <p className="text-sm text-white/70">Tesla telemetry has not synced yet.</p>
+      </div>
+      <button
+        type="button"
+        onClick={onRetrySync}
+        className="rounded-xl border border-white/25 bg-white/10 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-white/20"
+      >
+        Sync now
+      </button>
+    </div>
+  );
+}
+
+export default function CommandDashboard({
+  onNavigate = () => {},
+  route = 'overview',
+  fleet = [],
+  realSyncStatus = null,
+  isLoadingReal = false,
+  onRetrySync = () => {},
+}) {
   const totalVehicles = fleet.length;
   const onlineVehicles = fleet.filter(v => {
     const s = (v.status || '').toUpperCase();
@@ -132,6 +238,16 @@ export default function CommandDashboard({ onNavigate = () => {}, route = 'overv
           {/* Greeting — useUser only when ClerkProvider is active (local dev without API key) */}
           {isClerkConfigured() ? <ClerkGreetingHeader /> : <GreetingHeader />}
 
+          {/* Tesla sync status — the user should never have to open Settings to learn sync failed */}
+          <TeslaSyncStatusBanner
+            realSyncStatus={realSyncStatus}
+            isLoadingReal={isLoadingReal}
+            onRetrySync={onRetrySync}
+            onNavigate={onNavigate}
+            hasRealVehicles={realFleet.length > 0}
+            demoCount={demoCount}
+          />
+
           {/* KPI Cards — horizontal scroll on mobile, 4-col grid on lg */}
           <div className="mt-8 lg:mt-10">
             <div className="flex lg:grid lg:grid-cols-4 gap-4 lg:gap-6 overflow-x-auto snap-x snap-mandatory pb-2 -mx-5 px-5 lg:mx-0 lg:px-0 scrollbar-none">
@@ -165,19 +281,20 @@ export default function CommandDashboard({ onNavigate = () => {}, route = 'overv
             </div>
           </div>
 
-          {/* AI Bar */}
+          {/* AI Bar — launcher for the AI panel (the panel owns the real input) */}
           <div className="mt-8 lg:mt-12 bg-zinc-900 rounded-2xl lg:rounded-3xl p-2">
-            <div className="flex items-center gap-3 bg-[#0a0a0a] rounded-xl lg:rounded-3xl px-4 lg:px-6 py-3.5 lg:py-5">
+            <button
+              type="button"
+              onClick={() => onNavigate('ai')}
+              aria-label="Open the AI fleet assistant"
+              className="w-full flex items-center gap-3 bg-[#0a0a0a] rounded-xl lg:rounded-3xl px-4 lg:px-6 py-3.5 lg:py-5 text-left transition hover:bg-zinc-950"
+            >
               <div className="text-emerald-400 flex-shrink-0">✦</div>
-              <input
-                type="text"
-                placeholder="Ask anything about your fleet…"
-                className="flex-1 bg-transparent outline-none text-base lg:text-lg placeholder:text-white/40"
-              />
-              <button className="flex-shrink-0 bg-white text-black px-5 lg:px-8 py-2.5 lg:py-3 rounded-xl lg:rounded-2xl font-medium text-sm lg:text-base">
-                Send
-              </button>
-            </div>
+              <span className="flex-1 text-base lg:text-lg text-white/40">Ask anything about your fleet…</span>
+              <span className="flex-shrink-0 bg-white text-black px-5 lg:px-8 py-2.5 lg:py-3 rounded-xl lg:rounded-2xl font-medium text-sm lg:text-base">
+                Ask AI
+              </span>
+            </button>
           </div>
 
           {/* Live Data Overview - Charts & Stats */}

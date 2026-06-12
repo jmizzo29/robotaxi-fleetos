@@ -25,9 +25,11 @@ export default function SignOutButton({
         await window.Clerk.signOut();
       }
       onSignedOut?.();
-      // Force clean reload to landing to avoid any stale hybrid auth state
+      // Force a true reload at the landing route so no in-memory auth/fleet state
+      // survives sign-out. Setting the hash alone would keep the SPA alive.
       if (typeof window !== 'undefined') {
-        window.location.href = '/#/landing';
+        window.location.hash = '#/landing';
+        window.location.reload();
       }
     } finally {
       setIsSigningOut(false);

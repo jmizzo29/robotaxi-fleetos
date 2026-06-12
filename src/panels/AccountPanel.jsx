@@ -281,7 +281,7 @@ function SignedOutView({
   );
 }
 
-function ProfileSection({ user, profileName, isBusy, onProfileNameChange, onSaveProfile, onOpenDashboard }) {
+function ProfileSection({ user, profileName, isBusy, onProfileNameChange, onSaveProfile, onOpenDashboard, onOpenSettings }) {
   return (
     <Card padding="p-5 sm:p-6" className="animate-fade-up">
       <div className="flex items-start gap-4">
@@ -327,6 +327,9 @@ function ProfileSection({ user, profileName, isBusy, onProfileNameChange, onSave
       <Button size="lg" className="mt-5 w-full" onClick={onOpenDashboard}>
         Open dashboard
         <ArrowRight className="h-4 w-4" />
+      </Button>
+      <Button variant="secondary" className="mt-2 w-full" onClick={onOpenSettings}>
+        Open settings
       </Button>
     </Card>
   );
@@ -605,6 +608,7 @@ export default function AccountPanel({ onNavigate, embedded = false }) {
         onProfileNameChange={setProfileName}
         onSaveProfile={() => runAction(() => updateFleetOsProfile({ name: profileName }), 'Profile updated.')}
         onOpenDashboard={() => onNavigate?.('overview')}
+        onOpenSettings={() => onNavigate?.('settings')}
       />
 
       <TeslaSection

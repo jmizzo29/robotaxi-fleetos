@@ -48,7 +48,10 @@ export async function fetchApiJson(path, options = {}) {
 
   if (!response.ok) {
     const rawDetail = data.raw ? `: ${String(data.raw).slice(0, 160)}` : '';
-    throw new Error(data.message || data.error || `Request failed with ${response.status}${rawDetail}`);
+    const error = new Error(data.message || data.error || `Request failed with ${response.status}${rawDetail}`);
+    error.status = response.status;
+    error.code = data.error;
+    throw error;
   }
 
   return data;
