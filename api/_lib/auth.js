@@ -122,12 +122,15 @@ export async function createAnonymousSession(res) {
 export async function getSession(req, res, { create = false } = {}) {
   await ensureFleetSchema();
   let clerkSession = null;
+  let clerkError = null;
   try {
     clerkSession = await getVerifiedClerkSession(req);
   } catch (error) {
-    if (!(create && error.status === 401)) {
-      throw error;
-    }
+    // Defer Clerk failures until after the native cookie session is checked.
+    // When Clerk auth is marked required, requests without a Clerk token used
+    // to 401 here immediately, which locked out valid Tesla-OAuth cookie
+    // sessions on every create:false endpoint (e.g. GET /api/auth/session).
+    clerkError = error;
   }
   if (clerkSession) {
     await ensureBillingEntitlement(clerkSession.userId, clerkSession.user?.email);
@@ -156,6 +159,10 @@ export async function getSession(req, res, { create = false } = {}) {
         },
       };
     }
+  }
+
+  if (clerkError && !(create && clerkError.status === 401)) {
+    throw clerkError;
   }
 
   if (isClerkAuthRequired() && !create) return null;
