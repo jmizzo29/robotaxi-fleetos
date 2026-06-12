@@ -35,10 +35,7 @@ export default function Landing({ onNavigate }) {
             className="text-left transition hover:opacity-90 md:absolute md:left-0 md:top-0 md:flex md:h-[6.655rem] md:flex-col md:justify-center md:pl-8"
           >
             <span className="font-brand text-lg font-semibold tracking-[-0.3px] text-white md:text-[1.66375rem] md:tracking-[-0.5px]">
-              AutoFleeto
-            </span>
-            <span className="text-[10px] font-medium uppercase tracking-[0.14em] text-white/40 md:text-[11px]">
-              Powered by ROBOAGENT
+              ROBOAGENT
             </span>
           </button>
 

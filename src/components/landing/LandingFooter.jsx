@@ -14,8 +14,7 @@ export default function LandingFooter({ onNavigate }) {
           onClick={() => onNavigate('landing')}
           className="text-left transition hover:opacity-80"
         >
-          <span className="font-brand text-base font-semibold text-white">AutoFleeto</span>
-          <span className="ml-2 text-sm text-white/45">by ROBOAGENT</span>
+          <span className="font-brand text-base font-semibold text-white">ROBOAGENT</span>
         </button>
         <nav className="flex flex-wrap gap-x-5 gap-y-2">
           {links.map(([target, label]) => (

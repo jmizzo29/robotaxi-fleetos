@@ -9,7 +9,7 @@ export default function PricingValueSection({ onContinueWithTesla, isTeslaLoadin
         </h2>
         <p className="mt-5 text-base leading-relaxed text-white/60 md:text-lg">
           Your first Tesla is included free during beta. Connect your vehicle, view live fleet
-          performance, and experience AutoFleeto before paying anything.
+          performance, and experience ROBOAGENT before paying anything.
         </p>
         <p className="mt-3 text-sm text-white/45">No credit card required.</p>
         <button
