@@ -11,6 +11,7 @@ export default function Sidebar({
     { id: 'overview', label: 'Home' },
     { id: 'map', label: 'Map' },
     { id: 'fleet', label: 'Fleet' },
+    { id: 'network', label: 'Network' },
     { id: 'add-vehicle', label: 'Add Vehicle' },
     { id: 'ai', label: 'AI Agent' },
     { id: 'finance', label: 'Finance' },

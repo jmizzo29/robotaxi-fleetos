@@ -50,6 +50,7 @@ import { canUseTeslaTelemetry } from './services/betaCompliance';
 import { getFleetOsSession } from './services/sessionService';
 
 const FleetMap = lazy(() => import('./components/FleetMap'));
+const NetworkPanel = lazy(() => import('./panels/NetworkPanel'));
 
 const initialFleet = [
   {
@@ -870,6 +871,24 @@ function FleetApp() {
           isLoadingReal={isLoadingReal}
           onRetrySync={refreshRealTesla}
         />
+        <MobileBottomNav route={route} onNavigate={navigate} pendingCount={commandQueue.length} />
+        <FeedbackButton route={route} />
+      </>
+    );
+  }
+
+  if (route === 'network') {
+    return (
+      <>
+        <Suspense
+          fallback={(
+            <div className="flex min-h-screen items-center justify-center bg-black text-white">
+              <Loader2 className="h-6 w-6 animate-spin text-white/60" />
+            </div>
+          )}
+        >
+          <NetworkPanel />
+        </Suspense>
         <MobileBottomNav route={route} onNavigate={navigate} pendingCount={commandQueue.length} />
         <FeedbackButton route={route} />
       </>

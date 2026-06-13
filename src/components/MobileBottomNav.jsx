@@ -1,4 +1,4 @@
-import { BarChart3, Car, LayoutGrid, User, Wrench } from 'lucide-react';
+import { Car, Globe2, LayoutGrid, User, Wrench } from 'lucide-react';
 
 const items = [
   { id: 'overview', label: 'Command', Icon: LayoutGrid, routes: ['overview'] },
@@ -9,7 +9,7 @@ const items = [
     Icon: Wrench,
     routes: ['dispatch', 'charging', 'health', 'readiness', 'alerts'],
   },
-  { id: 'finance', label: 'Analytics', Icon: BarChart3, routes: ['finance', 'reports'] },
+  { id: 'network', label: 'Network', Icon: Globe2, routes: ['network'] },
   { id: 'account', label: 'Account', Icon: User, routes: ['account', 'settings'] },
 ];
 
