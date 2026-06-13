@@ -38,8 +38,8 @@ export default function CommandMapPreview({
 
   return (
     <section aria-label="Live fleet map">
-      <div className="mb-2 flex items-center justify-between gap-2">
-        <h2 className="text-[11px] font-bold uppercase tracking-[0.14em] text-slate-400">Live Fleet Map</h2>
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <h2 className="text-[22px] font-bold tracking-[-0.02em] text-slate-900">Live Fleet Map</h2>
         <button
           type="button"
           onClick={() => onNavigate('map')}
@@ -53,7 +53,7 @@ export default function CommandMapPreview({
         type="button"
         onClick={() => onNavigate('map')}
         className={`relative block w-full overflow-hidden text-left shadow-[0_10px_28px_-18px_rgba(15,23,42,0.35)] ${
-          isMockup ? 'h-[168px] rounded-[18px] border border-slate-200' : 'rounded-[14px] border border-white/10 bg-[#06080c]'
+          isMockup ? 'h-[218px] rounded-[18px] border border-slate-200' : 'rounded-[14px] border border-white/10 bg-[#06080c]'
         }`}
       >
         {isMockup ? (

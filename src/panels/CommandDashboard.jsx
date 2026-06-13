@@ -310,6 +310,7 @@ export default function CommandDashboard({
             realFleet={realFleet}
             realSyncStatus={realSyncStatus}
             isLoadingReal={isLoadingReal}
+            commandQueue={commandQueue}
             onRetrySync={onRetrySync}
             onNavigate={onNavigate}
           />

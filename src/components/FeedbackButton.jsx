@@ -12,6 +12,8 @@ export default function FeedbackButton({ route }) {
   });
   const [message, setMessage] = useState('');
 
+  if (route === 'overview') return null;
+
   const update = (field, value) => setForm((current) => ({ ...current, [field]: value }));
 
   const submit = async (event) => {

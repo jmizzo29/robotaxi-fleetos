@@ -2,6 +2,7 @@ import { describe, it, expect } from 'vitest';
 import {
   getCommandAiPlan,
   getCommandStatusBoard,
+  getFleetActivityFeed,
   getFleetVisibilityRows,
   getOpenActionsBreakdown,
 } from './commandHomeUtils';
@@ -36,6 +37,18 @@ describe('getCommandAiPlan', () => {
     const plan = getCommandAiPlan(fleet, [fleet[0]], { state: 'success' }, []);
     expect(plan.summary.length).toBeGreaterThan(0);
     expect(plan.checklist.length).toBeGreaterThan(0);
+    expect(plan.expectedRevenueImpact).toMatch(/^\+\$/);
+    expect(plan.confidenceScore).toBeGreaterThan(0);
+  });
+});
+
+describe('getFleetActivityFeed', () => {
+  it('returns activity events with impact and timestamp', () => {
+    const events = getFleetActivityFeed(fleet, [fleet[0]], 3);
+    expect(events.length).toBeGreaterThan(0);
+    expect(events[0].description).toBeTruthy();
+    expect(events[0].impact).toBeTruthy();
+    expect(events[0].timestamp).toBeTruthy();
   });
 });
 
