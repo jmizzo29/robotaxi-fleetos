@@ -8,8 +8,9 @@ const navItems = [
   { label: 'About', route: 'about' },
 ];
 
-export default function LandingHeader({ onNavigate }) {
+export default function LandingHeader({ onNavigate, onConnect }) {
   const [open, setOpen] = useState(false);
+  const connect = onConnect || (() => onNavigate('onboarding'));
 
   const go = (route) => {
     setOpen(false);
@@ -66,7 +67,10 @@ export default function LandingHeader({ onNavigate }) {
 
         <button
           type="button"
-          onClick={() => go('onboarding')}
+          onClick={() => {
+            setOpen(false);
+            connect();
+          }}
           className="mt-8 w-full rounded-full bg-white px-5 py-3.5 text-[15px] font-semibold text-black transition hover:bg-white/90"
         >
           Connect Tesla
