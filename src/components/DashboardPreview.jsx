@@ -39,7 +39,7 @@ function DarkKpi({ label, value, sub, Icon }) {
 
 function CompactFleetPreview() {
   return (
-    <div className="relative mx-auto w-full max-w-md">
+    <div className="relative mx-auto w-full max-w-md" data-testid="fleet-command-preview">
       <div className="pointer-events-none absolute -inset-4 -z-10 rounded-[2rem] bg-violet-500/15 blur-3xl" />
       <div className="overflow-hidden rounded-2xl border border-white/10 bg-black shadow-2xl shadow-violet-950/40">
         <div className="border-b border-white/10 px-5 py-3.5">
@@ -47,11 +47,15 @@ function CompactFleetPreview() {
           <p className="mt-0.5 text-xs text-white/35">Preview · what you unlock after connecting</p>
         </div>
 
-        <div className="px-5 pt-8 pb-6 text-center">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/35">Fleet</p>
-          <p className="mt-3 text-[52px] font-light tabular-nums leading-none tracking-tight text-white">$847</p>
-          <p className="mt-2 text-[13px] text-white/40">Today&apos;s Revenue</p>
-          <p className="mt-4 text-[13px] text-white/30">3 / 3 Fleet Online</p>
+        <div className="border-b border-white/10 px-5 py-6 text-center">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/35">Fleet Status</p>
+          <p className="mt-2 text-[44px] font-light tabular-nums leading-none tracking-tight text-white">4 / 5</p>
+          <p className="mt-2 text-[13px] text-white/40">Active</p>
+        </div>
+
+        <div className="px-5 py-6 text-center">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.2em] text-white/35">Today&apos;s Revenue</p>
+          <p className="mt-2 text-[40px] font-light tabular-nums leading-none tracking-tight text-white">$847</p>
         </div>
 
         <div className="mx-5 mb-5 rounded-2xl border border-white/10 bg-white/[0.06] px-5 py-4 backdrop-blur-md">
