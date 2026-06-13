@@ -9,9 +9,11 @@ const navItems = [
   { label: 'About', route: 'about' },
 ];
 
-export default function LandingHeader({ onNavigate, onConnect }) {
+export default function LandingHeader({ onNavigate, onConnect, variant = 'default' }) {
   const [open, setOpen] = useState(false);
   const connect = onConnect || (() => onNavigate('onboarding'));
+  const isEntry = variant === 'entry';
+  const homeRoute = isEntry ? 'landing-entry' : 'landing';
 
   const go = (route) => {
     setOpen(false);
@@ -23,12 +25,21 @@ export default function LandingHeader({ onNavigate, onConnect }) {
       <header className="fixed inset-x-0 top-0 z-50 flex h-14 items-center justify-between bg-black/80 px-5 backdrop-blur-md">
         <button
           type="button"
-          onClick={() => go('landing')}
-          className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-2"
+          onClick={() => go(homeRoute)}
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
           aria-label="ROBOAGENT home"
         >
-          <RoboLogo className="h-7 w-7 shrink-0 text-white" />
-          <RoboWordmark className="text-[13px] tracking-[0.12em]" colorClass="text-white" />
+          {isEntry ? (
+            <RoboWordmark
+              className="text-[1.0625rem] tracking-[0.15em] sm:text-[1.125rem]"
+              colorClass="text-white"
+            />
+          ) : (
+            <span className="flex items-center gap-2">
+              <RoboLogo className="h-7 w-7 shrink-0 text-white" />
+              <RoboWordmark className="text-[13px] tracking-[0.12em]" colorClass="text-white" />
+            </span>
+          )}
         </button>
 
         <div className="w-10" aria-hidden="true" />

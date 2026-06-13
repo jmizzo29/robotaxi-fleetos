@@ -4,7 +4,7 @@ import { startTeslaOAuth } from '../services/teslaHealthService';
 import LandingEntryScreen from '../components/landing/LandingEntryScreen';
 
 /** Ultra-minimal app entry experiment — separate from the main landing page. */
-export default function LandingEntry({ onNavigate: _onNavigate }) {
+export default function LandingEntry({ onNavigate }) {
   const [isTeslaLoading, setIsTeslaLoading] = useState(false);
 
   const handleTeslaAuth = () => {
@@ -23,6 +23,7 @@ export default function LandingEntry({ onNavigate: _onNavigate }) {
 
   return (
     <LandingEntryScreen
+      onNavigate={onNavigate}
       onConnect={handleTeslaAuth}
       connectLabel={connectLabel}
       connectDisabled={isTeslaLoading}
