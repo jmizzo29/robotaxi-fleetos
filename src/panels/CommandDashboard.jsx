@@ -304,7 +304,7 @@ export default function CommandDashboard({
       {/* Main Content */}
       <div className="flex-1 pb-24 lg:p-12 lg:pb-12">
         {/* Mobile Home — Fleet Command Center (Phase 1) */}
-        <div className="lg:hidden">
+        <div className="lg:hidden bg-[#f3f4f8]">
           <FleetCommandHome
             fleet={fleet}
             realFleet={realFleet}

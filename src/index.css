@@ -148,9 +148,14 @@ body,
   animation: command-led-charge 1.6s ease-in-out infinite;
 }
 
-.command-hero-sheen {
-  background: linear-gradient(135deg, rgba(89, 156, 231, 0.14) 0%, rgba(89, 156, 231, 0) 42%, rgba(52, 211, 153, 0.06) 100%);
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
 
 .font-brand {
   font-family: 'Orbitron', sans-serif;
