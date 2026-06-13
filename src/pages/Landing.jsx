@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { startTeslaOAuth } from '../services/teslaHealthService';
-import LandingScreenFlow from '../components/landing/LandingScreenFlow';
+import LandingEntryScreen from '../components/landing/LandingEntryScreen';
 
 export default function Landing({ onNavigate }) {
   const [isTeslaLoading, setIsTeslaLoading] = useState(false);
@@ -21,7 +21,7 @@ export default function Landing({ onNavigate }) {
   );
 
   return (
-    <LandingScreenFlow
+    <LandingEntryScreen
       onNavigate={onNavigate}
       onConnect={handleTeslaAuth}
       connectLabel={connectLabel}

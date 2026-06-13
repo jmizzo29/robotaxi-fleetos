@@ -13,7 +13,7 @@ export default function LandingHeader({ onNavigate, onConnect, variant = 'defaul
   const [open, setOpen] = useState(false);
   const connect = onConnect || (() => onNavigate('onboarding'));
   const isEntry = variant === 'entry';
-  const homeRoute = isEntry ? 'landing-entry' : 'landing';
+  const homeRoute = 'landing';
 
   const go = (route) => {
     setOpen(false);
