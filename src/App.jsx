@@ -25,6 +25,7 @@ import IntelligentAlertCenter from './panels/IntelligentAlertCenter';
 import IntegrationsPanel from './panels/IntegrationsPanel';
 import LandingPage, { AgentAboutPage, AgentChatPage, HowItWorksPage } from './panels/LandingPage';
 import Landing from './pages/Landing';
+import LandingEntry from './pages/LandingEntry';
 import Login from './components/Auth/Login';
 import Signup from './components/Auth/Signup';
 import LegalPage from './panels/LegalPage';
@@ -214,6 +215,7 @@ function FleetApp() {
   const [, setComplianceRevision] = useState(0);
   const [route, navigate] = useHashRoute();
   const isPublicRoute = route === 'landing';
+  const isPublicLandingEntryRoute = route === 'landing-entry';
   const isPublicLoginRoute = route === 'login';
   const isPublicSignupRoute = route === 'signup';
   const isPublicSignupEmailRoute = route === 'signup-email';
@@ -227,6 +229,7 @@ function FleetApp() {
   const teslaConsentReady = canUseTeslaTelemetry();
   const shouldAutoSyncReal = !(
     isPublicRoute ||
+    isPublicLandingEntryRoute ||
     isPublicLoginRoute ||
     isPublicSignupRoute ||
     isPublicSignupEmailRoute ||
@@ -709,6 +712,10 @@ function FleetApp() {
   // === PUBLIC ROUTES (Landing, Login, Signup) ===
   if (isPublicRoute) {
     return <Landing onNavigate={navigate} />;
+  }
+
+  if (isPublicLandingEntryRoute) {
+    return <LandingEntry onNavigate={navigate} />;
   }
 
   if (isPublicLoginRoute) {
