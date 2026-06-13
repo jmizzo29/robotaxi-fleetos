@@ -65,6 +65,47 @@ function getFleetOnlineHero(realFleet) {
   };
 }
 
+/** Answers: How much is my fleet earning? */
+export function getFleetEarningsSummary(realFleet, totalEarnings, syncState) {
+  if (syncState === 'loading') {
+    return { amount: '—', context: 'Loading fleet earnings…' };
+  }
+  if (hasTrustedFleetRevenue(realFleet, totalEarnings, syncState)) {
+    return {
+      amount: formatFleetDollars(totalEarnings),
+      context: 'Earned today across your fleet',
+    };
+  }
+  if (syncState === 'success' && realFleet.length > 0) {
+    return { amount: '—', context: 'No earnings recorded yet today' };
+  }
+  return { amount: '—', context: 'Connect Tesla to track fleet revenue' };
+}
+
+/** Answers: Are my vehicles available and healthy? */
+export function getFleetAvailabilitySummary(fleet, realFleet, snapshot, health) {
+  const source = realFleet.length > 0 ? realFleet : fleet;
+  const total = source.length;
+  const ready = snapshot.online + snapshot.charging;
+
+  let summary;
+  if (!total) {
+    summary = 'Connect vehicles to monitor availability';
+  } else if (snapshot.offline === 0 && snapshot.alerts === 0) {
+    summary = total === 1
+      ? 'Your vehicle is available'
+      : `${ready} of ${total} vehicles available`;
+  } else if (snapshot.offline > 0 && snapshot.alerts > 0) {
+    summary = `${snapshot.offline} unavailable · ${snapshot.alerts} alert${snapshot.alerts === 1 ? '' : 's'}`;
+  } else if (snapshot.offline > 0) {
+    summary = `${snapshot.offline} vehicle${snapshot.offline === 1 ? '' : 's'} unavailable`;
+  } else {
+    summary = `${snapshot.alerts} alert${snapshot.alerts === 1 ? '' : 's'} need attention`;
+  }
+
+  return { summary, health, total, ready };
+}
+
 /** Fleet overview metrics for Command home — active, revenue, utilization. */
 export function getFleetOverviewMetrics(fleet, realFleet, totalEarnings, syncState) {
   const source = realFleet.length > 0 ? realFleet : fleet;

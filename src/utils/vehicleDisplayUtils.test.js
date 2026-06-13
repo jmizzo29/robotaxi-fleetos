@@ -1,5 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import {
+  getFleetAvailabilitySummary,
+  getFleetEarningsSummary,
   getFleetHeroMetric,
   getFleetRecommendation,
   getFleetSnapshotCounts,
@@ -61,13 +63,13 @@ describe('getFleetHeroMetric', () => {
 describe('getFleetRecommendation', () => {
   it('prioritizes alerts over charging', () => {
     const rec = getFleetRecommendation([lowBatteryVehicle, chargingVehicle], { state: 'success' });
-    expect(rec.title).toBe('Low battery alert');
+    expect(rec.title).toBe('Charge Model Y');
   });
 
   it('shows idle recommendation when no alerts', () => {
     const idleOnly = { name: 'Model S', status: 'PARKED', battery: 85, revenue: 0, utilization: 18 };
     const rec = getFleetRecommendation([idleOnly], { state: 'success' });
-    expect(rec.title).toBe('Model S underutilized');
+    expect(rec.title).toBe('Review Model S');
   });
 
   it('shows all clear when fleet is healthy', () => {
@@ -83,5 +85,27 @@ describe('getFleetSnapshotCounts', () => {
     expect(counts.charging).toBe(1);
     expect(counts.offline).toBe(0);
     expect(counts.alerts).toBe(1);
+  });
+});
+
+describe('getFleetEarningsSummary', () => {
+  it('answers earnings with trusted revenue', () => {
+    const summary = getFleetEarningsSummary([earningVehicle], 482, 'success');
+    expect(summary.amount).toBe('$482');
+    expect(summary.context).toContain('today');
+  });
+
+  it('never shows zero dollars', () => {
+    const summary = getFleetEarningsSummary([onlineVehicle], 0, 'success');
+    expect(summary.amount).toBe('—');
+  });
+});
+
+describe('getFleetAvailabilitySummary', () => {
+  it('summarizes available fleet', () => {
+    const counts = getFleetSnapshotCounts([onlineVehicle, chargingVehicle]);
+    const health = { score: 92, label: 'Excellent', tone: 'ready' };
+    const summary = getFleetAvailabilitySummary([onlineVehicle, chargingVehicle], [onlineVehicle, chargingVehicle], counts, health);
+    expect(summary.summary).toContain('available');
   });
 });
