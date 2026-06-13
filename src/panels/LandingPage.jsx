@@ -6,21 +6,12 @@ import Logo from '../components/Logo';
 import PublicHeader from '../components/PublicHeader';
 import PublicFooter from '../components/PublicFooter';
 import DashboardPreview from '../components/DashboardPreview';
+import LandingHeader from '../components/landing/LandingHeader';
 import MobileHeroPreview from '../components/MobileHeroPreview';
 import OwnerOutcomePanel from '../components/OwnerOutcomePanel';
-import { Button, Card } from '../ui';
 import {
-  TrendingUp,
-  BatteryCharging,
-  Wrench,
-  ListChecks,
-  ArrowRight,
-  Shield,
-  ShieldCheck,
-  Cpu,
-  Link2,
-} from 'lucide-react';
-import { buildMarketRentalAnswer, isMarketQuestion } from '../services/marketIntelligenceService';
+  buildMarketRentalAnswer, isMarketQuestion,
+} from '../services/marketIntelligenceService';
 
 const demoPrompts = [
   'Maximize my earnings this weekend with 3 Teslas',
@@ -580,163 +571,88 @@ export function HowItWorksPage({ onNavigate }) {
   );
 }
 
+function scrollToPreview() {
+  document.getElementById('command-preview')?.scrollIntoView({ behavior: 'smooth' });
+}
+
 export default function LandingPage({ onNavigate }) {
-  const steps = [
-    {
-      Icon: Link2,
-      step: '01',
-      title: 'Connect your Tesla',
-      desc: 'Secure Tesla OAuth in two taps. Your password stays with Tesla — first vehicle is free during beta.',
-    },
-    {
-      Icon: Cpu,
-      step: '02',
-      title: 'AI optimizes everything',
-      desc: 'ROBOAGENT reads live telemetry to plan pricing, charging, routing, and maintenance every day.',
-    },
-    {
-      Icon: TrendingUp,
-      step: '03',
-      title: 'You approve and earn',
-      desc: 'Review a short morning action list, approve in seconds, and let your fleet run hands-off.',
-    },
-  ];
-
-  const benefits = [
-    { Icon: TrendingUp, title: 'Dynamic pricing', desc: 'Rates adjust to real local demand so every available hour earns more.' },
-    { Icon: BatteryCharging, title: 'Smart charging', desc: 'Cars charge in the cheapest windows and are ready before peak demand.' },
-    { Icon: Wrench, title: 'Predictive maintenance', desc: 'Tire, brake, and battery issues are flagged early from Tesla telemetry.' },
-    { Icon: ListChecks, title: 'Daily AI plans', desc: 'A prioritized morning brief you can approve from your phone in seconds.' },
-  ];
-
   return (
-    <div className="min-h-screen bg-surface text-ink">
-      <PublicHeader onNavigate={onNavigate} active="landing" />
+    <div className="min-h-screen bg-black text-white">
+      <LandingHeader onNavigate={onNavigate} />
 
-      {/* Hero — centered editorial */}
-      <section className="mx-auto max-w-3xl px-5 pt-16 pb-10 text-center sm:pt-20 md:pt-24">
-        <div className="animate-fade-up">
-          <span className="inline-flex items-center gap-2 rounded-full border border-ink/10 bg-surface-raised px-3.5 py-1.5 text-xs font-medium text-ink-muted shadow-sm">
-            <Shield className="h-3.5 w-3.5 text-status-ready" />
-            Built on the Tesla Fleet API · Privacy-first · Beta
-          </span>
-        </div>
+      {/* Screen 1 — cinematic hero (100vh) */}
+      <section className="relative flex min-h-[100dvh] flex-col px-5 pt-14">
+        <div className="relative z-10 mx-auto w-full max-w-lg flex-1 pt-10 sm:pt-14">
+          <h1 className="text-[2.35rem] font-semibold leading-[1.05] tracking-[-0.03em] text-white sm:text-5xl">
+            Your Tesla Fleet.
+            <span className="mt-1 block text-white/55">One Command Center.</span>
+          </h1>
 
-        <h1 className="animate-fade-up mt-7 text-[2.5rem] font-semibold leading-[1.04] tracking-tight text-ink sm:text-6xl md:text-[4.25rem]">
-          Run your Tesla fleet on autopilot.
-          <span className="mt-2 block text-ink-muted">Earn more, manage less.</span>
-        </h1>
+          <p className="mt-5 max-w-xs text-[15px] leading-relaxed text-white/45">
+            Monitor vehicles.
+            <br />
+            Track performance.
+            <br />
+            Manage operations.
+          </p>
 
-        <p className="animate-fade-up mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-ink-muted sm:text-xl">
-          AI agents optimize your Robotaxi operations so you maximize earnings with minimal effort.
-        </p>
-
-        <div className="animate-fade-up mt-9 flex flex-col items-center gap-4">
-          <Button size="lg" onClick={() => onNavigate('onboarding')} className="gap-2 rounded-full px-8">
-            Connect your Tesla
-            <ArrowRight className="h-4 w-4" />
-          </Button>
           <button
             type="button"
-            onClick={() => onNavigate('agent')}
-            className="text-sm font-medium text-ink-muted transition hover:text-ink"
+            onClick={() => onNavigate('onboarding')}
+            className="mt-8 w-full max-w-xs rounded-full bg-white px-8 py-4 text-[15px] font-semibold text-black transition hover:bg-white/90 active:scale-[0.985] sm:w-auto"
           >
-            Try the AI agent →
+            Connect Tesla
           </button>
         </div>
+
+        <div className="relative mt-auto flex min-h-[42vh] items-end justify-center pb-16 sm:min-h-[45vh]">
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-[70%] bg-[radial-gradient(ellipse_80%_60%_at_50%_100%,rgba(168,85,247,0.35),transparent_70%)]" />
+          <div className="pointer-events-none absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black via-black/80 to-transparent" />
+          <img
+            src="/vehicles/tesla-sedan-hero.svg"
+            alt=""
+            className="relative z-10 w-full max-w-xl object-contain object-bottom drop-shadow-[0_0_48px_rgba(168,85,247,0.35)]"
+          />
+        </div>
+
+        <button
+          type="button"
+          onClick={scrollToPreview}
+          className="absolute inset-x-0 bottom-6 z-20 mx-auto flex flex-col items-center gap-1 text-[12px] font-medium tracking-wide text-violet-300/80 transition hover:text-violet-200"
+        >
+          <span>See the Command Center</span>
+          <span className="text-lg leading-none" aria-hidden="true">↓</span>
+        </button>
       </section>
 
-      {/* Product shot — dark glowing map embedded in the light page */}
-      <section className="mx-auto max-w-6xl px-5 pb-16 sm:pb-20">
-        <div className="animate-fade-up">
-          <DashboardPreview />
+      {/* Screen 2 — Fleet Command preview */}
+      <section id="command-preview" className="scroll-mt-14 px-5 py-20 sm:py-24">
+        <div className="mx-auto max-w-md">
+          <DashboardPreview variant="compact" />
+          <p className="mt-10 text-center text-[13px] leading-relaxed text-white/35">
+            Built for Tesla Owners, Turo Operators, and Future Cybercab Fleets.
+          </p>
         </div>
       </section>
 
-      {/* How it works */}
-      <section className="border-t border-ink/8 bg-surface-raised py-16 md:py-20">
-        <div className="mx-auto max-w-6xl px-5">
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink-subtle">How it works</p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-              Connect once. Earn on autopilot.
-            </h2>
-            <p className="mt-3 text-ink-muted">Three steps from a parked Tesla to a self-running fleet.</p>
-          </div>
-
-          <div className="mt-12 grid gap-4 md:grid-cols-3">
-            {steps.map(({ Icon, step, title, desc }) => (
-              <Card key={step} padding="p-6" interactive>
-                <div className="flex items-center justify-between">
-                  <span className="inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-accent/5 text-accent">
-                    <Icon className="h-5 w-5" />
-                  </span>
-                  <span className="text-sm font-semibold text-ink-subtle">{step}</span>
-                </div>
-                <h3 className="mt-5 text-xl font-semibold tracking-tight text-ink">{title}</h3>
-                <p className="mt-2 text-[15px] leading-relaxed text-ink-muted">{desc}</p>
-              </Card>
-            ))}
-          </div>
+      {/* Screen 3 — final CTA */}
+      <section className="px-5 pb-16 pt-4 sm:pb-24">
+        <div className="mx-auto max-w-md text-center">
+          <h2 className="text-[1.75rem] font-semibold tracking-[-0.02em] text-white sm:text-3xl">
+            Ready to take control?
+          </h2>
+          <button
+            type="button"
+            onClick={() => onNavigate('onboarding')}
+            className="mt-8 w-full rounded-full bg-white px-8 py-4 text-[15px] font-semibold text-black transition hover:bg-white/90 active:scale-[0.985] sm:w-auto sm:min-w-[220px]"
+          >
+            Connect Tesla
+          </button>
+          <p className="mt-10 text-[11px] text-white/25">
+            Not affiliated with or endorsed by Tesla, Inc.
+          </p>
         </div>
       </section>
-
-      {/* Benefits */}
-      <section className="border-t border-ink/8 bg-surface py-16 md:py-20">
-        <div className="mx-auto max-w-6xl px-5">
-          <div className="mx-auto max-w-2xl text-center">
-            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink-subtle">What it handles</p>
-            <h2 className="mt-2 text-3xl font-semibold tracking-tight text-ink sm:text-4xl">
-              AI that works while your cars earn.
-            </h2>
-            <p className="mt-3 text-ink-muted">Four things ROBOAGENT runs every day so you don&apos;t have to.</p>
-          </div>
-
-          <div className="mx-auto mt-12 grid max-w-4xl gap-5 sm:grid-cols-2 sm:gap-6">
-            {benefits.map(({ Icon, title, desc }) => (
-              <Card key={title} padding="p-7 sm:p-8" interactive className="group">
-                <span className="inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-accent/5 text-accent transition group-hover:bg-accent group-hover:text-white">
-                  <Icon className="h-5 w-5" />
-                </span>
-                <h3 className="mt-5 text-xl font-semibold tracking-tight text-ink">{title}</h3>
-                <p className="mt-2 text-[15px] leading-relaxed text-ink-muted">{desc}</p>
-              </Card>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Final CTA */}
-      <section className="border-t border-ink/8 bg-surface-raised py-16 md:py-20">
-        <div className="mx-auto max-w-3xl px-5">
-          <Card padding="p-8 sm:p-10" className="relative overflow-hidden text-center">
-            <div className="pointer-events-none absolute -left-12 -top-12 h-40 w-40 rounded-full bg-status-ready/10 blur-3xl" />
-            <div className="relative">
-              <h2 className="text-2xl font-semibold tracking-tight text-ink sm:text-3xl">
-                Stop managing your fleet manually.
-              </h2>
-              <p className="mx-auto mt-3 max-w-lg text-ink-muted">
-                Connect your first Tesla in minutes and see your first AI plan before you commit. No card required in beta.
-              </p>
-              <div className="mt-7 flex flex-col items-center gap-4">
-                <Button size="lg" onClick={() => onNavigate('onboarding')} className="gap-2 rounded-full px-8">
-                  Connect your Tesla
-                  <ArrowRight className="h-4 w-4" />
-                </Button>
-                <button
-                  type="button"
-                  onClick={() => onNavigate('how-it-works')}
-                  className="text-sm font-medium text-ink-muted transition hover:text-ink"
-                >
-                  See how it works →
-                </button>
-              </div>
-            </div>
-          </Card>
-        </div>
-      </section>
-
-      <PublicFooter onNavigate={onNavigate} />
     </div>
   );
 }
