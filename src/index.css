@@ -51,6 +51,105 @@ body,
   .animate-fade-up {
     animation: none;
   }
+
+  .command-live-ping,
+  .command-hero-glow,
+  .command-map-scan,
+  .command-marker-drift,
+  .command-vehicle-pulse,
+  .command-vehicle-charge,
+  .command-status-live,
+  .command-led-live,
+  .command-led-charge {
+    animation: none !important;
+  }
+}
+
+@keyframes command-live-ping {
+  0%, 100% { transform: scale(1); opacity: 0.55; }
+  50% { transform: scale(1.8); opacity: 0; }
+}
+
+@keyframes command-hero-glow {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 0.75; }
+}
+
+@keyframes command-map-scan {
+  0% { transform: translateY(-110%); opacity: 0; }
+  15% { opacity: 0.35; }
+  85% { opacity: 0.35; }
+  100% { transform: translateY(110%); opacity: 0; }
+}
+
+@keyframes command-marker-drift {
+  0%, 100% { transform: translate(-50%, -50%); }
+  50% { transform: translate(calc(-50% + 3px), calc(-50% - 2px)); }
+}
+
+@keyframes command-vehicle-pulse {
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.85; }
+}
+
+@keyframes command-vehicle-charge {
+  0%, 100% { opacity: 0.35; width: 20%; margin-left: 0; }
+  50% { opacity: 1; width: 85%; margin-left: 15%; }
+}
+
+@keyframes command-status-live {
+  0%, 100% { box-shadow: inset 0 0 0 1px rgba(16, 185, 129, 0.12); }
+  50% { box-shadow: inset 0 0 0 1px rgba(16, 185, 129, 0.35), 0 0 18px rgba(16, 185, 129, 0.08); }
+}
+
+@keyframes command-led-live {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.5); }
+  50% { opacity: 0.75; box-shadow: 0 0 0 4px rgba(52, 211, 153, 0); }
+}
+
+@keyframes command-led-charge {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+.command-live-ping {
+  animation: command-live-ping 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.command-hero-glow {
+  animation: command-hero-glow 4s ease-in-out infinite;
+}
+
+.command-map-scan {
+  animation: command-map-scan 5s linear infinite;
+}
+
+.command-marker-drift {
+  animation: command-marker-drift 3.5s ease-in-out infinite;
+}
+
+.command-vehicle-pulse {
+  animation: command-vehicle-pulse 2.4s ease-in-out infinite;
+}
+
+.command-vehicle-charge {
+  animation: command-vehicle-charge 2.2s ease-in-out infinite;
+}
+
+.command-status-live {
+  animation: command-status-live 3s ease-in-out infinite;
+}
+
+.command-led-live {
+  animation: command-led-live 2s ease-in-out infinite;
+}
+
+.command-led-charge {
+  animation: command-led-charge 1.6s ease-in-out infinite;
+}
+
+.command-hero-sheen {
+  background: linear-gradient(135deg, rgba(89, 156, 231, 0.14) 0%, rgba(89, 156, 231, 0) 42%, rgba(52, 211, 153, 0.06) 100%);
 }
 
 .font-brand {
