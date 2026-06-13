@@ -1,3 +1,5 @@
+import { getVehicleOwnership } from '../data/vehicleOwnership';
+
 export function lastSyncedLabel(isoTimestamp, prefix = 'Last synced') {
   if (!isoTimestamp) return null;
   const elapsedMs = Date.now() - new Date(isoTimestamp).getTime();
@@ -68,18 +70,55 @@ function getFleetOnlineHero(realFleet) {
 /** Answers: How much is my fleet earning? */
 export function getFleetEarningsSummary(realFleet, totalEarnings, syncState) {
   if (syncState === 'loading') {
-    return { amount: '—', context: 'Loading fleet earnings…' };
+    return { amount: '—', context: 'Loading fleet earnings…', delta: null, tone: 'neutral' };
   }
   if (hasTrustedFleetRevenue(realFleet, totalEarnings, syncState)) {
+    const delta = formatEarningsDelta(realFleet, totalEarnings);
     return {
       amount: formatFleetDollars(totalEarnings),
-      context: 'Earned today across your fleet',
+      context: 'Today',
+      delta,
+      tone: 'positive',
     };
   }
   if (syncState === 'success' && realFleet.length > 0) {
-    return { amount: '—', context: 'No earnings recorded yet today' };
+    return {
+      amount: '$0',
+      context: 'No rides completed yet',
+      delta: null,
+      tone: 'neutral',
+    };
   }
-  return { amount: '—', context: 'Connect Tesla to track fleet revenue' };
+  return {
+    amount: '—',
+    context: 'Connect Tesla to track fleet revenue',
+    delta: null,
+    tone: 'neutral',
+  };
+}
+
+function formatEarningsDelta(realFleet, totalEarnings) {
+  const yesterdayTotal = realFleet.reduce(
+    (sum, vehicle) => sum + (Number(vehicle.revenueYesterday) || 0),
+    0,
+  );
+  if (yesterdayTotal <= 0) return null;
+  const delta = Math.round(totalEarnings || 0) - yesterdayTotal;
+  if (delta === 0) return 'Same as yesterday';
+  if (delta > 0) return `+$${delta.toLocaleString()} vs yesterday`;
+  return `−$${Math.abs(delta).toLocaleString()} vs yesterday`;
+}
+
+export function getVehicleStatusTone(status, battery) {
+  if (status === 'Offline' || status === 'Asleep') return 'issue';
+  if (Number.isFinite(battery) && battery < 20) return 'warning';
+  if (status === 'Online' || status === 'Parked') return 'ready';
+  return 'neutral';
+}
+
+export function vehicleBatteryPercent(vehicle) {
+  const battery = Number(vehicle?.battery ?? vehicle?.battery_level);
+  return Number.isFinite(battery) ? Math.round(battery) : null;
 }
 
 /** Answers: Are my vehicles available and healthy? */
@@ -162,6 +201,20 @@ export function getFleetHealthSummary(fleet, realFleet, snapshot) {
   return { score: null, label: 'Excellent', tone: 'ready' };
 }
 
+export function getFleetPreviewMeta(vehicle) {
+  const ownership = vehicle?.ownership || getVehicleOwnership(vehicle) || null;
+  const model = ownership?.model || (vehicle?.isReal ? 'Tesla Vehicle' : 'Fleet Vehicle');
+  const subtitle = ownership?.modelYear ? `${ownership.modelYear} ${model}` : model;
+  const meta = vehicle?.city || ownership?.tag || null;
+
+  return {
+    subtitle,
+    meta,
+    ownership,
+    isReal: Boolean(vehicle?.isReal),
+  };
+}
+
 function fleetVehicleLabel(vehicle, index) {
   const name = vehicleDisplayName(vehicle);
   if (name && name !== 'Your Tesla') return name;
@@ -173,14 +226,30 @@ function vehicleIndexInFleet(vehicle, fleet) {
   return idx >= 0 ? idx : 0;
 }
 
-/** First N vehicles for home preview — status only, no battery hero. */
-export function getFleetPreviewRows(fleet, realFleet, limit = 3) {
+/** First N vehicles for home preview — status, battery, freshness. */
+export function getFleetPreviewRows(fleet, realFleet, limit = 3, fleetLastSyncedAt = null) {
   const source = realFleet.length > 0 ? realFleet : fleet;
-  return source.slice(0, limit).map((vehicle, index) => ({
-    id: vehicle.id || `${index}`,
-    name: fleetVehicleLabel(vehicle, index),
-    status: vehicleStateLabel(vehicle),
-  }));
+  return source.slice(0, limit).map((vehicle, index) => {
+    const battery = vehicleBatteryPercent(vehicle);
+    const status = vehicleStateLabel(vehicle);
+    const lastUpdate = lastSyncedLabel(
+      vehicle.syncedAt || vehicle.lastSyncedAt || fleetLastSyncedAt,
+      'Updated',
+    );
+
+    const previewMeta = getFleetPreviewMeta(vehicle);
+
+    return {
+      id: vehicle.id || `${index}`,
+      name: fleetVehicleLabel(vehicle, index),
+      status,
+      battery,
+      lastUpdate,
+      tone: getVehicleStatusTone(status, battery),
+      vehicle,
+      ...previewMeta,
+    };
+  });
 }
 
 /** Hybrid hero — revenue when trusted and meaningful; otherwise fleet online. Never shows $0. */
@@ -226,15 +295,15 @@ function findFleetAlert(realFleet, realSyncStatus) {
 
   if (syncState === 'error') {
     if (isBillingError) {
-      return { title: 'Plan upgrade needed', subtitle: 'Additional vehicles require a paid plan', route: 'account' };
+      return { title: 'Plan upgrade needed', subtitle: 'Additional vehicles require a paid plan', route: 'account', tone: 'warning' };
     }
-    return { title: 'Vehicle sync failed', subtitle: 'Retry to refresh fleet data', route: 'fleet', action: 'retry' };
+    return { title: 'Vehicle sync failed', subtitle: 'Retry to refresh fleet data', route: 'fleet', action: 'retry', tone: 'issue' };
   }
   if (syncState === 'idle') {
-    return { title: 'Sync needed', subtitle: 'Enable telemetry to see fleet status', route: 'settings', action: 'retry' };
+    return { title: 'Sync needed', subtitle: 'Enable telemetry to see fleet status', route: 'settings', action: 'retry', tone: 'warning' };
   }
   if (realFleet.length === 0) {
-    return { title: 'Connect your fleet', subtitle: 'Link Tesla to begin', route: 'account' };
+    return { title: 'Connect your fleet', subtitle: 'Link Tesla to begin', route: 'account', tone: 'action' };
   }
 
   const offline = realFleet.filter((v) => {
@@ -246,6 +315,7 @@ function findFleetAlert(realFleet, realSyncStatus) {
       title: 'Vehicle offline',
       subtitle: `${vehicleDisplayName(offline[0])} needs attention`,
       route: 'fleet',
+      tone: 'issue',
     };
   }
   if (offline.length > 1) {
@@ -253,6 +323,7 @@ function findFleetAlert(realFleet, realSyncStatus) {
       title: `${offline.length} vehicles offline`,
       subtitle: 'Tap to review fleet',
       route: 'fleet',
+      tone: 'issue',
     };
   }
 
@@ -267,6 +338,7 @@ function findFleetAlert(realFleet, realSyncStatus) {
       title: `Charge ${fleetVehicleLabel(vehicle, index)}`,
       subtitle: 'Battery below 20%',
       route: 'charging',
+      tone: 'warning',
     };
   }
   if (lowBattery.length > 1) {
@@ -274,6 +346,7 @@ function findFleetAlert(realFleet, realSyncStatus) {
       title: `${lowBattery.length} vehicles low on battery`,
       subtitle: 'Tap to review fleet',
       route: 'fleet',
+      tone: 'warning',
     };
   }
 
@@ -293,6 +366,7 @@ function findChargingRecommendation(realFleet) {
         title: `Charge ${fleetVehicleLabel(chargeCandidate, index)}`,
         subtitle: 'Off-peak rates tonight',
         route: 'charging',
+        tone: 'action',
       };
     }
   }
@@ -310,6 +384,7 @@ function findServiceRecommendation(realFleet) {
     title: `Schedule Tire Service`,
     subtitle: fleetVehicleLabel(candidate, index),
     route: 'health',
+    tone: 'warning',
   };
 }
 
@@ -324,6 +399,7 @@ function findIdleVehicleRecommendation(realFleet) {
     title: `Review ${fleetVehicleLabel(idle, index)}`,
     subtitle: 'Underutilized today',
     route: 'fleet',
+    tone: 'action',
   };
 }
 
@@ -341,7 +417,7 @@ export function getFleetRecommendation(realFleet, realSyncStatus) {
   const idle = findIdleVehicleRecommendation(realFleet);
   if (idle) return idle;
 
-  return { title: 'All clear', subtitle: 'No action needed today', route: 'fleet' };
+  return { title: 'Fleet Ready', subtitle: 'No action needed today', route: 'fleet', tone: 'ready' };
 }
 
 /** One mobile-home recommendation from existing vehicle fields — no API calls. */

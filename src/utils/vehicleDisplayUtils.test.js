@@ -72,9 +72,9 @@ describe('getFleetRecommendation', () => {
     expect(rec.title).toBe('Review Model S');
   });
 
-  it('shows all clear when fleet is healthy', () => {
+  it('shows fleet ready when fleet is healthy', () => {
     const rec = getFleetRecommendation([onlineVehicle], { state: 'success' });
-    expect(rec.title).toBe('All clear');
+    expect(rec.title).toBe('Fleet Ready');
   });
 });
 
@@ -92,12 +92,14 @@ describe('getFleetEarningsSummary', () => {
   it('answers earnings with trusted revenue', () => {
     const summary = getFleetEarningsSummary([earningVehicle], 482, 'success');
     expect(summary.amount).toBe('$482');
-    expect(summary.context).toContain('today');
+    expect(summary.context).toBe('Today');
+    expect(summary.tone).toBe('positive');
   });
 
-  it('never shows zero dollars', () => {
+  it('shows zero dollars with meaningful context when synced but empty', () => {
     const summary = getFleetEarningsSummary([onlineVehicle], 0, 'success');
-    expect(summary.amount).toBe('—');
+    expect(summary.amount).toBe('$0');
+    expect(summary.context).toContain('No rides');
   });
 });
 
