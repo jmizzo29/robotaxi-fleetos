@@ -4,6 +4,12 @@ import { isClerkConfigured } from '../auth/clerkConfig';
 import SignOutButton from '../components/SignOutButton';
 import Logo from '../components/Logo';
 import LiveDataPanel from './LiveDataPanel';
+import FleetCommandHome from '../components/home/FleetCommandHome';
+import {
+  fleetInsightLine,
+  lastSyncedLabel,
+  vehicleStateLabel,
+} from '../utils/vehicleDisplayUtils';
 
 function getGreeting() {
   const h = new Date().getHours();
@@ -37,40 +43,6 @@ function GreetingHeader({ firstName = 'there' }) {
   );
 }
 
-function lastSyncedLabel(isoTimestamp, prefix = 'Last synced') {
-  if (!isoTimestamp) return null;
-  const elapsedMs = Date.now() - new Date(isoTimestamp).getTime();
-  if (Number.isNaN(elapsedMs)) return null;
-  const minutes = Math.floor(elapsedMs / 60000);
-  if (minutes < 1) return `${prefix} just now`;
-  if (minutes === 1) return `${prefix} 1 minute ago`;
-  if (minutes < 60) return `${prefix} ${minutes} minutes ago`;
-  const hours = Math.floor(minutes / 60);
-  return `${prefix} ${hours} hour${hours === 1 ? '' : 's'} ago`;
-}
-
-function vehicleStateLabel(vehicle) {
-  const raw = String(vehicle?.status || vehicle?.state || '').toUpperCase();
-  if (raw.includes('CHARG')) return 'Charging';
-  if (raw.includes('ASLEEP') || raw.includes('SLEEP')) return 'Asleep';
-  if (raw.includes('OFFLINE')) return 'Offline';
-  if (raw.includes('PARK')) return 'Parked';
-  if (raw.includes('ONLINE')) return 'Online';
-  return raw ? raw.charAt(0) + raw.slice(1).toLowerCase() : 'Online';
-}
-
-// One concise status line derived purely from data already in props — no API calls.
-function fleetInsightLine(realVehicles) {
-  if (realVehicles.some((v) => vehicleStateLabel(v) === 'Charging')) {
-    return 'Charging session active';
-  }
-  const lowBattery = realVehicles.filter((v) => Number.isFinite(Number(v.battery)) && Number(v.battery) < 20);
-  if (lowBattery.length > 0) {
-    return `${lowBattery.length} vehicle${lowBattery.length === 1 ? '' : 's'} low on battery`;
-  }
-  return 'No issues detected';
-}
-
 function ConnectedVehicleCard({ realVehicles, lastSyncedAt, onNavigate }) {
   const single = realVehicles.length === 1 ? realVehicles[0] : null;
   const headerName = single
@@ -78,14 +50,16 @@ function ConnectedVehicleCard({ realVehicles, lastSyncedAt, onNavigate }) {
     : `${realVehicles.length} Teslas Connected`;
   const battery = single ? Number(single.battery) : NaN;
   const showBattery = Number.isFinite(battery);
-  const statusWord = single ? vehicleStateLabel(single) : 'All connected';
+  const statusWord = single
+    ? vehicleStateLabel(single)
+    : `${realVehicles.length} vehicle${realVehicles.length === 1 ? '' : 's'} synced`;
   const syncedLabel = lastSyncedLabel(lastSyncedAt, 'Synced');
   const insight = fleetInsightLine(realVehicles);
 
   const actions = [
-    { label: 'View Vehicle', route: 'fleet' },
+    { label: 'View Fleet', route: 'fleet' },
     { label: 'Ask AI', route: 'ai' },
-    { label: 'Insights', route: 'alerts' },
+    { label: 'Alerts', route: 'alerts' },
   ];
 
   return (
@@ -326,8 +300,21 @@ export default function CommandDashboard({
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-5 lg:p-12 overflow-hidden pb-24 lg:pb-12">
-        <div className="max-w-screen-2xl mx-auto">
+      <div className="flex-1 pb-24 lg:p-12 lg:pb-12">
+        {/* Mobile Home — Fleet Command Center (Phase 1) */}
+        <div className="lg:hidden">
+          <FleetCommandHome
+            realFleet={realFleet}
+            totalEarnings={totalEarnings}
+            realSyncStatus={realSyncStatus}
+            isLoadingReal={isLoadingReal}
+            onRetrySync={onRetrySync}
+            onNavigate={onNavigate}
+          />
+        </div>
+
+        {/* Desktop dashboard — unchanged */}
+        <div className="hidden lg:block p-5 max-w-screen-2xl mx-auto">
           {/* Greeting — useUser only when ClerkProvider is active (local dev without API key) */}
           {isClerkConfigured() ? <ClerkGreetingHeader /> : <GreetingHeader />}
 
