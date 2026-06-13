@@ -426,13 +426,15 @@ function FleetApp() {
 
   const pages = {
     overview: (
-      <CommandDashboard
-        onNavigate={navigate}
-        fleet={fleet}
-        realSyncStatus={realSyncStatus}
-        isLoadingReal={isLoadingReal}
-        onRetrySync={refreshRealTesla}
-      />
+        <CommandDashboard
+          onNavigate={navigate}
+          fleet={fleet}
+          realSyncStatus={realSyncStatus}
+          isLoadingReal={isLoadingReal}
+          onRetrySync={refreshRealTesla}
+          commandQueue={commandQueue}
+          onQueueCommand={requestCommand}
+        />
     ),
     onboarding: (
       <>
@@ -870,6 +872,8 @@ function FleetApp() {
           realSyncStatus={realSyncStatus}
           isLoadingReal={isLoadingReal}
           onRetrySync={refreshRealTesla}
+          commandQueue={commandQueue}
+          onQueueCommand={requestCommand}
         />
         <MobileBottomNav route={route} onNavigate={navigate} pendingCount={commandQueue.length} />
         <FeedbackButton route={route} />

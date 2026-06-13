@@ -210,6 +210,8 @@ export default function CommandDashboard({
   realSyncStatus = null,
   isLoadingReal = false,
   onRetrySync = () => {},
+  commandQueue = [],
+  onQueueCommand = () => {},
 }) {
   const totalVehicles = fleet.length;
   const onlineVehicles = fleet.filter(v => {
@@ -306,10 +308,11 @@ export default function CommandDashboard({
           <FleetCommandHome
             fleet={fleet}
             realFleet={realFleet}
-            totalEarnings={totalEarnings}
             realSyncStatus={realSyncStatus}
             isLoadingReal={isLoadingReal}
+            commandQueue={commandQueue}
             onRetrySync={onRetrySync}
+            onQueueCommand={onQueueCommand}
             onNavigate={onNavigate}
           />
         </div>
