@@ -891,7 +891,7 @@ function FleetApp() {
             </div>
           )}
         >
-          <NetworkPanel />
+          <NetworkPanel fleet={fleet} onNavigate={navigate} />
         </Suspense>
         <MobileBottomNav route={route} onNavigate={navigate} pendingCount={commandQueue.length} />
         <FeedbackButton route={route} />

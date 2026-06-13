@@ -310,9 +310,7 @@ export default function CommandDashboard({
             realFleet={realFleet}
             realSyncStatus={realSyncStatus}
             isLoadingReal={isLoadingReal}
-            commandQueue={commandQueue}
             onRetrySync={onRetrySync}
-            onQueueCommand={onQueueCommand}
             onNavigate={onNavigate}
           />
         </div>

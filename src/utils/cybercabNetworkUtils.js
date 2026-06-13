@@ -16,7 +16,7 @@ export function getCybercabNetworkSummary(markets = cybercabMarkets) {
 
 export function getPhaseLabel(phase) {
   if (phase === 'live') return 'Live';
-  if (phase === 'early') return 'Early Rollout';
+  if (phase === 'early') return 'Emerging';
   return 'Planned';
 }
 

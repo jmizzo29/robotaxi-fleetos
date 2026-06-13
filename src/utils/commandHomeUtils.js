@@ -201,25 +201,27 @@ function vehicleOperationalLine(vehicle, index) {
   const revenue = Math.round(Number(vehicle.revenue) || 0);
   const parts = [];
 
-  if (status === 'Charging') parts.push('Charging session active');
-  else if (status === 'Offline' || status === 'Asleep') parts.push('Needs reconnect');
+  if (status === 'Charging') parts.push('Charging');
+  else if (status === 'Offline' || status === 'Asleep') parts.push('Offline');
   else if (String(vehicle.status || '').toUpperCase().includes('SERVICE')
     || String(vehicle.status || '').toUpperCase().includes('PICK')
     || String(vehicle.status || '').toUpperCase().includes('ROUTE')) {
-    parts.push('En route to pickup');
-  } else if (status === 'Parked') parts.push('Cleaning complete · Next: charging');
-  else parts.push('Telemetry active');
+    parts.push('En Route');
+  } else if (status === 'Parked') parts.push('Parked');
+  else parts.push('Online');
 
-  if (battery !== null) parts.push(`${battery}% battery`);
-  if (revenue > 0 && vehicle.isReal) parts.push(`$${revenue} surge`);
+  if (vehicle.city) parts.push(String(vehicle.city).split(',')[0].trim());
+  if (battery !== null && status !== 'Offline' && status !== 'Asleep') parts.push(`${battery}%`);
+  if (revenue > 0 && vehicle.isReal) parts.push(`$${revenue} today`);
 
   return {
     id: vehicle.id || `${index}`,
     name: fleetVehicleLabel(vehicle, index),
-    kind: vehicle.isReal ? 'Real Tesla' : 'In service',
-    line: parts.join(' · '),
+    status: parts[0],
+    kind: vehicle.isReal ? 'Tesla' : 'Cybercab',
+    line: parts.slice(1).join(' · ') || parts[0],
     battery,
-    tone: battery !== null && battery < 20 ? 'issue' : status === 'Offline' ? 'issue' : 'ready',
+    tone: battery !== null && battery < 20 ? 'issue' : status === 'Offline' || status === 'Asleep' ? 'issue' : status === 'Charging' ? 'warning' : 'ready',
     vehicle,
     ...getFleetPreviewMeta(vehicle),
   };

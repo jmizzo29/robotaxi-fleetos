@@ -252,6 +252,88 @@ export function getFleetPreviewRows(fleet, realFleet, limit = 3, fleetLastSynced
   });
 }
 
+/** v3 Command hero — net earnings, trips, Tesla share. */
+export function getCommandEarningsHero(realFleet, totalEarnings, syncState) {
+  if (syncState === 'loading') {
+    return {
+      amount: '—',
+      label: 'Net Earnings Today',
+      trips: '—',
+      teslaShare: '—',
+      delta: null,
+      tone: 'neutral',
+    };
+  }
+
+  const explicitTrips = realFleet.reduce(
+    (sum, vehicle) => sum + (Number(vehicle.tripsToday) || Number(vehicle.trips) || 0),
+    0,
+  );
+  const trips = explicitTrips > 0
+    ? explicitTrips
+    : totalEarnings > 0
+      ? Math.max(1, Math.round(totalEarnings / 61))
+      : 0;
+
+  const teslaShare = Math.round(
+    realFleet.reduce((sum, vehicle) => sum + (Number(vehicle.revenue) || 0), 0),
+  );
+
+  if (hasTrustedFleetRevenue(realFleet, totalEarnings, syncState)) {
+    return {
+      amount: formatFleetDollars(totalEarnings),
+      label: 'Net Earnings Today',
+      trips: String(trips),
+      teslaShare: formatFleetDollars(teslaShare),
+      delta: formatEarningsDelta(realFleet, totalEarnings),
+      tone: 'positive',
+    };
+  }
+
+  if (syncState === 'success' && realFleet.length > 0) {
+    return {
+      amount: '$0',
+      label: 'Net Earnings Today',
+      trips: '0',
+      teslaShare: '$0',
+      delta: null,
+      tone: 'neutral',
+    };
+  }
+
+  return {
+    amount: '—',
+    label: 'Net Earnings Today',
+    trips: '—',
+    teslaShare: '—',
+    delta: null,
+    tone: 'neutral',
+    hint: syncState === 'idle' || syncState === 'error' ? 'Connect Tesla to track earnings' : null,
+  };
+}
+
+/** v3 Command fleet status strip — active, charging, offline. */
+export function getCommandFleetStatusStrip(fleet, realFleet) {
+  const source = realFleet.length > 0 ? realFleet : fleet;
+  let active = 0;
+  let charging = 0;
+  let offline = 0;
+
+  for (const vehicle of source) {
+    const state = vehicleStateLabel(vehicle);
+    if (state === 'Charging') charging += 1;
+    else if (state === 'Offline' || state === 'Asleep') offline += 1;
+    else active += 1;
+  }
+
+  return {
+    active: { value: String(active), tone: active > 0 ? 'ready' : 'neutral' },
+    charging: { value: String(charging), tone: charging > 0 ? 'connected' : 'neutral' },
+    offline: { value: String(offline), tone: offline > 0 ? 'caution' : 'neutral' },
+    total: source.length,
+  };
+}
+
 /** Hybrid hero — revenue when trusted and meaningful; otherwise fleet online. Never shows $0. */
 export function getFleetHeroMetric({ realFleet, totalEarnings, syncState }) {
   if (syncState === 'loading') {
