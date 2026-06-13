@@ -17,39 +17,40 @@ export default function LandingScreenFlow({
     <div className="min-h-screen bg-black text-white">
       <LandingHeader onNavigate={onNavigate} onConnect={onConnect} />
 
-      {/* Screen 1 — cinematic hero: copy floats over full-bleed vehicle */}
-      <section className="relative min-h-[100dvh] overflow-hidden">
+      {/* Screen 1 — headline & CTA first, vehicle below, preview tease at fold */}
+      <section className="relative min-h-[100dvh] overflow-hidden bg-black">
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-[1] h-[40%] bg-black sm:h-[38%]" aria-hidden="true" />
         <LandingHeroVisual />
 
-        <div className="relative z-10 flex min-h-[100dvh] flex-col px-5 pt-14">
-          <div className="mx-auto w-full max-w-lg pt-5 sm:pt-7">
-            <h1 className="text-[2.35rem] font-semibold leading-[1.05] tracking-[-0.03em] text-white drop-shadow-[0_2px_24px_rgba(0,0,0,0.55)] sm:text-5xl">
-              Your Tesla Fleet.
-              <span className="mt-1 block text-white/60">One Command Center.</span>
-            </h1>
+        <div className="relative z-10 px-5 pt-14">
+          <div className="relative mx-auto w-full max-w-lg pt-5 sm:pt-7">
+            <div className="relative overflow-hidden rounded-2xl px-4 py-6 sm:px-5 sm:py-7">
+              <div
+                className="pointer-events-none absolute inset-0 bg-gradient-to-b from-black via-black/90 to-black/40"
+                aria-hidden="true"
+              />
+              <div className="relative">
+                <h1 className="text-[2.35rem] font-semibold leading-[1.05] tracking-[-0.03em] text-white sm:text-5xl">
+                  Your Tesla Fleet.
+                  <span className="mt-1 block text-white/70">One Command Center.</span>
+                </h1>
 
-            <p className="mt-4 max-w-xs text-[15px] leading-relaxed text-white/50 drop-shadow-[0_1px_12px_rgba(0,0,0,0.45)]">
-              See your fleet.
-              <br />
-              Know what needs attention.
-              <br />
-              Take action.
-            </p>
-
-            <button
-              type="button"
-              onClick={onConnect}
-              disabled={connectDisabled}
-              className={`mt-5 w-full max-w-xs shadow-[0_8px_32px_rgba(0,0,0,0.35)] sm:w-auto ${connectButtonClass}`}
-            >
-              {connectLabel}
-            </button>
+                <button
+                  type="button"
+                  onClick={onConnect}
+                  disabled={connectDisabled}
+                  className={`mt-6 w-full max-w-xs sm:w-auto ${connectButtonClass}`}
+                >
+                  {connectLabel}
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Product tease — card intrudes into bottom of hero viewport */}
-      <div id="command-preview" className="relative z-20 -mt-[6.5rem] scroll-mt-14 px-5 sm:-mt-28">
+      {/* Product tease — slightly more visible at hero fold */}
+      <div id="command-preview" className="relative z-20 -mt-[7.75rem] scroll-mt-14 px-5 sm:-mt-[8.75rem]">
         <button
           type="button"
           onClick={scrollToPreview}
@@ -59,7 +60,7 @@ export default function LandingScreenFlow({
           <span className="text-lg leading-none" aria-hidden="true">↓</span>
         </button>
 
-        <div className="mx-auto max-w-md">
+        <div className="mx-auto max-w-md shadow-[0_-12px_40px_rgba(139,92,246,0.12)]">
           <DashboardPreview variant="compact" />
         </div>
       </div>
