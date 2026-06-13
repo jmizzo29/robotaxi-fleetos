@@ -11,9 +11,9 @@ export default function LandingEntryScreen({ onConnect, connectLabel, connectDis
       />
 
       <div className="relative z-10 flex w-full max-w-sm flex-col items-center text-center">
-        <div className="flex items-center gap-2.5">
-          <RoboLogo className="h-9 w-9 shrink-0 text-white" />
-          <RoboWordmark className="text-[15px] tracking-[0.14em]" colorClass="text-white" />
+        <div className="flex items-center gap-[0.78125rem]">
+          <RoboLogo className="h-[2.8125rem] w-[2.8125rem] shrink-0 text-white" />
+          <RoboWordmark className="text-[1.171875rem] tracking-[0.14em]" colorClass="text-white" />
         </div>
 
         <h1 className="mt-12 text-[2.5rem] font-semibold leading-[1.06] tracking-[-0.035em] text-white sm:text-[2.75rem]">
