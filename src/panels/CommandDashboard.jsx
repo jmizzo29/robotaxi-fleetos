@@ -304,6 +304,7 @@ export default function CommandDashboard({
         {/* Mobile Home — Fleet Command Center (Phase 1) */}
         <div className="lg:hidden">
           <FleetCommandHome
+            fleet={fleet}
             realFleet={realFleet}
             totalEarnings={totalEarnings}
             realSyncStatus={realSyncStatus}

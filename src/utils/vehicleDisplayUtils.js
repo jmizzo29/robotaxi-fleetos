@@ -65,6 +65,83 @@ function getFleetOnlineHero(realFleet) {
   };
 }
 
+/** Fleet overview metrics for Command home — active, revenue, utilization. */
+export function getFleetOverviewMetrics(fleet, realFleet, totalEarnings, syncState) {
+  const source = realFleet.length > 0 ? realFleet : fleet;
+  const active = source.filter(isVehicleOnline).length;
+  const total = source.length;
+  const utilValues = source
+    .map((vehicle) => Number(vehicle.utilization))
+    .filter(Number.isFinite);
+  const utilization = utilValues.length
+    ? Math.round(utilValues.reduce((sum, value) => sum + value, 0) / utilValues.length)
+    : null;
+
+  let revenueDisplay = '—';
+  if (hasTrustedFleetRevenue(realFleet, totalEarnings, syncState)) {
+    revenueDisplay = formatFleetDollars(totalEarnings);
+  }
+
+  return {
+    active,
+    total,
+    revenueDisplay,
+    utilization,
+    syncState: syncState ?? 'idle',
+    hasFleet: total > 0,
+  };
+}
+
+/** Fleet health summary — score optional, simple status label. */
+export function getFleetHealthSummary(fleet, realFleet, snapshot) {
+  const source = realFleet.length > 0 ? realFleet : fleet;
+  if (!source.length) {
+    return { score: null, label: 'Awaiting fleet', tone: 'neutral' };
+  }
+
+  const scores = source
+    .map((vehicle) => Number(vehicle.maintenanceScore))
+    .filter(Number.isFinite);
+  const score = scores.length
+    ? Math.round(scores.reduce((sum, value) => sum + value, 0) / scores.length)
+    : null;
+
+  if (snapshot.alerts > 0 || snapshot.offline > 0) {
+    return { score, label: 'Attention Needed', tone: 'caution' };
+  }
+  if (score !== null && score >= 90) {
+    return { score, label: 'Excellent', tone: 'ready' };
+  }
+  if (score !== null && score >= 75) {
+    return { score, label: 'Good', tone: 'ready' };
+  }
+  if (score !== null) {
+    return { score, label: 'Fair', tone: 'neutral' };
+  }
+  return { score: null, label: 'Excellent', tone: 'ready' };
+}
+
+function fleetVehicleLabel(vehicle, index) {
+  const name = vehicleDisplayName(vehicle);
+  if (name && name !== 'Your Tesla') return name;
+  return `Vehicle ${index + 1}`;
+}
+
+function vehicleIndexInFleet(vehicle, fleet) {
+  const idx = fleet.indexOf(vehicle);
+  return idx >= 0 ? idx : 0;
+}
+
+/** First N vehicles for home preview — status only, no battery hero. */
+export function getFleetPreviewRows(fleet, realFleet, limit = 3) {
+  const source = realFleet.length > 0 ? realFleet : fleet;
+  return source.slice(0, limit).map((vehicle, index) => ({
+    id: vehicle.id || `${index}`,
+    name: fleetVehicleLabel(vehicle, index),
+    status: vehicleStateLabel(vehicle),
+  }));
+}
+
 /** Hybrid hero — revenue when trusted and meaningful; otherwise fleet online. Never shows $0. */
 export function getFleetHeroMetric({ realFleet, totalEarnings, syncState }) {
   if (syncState === 'loading') {
@@ -144,10 +221,10 @@ function findFleetAlert(realFleet, realSyncStatus) {
   });
   if (lowBattery.length === 1) {
     const vehicle = lowBattery[0];
-    const battery = Math.round(Number(vehicle.battery ?? vehicle.battery_level));
+    const index = vehicleIndexInFleet(vehicle, realFleet);
     return {
-      title: 'Low battery alert',
-      subtitle: `${vehicleDisplayName(vehicle)} · ${battery}%`,
+      title: `Charge ${fleetVehicleLabel(vehicle, index)}`,
+      subtitle: 'Battery below 20%',
       route: 'charging',
     };
   }
@@ -170,8 +247,9 @@ function findChargingRecommendation(realFleet) {
       return Number.isFinite(battery) && battery < 80 && vehicleStateLabel(v) !== 'Charging';
     });
     if (chargeCandidate) {
+      const index = vehicleIndexInFleet(chargeCandidate, realFleet);
       return {
-        title: `Charge ${vehicleDisplayName(chargeCandidate)} after 11 PM`,
+        title: `Charge ${fleetVehicleLabel(chargeCandidate, index)}`,
         subtitle: 'Off-peak rates tonight',
         route: 'charging',
       };
@@ -180,15 +258,30 @@ function findChargingRecommendation(realFleet) {
   return null;
 }
 
+function findServiceRecommendation(realFleet) {
+  const candidate = realFleet.find((vehicle) => {
+    const score = Number(vehicle.maintenanceScore);
+    return Number.isFinite(score) && score < 70;
+  });
+  if (!candidate) return null;
+  const index = vehicleIndexInFleet(candidate, realFleet);
+  return {
+    title: `Schedule Tire Service`,
+    subtitle: fleetVehicleLabel(candidate, index),
+    route: 'health',
+  };
+}
+
 function findIdleVehicleRecommendation(realFleet) {
   const idle = realFleet.find((v) => {
     const utilization = Number(v.utilization);
     return Number.isFinite(utilization) && utilization < 35;
   });
   if (!idle) return null;
+  const index = vehicleIndexInFleet(idle, realFleet);
   return {
-    title: `${vehicleDisplayName(idle)} underutilized`,
-    subtitle: 'Consider listing or charging',
+    title: `Review ${fleetVehicleLabel(idle, index)}`,
+    subtitle: 'Underutilized today',
     route: 'fleet',
   };
 }
@@ -200,6 +293,9 @@ export function getFleetRecommendation(realFleet, realSyncStatus) {
 
   const charging = findChargingRecommendation(realFleet);
   if (charging) return charging;
+
+  const service = findServiceRecommendation(realFleet);
+  if (service) return service;
 
   const idle = findIdleVehicleRecommendation(realFleet);
   if (idle) return idle;
