@@ -1,17 +1,10 @@
-import { MapPin } from 'lucide-react';
 import { getMapFeaturedVehicle, getMapPreviewVehicles } from '../../utils/commandHomeUtils';
 
-const gridStyle = {
-  backgroundImage:
-    'linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)',
-  backgroundSize: '24px 24px',
-};
-
 const zoneLabels = [
-  { label: 'Airport', left: '12%', top: '24%' },
-  { label: 'Downtown', left: '42%', top: '18%' },
-  { label: 'Disney', left: '62%', top: '34%' },
-  { label: 'Staging', left: '72%', top: '56%' },
+  { label: 'AIRPORT', left: '8%', top: '28%' },
+  { label: 'DOWNTOWN', left: '38%', top: '22%' },
+  { label: 'DISNEY', left: '62%', top: '38%' },
+  { label: 'STAGING', left: '72%', top: '58%' },
 ];
 
 function MarkerDot({ tone = 'active' }) {
@@ -24,20 +17,39 @@ function MarkerDot({ tone = 'active' }) {
   );
 }
 
-export default function CommandMapPreview({ fleet = [], realFleet = [], onNavigate, compact = false }) {
+function buildMapCaption(markers, featured, realFleet) {
+  const inMotion = markers.filter((marker) => marker.tone === 'active').length;
+  const cities = [...new Set(
+    realFleet
+      .map((vehicle) => String(vehicle.city || '').split(',')[0].trim())
+      .filter(Boolean),
+  )].slice(0, 3);
+
+  if (inMotion > 0 && cities.length > 0) {
+    return `${inMotion} in motion · ${cities.join(' · ')}`;
+  }
+  if (featured?.name) {
+    return `${featured.name} · ${featured.event}`;
+  }
+  if (inMotion > 0) {
+    return `${inMotion} in motion`;
+  }
+  return `${markers.length} assets tracked`;
+}
+
+export default function CommandMapPreview({ fleet = [], realFleet = [], onNavigate }) {
   const markers = getMapPreviewVehicles(fleet, realFleet);
   const featured = getMapFeaturedVehicle(fleet, realFleet);
-  const inMotion = markers.filter((marker) => marker.tone === 'active').length;
-  const mapHeight = compact ? 'h-[112px]' : 'h-[132px]';
+  const caption = buildMapCaption(markers, featured, realFleet);
 
   return (
     <section aria-label="Live fleet map">
       <div className="mb-1.5 flex items-center justify-between gap-2">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/40">Live fleet map</p>
+        <p className="text-[9px] font-semibold uppercase tracking-[0.16em] text-white/40">Live fleet map</p>
         <button
           type="button"
           onClick={() => onNavigate('map')}
-          className="text-[11px] font-medium text-[#599CE7] transition active:opacity-70"
+          className="text-[10px] font-semibold text-[#599CE7] transition active:opacity-70"
         >
           Full map
         </button>
@@ -46,11 +58,10 @@ export default function CommandMapPreview({ fleet = [], realFleet = [], onNaviga
       <button
         type="button"
         onClick={() => onNavigate('map')}
-        className="relative block w-full overflow-hidden rounded-[1.1rem] border border-white/10 bg-[#06080c] text-left transition active:brightness-110"
+        className="relative block w-full overflow-hidden rounded-[14px] border border-white/10 bg-[#06080c] text-left transition active:brightness-110"
       >
-        <div className="absolute inset-0 opacity-70" style={gridStyle} aria-hidden="true" />
         <svg
-          className="absolute inset-0 h-full w-full opacity-40"
+          className="absolute inset-0 h-full w-full"
           viewBox="0 0 100 100"
           preserveAspectRatio="none"
           aria-hidden="true"
@@ -58,22 +69,24 @@ export default function CommandMapPreview({ fleet = [], realFleet = [], onNaviga
           <path
             d="M10 55 Q35 40 55 50 T90 45"
             fill="none"
-            stroke="rgba(89,156,231,0.35)"
+            stroke="rgba(255,255,255,0.12)"
             strokeWidth="0.8"
+            opacity={0.5}
           />
           <path
             d="M15 70 Q45 62 75 68"
             fill="none"
-            stroke="rgba(255,255,255,0.12)"
+            stroke="rgba(255,255,255,0.08)"
             strokeWidth="0.6"
+            opacity={0.35}
           />
         </svg>
 
-        <div className={`relative ${mapHeight}`}>
+        <div className="relative h-[132px]">
           {zoneLabels.map((zone) => (
             <span
               key={zone.label}
-              className="absolute text-[8px] font-semibold uppercase tracking-[0.08em] text-white/30"
+              className="absolute text-[8px] font-semibold tracking-[0.04em] text-white/30"
               style={{ left: zone.left, top: zone.top }}
             >
               {zone.label}
@@ -93,14 +106,8 @@ export default function CommandMapPreview({ fleet = [], realFleet = [], onNaviga
             </span>
           ))}
 
-      <div className="absolute bottom-3 left-3 right-3 flex items-center gap-2 rounded-full border border-white/10 bg-black/80 px-2.5 py-1.5 backdrop-blur-sm">
-            <MapPin className="h-3 w-3 shrink-0 text-[#599CE7]" strokeWidth={2.2} />
-            <div className="min-w-0 flex-1 truncate text-[10px] font-semibold text-white">
-              {featured?.name || `${inMotion || markers.length} assets tracked`}
-            </div>
-            <span className="shrink-0 text-[10px] text-white/45">
-              {featured?.event || `${inMotion} in motion`}
-            </span>
+          <div className="absolute bottom-2 left-2 right-2 rounded-full border border-white/10 bg-black/80 px-2.5 py-1.5 text-[9px] font-semibold text-white">
+            {caption}
           </div>
         </div>
       </button>
