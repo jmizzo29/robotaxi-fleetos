@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useUser } from '@clerk/react';
 import { isClerkConfigured } from '../auth/clerkConfig';
 import SignOutButton from '../components/SignOutButton';
@@ -37,21 +37,104 @@ function GreetingHeader({ firstName = 'there' }) {
   );
 }
 
-function lastSyncedLabel(isoTimestamp) {
+function lastSyncedLabel(isoTimestamp, prefix = 'Last synced') {
   if (!isoTimestamp) return null;
   const elapsedMs = Date.now() - new Date(isoTimestamp).getTime();
   if (Number.isNaN(elapsedMs)) return null;
   const minutes = Math.floor(elapsedMs / 60000);
-  if (minutes < 1) return 'Last synced just now';
-  if (minutes === 1) return 'Last synced 1 minute ago';
-  if (minutes < 60) return `Last synced ${minutes} minutes ago`;
+  if (minutes < 1) return `${prefix} just now`;
+  if (minutes === 1) return `${prefix} 1 minute ago`;
+  if (minutes < 60) return `${prefix} ${minutes} minutes ago`;
   const hours = Math.floor(minutes / 60);
-  return `Last synced ${hours} hour${hours === 1 ? '' : 's'} ago`;
+  return `${prefix} ${hours} hour${hours === 1 ? '' : 's'} ago`;
 }
 
-function TeslaSyncStatusBanner({ realSyncStatus, isLoadingReal, onRetrySync, onNavigate, hasRealVehicles, demoCount }) {
+function vehicleStateLabel(vehicle) {
+  const raw = String(vehicle?.status || vehicle?.state || '').toUpperCase();
+  if (raw.includes('CHARG')) return 'Charging';
+  if (raw.includes('ASLEEP') || raw.includes('SLEEP')) return 'Asleep';
+  if (raw.includes('OFFLINE')) return 'Offline';
+  if (raw.includes('PARK')) return 'Parked';
+  if (raw.includes('ONLINE')) return 'Online';
+  return raw ? raw.charAt(0) + raw.slice(1).toLowerCase() : 'Online';
+}
+
+// One concise status line derived purely from data already in props — no API calls.
+function fleetInsightLine(realVehicles) {
+  if (realVehicles.some((v) => vehicleStateLabel(v) === 'Charging')) {
+    return 'Charging session active';
+  }
+  const lowBattery = realVehicles.filter((v) => Number.isFinite(Number(v.battery)) && Number(v.battery) < 20);
+  if (lowBattery.length > 0) {
+    return `${lowBattery.length} vehicle${lowBattery.length === 1 ? '' : 's'} low on battery`;
+  }
+  return 'No issues detected';
+}
+
+function ConnectedVehicleCard({ realVehicles, lastSyncedAt, onNavigate }) {
+  const single = realVehicles.length === 1 ? realVehicles[0] : null;
+  const headerName = single
+    ? (single.name || 'Your Tesla')
+    : `${realVehicles.length} Teslas Connected`;
+  const battery = single ? Number(single.battery) : NaN;
+  const showBattery = Number.isFinite(battery);
+  const statusWord = single ? vehicleStateLabel(single) : 'All connected';
+  const syncedLabel = lastSyncedLabel(lastSyncedAt, 'Synced');
+  const insight = fleetInsightLine(realVehicles);
+
+  const actions = [
+    { label: 'View Vehicle', route: 'fleet' },
+    { label: 'Ask AI', route: 'ai' },
+    { label: 'Insights', route: 'alerts' },
+  ];
+
+  return (
+    <div className="mt-6 rounded-2xl border border-emerald-500/25 bg-emerald-500/10 p-5" role="status">
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex min-w-0 items-center gap-3">
+          <span className="h-2.5 w-2.5 flex-shrink-0 rounded-full bg-emerald-400" aria-hidden="true" />
+          <p className="truncate text-base font-semibold text-white">{headerName}</p>
+        </div>
+        {showBattery && (
+          <p className="flex-shrink-0 text-base font-semibold tabular-nums text-emerald-300">
+            ⚡ {Math.round(battery)}%
+          </p>
+        )}
+      </div>
+
+      <p className="mt-1 pl-[22px] text-sm text-white/60">
+        {statusWord}
+        {syncedLabel ? ` · ${syncedLabel}` : ''}
+      </p>
+
+      <p className="mt-3 text-sm leading-relaxed text-white/70">
+        ROBOAGENT turns Tesla data into actionable insights so you know what needs attention and what can be optimized.
+      </p>
+
+      {insight && (
+        <p className="mt-2 text-sm font-medium text-emerald-300">{insight}</p>
+      )}
+
+      <div className="mt-4 grid grid-cols-3 gap-2">
+        {actions.map(({ label, route }) => (
+          <button
+            key={route}
+            type="button"
+            onClick={() => onNavigate(route)}
+            className="min-h-[44px] rounded-xl border border-white/25 bg-white/10 px-2 py-2.5 text-sm font-semibold text-white transition hover:bg-white/20"
+          >
+            {label}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function TeslaSyncStatusBanner({ realSyncStatus, isLoadingReal, onRetrySync, onNavigate, realFleet = [], demoCount }) {
   if (!realSyncStatus) return null;
 
+  const hasRealVehicles = realFleet.length > 0;
   const state = isLoadingReal ? 'loading' : realSyncStatus.state;
   const isBillingError = realSyncStatus.code === 'BILLING_REQUIRED' || realSyncStatus.httpStatus === 402;
 
@@ -65,6 +148,16 @@ function TeslaSyncStatusBanner({ realSyncStatus, isLoadingReal, onRetrySync, onN
   }
 
   if (state === 'success') {
+    if (hasRealVehicles) {
+      return (
+        <ConnectedVehicleCard
+          realVehicles={realFleet}
+          lastSyncedAt={realSyncStatus.lastSyncedAt}
+          onNavigate={onNavigate}
+        />
+      );
+    }
+    // Success reported but no real vehicles in the fleet yet — keep the simple confirmation.
     const syncedLabel = lastSyncedLabel(realSyncStatus.lastSyncedAt);
     return (
       <div className="mt-6 flex flex-wrap items-center gap-x-3 gap-y-1 rounded-2xl border border-emerald-500/25 bg-emerald-500/10 px-5 py-4" role="status">
@@ -244,7 +337,7 @@ export default function CommandDashboard({
             isLoadingReal={isLoadingReal}
             onRetrySync={onRetrySync}
             onNavigate={onNavigate}
-            hasRealVehicles={realFleet.length > 0}
+            realFleet={realFleet}
             demoCount={demoCount}
           />
 

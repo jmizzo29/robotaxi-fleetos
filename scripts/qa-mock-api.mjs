@@ -3,6 +3,8 @@
 //   mode=guest   -> /api/auth/session returns 401 (logged out)
 //   mode=billing -> session OK, /api/vehicles returns 402 BILLING_REQUIRED
 //   mode=ok      -> session OK, /api/vehicles returns one vehicle
+//   mode=multi   -> session OK, two vehicles
+//   mode=bare    -> session OK, one vehicle with no name/battery (fallback test)
 import http from 'node:http';
 
 const mode = process.argv[2] || 'guest';
@@ -41,6 +43,29 @@ const server = http.createServer((req, res) => {
         response: [{
           id: 'qa-tesla-1', vin: '5YJ3E1EA7KF000000', display_name: 'QA Model 3',
           state: 'online', status: 'ONLINE', battery: 81, latitude: 28.54, longitude: -81.38,
+          syncedAt: new Date().toISOString(),
+        }],
+      }));
+    } else if (mode === 'multi') {
+      res.end(JSON.stringify({
+        response: [
+          {
+            id: 'qa-tesla-1', vin: '5YJ3E1EA7KF000000', display_name: 'QA Model 3',
+            state: 'online', status: 'ONLINE', battery: 81, latitude: 28.54, longitude: -81.38,
+            syncedAt: new Date().toISOString(),
+          },
+          {
+            id: 'qa-tesla-2', vin: '5YJXCBE45KF000001', display_name: 'QA Model X',
+            state: 'online', status: 'CHARGING', battery: 42, latitude: 28.56, longitude: -81.36,
+            syncedAt: new Date().toISOString(),
+          },
+        ],
+      }));
+    } else if (mode === 'bare') {
+      res.end(JSON.stringify({
+        response: [{
+          id: 'qa-tesla-3', vin: '5YJ3E1EA7KF000002',
+          state: 'online', latitude: 28.54, longitude: -81.38,
           syncedAt: new Date().toISOString(),
         }],
       }));
