@@ -216,6 +216,7 @@ function FleetApp() {
   const [route, navigate] = useHashRoute();
   const isPublicRoute = route === 'landing';
   const isPublicLandingEntryRoute = route === 'landing-entry';
+  const isPublicLandingOnly = isPublicRoute || isPublicLandingEntryRoute;
   const isPublicLoginRoute = route === 'login';
   const isPublicSignupRoute = route === 'signup';
   const isPublicSignupEmailRoute = route === 'signup-email';
@@ -255,8 +256,42 @@ function FleetApp() {
   // who type #/overview etc. are redirected to the landing page.
   const { isAuthReady, isSignedIn } = useFleetAuthStatus();
   const [sessionCheck, setSessionCheck] = useState('checking'); // 'checking' | 'authed' | 'guest'
+  const [landingGateReady, setLandingGateReady] = useState(() => !isPublicLandingOnly);
   // Clerk-signed-in users are authenticated without a server round trip.
   const sessionAllowed = isSignedIn || sessionCheck === 'authed';
+
+  useEffect(() => {
+    if (!isPublicLandingOnly) {
+      setLandingGateReady(true);
+      return undefined;
+    }
+    if (!isAuthReady) {
+      setLandingGateReady(false);
+      return undefined;
+    }
+
+    let cancelled = false;
+    setLandingGateReady(false);
+
+    getFleetOsSession()
+      .then((session) => {
+        if (cancelled) return;
+        if (session?.authenticated && session?.teslaConnected) {
+          navigate('overview');
+          return;
+        }
+        setLandingGateReady(true);
+      })
+      .catch(() => {
+        if (!cancelled) setLandingGateReady(true);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+    // navigate is stable in behavior (sets window.location.hash); intentionally omitted.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPublicLandingOnly, isAuthReady, isSignedIn, route]);
 
   useEffect(() => {
     if (!isProtectedRoute || !isAuthReady || isSignedIn) return undefined;
@@ -710,6 +745,17 @@ function FleetApp() {
   };
 
   // === PUBLIC ROUTES (Landing, Login, Signup) ===
+  if (isPublicLandingOnly && (!isAuthReady || !landingGateReady)) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-black text-white">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="h-6 w-6 animate-spin text-white/60" />
+          <p className="text-sm text-white/60">Loading…</p>
+        </div>
+      </div>
+    );
+  }
+
   if (isPublicRoute) {
     return <Landing onNavigate={navigate} />;
   }

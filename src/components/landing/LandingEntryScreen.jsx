@@ -32,7 +32,7 @@ export default function LandingEntryScreen({
             {connectLabel}
           </button>
 
-          <p className="mt-5 text-[11px] font-medium tracking-[0.06em] text-white/50">
+          <p className="mt-5 text-[0.825rem] font-medium tracking-[0.06em] text-white/50">
             Fleet Management OS for Tesla Owners
           </p>
         </div>
