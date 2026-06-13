@@ -132,16 +132,27 @@ export function getOpenActionsBreakdown(commandQueue = [], fleet = [], realFleet
   };
 }
 
-function buildPlanSummary(recommendation, breakdown) {
-  const parts = [];
-  if (breakdown.pricing > 0) parts.push('adjust pricing');
-  if (breakdown.charging > 0 || recommendation?.route === 'charging') parts.push('charge after 11 PM');
-  if (breakdown.maintenance > 0) parts.push('clean before pickup');
-  if (recommendation?.title && recommendation.tone !== 'ready') {
-    parts.unshift(recommendation.title.replace(/^Charge /i, 'charge ').toLowerCase());
+function buildPlanSummary(recommendation, breakdown, fleet, realFleet) {
+  const source = realFleet.length > 0 ? realFleet : fleet;
+  const online = source.filter(isVehicleOnline).length;
+  const stagingCount = Math.min(3, Math.max(1, online >= 2 ? 2 : 1));
+
+  if (breakdown.pricing > 0 && breakdown.charging > 0) {
+    return `Move ${stagingCount} vehicles toward Orlando Airport and adjust peak pricing`;
   }
-  if (!parts.length) return 'Fleet is stable — review AI suggestions before peak hours.';
-  return parts.slice(0, 3).join(', ').replace(/^./, (c) => c.toUpperCase()) + '.';
+  if (breakdown.charging > 0 || recommendation?.route === 'charging') {
+    return `Schedule ${stagingCount} vehicle${stagingCount === 1 ? '' : 's'} for off-peak charging before morning demand`;
+  }
+  if (breakdown.maintenance > 0) {
+    return `Clear ${breakdown.maintenance} vehicle${breakdown.maintenance === 1 ? '' : 's'} for service before peak hours`;
+  }
+  if (breakdown.pricing > 0) {
+    return `Adjust pricing on ${stagingCount} high-utilization vehicle${stagingCount === 1 ? '' : 's'} before peak demand`;
+  }
+  if (source.length > 0) {
+    return `Move ${stagingCount} vehicle${stagingCount === 1 ? '' : 's'} toward Orlando Airport`;
+  }
+  return 'Connect fleet telemetry to unlock AI staging recommendations';
 }
 
 function buildPlanChecklist(fleet, realFleet, recommendation, breakdown) {
@@ -180,11 +191,11 @@ function buildPlanChecklist(fleet, realFleet, recommendation, breakdown) {
 
 function buildExpectedRevenueImpact(breakdown, fleet, realFleet) {
   const source = realFleet.length > 0 ? realFleet : fleet;
-  let bump = 64;
-  if (breakdown.pricing > 0) bump += 64;
+  let bump = 72;
+  if (breakdown.pricing > 0) bump += 46;
   if (breakdown.charging > 0) bump += 28;
-  if (source.some((vehicle) => Number(vehicle.utilization) >= 72)) bump += 48;
-  return `+$${bump} today`;
+  if (source.some((vehicle) => Number(vehicle.utilization) >= 72)) bump += 42;
+  return `+$${bump}`;
 }
 
 function buildConfidenceScore(realSyncStatus, realFleet) {
@@ -203,8 +214,24 @@ function activityVehicleName(vehicle, index) {
 function activityTimestamp(vehicle, index) {
   const label = lastSyncedLabel(vehicle?.syncedAt || vehicle?.lastSyncedAt, 'Updated');
   if (label) return label.replace(/^Updated /, '');
-  const minutes = (index + 1) * 3;
-  return minutes === 3 ? 'Just now' : `${minutes}m ago`;
+  const minutes = (index + 1) * 2;
+  if (minutes <= 2) return '2 min ago';
+  return `${minutes} min ago`;
+}
+
+function tripImpactAmount(vehicle, index) {
+  const revenue = Number(vehicle.revenue) || 0;
+  if (vehicle.isReal) {
+    return Math.max(12, Math.round(revenue / Math.max(1, Math.round((Number(vehicle.utilization) || 40) / 18))));
+  }
+  return 24 + ((index + 1) * 7) % 18;
+}
+
+function chargingReadyLabel(vehicle) {
+  const battery = vehicleBatteryPercent(vehicle);
+  if (battery === null) return 'Ready in 34 min';
+  const minutes = Math.max(12, Math.round((100 - battery) * 0.55));
+  return `Ready in ${minutes} min`;
 }
 
 /** Live fleet activity feed for Command screen. */
@@ -220,12 +247,14 @@ export function getFleetActivityFeed(fleet, realFleet, limit = 5) {
     const timestamp = activityTimestamp(vehicle, index);
 
     if (revenue > 0) {
+      const tripAmount = tripImpactAmount(vehicle, index);
       events.push({
         id: `${vehicle.id || index}-trip`,
         vehicleName: name,
         description: `${name} completed trip`,
-        impact: `+$${revenue}`,
+        impact: `+$${tripAmount.toFixed(2)}`,
         impactTone: 'positive',
+        eventType: 'trip',
         timestamp,
         vehicle,
       });
@@ -236,8 +265,9 @@ export function getFleetActivityFeed(fleet, realFleet, limit = 5) {
         id: `${vehicle.id || index}-charge`,
         vehicleName: name,
         description: `${name} started charging`,
-        impact: 'Session active',
+        impact: chargingReadyLabel(vehicle),
         impactTone: 'neutral',
+        eventType: 'charging',
         timestamp,
         vehicle,
       });
@@ -249,8 +279,9 @@ export function getFleetActivityFeed(fleet, realFleet, limit = 5) {
         id: `${vehicle.id || index}-surge`,
         vehicleName: name,
         description: `${name} entered surge zone`,
-        impact: `+${surgePct}%`,
+        impact: `+${surgePct}% projected earnings`,
         impactTone: 'surge',
+        eventType: 'surge',
         timestamp,
         vehicle,
       });
@@ -259,9 +290,9 @@ export function getFleetActivityFeed(fleet, realFleet, limit = 5) {
 
   if (!events.length) {
     return [
-      { id: 'demo-7-trip', vehicleName: 'Vehicle 7', description: 'Vehicle 7 completed trip', impact: '+$31', impactTone: 'positive', timestamp: '2m ago' },
-      { id: 'demo-3-charge', vehicleName: 'Vehicle 3', description: 'Vehicle 3 started charging', impact: 'Session active', impactTone: 'neutral', timestamp: '8m ago' },
-      { id: 'demo-8-surge', vehicleName: 'Vehicle 8', description: 'Vehicle 8 entered surge zone', impact: '+22%', impactTone: 'surge', timestamp: '14m ago' },
+      { id: 'demo-7-trip', vehicleName: 'Vehicle 7', description: 'Vehicle 7 completed trip', impact: '+$31.40', impactTone: 'positive', eventType: 'trip', timestamp: '2 min ago' },
+      { id: 'demo-3-charge', vehicleName: 'Vehicle 3', description: 'Vehicle 3 started charging', impact: 'Ready in 34 min', impactTone: 'neutral', eventType: 'charging', timestamp: '8 min ago' },
+      { id: 'demo-8-surge', vehicleName: 'Vehicle 8', description: 'Vehicle 8 entered surge zone', impact: '+22% projected earnings', impactTone: 'surge', eventType: 'surge', timestamp: '14 min ago' },
     ].slice(0, limit);
   }
 
@@ -279,7 +310,7 @@ export function getCommandAiPlan(fleet, realFleet, realSyncStatus, commandQueue 
   );
 
   return {
-    summary: buildPlanSummary(recommendation, breakdown),
+    summary: buildPlanSummary(recommendation, breakdown, fleet, realFleet),
     checklist: buildPlanChecklist(fleet, realFleet, recommendation, breakdown),
     pendingCount: pendingCount || (recommendation?.tone === 'ready' ? 0 : 1),
     recommendation,

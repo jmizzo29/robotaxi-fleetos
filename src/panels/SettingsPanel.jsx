@@ -1,5 +1,6 @@
 import TeslaSyncHealthPanel from './TeslaSyncHealthPanel';
 import DataPrivacyPanel from './DataPrivacyPanel';
+import BetaFeedbackForm from '../components/BetaFeedbackForm';
 
 export default function SettingsPanel({
   realSyncStatus,
@@ -20,6 +21,19 @@ export default function SettingsPanel({
       />
 
       <DataPrivacyPanel />
+
+      <article className="rounded-lg border border-white/10 bg-slate-900/80 p-5 shadow-lg shadow-black/10">
+        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-emerald-300">
+          Product Feedback
+        </p>
+        <h2 className="text-2xl font-black tracking-tight">Beta Feedback</h2>
+        <p className="mt-2 text-sm text-slate-400">
+          Report bugs, confusing flows, or feature ideas. Feedback is no longer shown on the Command screen.
+        </p>
+        <div className="mt-5">
+          <BetaFeedbackForm route="settings" />
+        </div>
+      </article>
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
       <article className="rounded-lg border border-white/10 bg-slate-900/80 p-5 shadow-lg shadow-black/10">

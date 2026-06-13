@@ -329,7 +329,7 @@ function ProfileSection({ user, profileName, isBusy, onProfileNameChange, onSave
         <ArrowRight className="h-4 w-4" />
       </Button>
       <Button variant="secondary" className="mt-2 w-full" onClick={onOpenSettings}>
-        Open settings
+        Settings &amp; feedback
       </Button>
     </Card>
   );

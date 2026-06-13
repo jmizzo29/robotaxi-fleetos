@@ -1,25 +1,117 @@
-import { getMapPreviewVehicles } from '../../utils/commandHomeUtils';
+import { useMemo, useState } from 'react';
+import Map, { Layer, Marker, Source } from 'react-map-gl/mapbox';
+import 'mapbox-gl/dist/mapbox-gl.css';
+import HeatmapLayer from '../HeatmapLayer';
+import heatmapData from '../../data/heatmapData';
+import demandZones from '../../data/demandZones';
+import { vehicleStateLabel } from '../../utils/vehicleDisplayUtils';
 
-const MAP_BG = '/command/mockup-reference.png';
+const ORLANDO_VIEW = {
+  longitude: -81.3792,
+  latitude: 28.5383,
+  zoom: 10,
+};
 
-function MapPin({ tone = 'active', style }) {
-  const colors = {
-    active: { ring: 'border-[#22c55e]', bg: 'bg-[#22c55e]', icon: 'text-white' },
-    charging: { ring: 'border-[#eab308]', bg: 'bg-[#eab308]', icon: 'text-white' },
-    offline: { ring: 'border-[#ef4444]', bg: 'bg-[#ef4444]', icon: 'text-white' },
-  };
-  const toneSet = colors[tone] || colors.active;
+function getVehicleName(vehicle) {
+  if (!vehicle) return 'Vehicle';
+  return vehicle.name || vehicle.ownership?.tag || vehicle.display_name || vehicle.id || 'Tesla';
+}
+
+function getMarkerColorClass(vehicle) {
+  const status = String(vehicle?.status || vehicle?.state || '').toUpperCase();
+  if (status.includes('OFFLINE') || status.includes('ASLEEP')) return 'bg-[#ef4444]';
+  if (status.includes('CHARG')) return 'bg-[#eab308]';
+  if (
+    status.includes('ONLINE')
+    || status.includes('READY')
+    || status.includes('EN ROUTE')
+    || status.includes('PICKUP')
+    || status.includes('REPOSITION')
+    || status.includes('IDLE')
+  ) {
+    return 'bg-[#22c55e]';
+  }
+  return vehicleStateLabel(vehicle) === 'Charging' ? 'bg-[#eab308]' : 'bg-[#22c55e]';
+}
+
+function getMapFleet(fleet, realFleet) {
+  const source = realFleet.length > 0 ? realFleet : fleet;
+  return source.filter((vehicle) => {
+    const lat = Number(vehicle.latitude);
+    const lng = Number(vehicle.longitude);
+    return Number.isFinite(lat) && Number.isFinite(lng);
+  });
+}
+
+function MapFooter({ total, active }) {
+  return (
+    <div className="pointer-events-none absolute bottom-0 left-0 right-0 flex items-center justify-between gap-2 border-t border-white/10 bg-white/95 px-3 py-2.5 backdrop-blur-sm">
+      <p className="text-[11px] font-semibold text-slate-800">
+        {total} Vehicles <span className="text-slate-400">|</span> {active} Active now
+      </p>
+      <div className="flex items-center gap-2 text-[9px] font-semibold text-slate-500">
+        <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-[#22c55e]" />Active</span>
+        <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-[#eab308]" />Charging</span>
+        <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-[#ef4444]" />Offline</span>
+      </div>
+    </div>
+  );
+}
+
+function DemandZonesLayer() {
+  const geojson = useMemo(() => ({
+    type: 'FeatureCollection',
+    features: demandZones.map((zone) => ({
+      type: 'Feature',
+      properties: {
+        color: zone.color,
+        demand: zone.demand,
+        name: zone.name,
+      },
+      geometry: {
+        type: 'Point',
+        coordinates: [zone.longitude, zone.latitude],
+      },
+    })),
+  }), []);
 
   return (
-    <span className="absolute -translate-x-1/2 -translate-y-1/2" style={style}>
-      <span className={`flex h-8 w-8 items-center justify-center rounded-full border-[2.5px] bg-white shadow-md ${toneSet.ring}`}>
-        <span className={`flex h-5 w-5 items-center justify-center rounded-full ${toneSet.bg}`}>
-          <svg viewBox="0 0 16 16" className={`h-3 w-3 ${toneSet.icon}`} fill="currentColor" aria-hidden="true">
-            <path d="M3 10c1-3 3-5 5-5s4 2 5 5l1 3H2l1-3Zm4.2-4.8c-1.2 0-2.2.8-2.6 2h5.2c-.4-1.2-1.4-2-2.6-2Z" />
-          </svg>
-        </span>
-      </span>
-    </span>
+    <Source id="command-demand-zones" type="geojson" data={geojson}>
+      <Layer
+        id="command-demand-zone-glow"
+        type="circle"
+        paint={{
+          'circle-radius': [
+            'interpolate',
+            ['linear'],
+            ['zoom'],
+            8,
+            14,
+            10,
+            28,
+            12,
+            52,
+          ],
+          'circle-color': ['get', 'color'],
+          'circle-opacity': 0.24,
+          'circle-blur': 0.55,
+        }}
+      />
+    </Source>
+  );
+}
+
+function LiveVehicleMarker({ vehicle }) {
+  const colorClass = getMarkerColorClass(vehicle);
+  const isActive = colorClass.includes('22c55e');
+
+  return (
+    <div className="relative flex h-8 w-8 items-center justify-center" title={getVehicleName(vehicle)}>
+      {isActive && (
+        <span className={`absolute h-8 w-8 animate-ping rounded-full opacity-40 ${colorClass}`} aria-hidden="true" />
+      )}
+      <div className={`relative h-3.5 w-3.5 rounded-full border-2 border-white shadow-md ${colorClass}`} />
+    </div>
   );
 }
 
@@ -29,72 +121,72 @@ export default function CommandMapPreview({
   onNavigate,
   activeCount = 0,
   totalCount = 0,
-  variant = 'default',
+  mapHeightClass = 'h-[284px]',
 }) {
-  const markers = getMapPreviewVehicles(fleet, realFleet, 8);
-  const isMockup = variant === 'mockup';
-  const total = totalCount || markers.length;
-  const active = activeCount || markers.filter((marker) => marker.tone === 'active').length;
+  const [viewState, setViewState] = useState(ORLANDO_VIEW);
+  const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
+  const vehicles = useMemo(() => getMapFleet(fleet, realFleet), [fleet, realFleet]);
+  const total = totalCount || vehicles.length || fleet.length;
+  const active = activeCount || vehicles.filter((vehicle) => {
+    const status = String(vehicle?.status || vehicle?.state || '').toUpperCase();
+    return !status.includes('OFFLINE') && !status.includes('ASLEEP') && !status.includes('CHARG');
+  }).length;
 
   return (
     <section aria-label="Live fleet map">
-      <div className="mb-3 flex items-center justify-between gap-2">
-        <h2 className="text-[22px] font-bold tracking-[-0.02em] text-slate-900">Live Fleet Map</h2>
+      <div className="mb-2.5 flex items-center justify-between gap-2">
+        <h2 className="text-[20px] font-bold tracking-[-0.03em] text-slate-950">Live Fleet Map</h2>
         <button
           type="button"
           onClick={() => onNavigate('map')}
-          className="text-[11px] font-semibold text-[#2563eb]"
+          className="text-[13px] font-semibold text-[#2563eb]"
         >
           Full map
         </button>
       </div>
 
-      <button
-        type="button"
-        onClick={() => onNavigate('map')}
-        className={`relative block w-full overflow-hidden text-left shadow-[0_10px_28px_-18px_rgba(15,23,42,0.35)] ${
-          isMockup ? 'h-[218px] rounded-[18px] border border-slate-200' : 'rounded-[14px] border border-white/10 bg-[#06080c]'
-        }`}
+      <div
+        className={`relative overflow-hidden rounded-[18px] border border-slate-200 shadow-[0_10px_28px_-18px_rgba(15,23,42,0.35)] ${mapHeightClass}`}
       >
-        {isMockup ? (
+        {!mapboxToken ? (
           <>
-            <img
-              src={MAP_BG}
-              alt=""
-              className="absolute inset-0 h-full w-full object-cover object-[center_47%] scale-[2.15]"
-              draggable={false}
-            />
-            <div className="absolute inset-0 bg-[#3f6212]/10" aria-hidden="true" />
+            <div className="absolute inset-0 flex items-center justify-center bg-[#06080c] px-6 text-center">
+              <div>
+                <p className="text-sm font-semibold text-white/80">Mapbox token required</p>
+                <p className="mt-1 text-[11px] text-white/45">
+                  Add <code className="rounded bg-white/10 px-1 py-0.5">VITE_MAPBOX_TOKEN</code> for the live map.
+                </p>
+              </div>
+            </div>
+            <MapFooter total={total} active={active} />
           </>
         ) : (
-          <div className="absolute inset-0 bg-[#06080c]" />
+          <Map
+            {...viewState}
+            onMove={(event) => setViewState(event.viewState)}
+            mapStyle="mapbox://styles/mapbox/dark-v11"
+            mapboxAccessToken={mapboxToken}
+            style={{ width: '100%', height: '100%' }}
+            attributionControl={false}
+            reuseMaps
+            touchPitch={false}
+          >
+            <HeatmapLayer heatmapData={heatmapData} />
+            <DemandZonesLayer />
+            {vehicles.map((vehicle) => (
+              <Marker
+                key={vehicle.id || getVehicleName(vehicle)}
+                longitude={Number(vehicle.longitude)}
+                latitude={Number(vehicle.latitude)}
+              >
+                <LiveVehicleMarker vehicle={vehicle} />
+              </Marker>
+            ))}
+          </Map>
         )}
 
-        {markers.slice(0, 6).map((marker, index) => (
-          <MapPin
-            key={marker.id}
-            tone={marker.tone === 'charging' ? 'charging' : index === 2 ? 'offline' : 'active'}
-            style={{
-              left: marker.left !== null ? `${marker.left}%` : `${18 + index * 13}%`,
-              top: marker.top !== null ? `${marker.top}%` : `${28 + (index % 3) * 16}%`,
-            }}
-          />
-        ))}
-
-        <div className={`absolute bottom-0 left-0 right-0 flex items-center justify-between gap-2 px-3 py-2.5 ${
-          isMockup ? 'bg-white/95 backdrop-blur-sm' : 'bg-black/80'
-        }`}
-        >
-          <p className={`text-[11px] font-semibold ${isMockup ? 'text-slate-800' : 'text-white'}`}>
-            {total} Vehicles <span className={isMockup ? 'text-slate-400' : 'text-white/45'}>|</span> {active} Active now
-          </p>
-          <div className={`flex items-center gap-2 text-[9px] font-semibold ${isMockup ? 'text-slate-500' : 'text-white/55'}`}>
-            <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-[#22c55e]" />Active</span>
-            <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-[#eab308]" />Charging</span>
-            <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-[#ef4444]" />Offline</span>
-          </div>
-        </div>
-      </button>
+        {mapboxToken && <MapFooter total={total} active={active} />}
+      </div>
     </section>
   );
 }

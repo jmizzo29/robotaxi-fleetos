@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import Map, { Marker, Popup } from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
+import HeatmapLayer from './HeatmapLayer';
+import heatmapData from '../data/heatmapData';
 
 function getVehicleName(vehicle) {
   if (!vehicle) return 'Vehicle';
@@ -77,6 +79,7 @@ export default function FleetMap({ fleet = [], onShowDetail }) {
           style={{ width: '100%', height: '100%' }}
           onClick={() => setSelectedVehicle(null)}
         >
+          <HeatmapLayer heatmapData={heatmapData} />
           {fleet.map((vehicle) => {
             const lng = Number(vehicle?.longitude);
             const lat = Number(vehicle?.latitude);
