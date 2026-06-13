@@ -43,7 +43,7 @@ function CompactFleetPreview() {
       <div className="pointer-events-none absolute -inset-4 -z-10 rounded-[2rem] bg-violet-500/15 blur-3xl" />
       <div className="overflow-hidden rounded-2xl border border-white/10 bg-black shadow-2xl shadow-violet-950/40">
         <div className="border-b border-white/10 px-5 py-3.5">
-          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-violet-400/80">Fleet Command</p>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-violet-400/80">Fleet Command Center</p>
           <p className="mt-0.5 text-xs text-white/35">Preview · what you unlock after connecting</p>
         </div>
 

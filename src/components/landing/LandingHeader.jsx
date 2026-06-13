@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
-import Logo from '../Logo';
+import RoboLogo from '../RoboLogo';
+import RoboWordmark from '../RoboWordmark';
 
 const navItems = [
   { label: 'How it works', route: 'how-it-works' },
@@ -23,10 +24,11 @@ export default function LandingHeader({ onNavigate, onConnect }) {
         <button
           type="button"
           onClick={() => go('landing')}
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+          className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center gap-2"
           aria-label="ROBOAGENT home"
         >
-          <Logo className="h-7" />
+          <RoboLogo className="h-7 w-7 shrink-0 text-white" />
+          <RoboWordmark className="text-[13px] tracking-[0.12em]" colorClass="text-white" />
         </button>
 
         <div className="w-10" aria-hidden="true" />
