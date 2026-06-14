@@ -107,6 +107,7 @@ function buildOperationalEarningsHero(fleet, realFleet, syncState) {
     tone: 'positive',
     operational: true,
     liveLabel: 'Operating',
+    earningsContext: 'Projected from fleet activity',
     hint: realFleet.length > 0
       ? 'Tesla linked · verified earnings replace projections when trips complete'
       : null,

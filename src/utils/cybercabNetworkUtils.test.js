@@ -15,6 +15,6 @@ describe('getPhaseLabel', () => {
   it('maps rollout phases to readable labels', () => {
     expect(getPhaseLabel('live')).toBe('Live');
     expect(getPhaseLabel('planned')).toBe('Planned');
-    expect(getPhaseLabel('early')).toBe('Early Rollout');
+    expect(getPhaseLabel('early')).toBe('Emerging');
   });
 });

@@ -15,11 +15,12 @@ import {
   getCommandAiPlan,
   getFleetActivityFeed,
 } from '../../utils/commandHomeUtils';
+import { getExpansionRecommendation } from '../../utils/networkIntelligenceUtils';
 import {
   getCommandEarningsHero,
   getCommandFleetStatusStrip,
 } from '../../utils/vehicleDisplayUtils';
-import { colors, icon, spacing, typography } from '../../design/roboagentTokens';
+import { colors, icon, semantic, spacing, typography } from '../../design/roboagentTokens';
 
 const MAP_HEIGHT = 'h-[420px]';
 
@@ -37,9 +38,17 @@ function EarningsSparkline() {
 function CommandHeaderActions({ onNavigate }) {
   return (
     <>
-      <button type="button" className="relative flex h-9 w-9 items-center justify-center rounded-full bg-white shadow-sm" aria-label="Notifications">
+      <button
+        type="button"
+        onClick={() => onNavigate('alerts')}
+        className="relative flex h-9 w-9 items-center justify-center rounded-full bg-white shadow-sm"
+        aria-label="Fleet alerts"
+      >
         <Bell className="h-[17px] w-[17px] text-slate-700" strokeWidth={icon.navStrokeIdle} />
-        <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#ef4444] px-1 text-[9px] font-bold text-white">
+        <span
+          className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold text-white"
+          style={{ backgroundColor: colors.error }}
+        >
           2
         </span>
       </button>
@@ -65,21 +74,31 @@ function EarningsHeroCard({ hero }) {
         <div className="relative flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
             <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-white/80">Net Earnings Today</p>
+            {hero.earningsContext && (
+              <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.08em] text-white/60">
+                {hero.earningsContext}
+              </p>
+            )}
             <p className={`mt-2 text-white ${typography.display}`}>{hero.amount}</p>
             {hero.delta ? (
-              <p className="mt-2 text-[15px] font-semibold text-[#bbf7d0]">{hero.delta}</p>
+              <p className="mt-2 text-[15px] font-semibold" style={{ color: colors.heroDelta }}>{hero.delta}</p>
             ) : hero.hint ? (
               <p className="mt-2 text-[14px] font-semibold text-white/80">{hero.hint}</p>
             ) : null}
           </div>
           <div className="flex shrink-0 flex-col items-end gap-2">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/20 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-white">
-              <span className="h-2 w-2 animate-pulse rounded-full bg-[#4ade80]" />
+              <span
+                className="h-2 w-2 animate-pulse rounded-full"
+                style={{ backgroundColor: colors.heroPulse }}
+              />
               {liveLabel}
             </span>
-            <div className="h-14 w-[7rem]">
-              <EarningsSparkline />
-            </div>
+            {!hero.operational && (
+              <div className="h-14 w-[7rem]">
+                <EarningsSparkline />
+              </div>
+            )}
           </div>
         </div>
 
@@ -145,46 +164,62 @@ function FleetStatusGrid({ strip, onNavigate }) {
   );
 }
 
+const ACTIVITY_ICON = {
+  trip: { bg: semantic.positiveBg, text: semantic.positive },
+  milestone: { bg: semantic.positiveBg, text: semantic.positive },
+  surge: { bg: semantic.surgeBg, text: semantic.surge },
+  offline: { bg: semantic.alertBg, text: semantic.alert },
+  charging: { bg: semantic.cautionBg, text: semantic.caution },
+};
+
 function ActivityStatusIcon({ eventType }) {
   const shell = `flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px]`;
-  if (eventType === 'trip' || eventType === 'milestone') {
-    return (
-      <span className={`${shell} bg-[#ecfdf3] text-[#15803d]`}>
-        <CircleDollarSign className="h-[18px] w-[18px]" strokeWidth={icon.stroke} />
-      </span>
-    );
-  }
-  if (eventType === 'surge') {
-    return (
-      <span className={`${shell} bg-[#eff6ff] text-[#2563eb]`}>
-        <TrendingUp className="h-[18px] w-[18px]" strokeWidth={icon.stroke} />
-      </span>
-    );
-  }
-  if (eventType === 'offline') {
-    return (
-      <span className={`${shell} bg-[#fef2f2] text-[#dc2626]`}>
-        <AlertTriangle className="h-[18px] w-[18px]" strokeWidth={icon.stroke} />
-      </span>
-    );
-  }
+  const palette = ACTIVITY_ICON[eventType] || ACTIVITY_ICON.charging;
+  const Icon = eventType === 'trip' || eventType === 'milestone'
+    ? CircleDollarSign
+    : eventType === 'surge'
+      ? TrendingUp
+      : eventType === 'offline'
+        ? AlertTriangle
+        : Zap;
+
   return (
-    <span className={`${shell} bg-[#fefce8] text-[#a16207]`}>
-      <Zap className="h-[18px] w-[18px]" strokeWidth={icon.stroke} />
+    <span className={shell} style={{ backgroundColor: palette.bg, color: palette.text }}>
+      <Icon className="h-[18px] w-[18px]" strokeWidth={icon.stroke} />
     </span>
   );
 }
 
-function impactClass(tone) {
-  if (tone === 'positive') return 'text-[#15803d]';
-  if (tone === 'surge') return 'text-[#2563eb]';
-  if (tone === 'alert') return 'text-[#dc2626]';
-  return 'text-slate-600';
+function impactStyle(tone) {
+  if (tone === 'positive') return { color: semantic.positive };
+  if (tone === 'surge') return { color: semantic.surge };
+  if (tone === 'alert') return { color: semantic.alert };
+  return undefined;
+}
+
+function GrowthSignal({ expansion, onNavigate }) {
+  return (
+    <button
+      type="button"
+      onClick={() => onNavigate('network')}
+      className="flex w-full items-center justify-between gap-3 rounded-[20px] border border-slate-200/90 bg-white px-4 py-3.5 text-left shadow-[0_4px_18px_-16px_rgba(15,23,42,0.22)] transition active:scale-[0.99]"
+    >
+      <div className="min-w-0">
+        <p className={typography.label}>Where to grow next</p>
+        <p className={`mt-1 ${typography.bodyMd}`}>
+          {expansion.city} · +${expansion.projectedDaily}/day potential
+        </p>
+      </div>
+      <span className="shrink-0 text-[13px] font-semibold" style={{ color: colors.primary }}>
+        Network →
+      </span>
+    </button>
+  );
 }
 
 function FleetActivitySection({ events }) {
   return (
-    <AppSection title="Fleet Activity" tier="secondary">
+    <AppSection title="Fleet Activity" tier="primary">
       <ul className={spacing.stackSm}>
         {events.map((event) => (
           <li key={event.id}>
@@ -192,7 +227,9 @@ function FleetActivitySection({ events }) {
               <ActivityStatusIcon eventType={event.eventType} />
               <div className="min-w-0 flex-1">
                 <p className={typography.body}>{event.description}</p>
-                <p className={`mt-0.5 text-[13px] font-bold tabular-nums ${impactClass(event.impactTone)}`}>{event.impact}</p>
+                <p className="mt-0.5 text-[13px] font-bold tabular-nums" style={impactStyle(event.impactTone)}>
+                  {event.impact}
+                </p>
               </div>
               <p className={`shrink-0 ${typography.caption}`}>{event.timestamp}</p>
             </AppCard>
@@ -208,23 +245,23 @@ function AiOperationsBrief({ plan, onNavigate }) {
     <AppSection title="AI Operations Brief" actionLabel="Execute" onAction={() => onNavigate('ai')} tier="tertiary" className="pb-2">
       <AppCard variant="alert">
         <div className="flex items-center gap-2">
-          <ClipboardList className="h-4 w-4 text-[#2563eb]" strokeWidth={icon.stroke} />
+          <ClipboardList className="h-4 w-4" style={{ color: colors.primary }} strokeWidth={icon.stroke} />
           <p className={typography.sectionSm}>Prepared for your fleet</p>
         </div>
         <p className={`mt-3 ${typography.cardTitle}`}>{plan.summary}</p>
-        <p className={`mt-2 ${typography.bodyMd} text-[#2563eb]`}>{plan.action}</p>
+        <p className="mt-2 font-semibold" style={{ color: colors.primary }}>{plan.action}</p>
         <div className="mt-4 grid grid-cols-2 gap-4 border-t border-slate-100 pt-4">
           <div>
             <p className={typography.label}>Expected demand increase</p>
-            <p className={`mt-1.5 ${typography.metricSm} text-[#2563eb]`}>{plan.demandIncrease}</p>
+            <p className={`mt-1.5 ${typography.metricSm}`} style={{ color: colors.primary }}>{plan.demandIncrease}</p>
           </div>
           <div>
             <p className={typography.label}>Est. additional earnings</p>
-            <p className={`mt-1.5 ${typography.metricSm} text-[#15803d]`}>{plan.expectedRevenueImpact}</p>
+            <p className={`mt-1.5 ${typography.metricSm}`} style={{ color: semantic.positive }}>{plan.expectedRevenueImpact}</p>
           </div>
         </div>
         <p className="mt-4 text-[13px] font-semibold text-slate-600">
-          Confidence: <span className="text-[#2563eb]">{plan.confidenceLabel}</span>
+          Confidence: <span style={{ color: colors.primary }}>{plan.confidenceLabel}</span>
         </p>
       </AppCard>
     </AppSection>
@@ -245,6 +282,7 @@ export default function FleetCommandHome({
   const strip = getCommandFleetStatusStrip(fleet, realFleet, totalEarnings, syncState);
   const activity = getFleetActivityFeed(fleet, realFleet, 5, totalEarnings, syncState);
   const plan = getCommandAiPlan(fleet, realFleet, realSyncStatus, commandQueue, totalEarnings);
+  const expansion = getExpansionRecommendation(fleet);
   const activeCount = Number(strip.active.value) || 0;
   const totalCount = strip.total || fleet.length;
 
@@ -267,6 +305,11 @@ export default function FleetCommandHome({
       />
 
       <FleetActivitySection events={activity} />
+
+      <div className={spacing.sectionTertiary}>
+        <GrowthSignal expansion={expansion} onNavigate={onNavigate} />
+      </div>
+
       <FleetStatusGrid strip={strip} onNavigate={onNavigate} />
       <AiOperationsBrief plan={plan} onNavigate={onNavigate} />
     </AppShell>

@@ -9,7 +9,7 @@ const ICONS = {
   account: User,
 };
 
-export default function MobileBottomNav({ route, onNavigate }) {
+export default function MobileBottomNav({ route, onNavigate, pendingCount = 0 }) {
   return (
     <nav
       className={`fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200/90 bg-white/98 backdrop-blur-lg lg:hidden ${shadow.nav}`}
@@ -20,6 +20,7 @@ export default function MobileBottomNav({ route, onNavigate }) {
         {mobileNavItems.map(({ id, label, routes }) => {
           const active = routes.includes(route);
           const Icon = ICONS[id];
+          const showBadge = id === 'dispatch' && pendingCount > 0;
 
           return (
             <button
@@ -27,30 +28,38 @@ export default function MobileBottomNav({ route, onNavigate }) {
               type="button"
               onClick={() => onNavigate(id)}
               aria-current={active ? 'page' : undefined}
-              className="relative flex min-h-[4.35rem] min-w-0 flex-col items-center justify-center gap-1 px-0.5 pb-2 pt-2.5 transition active:scale-[0.98]"
+              className="relative flex min-h-[4.5rem] min-w-0 flex-col items-center justify-center gap-1 px-0.5 pb-2 pt-2 transition active:scale-[0.98]"
             >
               {active && (
                 <span
-                  className="absolute inset-x-4 top-0 h-[3px] rounded-full"
+                  className="absolute inset-x-3 top-0 h-1 rounded-full"
                   style={{ backgroundColor: colors.primary }}
                   aria-hidden="true"
                 />
               )}
               <span
-                className="flex h-10 w-10 items-center justify-center rounded-2xl transition-colors"
-                style={{ backgroundColor: active ? colors.primaryLight : 'transparent' }}
+                className={`relative flex h-11 w-11 items-center justify-center rounded-2xl transition-all ${
+                  active ? 'shadow-lg shadow-blue-500/30' : ''
+                }`}
+                style={{ backgroundColor: active ? colors.primary : 'transparent' }}
               >
                 <Icon
                   size={icon.nav}
                   strokeWidth={active ? icon.navStroke : icon.navStrokeIdle}
                   className="flex-shrink-0"
-                  style={{ color: active ? colors.primary : colors.inkSubtle }}
+                  style={{ color: active ? '#ffffff' : colors.inkSubtle }}
                 />
+                {showBadge && (
+                  <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-rose-500 px-1 text-[9px] font-bold text-white">
+                    {pendingCount > 9 ? '9+' : pendingCount}
+                  </span>
+                )}
               </span>
               <span
-                className={`w-full max-w-[4.5rem] px-0.5 text-center ${typography.navLabel} ${
-                  active ? 'text-[#2563eb]' : 'text-slate-500'
+                className={`w-full max-w-[4.75rem] px-0.5 text-center ${typography.navLabel} ${
+                  active ? 'font-bold text-blue-800' : 'font-semibold text-slate-400'
                 }`}
+                style={active ? { color: colors.navActiveLabel } : undefined}
               >
                 {label}
               </span>

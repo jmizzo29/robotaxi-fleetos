@@ -2,7 +2,9 @@ import { useMemo, useState } from 'react';
 import { Battery, MapPin, Search } from 'lucide-react';
 import VehicleIdentityPlate from '../components/VehicleIdentityPlate';
 import { getVehicleOwnership } from '../data/vehicleOwnership';
-import { Card, Chip } from '../ui';
+import { colors, semantic, spacing, typography } from '../design/roboagentTokens';
+import { AppCard } from '../components/shell';
+import { Chip } from '../ui';
 
 function formatCurrency(value) {
   if (!Number.isFinite(value)) return '—';
@@ -19,10 +21,9 @@ function FleetRow({ vehicle, onSelect }) {
   const name = vehicle.name || vehicle.display_name || vehicle.id;
 
   return (
-    <Card
+    <AppCard
       as="button"
       type="button"
-      interactive
       onClick={() => onSelect?.({ ...vehicle, ownership })}
       className="w-full text-left lg:grid lg:grid-cols-[minmax(0,1fr)_120px_100px] lg:items-center lg:gap-4"
     >
@@ -34,12 +35,12 @@ function FleetRow({ vehicle, onSelect }) {
         </div>
         <div className="min-w-0 flex-1">
           <div className="flex items-center gap-2">
-            <p className="truncate text-sm font-semibold text-ink">{name}</p>
+            <p className={`truncate ${typography.body}`}>{name}</p>
             <Chip className="pointer-events-none px-2 py-0.5 text-[10px]">
               {vehicle.isReal ? 'Tesla' : 'Demo'}
             </Chip>
           </div>
-          <p className="mt-0.5 truncate text-xs text-ink-muted">
+          <p className={`mt-0.5 truncate ${typography.caption} text-slate-500`}>
             {ownership ? `${ownership.modelYear} ${ownership.model}` : vehicle.city || vehicle.status}
           </p>
         </div>
@@ -56,10 +57,10 @@ function FleetRow({ vehicle, onSelect }) {
         </span>
       </div>
 
-      <p className="mt-2 text-right text-sm font-medium text-status-ready lg:mt-0">
+      <p className="mt-2 text-right text-sm font-medium lg:mt-0" style={{ color: semantic.positive }}>
         {formatCurrency(ownership?.pricePaid)}
       </p>
-    </Card>
+    </AppCard>
   );
 }
 
@@ -99,12 +100,12 @@ export default function FleetListPanel({ fleet = [], onSelect }) {
   const realCount = fleet.filter((vehicle) => vehicle.isReal).length;
 
   return (
-    <section className="animate-fade-up space-y-4">
+    <section className={`animate-fade-up ${spacing.stackSm}`}>
       <div className="hidden flex-wrap items-center justify-between gap-3 lg:flex">
         <div>
-          <h2 className="text-xl font-semibold text-ink sm:text-2xl">Fleet</h2>
-          <p className="mt-1 text-sm text-ink-muted">
-            {realCount} Tesla{realCount === 1 ? '' : 's'} · {fleet.length - realCount} demo
+          <h2 className={typography.pageTitle}>Fleet</h2>
+          <p className={`mt-1 ${typography.caption}`}>
+            {realCount} Tesla{realCount === 1 ? '' : 's'} · {fleet.length - realCount} operating
           </p>
         </div>
       </div>
@@ -132,9 +133,9 @@ export default function FleetListPanel({ fleet = [], onSelect }) {
           <FleetRow key={vehicle.id} vehicle={vehicle} onSelect={onSelect} />
         ))}
         {filteredFleet.length === 0 && (
-          <Card className="text-center text-sm text-ink-muted">
+          <AppCard className="text-center text-sm text-slate-500">
             No vehicles match your search.
-          </Card>
+          </AppCard>
         )}
       </div>
     </section>

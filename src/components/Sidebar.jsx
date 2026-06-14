@@ -1,60 +1,66 @@
 import SignOutButton from './SignOutButton';
-import Logo from './Logo';
+import RoboWordmark from './RoboWordmark';
+import { colors, typography } from '../design/roboagentTokens';
 
 export default function Sidebar({
   commandQueue = [],
   route = 'overview',
   onNavigate = () => {},
 }) {
-  // Match the exact look and feel of the dashboard sidebar (dark premium, clean text-only nav)
   const navItems = [
-    { id: 'overview', label: 'Home' },
-    { id: 'map', label: 'Map' },
+    { id: 'overview', label: 'Command' },
     { id: 'fleet', label: 'Fleet' },
     { id: 'network', label: 'Network' },
-    { id: 'add-vehicle', label: 'Add Vehicle' },
+    { id: 'dispatch', label: 'Operations' },
+    { id: 'account', label: 'Account' },
     { id: 'ai', label: 'AI Agent' },
-    { id: 'finance', label: 'Finance' },
-    { id: 'charging', label: 'Charging' },
+    { id: 'map', label: 'Map' },
     { id: 'settings', label: 'Settings' },
   ];
 
-  const isActive = (id) => route === id;
+  const isActive = (id) => route === id || (id === 'overview' && route === 'overview');
 
   return (
-    <aside className="hidden w-72 flex-col border-r border-white/10 bg-[#0a0a0a] text-white lg:flex">
-      <div className="p-6 flex-1">
-        {/* Brand — matches dashboard */}
-        <div className="flex items-center mb-10">
-          <Logo className="h-8" onClick={() => onNavigate('overview')} />
+    <aside
+      className="hidden w-72 flex-col border-r border-slate-200/90 bg-white lg:flex"
+      style={{ paddingTop: 'env(safe-area-inset-top)' }}
+    >
+      <div className="flex-1 p-6">
+        <div className="mb-10">
+          <button type="button" onClick={() => onNavigate('overview')} className="text-left">
+            <RoboWordmark className="text-[1.05rem] tracking-[0.04em]" colorClass={typography.wordmarkColor} />
+          </button>
         </div>
 
-        {/* Navigation — exact match to dashboard pills */}
         <nav className="space-y-1">
-          {navItems.map((item) => (
-            <div
-              key={item.id}
-              onClick={() => onNavigate(item.id)}
-              className={`px-5 py-3.5 rounded-2xl text-lg font-medium cursor-pointer transition ${
-                isActive(item.id) ? 'bg-white text-black' : 'hover:bg-white/5'
-              }`}
-            >
-              {item.label}
-              {item.id === 'ai' && commandQueue.length > 0 && (
-                <span className="ml-2 rounded-full bg-emerald-400 text-black text-[10px] font-semibold tracking-wider px-1.5 py-0.5">
-                  {commandQueue.length}
-                </span>
-              )}
-            </div>
-          ))}
+          {navItems.map((item) => {
+            const active = isActive(item.id);
+            return (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => onNavigate(item.id)}
+                className={`flex w-full items-center justify-between rounded-2xl px-4 py-3 text-left text-[15px] font-semibold transition ${
+                  active ? 'text-white shadow-md shadow-blue-500/25' : 'text-slate-600 hover:bg-slate-50'
+                }`}
+                style={active ? { backgroundColor: colors.primary } : undefined}
+              >
+                <span>{item.label}</span>
+                {item.id === 'ai' && commandQueue.length > 0 && (
+                  <span className="rounded-full bg-white/20 px-2 py-0.5 text-[10px] font-bold text-white">
+                    {commandQueue.length}
+                  </span>
+                )}
+              </button>
+            );
+          })}
         </nav>
       </div>
 
-      {/* Sign out — matches dashboard */}
-      <div className="p-6 border-t border-white/10">
+      <div className="border-t border-slate-200/90 p-6">
         <SignOutButton
           onSignedOut={() => onNavigate('landing')}
-          className="w-full text-left text-sm text-white/60 hover:text-white hover:bg-white/5 rounded-2xl px-5 py-3 transition"
+          className="w-full rounded-2xl border border-slate-200/90 bg-slate-50 px-4 py-3 text-left text-sm font-semibold text-slate-600 transition hover:bg-slate-100"
           label="Sign out"
           compact
         />

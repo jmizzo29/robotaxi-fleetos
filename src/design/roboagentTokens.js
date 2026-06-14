@@ -19,6 +19,20 @@ export const colors = {
   errorBg: '#fef2f2',
   service: '#c2410c',
   serviceBg: '#fff7ed',
+  heroDelta: '#bbf7d0',
+  heroPulse: '#4ade80',
+  navActiveLabel: '#1e3a8a',
+};
+
+export const semantic = {
+  positive: colors.success,
+  positiveBg: colors.successBg,
+  surge: colors.primary,
+  surgeBg: colors.primaryLight,
+  alert: colors.error,
+  alertBg: colors.errorBg,
+  caution: colors.warning,
+  cautionBg: colors.warningBg,
 };
 
 export const typography = {
@@ -68,7 +82,7 @@ export const shadow = {
 export const card = {
   base: `${radius.card} border border-slate-200/90 bg-white ${shadow.card}`,
   subdued: `${shadow.cardSubdued}`,
-  accent: 'border-l-[4px] border-l-[#2563eb]',
+  accent: 'border-l-[4px] border-l-blue-600',
 };
 
 export const icon = {

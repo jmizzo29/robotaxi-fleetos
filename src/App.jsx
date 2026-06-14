@@ -32,7 +32,7 @@ import Login from './components/Auth/Login';
 import Signup from './components/Auth/Signup';
 import LegalPage from './panels/LegalPage';
 import MemoryEventsPanel from './panels/MemoryEventsPanel';
-import CommandDashboard from './panels/CommandDashboard';
+import FleetCommandHome from './components/home/FleetCommandHome';
 import OnboardingPanel from './panels/OnboardingPanel';
 import AddVehiclePanel from './panels/AddVehiclePanel';
 import OperationsReportPanel from './panels/OperationsReportPanel';
@@ -428,15 +428,14 @@ function FleetApp() {
 
   const pages = {
     overview: (
-        <CommandDashboard
-          onNavigate={navigate}
-          fleet={fleet}
-          realSyncStatus={realSyncStatus}
-          isLoadingReal={isLoadingReal}
-          onRetrySync={refreshRealTesla}
-          commandQueue={commandQueue}
-          onQueueCommand={requestCommand}
-        />
+      <FleetCommandHome
+        fleet={fleet}
+        realFleet={realVehicles}
+        realSyncStatus={realSyncStatus}
+        isLoadingReal={isLoadingReal}
+        commandQueue={commandQueue}
+        onNavigate={navigate}
+      />
     ),
     onboarding: (
       <>
@@ -875,16 +874,19 @@ function FleetApp() {
   if (route === 'overview') {
     return (
       <>
-        <CommandDashboard
-          onNavigate={navigate}
-          route={route}
-          fleet={fleet}
-          realSyncStatus={realSyncStatus}
-          isLoadingReal={isLoadingReal}
-          onRetrySync={refreshRealTesla}
-          commandQueue={commandQueue}
-          onQueueCommand={requestCommand}
-        />
+        <div className="flex min-h-screen" style={{ backgroundColor: '#f3f4f8' }}>
+          <Sidebar commandQueue={commandQueue} route={route} onNavigate={navigate} />
+          <main className="flex-1 overflow-y-auto">
+            <FleetCommandHome
+              fleet={fleet}
+              realFleet={realVehicles}
+              realSyncStatus={realSyncStatus}
+              isLoadingReal={isLoadingReal}
+              commandQueue={commandQueue}
+              onNavigate={navigate}
+            />
+          </main>
+        </div>
         <MobileBottomNav route={route} onNavigate={navigate} pendingCount={commandQueue.length} />
         <FeedbackButton route={route} />
       </>
