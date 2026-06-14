@@ -52,7 +52,7 @@ describe('getCommandFleetStatusStrip', () => {
     expect(strip.offline.sub).toBe('Fleet Healthy');
   });
 
-  it('uses simulated fleet counts when real revenue is not trusted', () => {
+  it('counts synced real vehicles when revenue is not trusted', () => {
     const simulatedFleet = [
       { id: 'CAR-001', status: 'EN ROUTE', isReal: false },
       { id: 'CAR-002', status: 'CHARGING', isReal: false },
@@ -60,8 +60,9 @@ describe('getCommandFleetStatusStrip', () => {
       { id: 'TSLA-1', status: 'PARKED', revenue: 0, isReal: true },
     ];
     const strip = getCommandFleetStatusStrip(simulatedFleet, [simulatedFleet[3]], 0, 'success');
-    expect(Number(strip.active.value)).toBeGreaterThan(0);
-    expect(Number(strip.charging.value)).toBeGreaterThan(0);
+    expect(strip.total).toBe(1);
+    expect(Number(strip.active.value)).toBe(1);
+    expect(Number(strip.charging.value)).toBe(0);
   });
 });
 

@@ -3,6 +3,7 @@ import { useUser } from '@clerk/react';
 import AccountSheet from './AccountSheet';
 import MonumentActionFooter from './MonumentActionFooter';
 import MonumentHero from './MonumentHero';
+import MonumentUtilityLinks from './MonumentUtilityLinks';
 import OperationsLedgerStrip from './OperationsLedgerStrip';
 import { monument } from './monumentTokens';
 import { clearLocalComplianceState } from '../../services/betaCompliance';
@@ -77,7 +78,8 @@ export default function MonumentSettings({
       />
 
       <div
-        className="shrink-0 touch-manipulation pb-[max(0.75rem,env(safe-area-inset-bottom))]"
+        className="shrink-0 touch-manipulation border-t pt-1"
+        style={{ borderColor: monument.hairline }}
         onPointerDown={(event) => {
           event.currentTarget.dataset.pressStart = String(Date.now());
         }}
@@ -87,9 +89,11 @@ export default function MonumentSettings({
           delete event.currentTarget.dataset.pressStart;
         }}
       >
-        <p className="text-center text-[10.8px] font-medium" style={{ color: monument.inkGhost }}>
+        <MonumentUtilityLinks layout="dock" active="settings" onNavigate={onNavigate} />
+        <p className="pb-1 text-center text-[10.8px] font-medium" style={{ color: monument.inkGhost }}>
           Long-press for Account
         </p>
+        <div className="lg:hidden min-h-[4.5rem] shrink-0" aria-hidden="true" />
       </div>
 
       <AccountSheet

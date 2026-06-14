@@ -51,7 +51,7 @@ export function hasTrustedFleetRevenue(realFleet, totalEarnings, syncState) {
   return realFleet.some((vehicle) => Math.round(vehicle.revenue || 0) > 0);
 }
 
-/** Prefer simulated fleet presentation until real Tesla revenue is meaningful. */
+/** Prefer simulated fleet presentation for earnings demos only — not fleet/telemetry UI. */
 export function shouldUseOperationalTruth(realFleet, totalEarnings, syncState) {
   if (syncState === 'loading') return false;
   return !hasTrustedFleetRevenue(realFleet, totalEarnings, syncState);
@@ -63,10 +63,8 @@ export function getSimulatedFleet(fleet = []) {
 }
 
 export function getCommandOperationalSource(fleet, realFleet, totalEarnings, syncState) {
-  if (shouldUseOperationalTruth(realFleet, totalEarnings, syncState)) {
-    return getSimulatedFleet(fleet);
-  }
-  return realFleet.length > 0 ? realFleet : fleet;
+  if (realFleet.length > 0) return realFleet;
+  return getSimulatedFleet(fleet);
 }
 
 function operationalTripsToday(vehicle, index) {

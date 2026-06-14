@@ -5,6 +5,7 @@ import CommandMapPreview from '../home/CommandMapPreview';
 import MapDetailSheet from './MapDetailSheet';
 import MonumentActionFooter from './MonumentActionFooter';
 import MonumentHero from './MonumentHero';
+import MonumentUtilityLinks from './MonumentUtilityLinks';
 import { monument } from './monumentTokens';
 import { clearLocalComplianceState } from '../../services/betaCompliance';
 import { logoutFleetOsAccount } from '../../services/sessionService';
@@ -90,7 +91,8 @@ export default function MonumentMap({
       />
 
       <div
-        className="shrink-0 touch-manipulation pb-[max(0.75rem,env(safe-area-inset-bottom))]"
+        className="shrink-0 touch-manipulation border-t pt-1"
+        style={{ borderColor: monument.hairline }}
         onPointerUp={(event) => {
           const started = Number(event.currentTarget.dataset.pressStart || 0);
           if (started && Date.now() - started >= 500) setAccountOpen(true);
@@ -100,9 +102,11 @@ export default function MonumentMap({
           event.currentTarget.dataset.pressStart = String(Date.now());
         }}
       >
-        <p className="text-center text-[10.8px] font-medium" style={{ color: monument.inkGhost }}>
+        <MonumentUtilityLinks layout="dock" active="map" onNavigate={onNavigate} />
+        <p className="pb-1 text-center text-[10.8px] font-medium" style={{ color: monument.inkGhost }}>
           Long-press for Account
         </p>
+        <div className="lg:hidden min-h-[4.5rem] shrink-0" aria-hidden="true" />
       </div>
 
       <MapDetailSheet

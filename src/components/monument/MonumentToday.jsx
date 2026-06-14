@@ -6,6 +6,7 @@ import ConfirmActionSheet from './ConfirmActionSheet';
 import ExploreMarketSheet from './ExploreMarketSheet';
 import FleetMonumentPanel from './FleetMonumentPanel';
 import MonumentSwipeStrip from './MonumentSwipeStrip';
+import MonumentUtilityLinks from './MonumentUtilityLinks';
 import MonumentActionFooter from './MonumentActionFooter';
 import TelemetryDetailSheet from './TelemetryDetailSheet';
 import FleetBrowseSheet from './FleetBrowseSheet';
@@ -54,6 +55,7 @@ export default function MonumentToday({
   commandQueue = [],
   onQueueCommand = () => {},
   onNavigate = () => {},
+  onSync = () => {},
 }) {
   const { user } = useUser();
   const [tab, setTab] = useState('today');
@@ -127,6 +129,11 @@ export default function MonumentToday({
 
   const actionLine = actionDone || action.line.replace(/\.$/, '');
   const offline = Number(strip.offline?.value) || 0;
+  const fleetSyncHint = realFleet.length === 0 && realSyncStatus?.state === 'error'
+    ? realSyncStatus.message
+    : realFleet.length === 0 && !isLoadingReal
+      ? 'Tesla connected? Sync from Settings to load your vehicle.'
+      : null;
 
   const scrollToTab = useCallback((nextTab) => {
     const index = TAB_ORDER.indexOf(nextTab);
@@ -281,13 +288,14 @@ export default function MonumentToday({
       id: 'fleet',
       hero: {
         label: 'FLEET',
-        amount: `${strip.active?.value || 0}/${strip.total || fleet.length || 0}`,
-        subline: `active now · ${fleetCity}`,
+        amount: `${strip.active?.value || 0}/${strip.total || realFleet.length || 0}`,
+        subline: fleetSyncHint || `active now · ${fleetCity}`,
         labelColor: monument.inkGhost,
       },
       footer: {
-        line: offline > 0 ? 'CAB offline — needs reconnect.' : 'Fleet healthy.',
-        doItLabel: 'Do it',
+        line: fleetSyncHint || (offline > 0 ? 'CAB offline — needs reconnect.' : 'Fleet healthy.'),
+        doItLabel: fleetSyncHint ? 'Sync Tesla' : 'Do it',
+        onDoItOverride: fleetSyncHint ? () => onSync() : null,
         secondaryLabel: action.secondary?.label,
         onSecondary: () => openAssetSheet(),
         tertiaryLabel: 'View telemetry',
@@ -310,7 +318,7 @@ export default function MonumentToday({
         onSecondary: null,
       },
     },
-  ], [take, actionLine, action.secondary, strip, fleet.length, fleetCity, offline, expansion]);
+  ], [take, actionLine, action.secondary, strip, realFleet.length, fleetCity, offline, expansion, fleetSyncHint, isLoadingReal]);
 
   return (
     <div
@@ -341,7 +349,7 @@ export default function MonumentToday({
             )}
             <MonumentActionFooter
               line={page.footer.line}
-              onDoIt={() => handleDoIt(page.id)}
+              onDoIt={page.footer.onDoItOverride || (() => handleDoIt(page.id))}
               doItLabel={page.footer.doItLabel}
               secondaryLabel={page.footer.secondaryLabel}
               onSecondary={page.footer.onSecondary}
@@ -352,11 +360,15 @@ export default function MonumentToday({
         ))}
       </div>
 
-      <MonumentSwipeStrip
-        active={tab}
-        onSelect={scrollToTab}
-        onLongPress={() => setAccountOpen(true)}
-      />
+      <div className="shrink-0 border-t" style={{ borderColor: monument.hairline }}>
+        <MonumentUtilityLinks layout="inline" onNavigate={onNavigate} />
+        <MonumentSwipeStrip
+          active={tab}
+          onSelect={scrollToTab}
+          onLongPress={() => setAccountOpen(true)}
+        />
+        <div className="lg:hidden min-h-[4.5rem] shrink-0" aria-hidden="true" />
+      </div>
 
       <ConfirmActionSheet
         open={confirmOpen}

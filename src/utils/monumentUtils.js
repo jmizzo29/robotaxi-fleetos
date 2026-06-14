@@ -14,6 +14,10 @@ function commandSource(fleet, realFleet, totalEarnings, syncState) {
 }
 
 function cabLabel(vehicle, index) {
+  if (vehicle?.isReal) {
+    const name = vehicle.display_name || vehicle.name;
+    if (name) return name;
+  }
   const id = String(vehicle?.id || vehicle?.name || '');
   const carMatch = id.match(/CAR-(\d+)/i);
   if (carMatch) return `CAB-${carMatch[1].padStart(2, '0')}`;
@@ -316,6 +320,9 @@ export function getAccountSheetPayload({
     rows: [
       { label: 'Tesla', value: realFleet.length > 0 ? 'Connected' : 'Not connected' },
       { label: 'Sync', value: syncLabel },
+      { label: 'Map', value: '→', route: 'map' },
+      { label: 'Network', value: '→', route: 'network' },
+      { label: 'Integrations', value: '→', route: 'integrations' },
       { label: 'Settings', value: '→', route: 'settings' },
       { label: 'Privacy', value: '→', route: 'privacy' },
     ],

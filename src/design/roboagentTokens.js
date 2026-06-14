@@ -97,16 +97,22 @@ export const icon = {
 
 export const mobileNavItems = [
   { id: 'overview', label: 'Command', routes: ['overview'] },
-  { id: 'fleet', label: 'Fleet', routes: ['fleet', 'vehicle'] },
   { id: 'dispatch', label: 'Operations', routes: ['dispatch', 'charging', 'health', 'readiness', 'alerts'] },
+  { id: 'map', label: 'Map', routes: ['map'] },
   { id: 'network', label: 'Network', routes: ['network'] },
-  { id: 'account', label: 'Account', routes: ['account', 'settings'] },
+  { id: 'integrations', label: 'Integrations', routes: ['integrations'] },
+  { id: 'settings', label: 'Settings', routes: ['settings', 'account'] },
 ];
+
+/** @deprecated use mobileNavItems — kept for legacy imports */
+export const monumentNavItems = mobileNavItems;
 
 export function mobileScreenBadge(route) {
   if (route === 'overview') return null;
+  if (route === 'map') return 'Map';
   if (route === 'network') return 'Network';
-  if (route === 'account' || route === 'settings') return 'Account';
+  if (route === 'integrations') return 'Integrations';
+  if (route === 'settings' || route === 'account') return 'Settings';
   if (route === 'fleet' || route === 'vehicle') return 'Fleet';
   if (['dispatch', 'charging', 'health', 'readiness', 'alerts'].includes(route)) return 'Operations';
   return null;

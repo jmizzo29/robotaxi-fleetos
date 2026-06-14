@@ -5,6 +5,7 @@ import {
   getFleetHeroMetric,
   getFleetRecommendation,
   getFleetSnapshotCounts,
+  getCommandOperationalSource,
   hasTrustedFleetRevenue,
 } from './vehicleDisplayUtils';
 
@@ -25,6 +26,26 @@ describe('hasTrustedFleetRevenue', () => {
 
   it('returns true when real vehicles have positive revenue and sync succeeded', () => {
     expect(hasTrustedFleetRevenue([earningVehicle], 482, 'success')).toBe(true);
+  });
+});
+
+describe('getCommandOperationalSource', () => {
+  const simulatedFleet = [
+    { id: 'CAR-001', isReal: false, revenue: 4200 },
+    { id: 'CAR-002', isReal: false, revenue: 3800 },
+  ];
+  const realFleet = [
+    { id: 'tesla-1', isReal: true, display_name: 'Model Y', revenue: 0, battery: 82 },
+  ];
+
+  it('prefers real fleet when synced without trusted revenue', () => {
+    const source = getCommandOperationalSource(simulatedFleet, realFleet, 0, 'success');
+    expect(source).toEqual(realFleet);
+  });
+
+  it('falls back to simulated fleet when no real vehicles are synced', () => {
+    const source = getCommandOperationalSource(simulatedFleet, [], 0, 'idle');
+    expect(source).toEqual(simulatedFleet);
   });
 });
 

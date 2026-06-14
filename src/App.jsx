@@ -408,6 +408,7 @@ function FleetApp() {
         commandQueue={commandQueue}
         onQueueCommand={enqueueCommand}
         onNavigate={navigate}
+        onSync={refreshRealTesla}
       />
     ),
     onboarding: (
@@ -797,9 +798,11 @@ function FleetApp() {
               commandQueue={commandQueue}
               onQueueCommand={enqueueCommand}
               onNavigate={navigate}
+              onSync={refreshRealTesla}
             />
           </main>
         </div>
+        <MobileBottomNav route={route} onNavigate={navigate} pendingCount={commandQueue.length} />
         <FeedbackButton route={route} />
       </>
     );
@@ -823,6 +826,7 @@ function FleetApp() {
             />
           </main>
         </div>
+        <MobileBottomNav route={route} onNavigate={navigate} pendingCount={commandQueue.length} />
         <FeedbackButton route={route} />
       </>
     );
@@ -877,6 +881,7 @@ function FleetApp() {
             {utilityPage}
           </main>
         </div>
+        <MobileBottomNav route={route} onNavigate={navigate} pendingCount={commandQueue.length} />
         <FeedbackButton route={route} />
       </>
     );

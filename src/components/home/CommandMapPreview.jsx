@@ -15,6 +15,10 @@ const ORLANDO_VIEW = {
 };
 
 function getVehicleLabel(vehicle, index) {
+  if (vehicle?.isReal) {
+    const name = vehicle.display_name || vehicle.name;
+    if (name) return name;
+  }
   const id = String(vehicle?.id || vehicle?.name || '');
   const carMatch = id.match(/CAR-(\d+)/i);
   if (carMatch) return `CAB-${carMatch[1].padStart(2, '0')}`;

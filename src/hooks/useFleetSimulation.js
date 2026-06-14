@@ -157,7 +157,9 @@ export function useFleetSimulation({
         setRealSyncStatus({
           state: 'error',
           lastSyncedAt: null,
-          message: 'No Tesla vehicles returned from the telemetry API.',
+          message: realVehicles === null
+            ? 'Could not reach the Tesla sync API. Check your connection and try again from Settings.'
+            : 'No Tesla vehicles returned from the telemetry API.',
         });
         return;
       }

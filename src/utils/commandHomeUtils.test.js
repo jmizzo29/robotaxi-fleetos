@@ -52,13 +52,13 @@ describe('getFleetActivityFeed', () => {
     expect(events[0].timestamp).toBeTruthy();
   });
 
-  it('uses simulated fleet activity when real revenue is not trusted', () => {
+  it('prefers synced real fleet over simulated activity when revenue is untrusted', () => {
     const simulatedFleet = [
       { id: 'CAR-007', status: 'PICKUP', revenue: 4100, utilization: 80, isReal: false, city: 'Orlando' },
-      { id: 'TSLA-1', status: 'PARKED', revenue: 0, isReal: true },
+      { id: 'TSLA-1', status: 'PARKED', revenue: 0, isReal: true, display_name: 'Model Y' },
     ];
     const events = getFleetActivityFeed(simulatedFleet, [simulatedFleet[1]], 5, 0, 'success');
-    expect(events.some((event) => event.description.includes('CAB-007'))).toBe(true);
+    expect(events.some((event) => event.description.includes('CAB-007'))).toBe(false);
   });
 });
 

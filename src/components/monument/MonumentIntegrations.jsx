@@ -5,6 +5,7 @@ import IntegrationDetailSheet from './IntegrationDetailSheet';
 import IntegrationsMonumentPanel from './IntegrationsMonumentPanel';
 import MonumentActionFooter from './MonumentActionFooter';
 import MonumentHero from './MonumentHero';
+import MonumentUtilityLinks from './MonumentUtilityLinks';
 import { monument } from './monumentTokens';
 import { clearLocalComplianceState } from '../../services/betaCompliance';
 import { logoutFleetOsAccount } from '../../services/sessionService';
@@ -99,7 +100,8 @@ export default function MonumentIntegrations({
       />
 
       <div
-        className="shrink-0 touch-manipulation pb-[max(0.75rem,env(safe-area-inset-bottom))]"
+        className="shrink-0 touch-manipulation border-t pt-1"
+        style={{ borderColor: monument.hairline }}
         onPointerDown={(event) => {
           event.currentTarget.dataset.pressStart = String(Date.now());
         }}
@@ -109,9 +111,11 @@ export default function MonumentIntegrations({
           delete event.currentTarget.dataset.pressStart;
         }}
       >
-        <p className="text-center text-[10.8px] font-medium" style={{ color: monument.inkGhost }}>
+        <MonumentUtilityLinks layout="dock" active="integrations" onNavigate={onNavigate} />
+        <p className="pb-1 text-center text-[10.8px] font-medium" style={{ color: monument.inkGhost }}>
           Long-press for Account
         </p>
+        <div className="lg:hidden min-h-[4.5rem] shrink-0" aria-hidden="true" />
       </div>
 
       <IntegrationDetailSheet

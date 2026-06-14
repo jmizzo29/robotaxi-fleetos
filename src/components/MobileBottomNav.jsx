@@ -1,12 +1,13 @@
-import { Car, Globe2, LayoutGrid, User, Wrench } from 'lucide-react';
+import { Globe2, LayoutGrid, Map, Plug, Settings, Wrench } from 'lucide-react';
 import { colors, icon, mobileNavItems, shadow, typography } from '../design/roboagentTokens';
 
 const ICONS = {
   overview: LayoutGrid,
-  fleet: Car,
   dispatch: Wrench,
+  map: Map,
   network: Globe2,
-  account: User,
+  integrations: Plug,
+  settings: Settings,
 };
 
 export default function MobileBottomNav({ route, onNavigate, pendingCount = 0 }) {
@@ -16,7 +17,7 @@ export default function MobileBottomNav({ route, onNavigate, pendingCount = 0 })
       aria-label="Primary navigation"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
-      <div className="grid grid-cols-5">
+      <div className={`grid ${mobileNavItems.length > 5 ? 'grid-cols-6' : 'grid-cols-5'}`}>
         {mobileNavItems.map(({ id, label, routes }) => {
           const active = routes.includes(route);
           const Icon = ICONS[id];
