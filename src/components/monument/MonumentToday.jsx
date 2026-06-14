@@ -1,10 +1,11 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useUser } from '@clerk/react';
 import AccountSheet from './AccountSheet';
 import AssetDetailSheet from './AssetDetailSheet';
 import ConfirmActionSheet from './ConfirmActionSheet';
 import ExploreMarketSheet from './ExploreMarketSheet';
-import MonumentDotNav from './MonumentDotNav';
+import FleetMonumentPanel from './FleetMonumentPanel';
+import MonumentSwipeStrip from './MonumentSwipeStrip';
 import TodayDetailSheet from './TodayDetailSheet';
 import { monument, monumentType } from './monumentTokens';
 import { clearLocalComplianceState } from '../../services/betaCompliance';
@@ -21,6 +22,8 @@ import {
 } from '../../utils/monumentUtils';
 import { getCommandFleetStatusStrip } from '../../utils/vehicleDisplayUtils';
 import { getExpansionRecommendation } from '../../utils/networkIntelligenceUtils';
+
+const TAB_ORDER = ['today', 'fleet', 'grow'];
 
 function Hairline() {
   return (
@@ -95,6 +98,8 @@ export default function MonumentToday({
   const [actionDone, setActionDone] = useState('');
   const [growCity, setGrowCity] = useState('Tampa');
   const [assetTarget, setAssetTarget] = useState(null);
+  const pagerRef = useRef(null);
+  const scrollRaf = useRef(null);
 
   const syncState = isLoadingReal ? 'loading' : (realSyncStatus?.state ?? 'idle');
   const totalEarnings = realFleet.reduce((sum, vehicle) => sum + (Number(vehicle.revenue) || 0), 0);
@@ -115,6 +120,11 @@ export default function MonumentToday({
   );
 
   const expansion = useMemo(() => getExpansionRecommendation(fleet), [fleet]);
+
+  const fleetCity = useMemo(() => {
+    const city = fleet.find((vehicle) => vehicle.city)?.city;
+    return city ? String(city).split(',')[0].trim() : 'Orlando';
+  }, [fleet]);
 
   const assetPayload = useMemo(
     () => getAssetSheetPayload(fleet, realFleet, totalEarnings, syncState, assetTarget),
@@ -142,14 +152,34 @@ export default function MonumentToday({
   );
 
   const actionLine = actionDone || action.line.replace(/\.$/, '');
+  const offline = Number(strip.offline?.value) || 0;
+
+  const scrollToTab = useCallback((nextTab) => {
+    const index = TAB_ORDER.indexOf(nextTab);
+    const el = pagerRef.current;
+    if (!el || index < 0) return;
+    el.scrollTo({ left: index * el.clientWidth, behavior: 'smooth' });
+    setTab(nextTab);
+  }, []);
+
+  const handlePagerScroll = useCallback(() => {
+    if (scrollRaf.current) cancelAnimationFrame(scrollRaf.current);
+    scrollRaf.current = requestAnimationFrame(() => {
+      const el = pagerRef.current;
+      if (!el || el.clientWidth === 0) return;
+      const index = Math.round(el.scrollLeft / el.clientWidth);
+      const next = TAB_ORDER[Math.min(TAB_ORDER.length - 1, Math.max(0, index))];
+      setTab((current) => (current === next ? current : next));
+    });
+  }, []);
 
   const openAssetSheet = (target = null) => {
     setAssetTarget(target || getTopEarner(fleet, realFleet, totalEarnings, syncState));
     setAssetOpen(true);
   };
 
-  const handleHeroTap = () => {
-    if (tab === 'grow') {
+  const handleHeroTap = (pageId) => {
+    if (pageId === 'grow') {
       setGrowCity('Tampa');
       setExploreOpen(true);
       return;
@@ -157,8 +187,8 @@ export default function MonumentToday({
     setTodayOpen(true);
   };
 
-  const handleDoIt = () => {
-    if (tab === 'grow') {
+  const handleDoIt = (pageId) => {
+    if (pageId === 'grow') {
       setGrowCity('Tampa');
       setExploreOpen(true);
       return;
@@ -234,68 +264,98 @@ export default function MonumentToday({
     }
   };
 
-  let heroProps = {
-    label: take.label,
-    amount: take.amount,
-    subline: take.subline,
-    labelColor: take.projected ? monument.projected : monument.inkGhost,
-    onTapAmount: handleHeroTap,
-  };
-
-  let footerLine = actionLine;
-  let doItLabel = 'Do it';
-  let secondaryLabel = tab === 'today' ? action.secondary?.label : null;
-
-  if (tab === 'fleet') {
-    heroProps = {
-      label: 'FLEET',
-      amount: String(strip.active?.value || '0'),
-      subline: `${strip.charging?.value || 0} charging · ${strip.offline?.value || 0} offline`,
-      labelColor: monument.inkGhost,
-      onTapAmount: handleHeroTap,
-    };
-    const offline = Number(strip.offline?.value) || 0;
-    footerLine = offline > 0 ? 'CAB offline — needs reconnect.' : 'Fleet healthy.';
-    secondaryLabel = null;
-  }
-
-  if (tab === 'grow') {
-    heroProps = {
-      label: 'GROW',
-      amount: `+$${Math.round((expansion.projectedMonthly || 4960) / 4).toLocaleString()}`,
-      subline: `${expansion.city} · per week potential`,
-      labelColor: monument.inkGhost,
-      onTapAmount: handleHeroTap,
-    };
-    footerLine = `${expansion.city} expansion ready when you are.`;
-    doItLabel = 'Explore';
-    secondaryLabel = null;
-  }
+  const pages = useMemo(() => [
+    {
+      id: 'today',
+      hero: {
+        label: take.label,
+        amount: take.amount,
+        subline: take.subline,
+        labelColor: take.projected ? monument.projected : monument.inkGhost,
+      },
+      footer: {
+        line: actionLine,
+        doItLabel: 'Do it',
+        secondaryLabel: action.secondary?.label,
+        onSecondary: () => openAssetSheet(),
+      },
+    },
+    {
+      id: 'fleet',
+      hero: {
+        label: 'FLEET',
+        amount: `${strip.active?.value || 0}/${strip.total || fleet.length || 0}`,
+        subline: `active now · ${fleetCity}`,
+        labelColor: monument.inkGhost,
+      },
+      footer: {
+        line: offline > 0 ? 'CAB offline — needs reconnect.' : 'Fleet healthy.',
+        doItLabel: 'Do it',
+        secondaryLabel: action.secondary?.label,
+        onSecondary: () => openAssetSheet(),
+      },
+      showFleetPanel: true,
+    },
+    {
+      id: 'grow',
+      hero: {
+        label: 'GROW',
+        amount: `+$${Math.round((expansion.projectedMonthly || 4960) / 4).toLocaleString()}`,
+        subline: `${expansion.city} · per week potential`,
+        labelColor: monument.inkGhost,
+      },
+      footer: {
+        line: `${expansion.city} expansion ready when you are.`,
+        doItLabel: 'Explore',
+        secondaryLabel: null,
+        onSecondary: null,
+      },
+    },
+  ], [take, actionLine, action.secondary, strip, fleet.length, fleetCity, offline, expansion]);
 
   return (
     <div
       className="flex h-full min-h-0 flex-col"
       style={{ backgroundColor: monument.canvas }}
     >
-      <MonumentHero {...heroProps} />
-
-      <div className="shrink-0">
-        <ActionFooter
-          line={footerLine}
-          onDoIt={handleDoIt}
-          doItLabel={doItLabel}
-          secondaryLabel={secondaryLabel}
-          onSecondary={() => openAssetSheet()}
-        />
+      <div
+        ref={pagerRef}
+        onScroll={handlePagerScroll}
+        className="flex min-h-0 flex-1 snap-x snap-mandatory overflow-x-auto overscroll-x-contain touch-pan-x [&::-webkit-scrollbar]:hidden"
+        style={{ WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none' }}
+      >
+        {pages.map((page) => (
+          <section
+            key={page.id}
+            className="flex min-h-0 w-full shrink-0 snap-center snap-always flex-col"
+            aria-label={page.id}
+          >
+            <MonumentHero
+              {...page.hero}
+              onTapAmount={() => handleHeroTap(page.id)}
+            />
+            {page.showFleetPanel && (
+              <FleetMonumentPanel
+                strip={strip}
+                onSelectStatus={() => openAssetSheet()}
+              />
+            )}
+            <ActionFooter
+              line={page.footer.line}
+              onDoIt={() => handleDoIt(page.id)}
+              doItLabel={page.footer.doItLabel}
+              secondaryLabel={page.footer.secondaryLabel}
+              onSecondary={page.footer.onSecondary}
+            />
+          </section>
+        ))}
       </div>
 
-      <div className="shrink-0">
-        <MonumentDotNav
-          active={tab}
-          onChange={setTab}
-          onLongPress={() => setAccountOpen(true)}
-        />
-      </div>
+      <MonumentSwipeStrip
+        active={tab}
+        onSelect={scrollToTab}
+        onLongPress={() => setAccountOpen(true)}
+      />
 
       <ConfirmActionSheet
         open={confirmOpen}

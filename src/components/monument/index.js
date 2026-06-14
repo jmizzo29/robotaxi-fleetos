@@ -6,4 +6,6 @@ export { default as ExploreMarketSheet } from './ExploreMarketSheet';
 export { default as TodayDetailSheet } from './TodayDetailSheet';
 export { default as AccountSheet } from './AccountSheet';
 export { default as FleetLedger } from './FleetLedger';
+export { default as FleetMonumentPanel } from './FleetMonumentPanel';
+export { default as MonumentSwipeStrip } from './MonumentSwipeStrip';
 export { default as MonumentDotNav } from './MonumentDotNav';
