@@ -1,6 +1,7 @@
 import { Loader2 } from 'lucide-react';
 import LandingHeader from './LandingHeader';
 import LandingLegalLinks from './LandingLegalLinks';
+import MonumentLaunchSignup from './MonumentLaunchSignup';
 import { monument, monumentType } from '../monument/monumentTokens';
 
 function Hairline() {
@@ -44,7 +45,7 @@ export default function LandingEntryScreen({
             type="button"
             onClick={onConnect}
             disabled={connectDisabled}
-            className={`mt-5 w-full rounded-xl py-3.5 ${monumentType.buttonPrimary} text-white transition active:scale-[0.98] disabled:cursor-wait disabled:opacity-60`}
+            className={`mt-5 w-full rounded-xl py-3.5 text-[16.56px] font-bold text-white transition active:scale-[0.98] disabled:cursor-wait disabled:opacity-60`}
             style={{ backgroundColor: monument.action }}
           >
             {connectDisabled ? (
@@ -58,9 +59,12 @@ export default function LandingEntryScreen({
           </button>
 
           <p className={`mt-4 pb-2 ${monumentType.revealHint}`} style={{ color: monument.inkGhost }}>
-            Fleet OS for Tesla owners
+            Fleet OS for Tesla owners · First Cybercab free during beta
           </p>
-          <div className="mt-3 pb-1">
+          <div className="mt-3">
+            <MonumentLaunchSignup layout="inline" />
+          </div>
+          <div className="mt-4 pb-1">
             <LandingLegalLinks onNavigate={onNavigate} layout="inline" />
           </div>
         </div>

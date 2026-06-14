@@ -27,6 +27,7 @@ export function getSettingsRows(realSyncStatus = null, aiAnalysis = null) {
   const syncValue = syncState === 'success' ? 'Connected' : syncState === 'loading' ? 'Syncing' : 'Setup';
 
   return [
+    { cab: 'Program', event: 'ROBOAGENT beta', value: 'Active', tone: 'neutral' },
     { cab: 'Tesla', event: 'Fleet connection', value: syncValue, tone: syncState === 'success' ? 'positive' : 'alert' },
     { cab: 'Privacy', event: 'Beta consent', value: 'OK', tone: 'positive' },
     { cab: 'Feedback', event: 'Beta form', value: 'Open', tone: 'neutral' },

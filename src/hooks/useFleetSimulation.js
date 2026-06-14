@@ -6,6 +6,7 @@ import { getVehicleOwnership, syncSavedOwnershipFromBackend } from '../data/vehi
 import { appendFleetMemory } from '../services/fleetMemory';
 import { appendLocationSnapshot } from '../services/locationHistory';
 import { getTeslaVehicles, mergeWithSimulation } from '../services/teslaService';
+import { disconnectTeslaForUser } from '../services/sessionService';
 
 const generatedFleet = Array.from({ length: 10 }, (_, i) => ({
   id: `CAR-${String(i + 1).padStart(3, '0')}`,
@@ -212,6 +213,31 @@ export function useFleetSimulation({
   }, [canSyncReal]);
 
   useEffect(() => {
+    const onDisconnected = () => {
+      setFleet((current) => current.filter((vehicle) => !vehicle.isReal));
+      setRealSyncStatus({
+        state: 'idle',
+        lastSyncedAt: null,
+        message: 'Tesla disconnected.',
+      });
+    };
+
+    window.addEventListener('fleetos-tesla-disconnected', onDisconnected);
+    return () => window.removeEventListener('fleetos-tesla-disconnected', onDisconnected);
+  }, []);
+
+  const disconnectRealTesla = useCallback(async () => {
+    const result = await disconnectTeslaForUser();
+    setFleet((current) => current.filter((vehicle) => !vehicle.isReal));
+    setRealSyncStatus({
+      state: 'idle',
+      lastSyncedAt: null,
+      message: result.message || 'Tesla disconnected.',
+    });
+    return result;
+  }, []);
+
+  useEffect(() => {
     if (!autoSyncReal || !canSyncReal) return undefined;
 
     const timer = window.setTimeout(() => {
@@ -254,6 +280,7 @@ export function useFleetSimulation({
     commandQueue,
     enqueueCommand,
     refreshRealTesla,
+    disconnectRealTesla,
     isLoadingReal,
     realSyncStatus,
     demandZones,

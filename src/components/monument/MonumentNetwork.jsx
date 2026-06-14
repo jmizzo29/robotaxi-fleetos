@@ -10,7 +10,7 @@ import OperationsLedgerStrip from './OperationsLedgerStrip';
 import { monument } from './monumentTokens';
 import { clearLocalComplianceState } from '../../services/betaCompliance';
 import { logoutFleetOsAccount } from '../../services/sessionService';
-import { getAccountSheetPayload, getGrowSheetPayload } from '../../utils/monumentUtils';
+import { getAccountSheetPayload, getGrowSheetPayload, isTeslaConnected } from '../../utils/monumentUtils';
 import {
   getNetworkConvoy,
   getNetworkEventRows,
@@ -23,6 +23,7 @@ export default function MonumentNetwork({
   realFleet = [],
   realSyncStatus = null,
   onNavigate = () => {},
+  onDisconnect = null,
 }) {
   const { user } = useUser();
   const [accountOpen, setAccountOpen] = useState(false);
@@ -30,6 +31,11 @@ export default function MonumentNetwork({
   const [staging, setStaging] = useState(false);
   const [growCity, setGrowCity] = useState('Tampa');
   const [signingOut, setSigningOut] = useState(false);
+
+  const teslaConnected = useMemo(
+    () => isTeslaConnected(realFleet, realSyncStatus),
+    [realFleet, realSyncStatus],
+  );
 
   const convoy = useMemo(() => getNetworkConvoy(fleet), [fleet]);
   const hero = useMemo(() => getNetworkHero(convoy), [convoy]);
@@ -131,6 +137,8 @@ export default function MonumentNetwork({
         onNavigate={onNavigate}
         onSignOut={handleSignOut}
         signingOut={signingOut}
+        teslaConnected={teslaConnected}
+        onDisconnectTesla={onDisconnect}
       />
     </div>
   );

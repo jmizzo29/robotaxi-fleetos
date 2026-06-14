@@ -1,5 +1,6 @@
 import LandingHeader from './LandingHeader';
 import LandingLegalLinks from './LandingLegalLinks';
+import MonumentLaunchSignup from './MonumentLaunchSignup';
 import { monument, monumentType } from '../monument/monumentTokens';
 
 function Hairline() {
@@ -22,6 +23,7 @@ function LedgerRow({ left, right }) {
 
 const ABOUT_ROWS = [
   ['built for', 'Tesla fleet owners'],
+  ['program', 'Beta'],
   ['fleet size', '1 to 100+ Cybercabs'],
   ['data source', 'Tesla Fleet API'],
   ['you control', 'approve every action'],
@@ -68,6 +70,9 @@ export default function AboutMonument({ onNavigate }) {
           </div>
 
           <Hairline />
+          <div className="mt-4">
+            <MonumentLaunchSignup />
+          </div>
           <p className={`mt-4 text-center ${monumentType.revealHint}`} style={{ color: monument.inkGhost }}>
             Not affiliated with or endorsed by Tesla, Inc.
           </p>

@@ -3,6 +3,7 @@ import { Menu, X } from 'lucide-react';
 import RoboLogo from '../RoboLogo';
 import RoboWordmark from '../RoboWordmark';
 import LandingHowItWorksCard from './LandingHowItWorksCard';
+import MonumentBetaBadge from '../monument/MonumentBetaBadge';
 import { monument, monumentType } from '../monument/monumentTokens';
 
 export default function LandingHeader({ onNavigate, variant = 'default' }) {
@@ -29,13 +30,14 @@ export default function LandingHeader({ onNavigate, variant = 'default' }) {
           <button
             type="button"
             onClick={() => go(homeRoute)}
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+            className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1"
             aria-label="ROBOAGENT home"
           >
             <RoboWordmark
-              className="text-[1.0625rem] tracking-[0.15em]"
+              className="text-[1.275rem] tracking-[0.15em]"
               colorClass="text-[#12141A]"
             />
+            <MonumentBetaBadge />
           </button>
 
           <div className="w-10" aria-hidden="true" />

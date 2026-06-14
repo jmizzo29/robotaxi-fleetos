@@ -23,6 +23,7 @@ import {
   getMonumentTake,
   getTodayDetailPayload,
   getTopEarner,
+  isTeslaConnected,
 } from '../../utils/monumentUtils';
 import { getTelemetryFocusTarget, getTelemetrySheetPayload } from '../../utils/telemetryUtils';
 import { getCommandFleetStatusStrip } from '../../utils/vehicleDisplayUtils';
@@ -56,6 +57,7 @@ export default function MonumentToday({
   onQueueCommand = () => {},
   onNavigate = () => {},
   onSync = () => {},
+  onDisconnect = null,
 }) {
   const { user } = useUser();
   const [tab, setTab] = useState('today');
@@ -79,6 +81,10 @@ export default function MonumentToday({
   const scrollRaf = useRef(null);
 
   const syncState = isLoadingReal ? 'loading' : (realSyncStatus?.state ?? 'idle');
+  const teslaConnected = useMemo(
+    () => isTeslaConnected(realFleet, realSyncStatus),
+    [realFleet, realSyncStatus],
+  );
   const totalEarnings = realFleet.reduce((sum, vehicle) => sum + (Number(vehicle.revenue) || 0), 0);
   const take = useMemo(
     () => getMonumentTake(fleet, realFleet, totalEarnings, syncState),
@@ -434,6 +440,8 @@ export default function MonumentToday({
         onNavigate={onNavigate}
         onSignOut={handleSignOut}
         signingOut={signingOut}
+        teslaConnected={teslaConnected}
+        onDisconnectTesla={onDisconnect}
       />
     </div>
   );

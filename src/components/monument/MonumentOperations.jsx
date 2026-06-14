@@ -17,6 +17,7 @@ import {
   findVehicleByCab,
   getAccountSheetPayload,
   getAssetSheetPayload,
+  isTeslaConnected,
 } from '../../utils/monumentUtils';
 import {
   getAlertsLedgerRows,
@@ -69,6 +70,7 @@ export default function MonumentOperations({
   onQueueCommand = () => {},
   onNavigate = () => {},
   initialTab = 'plan',
+  onDisconnect = null,
 }) {
   const { user } = useUser();
   const [tab, setTab] = useState(initialTab);
@@ -87,6 +89,10 @@ export default function MonumentOperations({
   const scrollRaf = useRef(null);
 
   const syncState = isLoadingReal ? 'loading' : (realSyncStatus?.state ?? 'idle');
+  const teslaConnected = useMemo(
+    () => isTeslaConnected(realFleet, realSyncStatus),
+    [realFleet, realSyncStatus],
+  );
   const totalEarnings = realFleet.reduce((sum, vehicle) => sum + (Number(vehicle.revenue) || 0), 0);
 
   const convoy = useMemo(
@@ -408,6 +414,8 @@ export default function MonumentOperations({
         onNavigate={onNavigate}
         onSignOut={handleSignOut}
         signingOut={signingOut}
+        teslaConnected={teslaConnected}
+        onDisconnectTesla={onDisconnect}
       />
     </div>
   );

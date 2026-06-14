@@ -1,5 +1,6 @@
 import SignOutButton from './SignOutButton';
 import RoboWordmark from './RoboWordmark';
+import MonumentBetaBadge from './monument/MonumentBetaBadge';
 import { colors, mobileNavItems, typography } from '../design/roboagentTokens';
 
 export default function Sidebar({
@@ -16,6 +17,7 @@ export default function Sidebar({
         <div className="mb-10">
           <button type="button" onClick={() => onNavigate('overview')} className="text-left">
             <RoboWordmark className="text-[1.05rem] tracking-[0.04em]" colorClass={typography.wordmarkColor} />
+            <MonumentBetaBadge className="mt-2" />
           </button>
         </div>
 

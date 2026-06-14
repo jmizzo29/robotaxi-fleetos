@@ -306,6 +306,7 @@ function FleetApp() {
     commandQueue,
     enqueueCommand,
     refreshRealTesla,
+    disconnectRealTesla,
     isLoadingReal,
     realSyncStatus,
   } = useFleetSimulation({
@@ -409,6 +410,7 @@ function FleetApp() {
         onQueueCommand={enqueueCommand}
         onNavigate={navigate}
         onSync={refreshRealTesla}
+        onDisconnect={disconnectRealTesla}
       />
     ),
     onboarding: (
@@ -799,6 +801,7 @@ function FleetApp() {
               onQueueCommand={enqueueCommand}
               onNavigate={navigate}
               onSync={refreshRealTesla}
+              onDisconnect={disconnectRealTesla}
             />
           </main>
         </div>
@@ -823,6 +826,7 @@ function FleetApp() {
               onQueueCommand={enqueueCommand}
               onNavigate={navigate}
               initialTab={routeToOperationsTab(route)}
+              onDisconnect={disconnectRealTesla}
             />
           </main>
         </div>
@@ -841,6 +845,7 @@ function FleetApp() {
           realSyncStatus={realSyncStatus}
           isLoadingReal={isLoadingReal}
           onNavigate={navigate}
+          onDisconnect={disconnectRealTesla}
         />
       ),
       network: (
@@ -849,6 +854,7 @@ function FleetApp() {
           realFleet={realVehicles}
           realSyncStatus={realSyncStatus}
           onNavigate={navigate}
+          onDisconnect={disconnectRealTesla}
         />
       ),
       integrations: (
@@ -858,6 +864,7 @@ function FleetApp() {
           realSyncStatus={realSyncStatus}
           aiAnalysis={aiAnalysis}
           onNavigate={navigate}
+          onDisconnect={disconnectRealTesla}
         />
       ),
       settings: (
@@ -869,6 +876,7 @@ function FleetApp() {
           isLoadingReal={isLoadingReal}
           onSync={refreshRealTesla}
           onNavigate={navigate}
+          onDisconnect={disconnectRealTesla}
         />
       ),
     }[route];

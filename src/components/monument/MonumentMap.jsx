@@ -9,7 +9,7 @@ import MonumentUtilityLinks from './MonumentUtilityLinks';
 import { monument } from './monumentTokens';
 import { clearLocalComplianceState } from '../../services/betaCompliance';
 import { logoutFleetOsAccount } from '../../services/sessionService';
-import { getAccountSheetPayload } from '../../utils/monumentUtils';
+import { getAccountSheetPayload, isTeslaConnected } from '../../utils/monumentUtils';
 import { getMapFooterLine, getMapMonumentHero } from '../../utils/mapMonumentUtils';
 
 export default function MonumentMap({
@@ -18,6 +18,7 @@ export default function MonumentMap({
   realSyncStatus = null,
   isLoadingReal = false,
   onNavigate = () => {},
+  onDisconnect = null,
 }) {
   const { user } = useUser();
   const [mapOpen, setMapOpen] = useState(false);
@@ -25,6 +26,10 @@ export default function MonumentMap({
   const [signingOut, setSigningOut] = useState(false);
 
   const syncState = isLoadingReal ? 'loading' : (realSyncStatus?.state ?? 'idle');
+  const teslaConnected = useMemo(
+    () => isTeslaConnected(realFleet, realSyncStatus),
+    [realFleet, realSyncStatus],
+  );
   const totalEarnings = realFleet.reduce((sum, vehicle) => sum + (Number(vehicle.revenue) || 0), 0);
 
   const hero = useMemo(
@@ -125,6 +130,8 @@ export default function MonumentMap({
         onNavigate={onNavigate}
         onSignOut={handleSignOut}
         signingOut={signingOut}
+        teslaConnected={teslaConnected}
+        onDisconnectTesla={onDisconnect}
       />
     </div>
   );

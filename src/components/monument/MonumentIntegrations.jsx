@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useUser } from '@clerk/react';
 import AccountSheet from './AccountSheet';
+import ConfirmActionSheet from './ConfirmActionSheet';
 import IntegrationDetailSheet from './IntegrationDetailSheet';
 import IntegrationsMonumentPanel from './IntegrationsMonumentPanel';
 import MonumentActionFooter from './MonumentActionFooter';
@@ -9,7 +10,8 @@ import MonumentUtilityLinks from './MonumentUtilityLinks';
 import { monument } from './monumentTokens';
 import { clearLocalComplianceState } from '../../services/betaCompliance';
 import { logoutFleetOsAccount } from '../../services/sessionService';
-import { getAccountSheetPayload } from '../../utils/monumentUtils';
+import useMonumentTeslaDisconnect from '../../hooks/useMonumentTeslaDisconnect';
+import { getAccountSheetPayload, isTeslaConnected } from '../../utils/monumentUtils';
 import {
   getIntegrationDetail,
   getIntegrationsConvoy,
@@ -23,12 +25,26 @@ export default function MonumentIntegrations({
   realSyncStatus = null,
   aiAnalysis = null,
   onNavigate = () => {},
+  onDisconnect = null,
 }) {
   const { user } = useUser();
   const [accountOpen, setAccountOpen] = useState(false);
   const [detailOpen, setDetailOpen] = useState(false);
   const [detailKey, setDetailKey] = useState('tesla');
   const [signingOut, setSigningOut] = useState(false);
+
+  const teslaConnected = useMemo(
+    () => isTeslaConnected(realFleet, realSyncStatus),
+    [realFleet, realSyncStatus],
+  );
+  const {
+    confirmOpen,
+    setConfirmOpen,
+    disconnecting,
+    confirmPayload,
+    requestDisconnect,
+    handleConfirm,
+  } = useMonumentTeslaDisconnect(onDisconnect);
 
   const convoy = useMemo(
     () => getIntegrationsConvoy(realSyncStatus, aiAnalysis),
@@ -97,6 +113,8 @@ export default function MonumentIntegrations({
           setDetailKey('tesla');
           setDetailOpen(true);
         }}
+        secondaryLabel={teslaConnected ? 'Disconnect Tesla' : null}
+        onSecondary={teslaConnected ? requestDisconnect : undefined}
       />
 
       <div
@@ -122,6 +140,17 @@ export default function MonumentIntegrations({
         open={detailOpen}
         payload={detailPayload}
         onClose={() => setDetailOpen(false)}
+        showDisconnect={detailKey === 'tesla' && teslaConnected}
+        onDisconnect={requestDisconnect}
+        disconnecting={disconnecting}
+      />
+
+      <ConfirmActionSheet
+        open={confirmOpen}
+        payload={confirmPayload}
+        confirming={disconnecting}
+        onClose={() => setConfirmOpen(false)}
+        onConfirm={handleConfirm}
       />
 
       <AccountSheet
@@ -131,6 +160,8 @@ export default function MonumentIntegrations({
         onNavigate={onNavigate}
         onSignOut={handleSignOut}
         signingOut={signingOut}
+        teslaConnected={teslaConnected}
+        onDisconnectTesla={onDisconnect}
       />
     </div>
   );

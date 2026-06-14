@@ -298,6 +298,17 @@ export function getTodayDetailPayload(fleet, realFleet, totalEarnings, syncState
   };
 }
 
+/** Whether Tesla telemetry is actively linked for this session. */
+export function isTeslaConnected(realFleet = [], realSyncStatus = null) {
+  return realFleet.length > 0 || realSyncStatus?.state === 'success';
+}
+
+export const TESLA_DISCONNECT_CONFIRM = {
+  title: 'Disconnect Tesla?',
+  body: 'ROBOAGENT will stop syncing your fleet. Reconnect anytime from the home screen. For a full revoke, also remove ROBOAGENT from Tesla third-party access in your Tesla app.',
+  primaryLabel: 'Disconnect',
+};
+
 /** Sheet E — account summary. */
 export function getAccountSheetPayload({
   userName = 'ROBOAGENT Owner',
@@ -318,6 +329,7 @@ export function getAccountSheetPayload({
     name: userName,
     subtitle: `${city} · ${fleetCount} Cybercab${fleetCount === 1 ? '' : 's'}`,
     rows: [
+      { label: 'Program', value: 'Beta' },
       { label: 'Tesla', value: realFleet.length > 0 ? 'Connected' : 'Not connected' },
       { label: 'Sync', value: syncLabel },
       { label: 'Map', value: '→', route: 'map' },
