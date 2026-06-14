@@ -56,6 +56,8 @@ function CommandHeaderActions({ onNavigate }) {
 }
 
 function EarningsHeroCard({ hero }) {
+  const liveLabel = hero.liveLabel || 'Live';
+
   return (
     <section aria-label="Net earnings today">
       <HeroCardFrame className="px-5 pb-5 pt-4">
@@ -65,15 +67,15 @@ function EarningsHeroCard({ hero }) {
             <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-white/80">Net Earnings Today</p>
             <p className={`mt-2 text-white ${typography.display}`}>{hero.amount}</p>
             {hero.delta ? (
-              <p className="mt-2 text-[15px] font-semibold text-[#bbf7d0]">+18% vs Yesterday</p>
-            ) : (
-              <p className="mt-2 text-[14px] font-semibold text-white/80">{hero.hint || 'Sync fleet to track earnings'}</p>
-            )}
+              <p className="mt-2 text-[15px] font-semibold text-[#bbf7d0]">{hero.delta}</p>
+            ) : hero.hint ? (
+              <p className="mt-2 text-[14px] font-semibold text-white/80">{hero.hint}</p>
+            ) : null}
           </div>
           <div className="flex shrink-0 flex-col items-end gap-2">
             <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/20 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.08em] text-white">
               <span className="h-2 w-2 animate-pulse rounded-full bg-[#4ade80]" />
-              Live
+              {liveLabel}
             </span>
             <div className="h-14 w-[7rem]">
               <EarningsSparkline />
@@ -239,10 +241,10 @@ export default function FleetCommandHome({
 }) {
   const syncState = isLoadingReal ? 'loading' : (realSyncStatus?.state ?? 'idle');
   const totalEarnings = realFleet.reduce((sum, vehicle) => sum + (Number(vehicle.revenue) || 0), 0);
-  const hero = getCommandEarningsHero(realFleet, totalEarnings, syncState);
-  const strip = getCommandFleetStatusStrip(fleet, realFleet);
-  const activity = getFleetActivityFeed(fleet, realFleet, 5);
-  const plan = getCommandAiPlan(fleet, realFleet, realSyncStatus, commandQueue);
+  const hero = getCommandEarningsHero(fleet, realFleet, totalEarnings, syncState);
+  const strip = getCommandFleetStatusStrip(fleet, realFleet, totalEarnings, syncState);
+  const activity = getFleetActivityFeed(fleet, realFleet, 5, totalEarnings, syncState);
+  const plan = getCommandAiPlan(fleet, realFleet, realSyncStatus, commandQueue, totalEarnings);
   const activeCount = Number(strip.active.value) || 0;
   const totalCount = strip.total || fleet.length;
 
@@ -255,6 +257,8 @@ export default function FleetCommandHome({
       <CommandMapPreview
         fleet={fleet}
         realFleet={realFleet}
+        totalEarnings={totalEarnings}
+        syncState={syncState}
         onNavigate={onNavigate}
         activeCount={activeCount}
         totalCount={totalCount}

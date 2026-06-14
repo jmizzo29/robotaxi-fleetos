@@ -14,7 +14,7 @@ const fleet = [
 
 describe('getCommandStatusBoard', () => {
   it('returns operational status cells', () => {
-    const board = getCommandStatusBoard(fleet, [fleet[0]], 'success', []);
+    const board = getCommandStatusBoard(fleet, [fleet[0]], 'success', [], 47);
     expect(board.active.value).toBe('1/1');
     expect(board.realTesla.value).toBe('1');
     expect(board.utilization.value).toBe('72%');
@@ -45,11 +45,20 @@ describe('getCommandAiPlan', () => {
 
 describe('getFleetActivityFeed', () => {
   it('returns activity events with impact and timestamp', () => {
-    const events = getFleetActivityFeed(fleet, [fleet[0]], 3);
+    const events = getFleetActivityFeed(fleet, [fleet[0]], 3, 47, 'success');
     expect(events.length).toBeGreaterThan(0);
     expect(events[0].description).toBeTruthy();
     expect(events[0].impact).toBeTruthy();
     expect(events[0].timestamp).toBeTruthy();
+  });
+
+  it('uses simulated fleet activity when real revenue is not trusted', () => {
+    const simulatedFleet = [
+      { id: 'CAR-007', status: 'PICKUP', revenue: 4100, utilization: 80, isReal: false, city: 'Orlando' },
+      { id: 'TSLA-1', status: 'PARKED', revenue: 0, isReal: true },
+    ];
+    const events = getFleetActivityFeed(simulatedFleet, [simulatedFleet[1]], 5, 0, 'success');
+    expect(events.some((event) => event.description.includes('CAB-007'))).toBe(true);
   });
 });
 

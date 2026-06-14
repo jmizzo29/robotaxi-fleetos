@@ -1,4 +1,5 @@
 import {
+  getCommandOperationalSource,
   getFleetPreviewMeta,
   getFleetRecommendation,
   lastSyncedLabel,
@@ -6,6 +7,10 @@ import {
   vehicleDisplayName,
   vehicleStateLabel,
 } from './vehicleDisplayUtils';
+
+function commandSource(fleet, realFleet, totalEarnings = 0, syncState = 'idle') {
+  return getCommandOperationalSource(fleet, realFleet, totalEarnings, syncState);
+}
 
 function isVehicleOnline(vehicle) {
   const state = vehicleStateLabel(vehicle);
@@ -29,8 +34,8 @@ function categorizeCommand(command = '') {
 }
 
 /** Operational status board — not analytics KPIs. */
-export function getCommandStatusBoard(fleet, realFleet, syncState, commandQueue = []) {
-  const source = realFleet.length > 0 ? realFleet : fleet;
+export function getCommandStatusBoard(fleet, realFleet, syncState, commandQueue = [], totalEarnings = 0) {
+  const source = commandSource(fleet, realFleet, totalEarnings, syncState);
   const active = source.filter(isVehicleOnline).length;
   const total = source.length;
 
@@ -89,7 +94,7 @@ export function getCommandStatusBoard(fleet, realFleet, syncState, commandQueue 
   };
 }
 
-export function getOpenActionsBreakdown(commandQueue = [], fleet = [], realFleet = []) {
+export function getOpenActionsBreakdown(commandQueue = [], fleet = [], realFleet = [], totalEarnings = 0, syncState = 'idle') {
   const counts = { pricing: 0, maintenance: 0, charging: 0, other: 0 };
 
   for (const item of commandQueue) {
@@ -100,7 +105,7 @@ export function getOpenActionsBreakdown(commandQueue = [], fleet = [], realFleet
     else counts.other += 1;
   }
 
-  const source = realFleet.length > 0 ? realFleet : fleet;
+  const source = commandSource(fleet, realFleet, totalEarnings, syncState);
   if (counts.pricing === 0) {
     const pricingCandidate = source.find((vehicle) => Number(vehicle.utilization) >= 72);
     if (pricingCandidate) counts.pricing += 1;
@@ -132,8 +137,8 @@ export function getOpenActionsBreakdown(commandQueue = [], fleet = [], realFleet
   };
 }
 
-function buildPlanSummary(recommendation, breakdown, fleet, realFleet) {
-  const source = realFleet.length > 0 ? realFleet : fleet;
+function buildPlanSummary(recommendation, breakdown, fleet, realFleet, totalEarnings, syncState) {
+  const source = commandSource(fleet, realFleet, totalEarnings, syncState);
   const online = source.filter(isVehicleOnline).length;
 
   if (breakdown.pricing > 0 || online >= 2) {
@@ -146,13 +151,13 @@ function buildPlanSummary(recommendation, breakdown, fleet, realFleet) {
     return 'Clear service vehicles before peak operating hours';
   }
   if (source.length > 0) {
-    return 'Increase Orlando airport coverage after 4 PM';
+    return 'Orlando airport demand increasing after 4 PM';
   }
   return 'Connect fleet telemetry to unlock AI operations brief';
 }
 
-function buildPlanAction(fleet, realFleet, breakdown) {
-  const source = realFleet.length > 0 ? realFleet : fleet;
+function buildPlanAction(fleet, realFleet, breakdown, totalEarnings, syncState) {
+  const source = commandSource(fleet, realFleet, totalEarnings, syncState);
   const target = source.find((vehicle) => Number(vehicle.utilization) >= 65)
     || source.find(isVehicleOnline)
     || source[0];
@@ -165,8 +170,8 @@ function buildPlanAction(fleet, realFleet, breakdown) {
   return `Move ${label} to MCO demand zone`;
 }
 
-function buildDemandIncrease(breakdown, fleet, realFleet) {
-  const source = realFleet.length > 0 ? realFleet : fleet;
+function buildDemandIncrease(breakdown, fleet, realFleet, totalEarnings, syncState) {
+  const source = commandSource(fleet, realFleet, totalEarnings, syncState);
   let pct = 18;
   if (breakdown.pricing > 0) pct += 9;
   if (source.some((vehicle) => Number(vehicle.utilization) >= 72)) pct += 12;
@@ -174,8 +179,8 @@ function buildDemandIncrease(breakdown, fleet, realFleet) {
   return `+${Math.min(42, pct)}%`;
 }
 
-function buildPlanChecklist(fleet, realFleet, recommendation, breakdown) {
-  const source = realFleet.length > 0 ? realFleet : fleet;
+function buildPlanChecklist(fleet, realFleet, recommendation, breakdown, totalEarnings, syncState) {
+  const source = commandSource(fleet, realFleet, totalEarnings, syncState);
   const items = [];
 
   if (breakdown.pricing > 0) {
@@ -208,8 +213,8 @@ function buildPlanChecklist(fleet, realFleet, recommendation, breakdown) {
   return items.slice(0, 3);
 }
 
-function buildExpectedRevenueImpact(breakdown, fleet, realFleet) {
-  const source = realFleet.length > 0 ? realFleet : fleet;
+function buildExpectedRevenueImpact(breakdown, fleet, realFleet, totalEarnings, syncState) {
+  const source = commandSource(fleet, realFleet, totalEarnings, syncState);
   let bump = 72;
   if (breakdown.pricing > 0) bump += 24;
   if (breakdown.charging > 0) bump += 18;
@@ -225,6 +230,8 @@ function buildConfidenceLabel(realSyncStatus, realFleet) {
 
 function activityVehicleName(vehicle, index) {
   const id = String(vehicle?.id || vehicle?.name || '');
+  const carMatch = id.match(/CAR-(\d+)/i);
+  if (carMatch) return `CAB-${carMatch[1].padStart(2, '0')}`;
   const match = id.match(/\d+/);
   if (match) return `CAB-${String(match[0]).padStart(2, '0')}`;
   return `CAB-${String(index + 1).padStart(2, '0')}`;
@@ -265,8 +272,8 @@ function chargingReadyLabel(vehicle) {
 }
 
 /** Live fleet activity feed for Command screen. */
-export function getFleetActivityFeed(fleet, realFleet, limit = 5) {
-  const source = realFleet.length > 0 ? realFleet : fleet;
+export function getFleetActivityFeed(fleet, realFleet, limit = 5, totalEarnings = 0, syncState = 'idle') {
+  const source = commandSource(fleet, realFleet, totalEarnings, syncState);
   const events = [];
 
   source.forEach((vehicle, index) => {
@@ -294,7 +301,7 @@ export function getFleetActivityFeed(fleet, realFleet, limit = 5) {
       events.push({
         id: `${vehicle.id || index}-charge`,
         vehicleName: name,
-        description: `${name} entered charging session`,
+        description: `${name} charging`,
         impact: chargingReadyLabel(vehicle),
         impactTone: 'neutral',
         eventType: 'charging',
@@ -348,9 +355,9 @@ export function getFleetActivityFeed(fleet, realFleet, limit = 5) {
 
   if (!events.length) {
     return [
-      { id: 'demo-7-trip', vehicleName: 'CAB-07', description: 'CAB-07 completed airport trip', impact: '+$48 revenue', impactTone: 'positive', eventType: 'trip', timestamp: '2 min ago' },
-      { id: 'demo-surge', vehicleName: 'Market', description: 'Demand surge detected', impact: 'Downtown Tampa +22%', impactTone: 'surge', eventType: 'surge', timestamp: '5 min ago' },
-      { id: 'demo-2-charge', vehicleName: 'CAB-02', description: 'CAB-02 entered charging session', impact: 'Ready in 38 min', impactTone: 'neutral', eventType: 'charging', timestamp: '8 min ago' },
+      { id: 'demo-7-trip', vehicleName: 'CAB-07', description: 'CAB-07 completed airport trip', impact: '+$42 revenue', impactTone: 'positive', eventType: 'trip', timestamp: '2 min ago' },
+      { id: 'demo-surge', vehicleName: 'MCO', description: 'Orlando airport demand increasing', impact: 'MCO +24%', impactTone: 'surge', eventType: 'surge', timestamp: '5 min ago' },
+      { id: 'demo-2-charge', vehicleName: 'CAB-02', description: 'CAB-02 charging', impact: 'Ready in 22 min', impactTone: 'neutral', eventType: 'charging', timestamp: '8 min ago' },
       { id: 'demo-5-milestone', vehicleName: 'CAB-05', description: 'CAB-05 completed 14th trip today', impact: 'High utilization', impactTone: 'positive', eventType: 'milestone', timestamp: '12 min ago' },
       { id: 'demo-9-offline', vehicleName: 'CAB-09', description: 'CAB-09 offline unexpectedly', impact: 'Needs review', impactTone: 'alert', eventType: 'offline', timestamp: '18 min ago' },
     ].slice(0, limit);
@@ -360,25 +367,26 @@ export function getFleetActivityFeed(fleet, realFleet, limit = 5) {
 }
 
 /** AI Operations Brief — fleet manager guidance, not a chatbot. */
-export function getCommandAiPlan(fleet, realFleet, realSyncStatus, commandQueue = []) {
-  const snapshotSource = realFleet.length > 0 ? realFleet : fleet;
+export function getCommandAiPlan(fleet, realFleet, realSyncStatus, commandQueue = [], totalEarnings = 0) {
+  const syncState = realSyncStatus?.state ?? 'idle';
+  const snapshotSource = commandSource(fleet, realFleet, totalEarnings, syncState);
   const recommendation = getFleetRecommendation(snapshotSource, realSyncStatus);
-  const breakdown = getOpenActionsBreakdown(commandQueue, fleet, realFleet);
+  const breakdown = getOpenActionsBreakdown(commandQueue, fleet, realFleet, totalEarnings, syncState);
   const pendingCount = Math.max(
     commandQueue.length,
     breakdown.pricing + breakdown.maintenance + breakdown.charging,
   );
 
   return {
-    summary: buildPlanSummary(recommendation, breakdown, fleet, realFleet),
-    action: buildPlanAction(fleet, realFleet, breakdown),
-    demandIncrease: buildDemandIncrease(breakdown, fleet, realFleet),
-    checklist: buildPlanChecklist(fleet, realFleet, recommendation, breakdown),
+    summary: buildPlanSummary(recommendation, breakdown, fleet, realFleet, totalEarnings, syncState),
+    action: buildPlanAction(fleet, realFleet, breakdown, totalEarnings, syncState),
+    demandIncrease: buildDemandIncrease(breakdown, fleet, realFleet, totalEarnings, syncState),
+    checklist: buildPlanChecklist(fleet, realFleet, recommendation, breakdown, totalEarnings, syncState),
     pendingCount: pendingCount || (recommendation?.tone === 'ready' ? 0 : 1),
     recommendation,
-    expectedRevenueImpact: buildExpectedRevenueImpact(breakdown, fleet, realFleet),
-    confidenceLabel: buildConfidenceLabel(realSyncStatus, realFleet),
-    confidenceScore: realSyncStatus?.state === 'success' && realFleet.length > 0 ? 91 : realFleet.length > 0 ? 78 : 62,
+    expectedRevenueImpact: buildExpectedRevenueImpact(breakdown, fleet, realFleet, totalEarnings, syncState),
+    confidenceLabel: snapshotSource.length > 0 ? buildConfidenceLabel(realSyncStatus, realFleet) : 'Low',
+    confidenceScore: realSyncStatus?.state === 'success' && realFleet.length > 0 ? 91 : snapshotSource.length > 0 ? 78 : 62,
   };
 }
 
@@ -415,14 +423,14 @@ function vehicleOperationalLine(vehicle, index) {
 }
 
 /** Fleet visibility rows — live operational picture below map. */
-export function getFleetVisibilityRows(fleet, realFleet, limit = 4) {
-  const source = realFleet.length > 0 ? realFleet : fleet;
+export function getFleetVisibilityRows(fleet, realFleet, limit = 4, totalEarnings = 0, syncState = 'idle') {
+  const source = commandSource(fleet, realFleet, totalEarnings, syncState);
   return source.slice(0, limit).map(vehicleOperationalLine);
 }
 
 /** Map preview — vehicles with coordinates or synthetic positions. */
-export function getMapPreviewVehicles(fleet, realFleet, limit = 6) {
-  const source = realFleet.length > 0 ? realFleet : fleet;
+export function getMapPreviewVehicles(fleet, realFleet, limit = 6, totalEarnings = 0, syncState = 'idle') {
+  const source = commandSource(fleet, realFleet, totalEarnings, syncState);
   const withCoords = source.filter((vehicle) => {
     const lat = Number(vehicle.latitude);
     const lng = Number(vehicle.longitude);

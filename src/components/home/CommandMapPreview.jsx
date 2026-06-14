@@ -4,7 +4,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import HeatmapLayer from '../HeatmapLayer';
 import heatmapData from '../../data/heatmapData';
 import demandZones from '../../data/demandZones';
-import { vehicleStateLabel } from '../../utils/vehicleDisplayUtils';
+import { getCommandOperationalSource, vehicleStateLabel } from '../../utils/vehicleDisplayUtils';
 import { AppSection } from '../shell';
 import { radius, shadow } from '../../design/roboagentTokens';
 
@@ -14,9 +14,13 @@ const ORLANDO_VIEW = {
   zoom: 10,
 };
 
-function getVehicleName(vehicle) {
-  if (!vehicle) return 'Vehicle';
-  return vehicle.name || vehicle.ownership?.tag || vehicle.display_name || vehicle.id || 'Tesla';
+function getVehicleLabel(vehicle, index) {
+  const id = String(vehicle?.id || vehicle?.name || '');
+  const carMatch = id.match(/CAR-(\d+)/i);
+  if (carMatch) return `CAB-${carMatch[1].padStart(2, '0')}`;
+  const match = id.match(/\d+/);
+  if (match) return `CAB-${String(match[0]).padStart(2, '0')}`;
+  return vehicle?.name || vehicle?.ownership?.tag || `CAB-${String(index + 1).padStart(2, '0')}`;
 }
 
 function getMarkerColorClass(vehicle) {
@@ -30,14 +34,15 @@ function getMarkerColorClass(vehicle) {
     || status.includes('PICKUP')
     || status.includes('REPOSITION')
     || status.includes('IDLE')
+    || status.includes('SERVICE')
   ) {
     return 'bg-[#22c55e]';
   }
   return vehicleStateLabel(vehicle) === 'Charging' ? 'bg-[#eab308]' : 'bg-[#22c55e]';
 }
 
-function getMapFleet(fleet, realFleet) {
-  const source = realFleet.length > 0 ? realFleet : fleet;
+function getMapFleet(fleet, realFleet, totalEarnings, syncState) {
+  const source = getCommandOperationalSource(fleet, realFleet, totalEarnings, syncState);
   return source.filter((vehicle) => {
     const lat = Number(vehicle.latitude);
     const lng = Number(vehicle.longitude);
@@ -88,31 +93,48 @@ function DemandZonesLayer() {
             ['linear'],
             ['zoom'],
             8,
-            14,
+            18,
             10,
-            28,
+            36,
             12,
-            52,
+            58,
           ],
           'circle-color': ['get', 'color'],
-          'circle-opacity': 0.24,
-          'circle-blur': 0.55,
+          'circle-opacity': 0.34,
+          'circle-blur': 0.45,
         }}
       />
     </Source>
   );
 }
 
-function LiveVehicleMarker({ vehicle }) {
-  const colorClass = getMarkerColorClass(vehicle);
-  const isActive = colorClass.includes('22c55e');
+function DemandZoneLabel({ zone }) {
+  const shortName = zone.name.includes('Airport') ? 'MCO' : zone.name.split(' ')[0];
+  const surge = Math.round(zone.demand * 0.26);
 
   return (
-    <div className="relative flex h-8 w-8 items-center justify-center" title={getVehicleName(vehicle)}>
+    <div className="pointer-events-none -translate-y-2 whitespace-nowrap rounded-lg border border-white/15 bg-slate-950/92 px-2.5 py-1.5 shadow-lg shadow-black/30">
+      <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-cyan-200">{shortName}</p>
+      <p className="text-[11px] font-bold text-white">+{surge}% demand</p>
+    </div>
+  );
+}
+
+function LiveVehicleMarker({ vehicle, label }) {
+  const colorClass = getMarkerColorClass(vehicle);
+  const isActive = colorClass.includes('22c55e');
+  const isCharging = colorClass.includes('eab308');
+  const statusWord = isCharging ? 'Charging' : isActive ? 'Active' : 'Offline';
+
+  return (
+    <div className="relative flex flex-col items-center" title={`${label} · ${statusWord}`}>
       {isActive && (
-        <span className={`absolute h-8 w-8 animate-ping rounded-full opacity-40 ${colorClass}`} aria-hidden="true" />
+        <span className={`absolute h-10 w-10 animate-ping rounded-full opacity-35 ${colorClass}`} aria-hidden="true" />
       )}
-      <div className={`relative h-3.5 w-3.5 rounded-full border-2 border-white shadow-md ${colorClass}`} />
+      <div className={`relative h-4 w-4 rounded-full border-2 border-white shadow-md ${colorClass}`} />
+      <span className="mt-1 rounded-md bg-slate-950/88 px-1.5 py-0.5 text-[9px] font-bold tracking-[0.04em] text-white shadow-sm">
+        {label}
+      </span>
     </div>
   );
 }
@@ -120,6 +142,8 @@ function LiveVehicleMarker({ vehicle }) {
 export default function CommandMapPreview({
   fleet = [],
   realFleet = [],
+  totalEarnings = 0,
+  syncState = 'idle',
   onNavigate,
   activeCount = 0,
   totalCount = 0,
@@ -128,8 +152,15 @@ export default function CommandMapPreview({
 }) {
   const [viewState, setViewState] = useState(ORLANDO_VIEW);
   const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
-  const vehicles = useMemo(() => getMapFleet(fleet, realFleet), [fleet, realFleet]);
-  const total = totalCount || vehicles.length || fleet.length;
+  const vehicles = useMemo(
+    () => getMapFleet(fleet, realFleet, totalEarnings, syncState),
+    [fleet, realFleet, totalEarnings, syncState],
+  );
+  const featuredZones = useMemo(
+    () => [...demandZones].sort((a, b) => b.demand - a.demand).slice(0, 3),
+    [],
+  );
+  const total = totalCount || vehicles.length || getCommandOperationalSource(fleet, realFleet, totalEarnings, syncState).length;
   const active = activeCount || vehicles.filter((vehicle) => {
     const status = String(vehicle?.status || vehicle?.state || '').toUpperCase();
     return !status.includes('OFFLINE') && !status.includes('ASLEEP') && !status.includes('CHARG');
@@ -170,13 +201,24 @@ export default function CommandMapPreview({
             >
               <HeatmapLayer heatmapData={heatmapData} />
               <DemandZonesLayer />
-              {vehicles.map((vehicle) => (
+              {featuredZones.map((zone) => (
                 <Marker
-                  key={vehicle.id || getVehicleName(vehicle)}
+                  key={zone.name}
+                  longitude={zone.longitude}
+                  latitude={zone.latitude}
+                  anchor="bottom"
+                >
+                  <DemandZoneLabel zone={zone} />
+                </Marker>
+              ))}
+              {vehicles.map((vehicle, index) => (
+                <Marker
+                  key={vehicle.id || getVehicleLabel(vehicle, index)}
                   longitude={Number(vehicle.longitude)}
                   latitude={Number(vehicle.latitude)}
+                  anchor="bottom"
                 >
-                  <LiveVehicleMarker vehicle={vehicle} />
+                  <LiveVehicleMarker vehicle={vehicle} label={getVehicleLabel(vehicle, index)} />
                 </Marker>
               ))}
             </Map>
