@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { monument, monumentType } from './monumentTokens';
 
 const UTILITY_LINKS = [
@@ -10,39 +11,24 @@ const UTILITY_LINKS = [
 export default function MonumentUtilityLinks({
   onNavigate,
   active = null,
-  layout = 'dock',
+  layout = 'strip',
 }) {
-  if (layout === 'inline') {
-    return (
-      <nav
-        className="flex flex-wrap items-center justify-center gap-x-3 gap-y-2 px-4 py-3"
-        aria-label="Fleet utilities"
-      >
-        {UTILITY_LINKS.map((link, index) => (
-          <span key={link.id} className="inline-flex items-center gap-3">
-            {index > 0 && (
-              <span className={monumentType.revealHint} style={{ color: monument.hairline }} aria-hidden="true">
-                ·
-              </span>
-            )}
-            <button
-              type="button"
-              onClick={() => onNavigate?.(link.id)}
-              className={`${monumentType.navLabel} transition active:opacity-70`}
-              style={{ color: active === link.id ? monument.action : monument.inkMuted }}
-            >
-              {link.label}
-            </button>
-          </span>
-        ))}
-      </nav>
-    );
-  }
+  const activeRef = useRef(null);
 
-  if (layout === 'dock') {
+  useEffect(() => {
+    if (layout !== 'strip' || !active || !activeRef.current) return;
+    activeRef.current.scrollIntoView({
+      inline: 'center',
+      block: 'nearest',
+      behavior: 'smooth',
+    });
+  }, [active, layout]);
+
+  if (layout === 'strip') {
     return (
       <nav
-        className="grid grid-cols-4 gap-1 px-4 pb-1"
+        className="flex items-center gap-6 overflow-x-auto overscroll-x-contain px-4 py-3 snap-x snap-mandatory touch-pan-x [&::-webkit-scrollbar]:hidden"
+        style={{ WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none' }}
         aria-label="Fleet utilities"
       >
         {UTILITY_LINKS.map((link) => {
@@ -50,17 +36,15 @@ export default function MonumentUtilityLinks({
           return (
             <button
               key={link.id}
+              ref={isActive ? activeRef : null}
               type="button"
               onClick={() => onNavigate?.(link.id)}
-              className={`rounded-xl px-1 py-2.5 text-center transition active:scale-[0.98] ${
-                isActive ? 'opacity-100' : 'opacity-70'
+              className={`shrink-0 snap-center whitespace-nowrap ${monumentType.navLabel} transition-opacity active:opacity-70 ${
+                isActive ? 'opacity-100' : 'opacity-40'
               }`}
-              style={{
-                backgroundColor: isActive ? monument.ledgerWash : 'transparent',
-                color: isActive ? monument.ink : monument.inkMuted,
-              }}
+              style={{ color: isActive ? monument.action : monument.inkGhost }}
             >
-              <span className={`block ${monumentType.revealHint} font-semibold`}>{link.label}</span>
+              {link.label}
             </button>
           );
         })}
@@ -68,21 +52,36 @@ export default function MonumentUtilityLinks({
     );
   }
 
-  return (
-    <div className={`flex flex-wrap items-center justify-center gap-x-3 gap-y-1 px-4 py-2 ${monumentType.revealHint}`}>
-      {UTILITY_LINKS.map((link, index) => (
-        <span key={link.id} className="inline-flex items-center gap-3">
-          {index > 0 && <span style={{ color: monument.hairline }} aria-hidden="true">·</span>}
-          <button
-            type="button"
-            onClick={() => onNavigate?.(link.id)}
-            className="font-semibold transition active:opacity-70"
-            style={{ color: active === link.id ? monument.action : monument.inkGhost }}
-          >
-            {link.label}
-          </button>
-        </span>
-      ))}
-    </div>
-  );
+  if (layout === 'dock') {
+    return (
+      <nav
+        className="flex items-center gap-6 overflow-x-auto overscroll-x-contain px-4 py-3 snap-x snap-mandatory touch-pan-x [&::-webkit-scrollbar]:hidden"
+        style={{ WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none' }}
+        aria-label="Fleet utilities"
+      >
+        {UTILITY_LINKS.map((link) => {
+          const isActive = active === link.id;
+          return (
+            <button
+              key={link.id}
+              ref={isActive ? activeRef : null}
+              type="button"
+              onClick={() => onNavigate?.(link.id)}
+              className={`shrink-0 snap-center whitespace-nowrap rounded-xl px-2 py-2 ${monumentType.navLabel} transition active:scale-[0.98] ${
+                isActive ? 'opacity-100' : 'opacity-40'
+              }`}
+              style={{
+                backgroundColor: isActive ? monument.ledgerWash : 'transparent',
+                color: isActive ? monument.ink : monument.inkMuted,
+              }}
+            >
+              {link.label}
+            </button>
+          );
+        })}
+      </nav>
+    );
+  }
+
+  return null;
 }

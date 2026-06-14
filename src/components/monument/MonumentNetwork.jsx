@@ -4,7 +4,7 @@ import AccountSheet from './AccountSheet';
 import ExploreMarketSheet from './ExploreMarketSheet';
 import MonumentActionFooter from './MonumentActionFooter';
 import MonumentHero from './MonumentHero';
-import MonumentUtilityLinks from './MonumentUtilityLinks';
+import MonumentBottomChrome from './MonumentBottomChrome';
 import NetworkMonumentPanel from './NetworkMonumentPanel';
 import OperationsLedgerStrip from './OperationsLedgerStrip';
 import { monument } from './monumentTokens';
@@ -102,23 +102,11 @@ export default function MonumentNetwork({
         }}
       />
 
-      <div
-        className="shrink-0 touch-manipulation border-t pt-1"
-        style={{ borderColor: monument.hairline }}
-        onPointerDown={(event) => {
-          event.currentTarget.dataset.pressStart = String(Date.now());
-        }}
-        onPointerUp={(event) => {
-          const started = Number(event.currentTarget.dataset.pressStart || 0);
-          if (started && Date.now() - started >= 500) setAccountOpen(true);
-          delete event.currentTarget.dataset.pressStart;
-        }}
-      >
-        <MonumentUtilityLinks layout="dock" active="network" onNavigate={onNavigate} />
-        <p className="pb-1 text-center text-[10.8px] font-medium" style={{ color: monument.inkGhost }}>
-          Long-press for Account
-        </p>
-      </div>
+      <MonumentBottomChrome
+        utilityActive="network"
+        onNavigate={onNavigate}
+        onLongPress={() => setAccountOpen(true)}
+      />
 
       <ExploreMarketSheet
         open={exploreOpen}

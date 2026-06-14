@@ -6,7 +6,7 @@ import IntegrationDetailSheet from './IntegrationDetailSheet';
 import IntegrationsMonumentPanel from './IntegrationsMonumentPanel';
 import MonumentActionFooter from './MonumentActionFooter';
 import MonumentHero from './MonumentHero';
-import MonumentUtilityLinks from './MonumentUtilityLinks';
+import MonumentBottomChrome from './MonumentBottomChrome';
 import { monument } from './monumentTokens';
 import { clearLocalComplianceState } from '../../services/betaCompliance';
 import { logoutFleetOsAccount } from '../../services/sessionService';
@@ -117,23 +117,11 @@ export default function MonumentIntegrations({
         onSecondary={teslaConnected ? requestDisconnect : undefined}
       />
 
-      <div
-        className="shrink-0 touch-manipulation border-t pt-1"
-        style={{ borderColor: monument.hairline }}
-        onPointerDown={(event) => {
-          event.currentTarget.dataset.pressStart = String(Date.now());
-        }}
-        onPointerUp={(event) => {
-          const started = Number(event.currentTarget.dataset.pressStart || 0);
-          if (started && Date.now() - started >= 500) setAccountOpen(true);
-          delete event.currentTarget.dataset.pressStart;
-        }}
-      >
-        <MonumentUtilityLinks layout="dock" active="integrations" onNavigate={onNavigate} />
-        <p className="pb-1 text-center text-[10.8px] font-medium" style={{ color: monument.inkGhost }}>
-          Long-press for Account
-        </p>
-      </div>
+      <MonumentBottomChrome
+        utilityActive="integrations"
+        onNavigate={onNavigate}
+        onLongPress={() => setAccountOpen(true)}
+      />
 
       <IntegrationDetailSheet
         open={detailOpen}

@@ -14,8 +14,10 @@ export default function MonumentSwipeStrip({
   pages = DEFAULT_PAGES,
   ariaLabel = 'Command sections',
 }) {
-  const activeIndex = pages.findIndex((page) => page.id === active);
-  const nextLabel = activeIndex < pages.length - 1 ? pages[activeIndex + 1].label : null;
+  const activeIndex = active ? pages.findIndex((page) => page.id === active) : -1;
+  const nextLabel = activeIndex >= 0 && activeIndex < pages.length - 1
+    ? pages[activeIndex + 1].label
+    : null;
 
   return (
     <div
@@ -35,7 +37,8 @@ export default function MonumentSwipeStrip({
       }}
     >
       <div
-        className="flex items-center justify-center gap-6 px-4 pb-2 pt-3"
+        className="flex items-center justify-center gap-6 overflow-x-auto overscroll-x-contain px-4 pb-2 pt-3 snap-x snap-mandatory touch-pan-x [&::-webkit-scrollbar]:hidden"
+        style={{ WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none' }}
         role="tablist"
         aria-label={ariaLabel}
       >
@@ -48,7 +51,7 @@ export default function MonumentSwipeStrip({
               role="tab"
               aria-selected={isActive}
               onClick={() => onSelect?.(page.id)}
-              className={`${monumentType.navLabel} transition-opacity ${isActive ? 'opacity-100' : 'opacity-40'}`}
+              className={`shrink-0 snap-center whitespace-nowrap ${monumentType.navLabel} transition-opacity ${isActive ? 'opacity-100' : 'opacity-40'}`}
               style={{ color: isActive ? monument.ink : monument.inkGhost }}
             >
               {page.label}

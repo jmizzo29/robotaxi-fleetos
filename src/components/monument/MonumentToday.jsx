@@ -5,8 +5,7 @@ import AssetDetailSheet from './AssetDetailSheet';
 import ConfirmActionSheet from './ConfirmActionSheet';
 import ExploreMarketSheet from './ExploreMarketSheet';
 import FleetMonumentPanel from './FleetMonumentPanel';
-import MonumentSwipeStrip from './MonumentSwipeStrip';
-import MonumentUtilityLinks from './MonumentUtilityLinks';
+import MonumentBottomChrome from './MonumentBottomChrome';
 import MonumentActionFooter from './MonumentActionFooter';
 import TelemetryDetailSheet from './TelemetryDetailSheet';
 import FleetBrowseSheet from './FleetBrowseSheet';
@@ -366,14 +365,12 @@ export default function MonumentToday({
         ))}
       </div>
 
-      <div className="shrink-0 border-t" style={{ borderColor: monument.hairline }}>
-        <MonumentUtilityLinks layout="inline" onNavigate={onNavigate} />
-        <MonumentSwipeStrip
-          active={tab}
-          onSelect={scrollToTab}
-          onLongPress={() => setAccountOpen(true)}
-        />
-      </div>
+      <MonumentBottomChrome
+        onNavigate={onNavigate}
+        commandActive={tab}
+        onCommandSelect={scrollToTab}
+        onLongPress={() => setAccountOpen(true)}
+      />
 
       <ConfirmActionSheet
         open={confirmOpen}

@@ -4,8 +4,7 @@ import AccountSheet from './AccountSheet';
 import AssetDetailSheet from './AssetDetailSheet';
 import ConfirmActionSheet from './ConfirmActionSheet';
 import MonumentActionFooter from './MonumentActionFooter';
-import MonumentSwipeStrip from './MonumentSwipeStrip';
-import MonumentUtilityLinks from './MonumentUtilityLinks';
+import MonumentBottomChrome from './MonumentBottomChrome';
 import OperationsLedgerStrip from './OperationsLedgerStrip';
 import OperationsMonumentPanel from './OperationsMonumentPanel';
 import PlanDetailSheet from './PlanDetailSheet';
@@ -358,16 +357,14 @@ export default function MonumentOperations({
         ))}
       </div>
 
-      <div className="shrink-0 border-t" style={{ borderColor: monument.hairline }}>
-        <MonumentUtilityLinks layout="inline" onNavigate={onNavigate} />
-        <MonumentSwipeStrip
-          active={tab}
-          pages={SWIPE_PAGES}
-          ariaLabel="Operations sections"
-          onSelect={scrollToTab}
-          onLongPress={() => setAccountOpen(true)}
-        />
-      </div>
+      <MonumentBottomChrome
+        onNavigate={onNavigate}
+        commandActive={tab}
+        commandPages={SWIPE_PAGES}
+        commandAriaLabel="Operations sections"
+        onCommandSelect={scrollToTab}
+        onLongPress={() => setAccountOpen(true)}
+      />
 
       <ConfirmActionSheet
         open={confirmOpen}
