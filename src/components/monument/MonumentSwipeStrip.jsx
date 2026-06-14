@@ -46,7 +46,7 @@ export default function MonumentSwipeStrip({
               role="tab"
               aria-selected={isActive}
               onClick={() => onSelect?.(page.id)}
-              className={`${monumentType.label} transition-opacity ${isActive ? 'opacity-100' : 'opacity-40'}`}
+              className={`${monumentType.navLabel} transition-opacity ${isActive ? 'opacity-100' : 'opacity-40'}`}
               style={{ color: isActive ? monument.ink : monument.inkGhost }}
             >
               {page.label}

@@ -45,7 +45,7 @@ import chargingStations from './data/chargingStations';
 import demandZones from './data/demandZones';
 import weatherZones from './data/weatherZones';
 import useAiFleetAnalysis from './hooks/useAiFleetAnalysis';
-import useHashRoute from './hooks/useHashRoute';
+import useHashRoute, { isExplicitLandingHash, isImplicitLandingEntry } from './hooks/useHashRoute';
 import { useFleetSimulation } from './hooks/useFleetSimulation';
 import { useFleetAuthStatus } from './auth/FleetAuthContext';
 import { canUseTeslaTelemetry } from './services/betaCompliance';
@@ -259,42 +259,33 @@ function FleetApp() {
   // who type #/overview etc. are redirected to the landing page.
   const { isAuthReady, isSignedIn } = useFleetAuthStatus();
   const [sessionCheck, setSessionCheck] = useState('checking'); // 'checking' | 'authed' | 'guest'
-  const [landingGateReady, setLandingGateReady] = useState(() => !isPublicLandingOnly);
   // Clerk-signed-in users are authenticated without a server round trip.
   const sessionAllowed = isSignedIn || sessionCheck === 'authed';
 
   useEffect(() => {
-    if (!isPublicLandingOnly) {
-      setLandingGateReady(true);
-      return undefined;
-    }
-    if (!isAuthReady) {
-      setLandingGateReady(false);
-      return undefined;
-    }
+    if (!isPublicLandingOnly || !isAuthReady) return undefined;
 
     let cancelled = false;
-    setLandingGateReady(false);
 
     getFleetOsSession()
       .then((session) => {
         if (cancelled) return;
-        if (session?.authenticated && session?.teslaConnected) {
+        const shouldAutoEnterApp = session?.authenticated
+          && session?.teslaConnected
+          && isImplicitLandingEntry()
+          && !isExplicitLandingHash();
+        if (shouldAutoEnterApp) {
           navigate('overview');
-          return;
         }
-        setLandingGateReady(true);
       })
-      .catch(() => {
-        if (!cancelled) setLandingGateReady(true);
-      });
+      .catch(() => {});
 
     return () => {
       cancelled = true;
     };
     // navigate is stable in behavior (sets window.location.hash); intentionally omitted.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPublicLandingOnly, isAuthReady, isSignedIn, route]);
+  }, [isPublicLandingOnly, isAuthReady, route]);
 
   useEffect(() => {
     if (!isProtectedRoute || !isAuthReady || isSignedIn) return undefined;
@@ -707,12 +698,15 @@ function FleetApp() {
   };
 
   // === PUBLIC ROUTES (Landing, Login, Signup) ===
-  if (isPublicLandingOnly && (!isAuthReady || !landingGateReady)) {
+  if (isPublicLandingOnly && !isAuthReady) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-black text-white">
+      <div
+        className="flex min-h-screen items-center justify-center"
+        style={{ backgroundColor: '#FAFAF8' }}
+      >
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="h-6 w-6 animate-spin text-white/60" />
-          <p className="text-sm text-white/60">Loading…</p>
+          <Loader2 className="h-6 w-6 animate-spin" style={{ color: '#9CA3AF' }} />
+          <p className="text-sm" style={{ color: '#6B7280' }}>Loading…</p>
         </div>
       </div>
     );

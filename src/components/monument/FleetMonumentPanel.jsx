@@ -30,8 +30,8 @@ export default function FleetMonumentPanel({ strip, onSelectStatus }) {
           >
             <p className={monumentType.label} style={{ color: monument.inkGhost }}>{tile.label}</p>
             <p
-              className={`mt-2 ${monumentType.ledgerAmount}`}
-              style={{ color: tileValueColor(tile.key), fontSize: '28px' }}
+              className={`mt-2 ${monumentType.monumentSm}`}
+              style={{ color: tileValueColor(tile.key) }}
             >
               {tile.value}
             </p>

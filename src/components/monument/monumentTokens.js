@@ -16,10 +16,11 @@ export const monument = {
 };
 
 export const monumentType = {
-  label: 'text-[10.8px] font-medium uppercase tracking-[0.22em]',
-  monument: 'text-[67.2px] font-bold leading-none tracking-[-0.05em] tabular-nums',
+  label: 'text-[12.96px] font-medium uppercase tracking-[0.22em]',
+  navLabel: 'text-[12.96px] font-semibold uppercase tracking-[0.18em]',
+  monument: 'text-[80.64px] font-bold leading-none tracking-[-0.05em] tabular-nums',
   monumentSm: 'text-[33.6px] font-bold leading-none tracking-[-0.04em] tabular-nums',
-  subline: 'text-[14.4px] font-normal',
+  subline: 'text-[17.28px] font-normal',
   actionLine: 'text-[15.6px] font-normal leading-snug',
   actionLink: 'text-[14.4px] font-semibold',
   revealHint: 'text-[10.8px] font-medium',

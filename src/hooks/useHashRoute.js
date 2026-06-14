@@ -8,6 +8,20 @@ function readRoute() {
   return validRoutes.has(rawHash) ? rawHash : 'landing';
 }
 
+/** True when the user opened #/landing directly (should always show marketing). */
+export function isExplicitLandingHash() {
+  if (typeof window === 'undefined') return false;
+  const hash = window.location.hash.replace(/^#/, '').replace(/^\//, '');
+  return hash === 'landing' || hash === 'landing-entry';
+}
+
+/** True on first open with no hash — authed users may skip to Command. */
+export function isImplicitLandingEntry() {
+  if (typeof window === 'undefined') return true;
+  const hash = window.location.hash;
+  return !hash || hash === '#' || hash === '#/';
+}
+
 export default function useHashRoute() {
   const [route, setRoute] = useState(() => readRoute());
 
