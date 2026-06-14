@@ -45,11 +45,11 @@ function getMapFleet(fleet, realFleet) {
 
 function MapFooter({ total, active }) {
   return (
-    <div className="pointer-events-none absolute bottom-0 left-0 right-0 flex items-center justify-between gap-2 border-t border-white/10 bg-white/95 px-3 py-2.5 backdrop-blur-sm">
-      <p className="text-[11px] font-semibold text-slate-800">
-        {total} Vehicles <span className="text-slate-400">|</span> {active} Active now
+    <div className="pointer-events-none absolute bottom-0 left-0 right-0 flex items-center justify-between gap-2 border-t border-slate-200/80 bg-white/96 px-4 py-3 backdrop-blur-md">
+      <p className="text-[12px] font-semibold text-slate-800">
+        {total} Vehicles <span className="text-slate-300">|</span> {active} Active now
       </p>
-      <div className="flex items-center gap-2 text-[9px] font-semibold text-slate-500">
+      <div className="flex items-center gap-2.5 text-[10px] font-semibold text-slate-500">
         <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-[#22c55e]" />Active</span>
         <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-[#eab308]" />Charging</span>
         <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-[#ef4444]" />Offline</span>
@@ -121,7 +121,8 @@ export default function CommandMapPreview({
   onNavigate,
   activeCount = 0,
   totalCount = 0,
-  mapHeightClass = 'h-[380px]',
+  mapHeightClass = 'h-[420px]',
+  tier = 'primary',
 }) {
   const [viewState, setViewState] = useState(ORLANDO_VIEW);
   const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
@@ -132,60 +133,66 @@ export default function CommandMapPreview({
     return !status.includes('OFFLINE') && !status.includes('ASLEEP') && !status.includes('CHARG');
   }).length;
 
+  const titleClass = tier === 'primary'
+    ? 'text-[24px] font-bold tracking-[-0.03em] text-slate-950'
+    : 'text-[18px] font-bold tracking-[-0.02em] text-slate-800';
+
   return (
     <section aria-label="Live fleet map">
-      <div className="mb-3 flex items-center justify-between gap-2">
-        <h2 className="text-[22px] font-bold tracking-[-0.03em] text-slate-950">Live Fleet Map</h2>
+      <div className="mb-3.5 flex items-center justify-between gap-3">
+        <h2 className={titleClass}>Live Fleet Map</h2>
         <button
           type="button"
           onClick={() => onNavigate('map')}
-          className="text-[13px] font-semibold text-[#2563eb]"
+          className="shrink-0 text-[13px] font-semibold text-[#2563eb]"
         >
           Full map
         </button>
       </div>
 
-      <div
-        className={`relative overflow-hidden rounded-[20px] border border-slate-200 shadow-[0_14px_36px_-20px_rgba(15,23,42,0.45)] ${mapHeightClass}`}
-      >
-        {!mapboxToken ? (
-          <>
-            <div className="absolute inset-0 flex items-center justify-center bg-[#06080c] px-6 text-center">
-              <div>
-                <p className="text-sm font-semibold text-white/80">Mapbox token required</p>
-                <p className="mt-1 text-[11px] text-white/45">
-                  Add <code className="rounded bg-white/10 px-1 py-0.5">VITE_MAPBOX_TOKEN</code> for the live map.
-                </p>
+      <div className="rounded-[24px] bg-gradient-to-b from-slate-100 to-slate-200/80 p-1 shadow-[0_20px_48px_-24px_rgba(15,23,42,0.45)]">
+        <div
+          className={`relative overflow-hidden rounded-[20px] border border-slate-300/60 shadow-inner ${mapHeightClass}`}
+        >
+          {!mapboxToken ? (
+            <>
+              <div className="absolute inset-0 flex items-center justify-center bg-[#06080c] px-6 text-center">
+                <div>
+                  <p className="text-sm font-semibold text-white/80">Mapbox token required</p>
+                  <p className="mt-1 text-[11px] text-white/45">
+                    Add <code className="rounded bg-white/10 px-1 py-0.5">VITE_MAPBOX_TOKEN</code> for the live map.
+                  </p>
+                </div>
               </div>
-            </div>
-            <MapFooter total={total} active={active} />
-          </>
-        ) : (
-          <Map
-            {...viewState}
-            onMove={(event) => setViewState(event.viewState)}
-            mapStyle="mapbox://styles/mapbox/dark-v11"
-            mapboxAccessToken={mapboxToken}
-            style={{ width: '100%', height: '100%' }}
-            attributionControl={false}
-            reuseMaps
-            touchPitch={false}
-          >
-            <HeatmapLayer heatmapData={heatmapData} />
-            <DemandZonesLayer />
-            {vehicles.map((vehicle) => (
-              <Marker
-                key={vehicle.id || getVehicleName(vehicle)}
-                longitude={Number(vehicle.longitude)}
-                latitude={Number(vehicle.latitude)}
-              >
-                <LiveVehicleMarker vehicle={vehicle} />
-              </Marker>
-            ))}
-          </Map>
-        )}
+              <MapFooter total={total} active={active} />
+            </>
+          ) : (
+            <Map
+              {...viewState}
+              onMove={(event) => setViewState(event.viewState)}
+              mapStyle="mapbox://styles/mapbox/dark-v11"
+              mapboxAccessToken={mapboxToken}
+              style={{ width: '100%', height: '100%' }}
+              attributionControl={false}
+              reuseMaps
+              touchPitch={false}
+            >
+              <HeatmapLayer heatmapData={heatmapData} />
+              <DemandZonesLayer />
+              {vehicles.map((vehicle) => (
+                <Marker
+                  key={vehicle.id || getVehicleName(vehicle)}
+                  longitude={Number(vehicle.longitude)}
+                  latitude={Number(vehicle.latitude)}
+                >
+                  <LiveVehicleMarker vehicle={vehicle} />
+                </Marker>
+              ))}
+            </Map>
+          )}
 
-        {mapboxToken && <MapFooter total={total} active={active} />}
+          {mapboxToken && <MapFooter total={total} active={active} />}
+        </div>
       </div>
     </section>
   );

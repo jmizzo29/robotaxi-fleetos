@@ -13,20 +13,16 @@ const items = [
   { id: 'account', label: 'Account', Icon: User, routes: ['account', 'settings'] },
 ];
 
-export default function MobileBottomNav({ route, onNavigate }) {
-  const isCommand = route === 'overview';
+const ICON_SIZE = 21;
 
+export default function MobileBottomNav({ route, onNavigate }) {
   return (
     <nav
-      className={`fixed bottom-0 left-0 right-0 z-50 backdrop-blur-md lg:hidden ${
-        isCommand
-          ? 'border-t border-slate-200 bg-white/95'
-          : 'border-t border-white/10 bg-[#0a0a0a]/95'
-      }`}
+      className="fixed bottom-0 left-0 right-0 z-50 border-t border-slate-200/90 bg-white/98 shadow-[0_-8px_32px_-12px_rgba(15,23,42,0.18)] backdrop-blur-lg lg:hidden"
       aria-label="Primary navigation"
       style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
-      <div className="grid grid-cols-5 px-1 pt-1">
+      <div className="grid grid-cols-5">
         {items.map(({ id, label, Icon, routes }) => {
           const active = routes.includes(route);
 
@@ -35,40 +31,29 @@ export default function MobileBottomNav({ route, onNavigate }) {
               key={id}
               type="button"
               onClick={() => onNavigate(id)}
-              className="relative flex min-h-[3.85rem] flex-col items-center justify-center gap-1 px-1 py-2 transition active:scale-[0.98]"
+              aria-current={active ? 'page' : undefined}
+              className="relative flex min-h-[4.25rem] min-w-0 flex-col items-center justify-center gap-1 px-0.5 pb-2 pt-2.5 transition active:scale-[0.98]"
             >
+              {active && (
+                <span
+                  className="absolute inset-x-3 top-0 h-[3px] rounded-full bg-[#2563eb]"
+                  aria-hidden="true"
+                />
+              )}
               <span
-                className={`flex h-9 w-11 items-center justify-center rounded-2xl transition-colors ${
-                  active
-                    ? isCommand
-                      ? 'bg-[#eff6ff]'
-                      : 'bg-white/12'
-                    : 'bg-transparent'
+                className={`flex h-10 w-10 items-center justify-center rounded-2xl transition-colors ${
+                  active ? 'bg-[#eff6ff]' : 'bg-transparent'
                 }`}
               >
                 <Icon
-                  size={22}
-                  strokeWidth={active ? 2.35 : 2}
-                  className={`flex-shrink-0 ${
-                    active
-                      ? isCommand
-                        ? 'text-[#2563eb]'
-                        : 'text-white'
-                      : isCommand
-                        ? 'text-slate-400'
-                        : 'text-white/65'
-                  }`}
+                  size={ICON_SIZE}
+                  strokeWidth={active ? 2.4 : 2}
+                  className={`flex-shrink-0 ${active ? 'text-[#2563eb]' : 'text-slate-400'}`}
                 />
               </span>
               <span
-                className={`text-[10px] font-semibold tracking-wide ${
-                  active
-                    ? isCommand
-                      ? 'text-[#2563eb]'
-                      : 'text-white'
-                    : isCommand
-                      ? 'text-slate-400'
-                      : 'text-white/65'
+                className={`w-full px-0.5 text-center text-[9.5px] font-semibold leading-tight ${
+                  active ? 'text-[#2563eb]' : 'text-slate-500'
                 }`}
               >
                 {label}
