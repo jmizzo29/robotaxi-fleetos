@@ -43,6 +43,16 @@ function assetStatusLine(vehicle) {
   return 'Online';
 }
 
+function assetPositionLabel(vehicle) {
+  const lat = Number(vehicle?.latitude);
+  const lng = Number(vehicle?.longitude);
+  const city = vehicle?.city ? String(vehicle.city).split(',')[0].trim() : null;
+  if (Number.isFinite(lat) && Number.isFinite(lng)) {
+    return city ? `${city} · live` : `${lat.toFixed(4)}, ${lng.toFixed(4)}`;
+  }
+  return city || 'Position pending sync';
+}
+
 function ownerCityLabel(fleet = []) {
   const city = fleet.find((vehicle) => vehicle.city)?.city;
   return city ? String(city).split(',')[0].trim() : 'Orlando';
@@ -160,6 +170,29 @@ export function getTopEarner(fleet, realFleet, totalEarnings, syncState) {
   };
 }
 
+function isFleetMemberInService(vehicle) {
+  const status = String(vehicle?.status || '').toUpperCase();
+  const score = Number(vehicle?.maintenanceScore);
+  return status.includes('SERVICE') || status.includes('MAINT')
+    || (Number.isFinite(score) && score < 78);
+}
+
+function getFleetMemberTile(vehicle) {
+  const state = vehicleStateLabel(vehicle);
+  if (isFleetMemberInService(vehicle)) return 'down';
+  if (state === 'Charging') return 'charging';
+  if (state === 'Offline' || state === 'Asleep') return 'down';
+  return 'active';
+}
+
+/** Fleet tab tile drill-down — members matching Active, Charge, or Down. */
+export function getFleetMembersByTile(tileKey, fleet, realFleet, totalEarnings, syncState) {
+  const source = commandSource(fleet, realFleet, totalEarnings, syncState);
+  return source
+    .map((vehicle, index) => ({ vehicle, index, cab: cabLabel(vehicle, index) }))
+    .filter((entry) => getFleetMemberTile(entry.vehicle) === tileKey);
+}
+
 export function findVehicleByCab(cab, fleet, realFleet, totalEarnings = 0, syncState = 'idle') {
   const source = commandSource(fleet, realFleet, totalEarnings, syncState);
   const match = source.find((vehicle, index) => cabLabel(vehicle, index) === cab);
@@ -197,6 +230,7 @@ export function getAssetSheetPayload(
 
   return {
     cab,
+    vehicle,
     statusLine: assetStatusLine(vehicle),
     revenue: `$${revenue.toLocaleString()}`,
     rows: rows.length
@@ -210,6 +244,9 @@ export function getAssetSheetPayload(
       { label: 'battery', value: battery !== null ? `${battery}%` : '—' },
     ],
     hasLocation: Number.isFinite(Number(vehicle.latitude)) && Number.isFinite(Number(vehicle.longitude)),
+    positionLabel: assetPositionLabel(vehicle),
+    latitude: Number(vehicle.latitude),
+    longitude: Number(vehicle.longitude),
     nudgeCommand: `Move ${cab} to MCO demand zone`,
   };
 }

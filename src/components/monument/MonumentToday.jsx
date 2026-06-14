@@ -8,6 +8,7 @@ import FleetMonumentPanel from './FleetMonumentPanel';
 import MonumentSwipeStrip from './MonumentSwipeStrip';
 import MonumentActionFooter from './MonumentActionFooter';
 import TelemetryDetailSheet from './TelemetryDetailSheet';
+import FleetBrowseSheet from './FleetBrowseSheet';
 import TodayDetailSheet from './TodayDetailSheet';
 import { monument, monumentType } from './monumentTokens';
 import { clearLocalComplianceState } from '../../services/betaCompliance';
@@ -70,6 +71,8 @@ export default function MonumentToday({
   const [assetTarget, setAssetTarget] = useState(null);
   const [telemetryOpen, setTelemetryOpen] = useState(false);
   const [telemetryTarget, setTelemetryTarget] = useState(null);
+  const [fleetBrowseOpen, setFleetBrowseOpen] = useState(false);
+  const [fleetBrowseKey, setFleetBrowseKey] = useState('active');
   const pagerRef = useRef(null);
   const scrollRaf = useRef(null);
 
@@ -160,6 +163,11 @@ export default function MonumentToday({
     if (!target?.vehicle) return;
     setTelemetryTarget(target);
     setTelemetryOpen(true);
+  };
+
+  const handleFleetStatusSelect = (tileKey) => {
+    setFleetBrowseKey(tileKey);
+    setFleetBrowseOpen(true);
   };
 
   const telemetryPayload = useMemo(
@@ -328,7 +336,7 @@ export default function MonumentToday({
             {page.showFleetPanel && (
               <FleetMonumentPanel
                 strip={strip}
-                onSelectStatus={() => openAssetSheet()}
+                onSelectStatus={handleFleetStatusSelect}
               />
             )}
             <MonumentActionFooter
@@ -375,6 +383,20 @@ export default function MonumentToday({
         open={telemetryOpen}
         payload={telemetryPayload}
         onClose={() => setTelemetryOpen(false)}
+      />
+
+      <FleetBrowseSheet
+        open={fleetBrowseOpen}
+        tileKey={fleetBrowseKey}
+        fleet={fleet}
+        realFleet={realFleet}
+        totalEarnings={totalEarnings}
+        syncState={syncState}
+        onClose={() => setFleetBrowseOpen(false)}
+        onViewTelemetry={(cab) => {
+          setFleetBrowseOpen(false);
+          openTelemetrySheet(cab);
+        }}
       />
 
       <ExploreMarketSheet

@@ -1,4 +1,4 @@
-import { MapPin } from 'lucide-react';
+import AssetPositionMap from './AssetPositionMap';
 import MonumentSheet from './MonumentSheet';
 import { monument, monumentType } from './monumentTokens';
 
@@ -52,14 +52,12 @@ export default function AssetDetailSheet({
           </div>
         </div>
 
-        <div
-          className="mt-3.5 flex h-[72px] items-center justify-center rounded-xl"
-          style={{ backgroundColor: monument.ledgerWash }}
-        >
-          <MapPin className="h-4 w-4" style={{ color: monument.inkGhost }} strokeWidth={1.75} />
-          <span className={`ml-2 ${monumentType.revealHint}`} style={{ color: monument.inkGhost }}>
-            {payload.hasLocation ? 'Live position' : 'quiet map pin'}
-          </span>
+        <div className="mt-3.5">
+          <AssetPositionMap
+            vehicle={payload.vehicle}
+            cab={payload.cab}
+            positionLabel={payload.positionLabel}
+          />
         </div>
 
         <p className={`mt-4 ${monumentType.label}`} style={{ color: monument.inkGhost }}>Today ledger</p>
