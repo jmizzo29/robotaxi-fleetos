@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import RoboLogo from '../RoboLogo';
 import RoboWordmark from '../RoboWordmark';
+import { monument, monumentType } from '../monument/monumentTokens';
 
 const navItems = [
   { label: 'How it works', route: 'how-it-works' },
@@ -13,12 +14,96 @@ export default function LandingHeader({ onNavigate, onConnect, variant = 'defaul
   const [open, setOpen] = useState(false);
   const connect = onConnect || (() => onNavigate('onboarding'));
   const isEntry = variant === 'entry';
+  const isMonument = variant === 'monument';
   const homeRoute = 'landing';
 
   const go = (route) => {
     setOpen(false);
     onNavigate(route);
   };
+
+  if (isMonument) {
+    return (
+      <>
+        <header
+          className="fixed inset-x-0 top-0 z-50 flex h-14 items-center justify-between px-5 backdrop-blur-md"
+          style={{
+            backgroundColor: 'rgba(250,250,248,0.92)',
+            paddingTop: 'env(safe-area-inset-top)',
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => go(homeRoute)}
+            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+            aria-label="ROBOAGENT home"
+          >
+            <RoboWordmark
+              className="text-[1.0625rem] tracking-[0.15em]"
+              colorClass="text-[#12141A]"
+            />
+          </button>
+
+          <div className="w-10" aria-hidden="true" />
+
+          <button
+            type="button"
+            onClick={() => setOpen((current) => !current)}
+            className="flex h-10 w-10 items-center justify-center rounded-full transition active:scale-[0.98]"
+            style={{ color: monument.inkMuted }}
+            aria-label={open ? 'Close menu' : 'Open menu'}
+            aria-expanded={open}
+          >
+            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          </button>
+        </header>
+
+        {open && (
+          <button
+            type="button"
+            className="fixed inset-0 z-40"
+            style={{ backgroundColor: monument.scrim }}
+            onClick={() => setOpen(false)}
+            aria-label="Close menu"
+          />
+        )}
+
+        <nav
+          className={`fixed right-0 top-0 z-50 flex h-full w-[min(100%,280px)] flex-col px-6 pt-20 shadow-2xl transition-transform duration-300 ${
+            open ? 'translate-x-0' : 'translate-x-full'
+          }`}
+          style={{ backgroundColor: monument.canvas }}
+          aria-hidden={!open}
+        >
+          <div className="flex flex-col gap-1">
+            {navItems.map(({ label, route }) => (
+              <button
+                key={route}
+                type="button"
+                onClick={() => go(route)}
+                className={`rounded-xl px-3 py-3.5 text-left ${monumentType.sheetBody} transition active:bg-black/[0.03]`}
+                style={{ color: monument.ink }}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            onClick={() => {
+              setOpen(false);
+              connect();
+            }}
+            className={`mt-8 w-full rounded-xl py-3.5 ${monumentType.buttonPrimary} text-white`}
+            style={{ backgroundColor: monument.action }}
+          >
+            Connect Tesla
+          </button>
+        </nav>
+      </>
+    );
+  }
 
   return (
     <>
