@@ -133,7 +133,6 @@ export default function MonumentIntegrations({
         <p className="pb-1 text-center text-[10.8px] font-medium" style={{ color: monument.inkGhost }}>
           Long-press for Account
         </p>
-        <div className="lg:hidden min-h-[4.5rem] shrink-0" aria-hidden="true" />
       </div>
 
       <IntegrationDetailSheet

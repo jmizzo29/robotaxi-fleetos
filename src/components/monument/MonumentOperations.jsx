@@ -367,7 +367,6 @@ export default function MonumentOperations({
           onSelect={scrollToTab}
           onLongPress={() => setAccountOpen(true)}
         />
-        <div className="lg:hidden min-h-[4.5rem] shrink-0" aria-hidden="true" />
       </div>
 
       <ConfirmActionSheet

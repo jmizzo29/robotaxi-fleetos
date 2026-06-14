@@ -4,7 +4,6 @@ import ErrorBoundary from './components/ErrorBoundary';
 import { AuthenticateWithRedirectCallback, ClerkProvider } from '@clerk/react';
 import CommandSafetyModal from './components/CommandSafetyModal';
 import FeedbackButton from './components/FeedbackButton';
-import MobileBottomNav from './components/MobileBottomNav';
 import PageHeader from './components/PageHeader';
 import { AppHeader, AppShell } from './components/shell';
 import { mobileScreenBadge } from './design/roboagentTokens';
@@ -764,7 +763,6 @@ function FleetApp() {
         <div className="hidden min-h-screen bg-surface text-ink lg:block">
           <AccountPanel onNavigate={navigate} />
         </div>
-        <MobileBottomNav route={route} onNavigate={navigate} pendingCount={commandQueue.length} />
         <FeedbackButton route={route} />
       </>
     );
@@ -805,7 +803,6 @@ function FleetApp() {
             />
           </main>
         </div>
-        <MobileBottomNav route={route} onNavigate={navigate} pendingCount={commandQueue.length} />
         <FeedbackButton route={route} />
       </>
     );
@@ -830,7 +827,6 @@ function FleetApp() {
             />
           </main>
         </div>
-        <MobileBottomNav route={route} onNavigate={navigate} pendingCount={commandQueue.length} />
         <FeedbackButton route={route} />
       </>
     );
@@ -889,7 +885,6 @@ function FleetApp() {
             {utilityPage}
           </main>
         </div>
-        <MobileBottomNav route={route} onNavigate={navigate} pendingCount={commandQueue.length} />
         <FeedbackButton route={route} />
       </>
     );
@@ -921,7 +916,6 @@ function FleetApp() {
         </div>
       </main>
 
-      <MobileBottomNav route={route} onNavigate={navigate} pendingCount={commandQueue.length} />
       <CommandSafetyModal
         pendingCommand={pendingCommand}
         onCancel={() => setPendingCommand(null)}
