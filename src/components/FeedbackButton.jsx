@@ -1,10 +1,24 @@
 import { useState } from 'react';
 import BetaFeedbackForm from './BetaFeedbackForm';
 
+const OPERATIONAL_ROUTES = new Set([
+  'overview',
+  'fleet',
+  'dispatch',
+  'network',
+  'map',
+  'charging',
+  'alerts',
+  'ai',
+  'health',
+  'finance',
+  'readiness',
+]);
+
 export default function FeedbackButton({ route }) {
   const [open, setOpen] = useState(false);
 
-  if (route === 'overview') return null;
+  if (OPERATIONAL_ROUTES.has(route)) return null;
 
   return (
     <>

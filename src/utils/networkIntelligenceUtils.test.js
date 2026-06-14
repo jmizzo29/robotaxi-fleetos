@@ -5,6 +5,7 @@ import {
 } from './vehicleDisplayUtils';
 import {
   getExpansionRecommendation,
+  getExpansionScoreboard,
   getNetworkOpportunities,
 } from './networkIntelligenceUtils';
 
@@ -15,21 +16,23 @@ const fleet = [
 ];
 
 describe('getCommandEarningsHero', () => {
-  it('returns net earnings, trips, and tesla share when revenue is trusted', () => {
+  it('returns net earnings, trips, tesla share, and net margin when revenue is trusted', () => {
     const hero = getCommandEarningsHero([fleet[0], fleet[1]], 165, 'success');
     expect(hero.amount).toBe('$165');
     expect(hero.label).toBe('Net Earnings Today');
     expect(Number(hero.trips)).toBeGreaterThan(0);
     expect(hero.teslaShare).toBe('$165');
+    expect(hero.netMargin).toMatch(/%$/);
   });
 });
 
 describe('getCommandFleetStatusStrip', () => {
-  it('counts active, charging, and offline vehicles', () => {
+  it('counts active, charging, service, and offline vehicles with operational sublabels', () => {
     const strip = getCommandFleetStatusStrip(fleet, [fleet[0], fleet[1]]);
-    expect(strip.active.value).toBe('1');
+    expect(strip.service.value).toBe('1');
     expect(strip.charging.value).toBe('1');
-    expect(strip.offline.value).toBe('0');
+    expect(strip.active.sub).toBeTruthy();
+    expect(strip.offline.sub).toBe('Fleet Healthy');
   });
 });
 
@@ -41,10 +44,20 @@ describe('getNetworkOpportunities', () => {
   });
 });
 
+describe('getExpansionScoreboard', () => {
+  it('returns ranked Florida markets', () => {
+    const board = getExpansionScoreboard();
+    expect(board[0].city).toBe('Orlando');
+    expect(board[0].score).toBeGreaterThan(board[1].score);
+  });
+});
+
 describe('getExpansionRecommendation', () => {
-  it('returns Orlando expansion projection', () => {
+  it('returns Orlando expansion with monthly projection', () => {
     const expansion = getExpansionRecommendation(fleet);
     expect(expansion.city).toBe('Orlando');
     expect(expansion.projectedLabel).toMatch(/^\+\$/);
+    expect(expansion.deployLabel).toContain('Deploy');
+    expect(expansion.confidenceLabel).toBeTruthy();
   });
 });

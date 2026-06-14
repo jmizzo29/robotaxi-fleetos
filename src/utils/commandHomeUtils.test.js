@@ -33,12 +33,13 @@ describe('getOpenActionsBreakdown', () => {
 });
 
 describe('getCommandAiPlan', () => {
-  it('builds a summary and checklist', () => {
+  it('builds an operations brief with action and demand metrics', () => {
     const plan = getCommandAiPlan(fleet, [fleet[0]], { state: 'success' }, []);
     expect(plan.summary.length).toBeGreaterThan(0);
-    expect(plan.checklist.length).toBeGreaterThan(0);
+    expect(plan.action.length).toBeGreaterThan(0);
+    expect(plan.demandIncrease).toMatch(/^\+/);
     expect(plan.expectedRevenueImpact).toMatch(/^\+\$/);
-    expect(plan.confidenceScore).toBeGreaterThan(0);
+    expect(plan.confidenceLabel).toBeTruthy();
   });
 });
 

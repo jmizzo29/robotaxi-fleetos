@@ -135,24 +135,43 @@ export function getOpenActionsBreakdown(commandQueue = [], fleet = [], realFleet
 function buildPlanSummary(recommendation, breakdown, fleet, realFleet) {
   const source = realFleet.length > 0 ? realFleet : fleet;
   const online = source.filter(isVehicleOnline).length;
-  const stagingCount = Math.min(3, Math.max(1, online >= 2 ? 2 : 1));
 
-  if (breakdown.pricing > 0 && breakdown.charging > 0) {
-    return `Move ${stagingCount} vehicles toward Orlando Airport and adjust peak pricing`;
+  if (breakdown.pricing > 0 || online >= 2) {
+    return 'Increase Orlando airport coverage after 4 PM';
   }
   if (breakdown.charging > 0 || recommendation?.route === 'charging') {
-    return `Schedule ${stagingCount} vehicle${stagingCount === 1 ? '' : 's'} for off-peak charging before morning demand`;
+    return 'Stage charging before evening demand window';
   }
   if (breakdown.maintenance > 0) {
-    return `Clear ${breakdown.maintenance} vehicle${breakdown.maintenance === 1 ? '' : 's'} for service before peak hours`;
-  }
-  if (breakdown.pricing > 0) {
-    return `Adjust pricing on ${stagingCount} high-utilization vehicle${stagingCount === 1 ? '' : 's'} before peak demand`;
+    return 'Clear service vehicles before peak operating hours';
   }
   if (source.length > 0) {
-    return `Move ${stagingCount} vehicle${stagingCount === 1 ? '' : 's'} toward Orlando Airport`;
+    return 'Increase Orlando airport coverage after 4 PM';
   }
-  return 'Connect fleet telemetry to unlock AI staging recommendations';
+  return 'Connect fleet telemetry to unlock AI operations brief';
+}
+
+function buildPlanAction(fleet, realFleet, breakdown) {
+  const source = realFleet.length > 0 ? realFleet : fleet;
+  const target = source.find((vehicle) => Number(vehicle.utilization) >= 65)
+    || source.find(isVehicleOnline)
+    || source[0];
+  if (!target) return 'Deploy first vehicle to MCO demand zone';
+
+  const label = activityVehicleName(target, source.indexOf(target));
+  if (breakdown.charging > 0) {
+    return `Schedule ${label} for off-peak charging before 4 PM`;
+  }
+  return `Move ${label} to MCO demand zone`;
+}
+
+function buildDemandIncrease(breakdown, fleet, realFleet) {
+  const source = realFleet.length > 0 ? realFleet : fleet;
+  let pct = 18;
+  if (breakdown.pricing > 0) pct += 9;
+  if (source.some((vehicle) => Number(vehicle.utilization) >= 72)) pct += 12;
+  if (source.length >= 5) pct += 6;
+  return `+${Math.min(42, pct)}%`;
 }
 
 function buildPlanChecklist(fleet, realFleet, recommendation, breakdown) {
@@ -192,23 +211,34 @@ function buildPlanChecklist(fleet, realFleet, recommendation, breakdown) {
 function buildExpectedRevenueImpact(breakdown, fleet, realFleet) {
   const source = realFleet.length > 0 ? realFleet : fleet;
   let bump = 72;
-  if (breakdown.pricing > 0) bump += 46;
-  if (breakdown.charging > 0) bump += 28;
-  if (source.some((vehicle) => Number(vehicle.utilization) >= 72)) bump += 42;
-  return `+$${bump}`;
+  if (breakdown.pricing > 0) bump += 24;
+  if (breakdown.charging > 0) bump += 18;
+  if (source.some((vehicle) => Number(vehicle.utilization) >= 72)) bump += 32;
+  return `+$${bump} today`;
 }
 
-function buildConfidenceScore(realSyncStatus, realFleet) {
-  if (realSyncStatus?.state === 'success' && realFleet.length > 0) return 91;
-  if (realFleet.length > 0) return 78;
-  return 62;
+function buildConfidenceLabel(realSyncStatus, realFleet) {
+  if (realSyncStatus?.state === 'success' && realFleet.length > 0) return 'High';
+  if (realFleet.length > 0) return 'Medium';
+  return 'Low';
 }
 
 function activityVehicleName(vehicle, index) {
   const id = String(vehicle?.id || vehicle?.name || '');
   const match = id.match(/\d+/);
-  if (match) return `Vehicle ${Number(match[0])}`;
-  return `Vehicle ${index + 1}`;
+  if (match) return `CAB-${String(match[0]).padStart(2, '0')}`;
+  return `CAB-${String(index + 1).padStart(2, '0')}`;
+}
+
+function tripDescription(vehicle, name) {
+  const status = String(vehicle?.status || '').toUpperCase();
+  if (status.includes('AIRPORT') || status.includes('MCO')) {
+    return `${name} completed airport trip`;
+  }
+  if (status.includes('PICK') || status.includes('ROUTE') || status.includes('SERVICE')) {
+    return `${name} completed revenue trip`;
+  }
+  return `${name} completed trip`;
 }
 
 function activityTimestamp(vehicle, index) {
@@ -251,8 +281,8 @@ export function getFleetActivityFeed(fleet, realFleet, limit = 5) {
       events.push({
         id: `${vehicle.id || index}-trip`,
         vehicleName: name,
-        description: `${name} completed trip`,
-        impact: `+$${tripAmount.toFixed(2)}`,
+        description: tripDescription(vehicle, name),
+        impact: `+$${tripAmount.toFixed(0)} revenue`,
         impactTone: 'positive',
         eventType: 'trip',
         timestamp,
@@ -264,7 +294,7 @@ export function getFleetActivityFeed(fleet, realFleet, limit = 5) {
       events.push({
         id: `${vehicle.id || index}-charge`,
         vehicleName: name,
-        description: `${name} started charging`,
+        description: `${name} entered charging session`,
         impact: chargingReadyLabel(vehicle),
         impactTone: 'neutral',
         eventType: 'charging',
@@ -273,13 +303,41 @@ export function getFleetActivityFeed(fleet, realFleet, limit = 5) {
       });
     }
 
+    if (status === 'Offline' || status === 'Asleep') {
+      events.push({
+        id: `${vehicle.id || index}-offline`,
+        vehicleName: name,
+        description: `${name} offline unexpectedly`,
+        impact: 'Needs review',
+        impactTone: 'alert',
+        eventType: 'offline',
+        timestamp,
+        vehicle,
+      });
+    }
+
+    const tripsToday = Number(vehicle.tripsToday) || Number(vehicle.trips) || 0;
+    if (tripsToday >= 10) {
+      events.push({
+        id: `${vehicle.id || index}-milestone`,
+        vehicleName: name,
+        description: `${name} completed ${tripsToday}th trip today`,
+        impact: 'High utilization',
+        impactTone: 'positive',
+        eventType: 'milestone',
+        timestamp,
+        vehicle,
+      });
+    }
+
     if (Number.isFinite(utilization) && utilization >= 68) {
       const surgePct = Math.min(38, Math.round((utilization - 55) / 2));
+      const zone = String(vehicle.city || 'Downtown Tampa').split(',')[0].trim();
       events.push({
         id: `${vehicle.id || index}-surge`,
         vehicleName: name,
-        description: `${name} entered surge zone`,
-        impact: `+${surgePct}% projected earnings`,
+        description: 'Demand surge detected',
+        impact: `${zone} +${surgePct}%`,
         impactTone: 'surge',
         eventType: 'surge',
         timestamp,
@@ -290,16 +348,18 @@ export function getFleetActivityFeed(fleet, realFleet, limit = 5) {
 
   if (!events.length) {
     return [
-      { id: 'demo-7-trip', vehicleName: 'Vehicle 7', description: 'Vehicle 7 completed trip', impact: '+$31.40', impactTone: 'positive', eventType: 'trip', timestamp: '2 min ago' },
-      { id: 'demo-3-charge', vehicleName: 'Vehicle 3', description: 'Vehicle 3 started charging', impact: 'Ready in 34 min', impactTone: 'neutral', eventType: 'charging', timestamp: '8 min ago' },
-      { id: 'demo-8-surge', vehicleName: 'Vehicle 8', description: 'Vehicle 8 entered surge zone', impact: '+22% projected earnings', impactTone: 'surge', eventType: 'surge', timestamp: '14 min ago' },
+      { id: 'demo-7-trip', vehicleName: 'CAB-07', description: 'CAB-07 completed airport trip', impact: '+$48 revenue', impactTone: 'positive', eventType: 'trip', timestamp: '2 min ago' },
+      { id: 'demo-surge', vehicleName: 'Market', description: 'Demand surge detected', impact: 'Downtown Tampa +22%', impactTone: 'surge', eventType: 'surge', timestamp: '5 min ago' },
+      { id: 'demo-2-charge', vehicleName: 'CAB-02', description: 'CAB-02 entered charging session', impact: 'Ready in 38 min', impactTone: 'neutral', eventType: 'charging', timestamp: '8 min ago' },
+      { id: 'demo-5-milestone', vehicleName: 'CAB-05', description: 'CAB-05 completed 14th trip today', impact: 'High utilization', impactTone: 'positive', eventType: 'milestone', timestamp: '12 min ago' },
+      { id: 'demo-9-offline', vehicleName: 'CAB-09', description: 'CAB-09 offline unexpectedly', impact: 'Needs review', impactTone: 'alert', eventType: 'offline', timestamp: '18 min ago' },
     ].slice(0, limit);
   }
 
   return events.slice(0, limit);
 }
 
-/** Today's AI Plan — operational brief, not analytics. */
+/** AI Operations Brief — fleet manager guidance, not a chatbot. */
 export function getCommandAiPlan(fleet, realFleet, realSyncStatus, commandQueue = []) {
   const snapshotSource = realFleet.length > 0 ? realFleet : fleet;
   const recommendation = getFleetRecommendation(snapshotSource, realSyncStatus);
@@ -311,11 +371,14 @@ export function getCommandAiPlan(fleet, realFleet, realSyncStatus, commandQueue 
 
   return {
     summary: buildPlanSummary(recommendation, breakdown, fleet, realFleet),
+    action: buildPlanAction(fleet, realFleet, breakdown),
+    demandIncrease: buildDemandIncrease(breakdown, fleet, realFleet),
     checklist: buildPlanChecklist(fleet, realFleet, recommendation, breakdown),
     pendingCount: pendingCount || (recommendation?.tone === 'ready' ? 0 : 1),
     recommendation,
     expectedRevenueImpact: buildExpectedRevenueImpact(breakdown, fleet, realFleet),
-    confidenceScore: buildConfidenceScore(realSyncStatus, realFleet),
+    confidenceLabel: buildConfidenceLabel(realSyncStatus, realFleet),
+    confidenceScore: realSyncStatus?.state === 'success' && realFleet.length > 0 ? 91 : realFleet.length > 0 ? 78 : 62,
   };
 }
 

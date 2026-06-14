@@ -1,132 +1,49 @@
-import { useMemo, useState } from 'react';
-import Map, { Marker, Popup } from 'react-map-gl/mapbox';
-import 'mapbox-gl/dist/mapbox-gl.css';
-import { cybercabMarkets } from '../data/cybercabNetwork';
-import {
-  getCybercabNetworkSummary,
-  getPhaseLabel,
-  getPhaseMarkerClass,
-  getPhaseRingClass,
-  getPhaseTextClass,
-} from '../utils/cybercabNetworkUtils';
+import { useMemo } from 'react';
+import { Bot, TrendingUp } from 'lucide-react';
+import RoboWordmark from '../components/RoboWordmark';
 import {
   getExpansionRecommendation,
+  getExpansionScoreboard,
   getNetworkOpportunities,
 } from '../utils/networkIntelligenceUtils';
 
-const INITIAL_VIEW = {
-  longitude: -98.5,
-  latitude: 34.5,
-  zoom: 3.6,
-};
-
 const opportunityToneClasses = {
-  primary: 'border-l-[#599CE7]',
-  success: 'border-l-emerald-400',
-  warning: 'border-l-amber-400',
+  primary: 'border-l-[#2563eb]',
+  success: 'border-l-[#15803d]',
+  warning: 'border-l-[#a16207]',
 };
 
-function NetworkHeader() {
+function SectionHead({ title, actionLabel }) {
   return (
-    <header className="mb-3 flex items-center justify-between gap-3">
-      <p className="text-[1.05rem] font-bold tracking-[0.04em] text-white">NETWORK</p>
-      <p className="text-[10px] font-semibold uppercase tracking-[0.14em] text-[#599CE7]">Demand intel</p>
-    </header>
+    <div className="mb-3 flex items-center justify-between gap-2">
+      <h2 className="text-[22px] font-bold tracking-[-0.03em] text-slate-950">{title}</h2>
+      {actionLabel && (
+        <span className="text-[13px] font-semibold text-[#2563eb]">{actionLabel}</span>
+      )}
+    </div>
   );
 }
 
-function NetworkMapSection({ mapboxToken, viewState, setViewState, selectedMarket, setSelectedMarket, summary }) {
-  if (!mapboxToken) {
-    return (
-      <section aria-label="Cybercab network map">
-        <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/40">Cybercab network map</p>
-        <div className="relative h-44 overflow-hidden rounded-[1.1rem] border border-white/10 bg-[#06080c]">
-          <div className="absolute inset-0 bg-[#599CE7]/[0.06]" aria-hidden="true" />
-          <div className="absolute left-3 top-3 flex flex-wrap gap-3 text-[9px] font-semibold">
-            <span className="text-emerald-400">● Live {summary.live}</span>
-            <span className="text-[#599CE7]">● Planned {summary.planned}</span>
-            <span className="text-amber-300">● Emerging {summary.early}</span>
-          </div>
-          <p className="absolute bottom-3 left-3 right-3 text-[11px] font-medium text-white/55">
-            {summary.total} markets · {summary.recommendedExpansion} recommended
-          </p>
-        </div>
-      </section>
-    );
-  }
-
+function ExpansionScoreboard({ markets }) {
   return (
-    <section aria-label="Cybercab network map">
-      <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/40">Cybercab network map</p>
-      <div className="relative h-44 overflow-hidden rounded-[1.1rem] border border-white/10">
-        <Map
-          {...viewState}
-          onMove={(event) => setViewState(event.viewState)}
-          mapStyle="mapbox://styles/mapbox/dark-v11"
-          mapboxAccessToken={mapboxToken}
-          style={{ width: '100%', height: '100%' }}
-          onClick={() => setSelectedMarket(null)}
-        >
-          {cybercabMarkets.map((market) => (
-            <Marker
-              key={market.id}
-              longitude={market.longitude}
-              latitude={market.latitude}
-              onClick={(event) => {
-                event.originalEvent?.stopPropagation?.();
-                setSelectedMarket(market);
-              }}
-            >
-              <button
-                type="button"
-                aria-label={`${market.city} — ${getPhaseLabel(market.phase)}`}
-                className={`h-3.5 w-3.5 rounded-full border-2 border-white/90 ring-4 transition hover:scale-125 ${getPhaseMarkerClass(market.phase)} ${getPhaseRingClass(market.phase)}`}
-              />
-            </Marker>
-          ))}
-
-          {selectedMarket && (
-            <Popup
-              longitude={selectedMarket.longitude}
-              latitude={selectedMarket.latitude}
-              onClose={() => setSelectedMarket(null)}
-              closeButton
-              closeOnClick={false}
-              anchor="top"
-              offset={16}
-              className="fleetos-popup"
-            >
-              <MarketPopup market={selectedMarket} onClose={() => setSelectedMarket(null)} />
-            </Popup>
-          )}
-        </Map>
-        <div className="pointer-events-none absolute left-3 top-3 flex flex-wrap gap-3 rounded-full border border-white/10 bg-black/70 px-3 py-1.5 text-[9px] font-semibold backdrop-blur-sm">
-          <span className="text-emerald-400">● Live</span>
-          <span className="text-[#599CE7]">● Planned</span>
-          <span className="text-amber-300">● Emerging</span>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-function OpportunitiesSection({ opportunities }) {
-  return (
-    <section className="mt-4" aria-label="Opportunities">
-      <div className="mb-2 flex items-center justify-between gap-2">
-        <p className="text-[10px] font-semibold uppercase tracking-[0.18em] text-white/40">Opportunities</p>
-        <span className="text-[11px] font-medium text-[#599CE7]">See all</span>
-      </div>
+    <section aria-label="Expansion scoreboard">
+      <SectionHead title="Expansion Scoreboard" />
       <ul className="space-y-2">
-        {opportunities.map((item) => (
+        {markets.map((market, index) => (
           <li
-            key={item.id}
-            className={`rounded-xl border border-white/10 border-l-[3px] bg-white/[0.03] px-3 py-2.5 ${opportunityToneClasses[item.tone] || opportunityToneClasses.primary}`}
+            key={market.id}
+            className="flex items-center justify-between gap-3 rounded-[18px] border border-slate-200 bg-white px-4 py-3.5 shadow-[0_4px_18px_-14px_rgba(15,23,42,0.3)]"
           >
-            <p className="text-[13px] font-semibold text-white">{item.title}</p>
-            <p className="mt-0.5 text-[11px] text-white/50">{item.place}</p>
-            <p className="mt-1.5 text-[12px] font-bold text-[#599CE7]">{item.demandLabel}</p>
-            <p className="mt-1 text-[11px] text-white/55">Recommended: {item.recommendation}</p>
+            <div className="flex items-center gap-3">
+              <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[#eff6ff] text-[13px] font-bold text-[#2563eb]">
+                {index + 1}
+              </span>
+              <p className="text-[17px] font-bold text-slate-950">{market.city}</p>
+            </div>
+            <div className="text-right">
+              <p className="text-[24px] font-bold tabular-nums text-[#2563eb]">{market.score}</p>
+              <p className="text-[10px] font-semibold uppercase tracking-[0.08em] text-slate-400">Opportunity Score</p>
+            </div>
           </li>
         ))}
       </ul>
@@ -134,69 +51,83 @@ function OpportunitiesSection({ opportunities }) {
   );
 }
 
-function ExpansionSection({ expansion, onNavigate }) {
+function DemandEventsSection({ events }) {
   return (
-    <section className="mt-4" aria-label="Expansion recommendations">
-      <p className="mb-2 text-[10px] font-semibold uppercase tracking-[0.18em] text-white/40">Expansion recommendations</p>
-      <div className="rounded-[1rem] border border-emerald-500/25 border-l-[3px] border-l-emerald-400 bg-white/[0.03] p-3.5">
-        <p className="text-[9px] font-semibold uppercase tracking-[0.14em] text-emerald-400">Recommended expansion</p>
-        <div className="mt-2 flex items-end justify-between gap-3">
-          <p className="text-[1.35rem] font-semibold text-white">{expansion.city}</p>
-          <p className="text-[1rem] font-bold text-emerald-400">{expansion.projectedLabel}</p>
+    <section className="mt-5" aria-label="Upcoming demand events">
+      <SectionHead title="Upcoming Demand Events" />
+      <ul className="space-y-2">
+        {events.map((item) => (
+          <li
+            key={item.id}
+            className={`rounded-[18px] border border-slate-200 border-l-[4px] bg-white px-4 py-3.5 shadow-[0_4px_18px_-14px_rgba(15,23,42,0.3)] ${opportunityToneClasses[item.tone] || opportunityToneClasses.primary}`}
+          >
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="text-[16px] font-bold text-slate-950">{item.title}</p>
+                <p className="mt-0.5 text-[12px] font-medium text-slate-500">{item.place}</p>
+              </div>
+              <p className="shrink-0 text-[15px] font-bold text-[#2563eb]">{item.demandLabel}</p>
+            </div>
+            <p className="mt-2 text-[12px] font-semibold text-slate-600">{item.recommendation}</p>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
+function AiExpansionSection({ expansion, onNavigate }) {
+  return (
+    <section className="mt-5" aria-label="AI expansion recommendations">
+      <SectionHead title="AI Expansion Recommendations" />
+      <div className="rounded-[20px] border border-slate-200 bg-white p-4 shadow-[0_8px_28px_-18px_rgba(15,23,42,0.35)]">
+        <div className="flex items-start gap-3">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[14px] bg-[#eef2ff] text-[#4f46e5]">
+            <Bot className="h-5 w-5" strokeWidth={2.2} />
+          </span>
+          <div className="min-w-0 flex-1">
+            <p className="text-[17px] font-bold leading-snug text-slate-950">{expansion.deployLabel}</p>
+            <div className="mt-3.5 grid grid-cols-2 gap-3 border-t border-slate-100 pt-3">
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-slate-400">Expected monthly revenue increase</p>
+                <p className="mt-1 text-[22px] font-bold tabular-nums text-[#15803d]">{expansion.projectedLabel}</p>
+              </div>
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-slate-400">Confidence</p>
+                <p className="mt-1 text-[22px] font-bold text-[#2563eb]">{expansion.confidenceLabel}</p>
+              </div>
+            </div>
+            <p className="mt-3 text-[13px] leading-snug text-slate-600">{expansion.rationale}</p>
+            <button
+              type="button"
+              onClick={() => onNavigate?.('finance')}
+              className="mt-4 flex w-full items-center justify-center gap-2 rounded-[14px] border border-[#2563eb]/20 bg-[#eff6ff] px-4 py-3 text-[14px] font-semibold text-[#2563eb] transition active:bg-[#dbeafe]"
+            >
+              <TrendingUp className="h-4 w-4" strokeWidth={2.2} />
+              View expansion plan
+            </button>
+          </div>
         </div>
-        <p className="mt-2 text-[11px] leading-snug text-white/55">{expansion.rationale}</p>
-        <button
-          type="button"
-          onClick={() => onNavigate?.('finance')}
-          className="mt-3 w-full rounded-xl border border-white/10 px-4 py-3 text-[13px] font-semibold text-white transition active:bg-white/[0.04]"
-        >
-          View expansion plan →
-        </button>
       </div>
     </section>
   );
 }
 
-function MarketPopup({ market, onClose }) {
-  return (
-    <div className="min-w-[220px] rounded-[14px] border border-white/10 bg-[#0a0a0a]/95 p-4 text-white backdrop-blur-md">
-      <p className="text-[17px] font-semibold tracking-tight">{market.city}</p>
-      <p className={`mt-1 text-[13px] font-medium ${getPhaseTextClass(market.phase)}`}>
-        {getPhaseLabel(market.phase)}
-      </p>
-      <p className="mt-3 text-[13px] leading-snug text-white/55">{market.notes}</p>
-      <button
-        type="button"
-        onClick={onClose}
-        className="mt-4 text-[12px] font-medium text-white/45 transition active:text-white"
-      >
-        Close
-      </button>
-    </div>
-  );
-}
-
 export default function NetworkPanel({ fleet = [], onNavigate = () => {} }) {
-  const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
-  const [viewState, setViewState] = useState(INITIAL_VIEW);
-  const [selectedMarket, setSelectedMarket] = useState(null);
-  const summary = useMemo(() => getCybercabNetworkSummary(), []);
-  const opportunities = useMemo(() => getNetworkOpportunities(fleet), [fleet]);
+  const scoreboard = useMemo(() => getExpansionScoreboard(), []);
+  const events = useMemo(() => getNetworkOpportunities(fleet), [fleet]);
   const expansion = useMemo(() => getExpansionRecommendation(fleet), [fleet]);
 
   return (
-    <div className="min-h-screen bg-black px-4 pb-28 pt-4 text-white">
-      <NetworkHeader />
-      <NetworkMapSection
-        mapboxToken={mapboxToken}
-        viewState={viewState}
-        setViewState={setViewState}
-        selectedMarket={selectedMarket}
-        setSelectedMarket={setSelectedMarket}
-        summary={summary}
-      />
-      <OpportunitiesSection opportunities={opportunities} />
-      <ExpansionSection expansion={expansion} onNavigate={onNavigate} />
+    <div className="min-h-screen bg-[#f3f4f8] px-4 pb-28 pt-1.5 text-slate-900">
+      <header className="mb-4 flex items-center justify-between gap-3">
+        <RoboWordmark className="text-[1.05rem] tracking-[0.04em]" colorClass="text-[#1e3a8a]" />
+        <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[#2563eb]">Growth Intel</p>
+      </header>
+
+      <ExpansionScoreboard markets={scoreboard} />
+      <DemandEventsSection events={events} />
+      <AiExpansionSection expansion={expansion} onNavigate={onNavigate} />
     </div>
   );
 }

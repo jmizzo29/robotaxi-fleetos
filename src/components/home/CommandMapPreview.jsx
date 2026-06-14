@@ -121,7 +121,7 @@ export default function CommandMapPreview({
   onNavigate,
   activeCount = 0,
   totalCount = 0,
-  mapHeightClass = 'h-[284px]',
+  mapHeightClass = 'h-[380px]',
 }) {
   const [viewState, setViewState] = useState(ORLANDO_VIEW);
   const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
@@ -134,8 +134,8 @@ export default function CommandMapPreview({
 
   return (
     <section aria-label="Live fleet map">
-      <div className="mb-2.5 flex items-center justify-between gap-2">
-        <h2 className="text-[20px] font-bold tracking-[-0.03em] text-slate-950">Live Fleet Map</h2>
+      <div className="mb-3 flex items-center justify-between gap-2">
+        <h2 className="text-[22px] font-bold tracking-[-0.03em] text-slate-950">Live Fleet Map</h2>
         <button
           type="button"
           onClick={() => onNavigate('map')}
@@ -146,7 +146,7 @@ export default function CommandMapPreview({
       </div>
 
       <div
-        className={`relative overflow-hidden rounded-[18px] border border-slate-200 shadow-[0_10px_28px_-18px_rgba(15,23,42,0.35)] ${mapHeightClass}`}
+        className={`relative overflow-hidden rounded-[20px] border border-slate-200 shadow-[0_14px_36px_-20px_rgba(15,23,42,0.45)] ${mapHeightClass}`}
       >
         {!mapboxToken ? (
           <>

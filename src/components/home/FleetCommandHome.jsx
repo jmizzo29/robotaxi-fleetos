@@ -3,11 +3,10 @@ import {
   AlertTriangle,
   Bell,
   Bot,
-  Car,
   CircleDollarSign,
   TrendingUp,
-  Truck,
   User,
+  Wrench,
   Zap,
 } from 'lucide-react';
 import RoboWordmark from '../RoboWordmark';
@@ -21,12 +20,20 @@ import {
   getCommandFleetStatusStrip,
 } from '../../utils/vehicleDisplayUtils';
 
-const MAP_HEIGHT = 'h-[284px]';
+const MAP_HEIGHT = 'h-[380px]';
 
-function SectionHead({ title, actionLabel, onAction }) {
+function SectionHead({ title, actionLabel, onAction, live = false }) {
   return (
-    <div className="mb-2.5 flex items-center justify-between gap-2">
-      <h2 className="text-[20px] font-bold tracking-[-0.03em] text-slate-950">{title}</h2>
+    <div className="mb-3 flex items-center justify-between gap-2">
+      <div className="flex items-center gap-2">
+        <h2 className="text-[22px] font-bold tracking-[-0.03em] text-slate-950">{title}</h2>
+        {live && (
+          <span className="inline-flex items-center gap-1 rounded-full border border-[#2563eb]/20 bg-[#eff6ff] px-2 py-0.5 text-[9px] font-bold uppercase tracking-[0.1em] text-[#2563eb]">
+            <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#2563eb]" />
+            Live
+          </span>
+        )}
+      </div>
       {actionLabel && (
         <button type="button" onClick={onAction} className="text-[13px] font-semibold text-[#2563eb]">
           {actionLabel}
@@ -47,12 +54,7 @@ function EarningsSparkline() {
   );
 }
 
-function EarningsHeroCard({ hero, totalEarnings }) {
-  const gross = Math.round(totalEarnings || 0);
-  const sharePct = gross > 0
-    ? Math.round((Number(String(hero.teslaShare).replace(/[^\d]/g, '')) / gross) * 100)
-    : 30;
-
+function EarningsHeroCard({ hero }) {
   return (
     <section aria-label="Net earnings today">
       <div
@@ -63,11 +65,11 @@ function EarningsHeroCard({ hero, totalEarnings }) {
         <div className="relative flex items-start justify-between gap-3">
           <div>
             <p className="text-[12px] font-semibold uppercase tracking-[0.06em] text-white/85">Net Earnings Today</p>
-            <p className="mt-1.5 text-[3.5rem] font-bold leading-[0.95] tracking-[-0.04em] text-white">
+            <p className="mt-1.5 text-[3.75rem] font-bold leading-[0.92] tracking-[-0.04em] text-white">
               {hero.amount}
             </p>
             {hero.delta ? (
-              <p className="mt-1.5 text-[13px] font-semibold text-[#bbf7d0]">▲ 18% vs yesterday</p>
+              <p className="mt-1.5 text-[14px] font-semibold text-[#bbf7d0]">+18% vs Yesterday</p>
             ) : (
               <p className="mt-1.5 text-[13px] font-semibold text-white/80">{hero.hint || 'Sync fleet to track earnings'}</p>
             )}
@@ -83,24 +85,18 @@ function EarningsHeroCard({ hero, totalEarnings }) {
           </div>
         </div>
 
-        <div className="relative mt-3.5 grid grid-cols-2 gap-3 border-t border-white/25 pt-3">
-          <div className="flex items-center gap-3">
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-white">
-              <Car className="h-[17px] w-[17px]" strokeWidth={2.2} />
-            </span>
-            <div>
-              <p className="text-[28px] font-bold leading-none text-white">{hero.trips}</p>
-              <p className="mt-0.5 text-[11px] font-semibold text-white/75">Trips today</p>
-            </div>
+        <div className="relative mt-3.5 grid grid-cols-3 gap-2 border-t border-white/25 pt-3">
+          <div className="text-center">
+            <p className="text-[26px] font-bold leading-none text-white">{hero.trips}</p>
+            <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.06em] text-white/70">Trips</p>
           </div>
-          <div className="flex items-center gap-3">
-            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/20 text-[11px] font-bold text-white">
-              T
-            </span>
-            <div>
-              <p className="text-[26px] font-bold leading-none text-white">{hero.teslaShare}</p>
-              <p className="mt-0.5 text-[11px] font-semibold text-white/75">Tesla share · {sharePct || 30}%</p>
-            </div>
+          <div className="text-center border-x border-white/20">
+            <p className="text-[26px] font-bold leading-none text-white">{hero.teslaShare}</p>
+            <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.06em] text-white/70">Tesla Share</p>
+          </div>
+          <div className="text-center">
+            <p className="text-[26px] font-bold leading-none text-white">{hero.netMargin || '—'}</p>
+            <p className="mt-1 text-[10px] font-semibold uppercase tracking-[0.06em] text-white/70">Net Margin</p>
           </div>
         </div>
       </div>
@@ -108,26 +104,25 @@ function EarningsHeroCard({ hero, totalEarnings }) {
   );
 }
 
-const STATUS_ICONS = {
-  active: Activity,
-  charging: Zap,
-  offline: AlertTriangle,
-  total: Truck,
+const STATUS_CONFIG = {
+  active: { label: 'Active', icon: Activity, accent: 'text-[#15803d]', bg: 'bg-[#ecfdf3]' },
+  charging: { label: 'Charging', icon: Zap, accent: 'text-[#a16207]', bg: 'bg-[#fefce8]' },
+  service: { label: 'Service', icon: Wrench, accent: 'text-[#c2410c]', bg: 'bg-[#fff7ed]' },
+  offline: { label: 'Offline', icon: AlertTriangle, accent: 'text-[#dc2626]', bg: 'bg-[#fef2f2]' },
 };
 
 function FleetStatusGrid({ strip, onNavigate }) {
-  const total = strip.total || 0;
-  const cards = [
-    { key: 'active', label: 'Active', value: strip.active.value, icon: STATUS_ICONS.active, accent: 'text-[#15803d]' },
-    { key: 'charging', label: 'Charging', value: strip.charging.value, icon: STATUS_ICONS.charging, accent: 'text-[#a16207]' },
-    { key: 'offline', label: 'Offline', value: strip.offline.value, icon: STATUS_ICONS.offline, accent: 'text-[#dc2626]' },
-    { key: 'total', label: 'Total', value: String(total), icon: STATUS_ICONS.total, accent: 'text-[#1e40af]' },
-  ];
+  const cards = ['active', 'charging', 'service', 'offline'].map((key) => ({
+    key,
+    ...STATUS_CONFIG[key],
+    value: strip[key].value,
+    sub: strip[key].sub,
+  }));
 
   return (
-    <section className="mt-4" aria-label="Fleet status">
+    <section className="mt-5" aria-label="Fleet status">
       <SectionHead title="Fleet Status" actionLabel="View all" onAction={() => onNavigate('fleet')} />
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-2 gap-2.5">
         {cards.map((card) => {
           const Icon = card.icon;
           return (
@@ -135,11 +130,16 @@ function FleetStatusGrid({ strip, onNavigate }) {
               key={card.key}
               type="button"
               onClick={() => onNavigate(card.key === 'charging' ? 'charging' : 'fleet')}
-              className="rounded-[16px] border border-slate-200 bg-white px-1.5 py-3 text-center shadow-[0_4px_16px_-12px_rgba(15,23,42,0.35)] transition active:scale-[0.98]"
+              className="rounded-[18px] border border-slate-200 bg-white px-4 py-4 text-left shadow-[0_4px_20px_-14px_rgba(15,23,42,0.35)] transition active:scale-[0.98]"
             >
-              <Icon className={`mx-auto h-4 w-4 ${card.accent}`} strokeWidth={2.3} aria-hidden="true" />
-              <p className={`mt-2 text-[30px] font-bold leading-none tabular-nums ${card.accent}`}>{card.value}</p>
-              <p className="mt-1.5 text-[9px] font-bold uppercase tracking-[0.1em] text-slate-500">{card.label}</p>
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-slate-500">{card.label}</p>
+                <span className={`flex h-8 w-8 items-center justify-center rounded-full ${card.bg}`}>
+                  <Icon className={`h-4 w-4 ${card.accent}`} strokeWidth={2.3} aria-hidden="true" />
+                </span>
+              </div>
+              <p className={`mt-2 text-[36px] font-bold leading-none tabular-nums ${card.accent}`}>{card.value}</p>
+              <p className="mt-1.5 text-[12px] font-semibold text-slate-600">{card.sub}</p>
             </button>
           );
         })}
@@ -149,22 +149,29 @@ function FleetStatusGrid({ strip, onNavigate }) {
 }
 
 function ActivityStatusIcon({ eventType }) {
-  if (eventType === 'trip') {
+  if (eventType === 'trip' || eventType === 'milestone') {
     return (
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] bg-[#ecfdf3] text-[#15803d]">
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[14px] bg-[#ecfdf3] text-[#15803d]">
         <CircleDollarSign className="h-5 w-5" strokeWidth={2.2} />
       </span>
     );
   }
   if (eventType === 'surge') {
     return (
-      <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] bg-[#eff6ff] text-[#2563eb]">
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[14px] bg-[#eff6ff] text-[#2563eb]">
         <TrendingUp className="h-5 w-5" strokeWidth={2.2} />
       </span>
     );
   }
+  if (eventType === 'offline') {
+    return (
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[14px] bg-[#fef2f2] text-[#dc2626]">
+        <AlertTriangle className="h-5 w-5" strokeWidth={2.2} />
+      </span>
+    );
+  }
   return (
-    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px] bg-[#fefce8] text-[#a16207]">
+    <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[14px] bg-[#fefce8] text-[#a16207]">
       <Zap className="h-5 w-5" strokeWidth={2.2} />
     </span>
   );
@@ -173,22 +180,23 @@ function ActivityStatusIcon({ eventType }) {
 function impactClass(tone) {
   if (tone === 'positive') return 'text-[#15803d]';
   if (tone === 'surge') return 'text-[#2563eb]';
+  if (tone === 'alert') return 'text-[#dc2626]';
   return 'text-slate-600';
 }
 
 function FleetActivitySection({ events }) {
   return (
-    <section className="mt-4" aria-label="Fleet activity">
-      <SectionHead title="Fleet Activity" />
-      <ul className="space-y-2">
+    <section className="mt-5" aria-label="Fleet activity">
+      <SectionHead title="Fleet Activity" live />
+      <ul className="space-y-2.5">
         {events.map((event) => (
           <li
             key={event.id}
-            className="flex items-center gap-3 rounded-[16px] border border-slate-200 bg-white px-3 py-3 shadow-[0_4px_18px_-14px_rgba(15,23,42,0.3)]"
+            className="flex items-center gap-3 rounded-[18px] border border-slate-200 bg-white px-3.5 py-3.5 shadow-[0_6px_22px_-16px_rgba(15,23,42,0.35)]"
           >
             <ActivityStatusIcon eventType={event.eventType} />
             <div className="min-w-0 flex-1">
-              <p className="text-[15px] font-semibold leading-snug text-slate-950">{event.description}</p>
+              <p className="text-[16px] font-semibold leading-snug text-slate-950">{event.description}</p>
               <p className={`mt-0.5 text-[14px] font-bold tabular-nums ${impactClass(event.impactTone)}`}>{event.impact}</p>
             </div>
             <p className="shrink-0 text-[11px] font-medium text-slate-400">{event.timestamp}</p>
@@ -199,27 +207,31 @@ function FleetActivitySection({ events }) {
   );
 }
 
-function AiPlanCard({ plan, onNavigate }) {
+function AiOperationsBrief({ plan, onNavigate }) {
   return (
-    <section className="mt-4 pb-1" aria-label="Today's AI Plan">
-      <SectionHead title="Today's AI Plan" actionLabel="Open" onAction={() => onNavigate('ai')} />
-      <div className="rounded-[18px] border border-slate-200 bg-white p-4 shadow-[0_6px_24px_-16px_rgba(15,23,42,0.35)]">
+    <section className="mt-5 pb-1" aria-label="AI Operations Brief">
+      <SectionHead title="AI Operations Brief" actionLabel="Execute" onAction={() => onNavigate('ai')} />
+      <div className="rounded-[20px] border border-slate-200 bg-white p-4 shadow-[0_8px_28px_-18px_rgba(15,23,42,0.35)]">
         <div className="flex items-start gap-3">
           <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-[14px] bg-[#eef2ff] text-[#4f46e5]">
             <Bot className="h-5 w-5" strokeWidth={2.2} />
           </span>
           <div className="min-w-0 flex-1">
-            <p className="text-[16px] font-semibold leading-snug text-slate-950">{plan.summary}</p>
-            <div className="mt-3.5 grid grid-cols-2 gap-3 border-t border-slate-100 pt-3">
+            <p className="text-[17px] font-bold leading-snug text-slate-950">{plan.summary}</p>
+            <p className="mt-2 text-[14px] font-semibold text-[#2563eb]">{plan.action}</p>
+            <div className="mt-4 grid grid-cols-2 gap-3 border-t border-slate-100 pt-3">
               <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-slate-400">Expected Additional Revenue</p>
+                <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-slate-400">Expected demand increase</p>
+                <p className="mt-1 text-[22px] font-bold tabular-nums text-[#2563eb]">{plan.demandIncrease}</p>
+              </div>
+              <div>
+                <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-slate-400">Est. additional earnings</p>
                 <p className="mt-1 text-[22px] font-bold tabular-nums text-[#15803d]">{plan.expectedRevenueImpact}</p>
               </div>
-              <div>
-                <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-slate-400">Confidence</p>
-                <p className="mt-1 text-[22px] font-bold tabular-nums text-[#2563eb]">{plan.confidenceScore}%</p>
-              </div>
             </div>
+            <p className="mt-3 text-[12px] font-semibold text-slate-500">
+              Confidence: <span className="text-[#2563eb]">{plan.confidenceLabel}</span>
+            </p>
           </div>
         </div>
       </div>
@@ -266,10 +278,10 @@ export default function FleetCommandHome({
         </div>
       </header>
 
-      <EarningsHeroCard hero={hero} totalEarnings={totalEarnings} />
-      <FleetStatusGrid strip={strip} onNavigate={onNavigate} />
+      <EarningsHeroCard hero={hero} />
+      <FleetActivitySection events={activity} />
 
-      <div className="mt-4">
+      <div className="mt-5">
         <CommandMapPreview
           fleet={fleet}
           realFleet={realFleet}
@@ -280,8 +292,8 @@ export default function FleetCommandHome({
         />
       </div>
 
-      <FleetActivitySection events={activity} />
-      <AiPlanCard plan={plan} onNavigate={onNavigate} />
+      <FleetStatusGrid strip={strip} onNavigate={onNavigate} />
+      <AiOperationsBrief plan={plan} onNavigate={onNavigate} />
     </div>
   );
 }
