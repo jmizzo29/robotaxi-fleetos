@@ -1,15 +1,17 @@
 import { useEffect, useMemo, useState } from 'react';
 import BetaConsentPanel from '../components/BetaConsentPanel';
 import TeslaIndependenceNotice from '../components/TeslaIndependenceNotice';
+import { AppCard } from '../components/shell';
 import { canUseTeslaTelemetry } from '../services/betaCompliance';
 import { disconnectTeslaForUser, getFleetOsSession } from '../services/sessionService';
 import { logTeslaDisconnect } from '../services/teslaDisconnectUtils';
 import { getTeslaLoginUrl, getTeslaSyncHealth } from '../services/teslaHealthService';
+import { colors, semantic, typography } from '../design/roboagentTokens';
 
 function healthTone(status) {
-  if (status === true) return 'border-emerald-400/25 bg-emerald-400/10 text-emerald-200';
-  if (status === false) return 'border-rose-400/25 bg-rose-400/10 text-rose-200';
-  return 'border-amber-400/25 bg-amber-400/10 text-amber-200';
+  if (status === true) return 'border-emerald-200 bg-emerald-50 text-emerald-800';
+  if (status === false) return 'border-rose-200 bg-rose-50 text-rose-800';
+  return 'border-amber-200 bg-amber-50 text-amber-800';
 }
 
 function statusLabel(status) {
@@ -20,17 +22,17 @@ function statusLabel(status) {
 
 function CheckCard({ label, detail, status }) {
   return (
-    <article className="rounded-lg border border-white/10 bg-slate-950/50 p-4">
+    <AppCard variant="subdued">
       <div className="flex items-start justify-between gap-3">
         <div>
-          <p className="text-sm font-black text-slate-100">{label}</p>
-          <p className="mt-2 text-xs leading-5 text-slate-500">{detail}</p>
+          <p className={`${typography.bodyMd}`}>{label}</p>
+          <p className="mt-2 text-xs font-medium leading-5 text-slate-500">{detail}</p>
         </div>
-        <span className={`shrink-0 rounded-full border px-2.5 py-1 text-[10px] font-black uppercase ${healthTone(status)}`}>
+        <span className={`shrink-0 rounded-full border px-2.5 py-1 text-[10px] font-bold uppercase ${healthTone(status)}`}>
           {statusLabel(status)}
         </span>
       </div>
-    </article>
+    </AppCard>
   );
 }
 
@@ -208,46 +210,45 @@ export default function TeslaSyncHealthPanel({
   const overallHealthy = checks.filter((check) => check.status === false).length === 0 && checks.some((check) => check.status === true);
 
   return (
-    <section className="mb-6 rounded-lg border border-white/10 bg-slate-900/80 p-5 shadow-lg shadow-black/10 sm:mb-8">
+    <AppCard className="mb-6 sm:mb-8">
       <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-emerald-300">
-            Tesla Sync Health
-          </p>
-          <h2 className="mt-2 text-2xl font-black tracking-tight sm:text-3xl">
+          <p className={typography.label}>Tesla Sync Health</p>
+          <h2 className={`mt-2 ${typography.cardTitle}`}>
             Integration Trust Check
           </h2>
-          <p className="mt-2 max-w-3xl text-sm leading-6 text-slate-400">
+          <p className="mt-2 max-w-3xl text-sm font-medium leading-6 text-slate-600">
             A readable checklist for credentials, refresh token status, vehicle access, and precise GPS telemetry.
           </p>
         </div>
 
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <span className={`rounded-md border px-3 py-2 text-xs font-black uppercase ${healthTone(overallHealthy)}`}>
+        <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+          <span className={`rounded-2xl border px-3 py-2 text-xs font-bold uppercase ${healthTone(overallHealthy)}`}>
             {overallHealthy ? 'Ready' : 'Review Needed'}
           </span>
           <button
             type="button"
             onClick={refreshHealth}
             disabled={isLoadingHealth}
-            className="rounded-md border border-white/10 bg-white/5 px-4 py-2.5 text-sm font-bold text-slate-100 transition hover:bg-white/10 disabled:cursor-wait disabled:opacity-60"
+            className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-bold text-slate-700 transition hover:bg-slate-100 disabled:cursor-wait disabled:opacity-60"
           >
-            {isLoadingHealth ? 'Checking...' : 'Recheck Health'}
+            {isLoadingHealth ? 'Checking…' : 'Recheck Health'}
           </button>
           {consentReady && (
             <button
               type="button"
               onClick={syncAndRecheck}
               disabled={isLoading}
-              className="rounded-md border border-sky-400/30 bg-sky-400/10 px-4 py-2.5 text-sm font-bold text-sky-100 transition hover:bg-sky-400/20 disabled:cursor-wait disabled:opacity-60"
+              className="rounded-2xl px-4 py-2.5 text-sm font-bold text-white transition disabled:cursor-wait disabled:opacity-60"
+              style={{ backgroundColor: colors.primary }}
             >
-              {isLoading ? 'Syncing...' : 'Sync Telemetry'}
+              {isLoading ? 'Syncing…' : 'Sync Telemetry'}
             </button>
           )}
           {consentReady && teslaLoginUrl && (
             <a
               href={teslaLoginUrl}
-              className="rounded-md border border-emerald-400/30 bg-emerald-400/10 px-4 py-2.5 text-center text-sm font-bold text-emerald-100 transition hover:bg-emerald-400/20"
+              className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-center text-sm font-bold text-emerald-800 transition hover:bg-emerald-100"
             >
               {showConnected ? 'Reconnect Tesla' : 'Connect Tesla'}
             </a>
@@ -258,7 +259,7 @@ export default function TeslaSyncHealthPanel({
               onClick={disconnectTesla}
               disabled={isLoadingHealth || isDisconnecting}
               aria-busy={isDisconnecting}
-              className="rounded-md border border-rose-400/30 bg-rose-400/10 px-4 py-2.5 text-sm font-bold text-rose-100 transition hover:bg-rose-400/20 disabled:cursor-wait disabled:opacity-60"
+              className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-2.5 text-sm font-bold text-rose-800 transition hover:bg-rose-100 disabled:cursor-wait disabled:opacity-60"
             >
               {isDisconnecting ? 'Disconnecting…' : 'Disconnect'}
             </button>
@@ -269,7 +270,8 @@ export default function TeslaSyncHealthPanel({
       {(disconnectMessage || disconnectState === 'failed') && (
         <p
           role={disconnectState === 'failed' ? 'alert' : 'status'}
-          className={`mt-4 text-sm font-semibold ${disconnectState === 'failed' ? 'text-rose-300' : 'text-emerald-300'}`}
+          className="mt-4 text-sm font-semibold"
+          style={{ color: disconnectState === 'failed' ? semantic.alert : semantic.positive }}
         >
           {disconnectState === 'failed' ? healthError : disconnectMessage}
         </p>
@@ -291,6 +293,6 @@ export default function TeslaSyncHealthPanel({
         ))}
       </div>
       <span className="hidden">{complianceRevision}</span>
-    </section>
+    </AppCard>
   );
 }

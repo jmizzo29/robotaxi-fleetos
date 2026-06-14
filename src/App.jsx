@@ -434,6 +434,7 @@ function FleetApp() {
         realSyncStatus={realSyncStatus}
         isLoadingReal={isLoadingReal}
         commandQueue={commandQueue}
+        aiAnalysis={aiAnalysis}
         onNavigate={navigate}
       />
     ),
@@ -532,32 +533,16 @@ function FleetApp() {
       </>
     ),
     health: (
-      <>
-        <PageHeader
-          eyebrow="Fleet Health"
-          title="Robotaxi Health"
-          description="Estimate utilization and earnings, schedule cleaning and maintenance, and turn fleet health signals into AI-prioritized actions."
-          action={operationsStatus}
-        />
-        <FleetHealthDashboard
-          fleet={fleet}
-          onQueueCommand={requestCommand}
-        />
-      </>
+      <FleetHealthDashboard
+        fleet={fleet}
+        onQueueCommand={requestCommand}
+      />
     ),
     charging: (
-      <>
-        <PageHeader
-          eyebrow="Energy Operations"
-          title="Charging"
-          description="Translate battery and charging telemetry into dispatch readiness, range planning, and charge-priority decisions."
-          action={operationsStatus}
-        />
-        <ChargingReadinessPanel
-          fleet={fleet}
-          onQueueCommand={requestCommand}
-        />
-      </>
+      <ChargingReadinessPanel
+        fleet={fleet}
+        onQueueCommand={requestCommand}
+      />
     ),
     dispatch: (
       <DispatchPlannerPanel
@@ -569,18 +554,10 @@ function FleetApp() {
       />
     ),
     readiness: (
-      <>
-        <PageHeader
-          eyebrow="Robotaxi Readiness"
-          title="Driverless Readiness"
-          description="Score each vehicle for future driverless operations across battery, telemetry, maintenance, risk, compliance, and Tesla autonomy dependency."
-          action={operationsStatus}
-        />
-        <DriverlessReadinessPanel
-          fleet={fleet}
-          onQueueCommand={requestCommand}
-        />
-      </>
+      <DriverlessReadinessPanel
+        fleet={fleet}
+        onQueueCommand={requestCommand}
+      />
     ),
     ai: (
       <>
@@ -603,14 +580,10 @@ function FleetApp() {
     ),
     alerts: (
       <>
-        <PageHeader
-          eyebrow="AI Triage"
-          title="Alerts"
-          description="Prioritized fleet alerts with AI explanations, risk scores, and recommended operator action."
-          action={operationsStatus}
-        />
         <IntelligentAlertCenter analysis={aiAnalysis} isAnalyzing={isAnalyzing} />
-        <Timeline timelineEvents={combinedTimeline} replayMode={replayMode} />
+        <div className="hidden lg:block">
+          <Timeline timelineEvents={combinedTimeline} replayMode={replayMode} />
+        </div>
       </>
     ),
     memory: (
@@ -691,22 +664,15 @@ function FleetApp() {
       </>
     ),
     settings: (
-      <>
-        <PageHeader
-          eyebrow="Administration"
-          title="Settings"
-          description="Manage telemetry sync, AI runtime status, and operating modes."
-        />
-        <SettingsPanel
-          realSyncStatus={realSyncStatus}
-          vehicle={primaryTesla}
-          isLoadingReal={isLoadingReal}
-          onSync={refreshRealTesla}
-          aiAnalysis={aiAnalysis}
-          replayMode={replayMode}
-          setReplayMode={setReplayMode}
-        />
-      </>
+      <SettingsPanel
+        realSyncStatus={realSyncStatus}
+        vehicle={primaryTesla}
+        isLoadingReal={isLoadingReal}
+        onSync={refreshRealTesla}
+        aiAnalysis={aiAnalysis}
+        replayMode={replayMode}
+        setReplayMode={setReplayMode}
+      />
     ),
     admin: (
       <>
@@ -875,6 +841,7 @@ function FleetApp() {
               realSyncStatus={realSyncStatus}
               isLoadingReal={isLoadingReal}
               commandQueue={commandQueue}
+              aiAnalysis={aiAnalysis}
               onNavigate={navigate}
             />
           </main>

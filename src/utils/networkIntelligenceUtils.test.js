@@ -38,6 +38,8 @@ describe('getCommandEarningsHero', () => {
     expect(Number(hero.trips)).toBeGreaterThan(0);
     expect(hero.operational).toBe(true);
     expect(hero.liveLabel).toBe('Operating');
+    expect(hero.label).toBe('Projected Earnings Today');
+    expect(hero.delta).toBeNull();
   });
 });
 

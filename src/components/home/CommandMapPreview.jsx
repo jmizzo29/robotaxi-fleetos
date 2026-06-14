@@ -23,6 +23,14 @@ function getVehicleLabel(vehicle, index) {
   return vehicle?.name || vehicle?.ownership?.tag || `CAB-${String(index + 1).padStart(2, '0')}`;
 }
 
+function isVehicleMoving(vehicle) {
+  const status = String(vehicle?.status || vehicle?.state || '').toUpperCase();
+  return status.includes('EN ROUTE')
+    || status.includes('REPOSITION')
+    || status.includes('PICKUP')
+    || status.includes('IN SERVICE');
+}
+
 function getMarkerColorClass(vehicle) {
   const status = String(vehicle?.status || vehicle?.state || '').toUpperCase();
   if (status.includes('OFFLINE') || status.includes('ASLEEP')) return 'bg-[#ef4444]';
@@ -111,27 +119,77 @@ function DemandZonesLayer() {
 function DemandZoneLabel({ zone }) {
   const shortName = zone.name.includes('Airport') ? 'MCO' : zone.name.split(' ')[0];
   const surge = Math.round(zone.demand * 0.26);
+  const hourlyEst = Math.round((zone.profitability || 75) * (zone.surgeMultiplier || 1.2) * 3.8);
 
   return (
     <div className="pointer-events-none -translate-y-2 whitespace-nowrap rounded-lg border border-white/15 bg-slate-950/92 px-2.5 py-1.5 shadow-lg shadow-black/30">
       <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-cyan-200">{shortName}</p>
-      <p className="text-[11px] font-bold text-white">+{surge}% demand</p>
+      <p className="text-[11px] font-bold text-emerald-300">~${hourlyEst}/hr</p>
+      <p className="text-[10px] font-semibold text-white/75">+{surge}% demand</p>
     </div>
+  );
+}
+
+function TripTracesLayer({ vehicles, zones }) {
+  const geojson = useMemo(() => ({
+    type: 'FeatureCollection',
+    features: vehicles
+      .filter(isVehicleMoving)
+      .map((vehicle, index) => {
+        const zone = zones[index % Math.max(zones.length, 1)];
+        if (!zone) return null;
+        return {
+          type: 'Feature',
+          properties: { id: vehicle.id },
+          geometry: {
+            type: 'LineString',
+            coordinates: [
+              [Number(vehicle.longitude), Number(vehicle.latitude)],
+              [zone.longitude, zone.latitude],
+            ],
+          },
+        };
+      })
+      .filter(Boolean),
+  }), [vehicles, zones]);
+
+  if (!geojson.features.length) return null;
+
+  return (
+    <Source id="command-trip-traces" type="geojson" data={geojson}>
+      <Layer
+        id="command-trip-trace-line"
+        type="line"
+        paint={{
+          'line-color': '#38bdf8',
+          'line-width': 2.5,
+          'line-opacity': 0.6,
+          'line-dasharray': [2, 2],
+        }}
+      />
+    </Source>
   );
 }
 
 function LiveVehicleMarker({ vehicle, label }) {
   const colorClass = getMarkerColorClass(vehicle);
+  const isMoving = isVehicleMoving(vehicle);
   const isActive = colorClass.includes('22c55e');
   const isCharging = colorClass.includes('eab308');
-  const statusWord = isCharging ? 'Charging' : isActive ? 'Active' : 'Offline';
+  const statusWord = isMoving ? 'En route' : isCharging ? 'Charging' : isActive ? 'Active' : 'Offline';
 
   return (
     <div className="relative flex flex-col items-center" title={`${label} · ${statusWord}`}>
-      {isActive && (
-        <span className={`absolute h-10 w-10 animate-ping rounded-full opacity-35 ${colorClass}`} aria-hidden="true" />
+      {(isActive || isMoving) && (
+        <span
+          className={`absolute h-10 w-10 rounded-full opacity-35 ${isMoving ? 'animate-ping' : 'animate-pulse'} ${colorClass}`}
+          aria-hidden="true"
+        />
       )}
-      <div className={`relative h-4 w-4 rounded-full border-2 border-white shadow-md ${colorClass}`} />
+      <div
+        className={`relative h-4 w-4 rounded-full border-2 border-white shadow-md ${colorClass} ${isMoving ? 'animate-bounce' : ''}`}
+        style={isMoving ? { animationDuration: '2.4s' } : undefined}
+      />
       <span className="mt-1 rounded-md bg-slate-950/88 px-1.5 py-0.5 text-[9px] font-bold tracking-[0.04em] text-white shadow-sm">
         {label}
       </span>
@@ -201,6 +259,7 @@ export default function CommandMapPreview({
             >
               <HeatmapLayer heatmapData={heatmapData} />
               <DemandZonesLayer />
+              <TripTracesLayer vehicles={vehicles} zones={featuredZones} />
               {featuredZones.map((zone) => (
                 <Marker
                   key={zone.name}

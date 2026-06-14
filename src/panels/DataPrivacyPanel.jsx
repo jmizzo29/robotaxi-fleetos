@@ -2,6 +2,8 @@ import { useState } from 'react';
 import BetaConsentPanel from '../components/BetaConsentPanel';
 import { deleteUserData, revokeTeslaConsent } from '../services/betaCompliance';
 import { disconnectTeslaForUser } from '../services/sessionService';
+import { AppCard } from '../components/shell';
+import { colors, semantic, typography } from '../design/roboagentTokens';
 
 export default function DataPrivacyPanel() {
   const [message, setMessage] = useState('');
@@ -29,12 +31,10 @@ export default function DataPrivacyPanel() {
   };
 
   return (
-    <article className="rounded-lg border border-white/10 bg-slate-900/80 p-5 shadow-lg shadow-black/10">
-      <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-rose-300">
-        Privacy Controls
-      </p>
-      <h2 className="text-2xl font-black tracking-tight">Beta Data & Consent</h2>
-      <p className="mt-2 text-sm leading-6 text-slate-400">
+    <AppCard>
+      <p className={typography.label}>Privacy Controls</p>
+      <h2 className={`mt-1 ${typography.cardTitle}`}>Beta Data & Consent</h2>
+      <p className="mt-2 text-sm font-medium leading-6 text-slate-600">
         Use these controls before bringing in beta testers. They make consent explicit and give users a simple path to delete ROBOAGENT data.
       </p>
 
@@ -46,24 +46,26 @@ export default function DataPrivacyPanel() {
         <button
           type="button"
           onClick={revoke}
-          className="rounded-md border border-amber-400/30 bg-amber-400/10 px-4 py-3 text-sm font-bold text-amber-100 transition hover:bg-amber-400/20"
+          className="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-bold text-amber-900 transition hover:bg-amber-100"
         >
           Revoke ROBOAGENT Consent
         </button>
         <button
           type="button"
           onClick={deleteData}
-          className="rounded-md border border-rose-400/30 bg-rose-400/10 px-4 py-3 text-sm font-bold text-rose-100 transition hover:bg-rose-400/20"
+          className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-bold text-rose-800 transition hover:bg-rose-100"
         >
           Delete My Data
         </button>
       </div>
 
-      <div className="mt-4 rounded-lg border border-white/10 bg-slate-950/50 p-4 text-sm leading-6 text-slate-400">
+      <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm font-medium leading-6 text-slate-600">
         To fully disconnect, the beta user should also remove ROBOAGENT from Tesla third-party app access in their Tesla account/app.
       </div>
 
-      {message && <p className="mt-3 text-sm font-semibold text-emerald-300">{message}</p>}
-    </article>
+      {message && (
+        <p className="mt-3 text-sm font-semibold" style={{ color: semantic.positive }}>{message}</p>
+      )}
+    </AppCard>
   );
 }

@@ -12,6 +12,26 @@ function commandSource(fleet, realFleet, totalEarnings = 0, syncState = 'idle') 
   return getCommandOperationalSource(fleet, realFleet, totalEarnings, syncState);
 }
 
+/** Real alert count for Command header — no decorative badges. */
+export function getCommandAlertCount({
+  aiAnalysis = null,
+  commandQueue = [],
+  strip = null,
+} = {}) {
+  const aiAlerts = Array.isArray(aiAnalysis?.alerts) ? aiAnalysis.alerts.length : 0;
+  const offline = Number(strip?.offline?.value) || 0;
+  const service = Number(strip?.service?.value) || 0;
+  const queue = Array.isArray(commandQueue) ? commandQueue.length : 0;
+  return aiAlerts + offline + service + queue;
+}
+
+export function fleetStatusNeedsAttention(strip) {
+  if (!strip) return false;
+  return Number(strip.offline?.value) > 0
+    || Number(strip.service?.value) > 0
+    || Number(strip.charging?.value) > 0;
+}
+
 function isVehicleOnline(vehicle) {
   const state = vehicleStateLabel(vehicle);
   return state !== 'Offline' && state !== 'Asleep';

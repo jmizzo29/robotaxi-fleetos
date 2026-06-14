@@ -99,18 +99,18 @@ function buildOperationalEarningsHero(fleet, realFleet, syncState) {
 
   return {
     amount: formatFleetDollars(earningsToday),
-    label: 'Net Earnings Today',
+    label: 'Projected Earnings Today',
     trips: String(trips),
     teslaShare: formatFleetDollars(teslaShare),
     netMargin: `${netMarginPct}%`,
-    delta: '+18% vs yesterday',
+    delta: null,
     tone: 'positive',
     operational: true,
     liveLabel: 'Operating',
-    earningsContext: 'Projected from fleet activity',
+    earningsContext: null,
     hint: realFleet.length > 0
-      ? 'Tesla linked · verified earnings replace projections when trips complete'
-      : null,
+      ? 'Verified Tesla earnings replace projections when trips complete'
+      : 'Simulated fleet activity until Tesla revenue is verified',
   };
 }
 

@@ -1,6 +1,8 @@
 import TeslaSyncHealthPanel from './TeslaSyncHealthPanel';
 import DataPrivacyPanel from './DataPrivacyPanel';
 import BetaFeedbackForm from '../components/BetaFeedbackForm';
+import { AppCard, AppSection } from '../components/shell';
+import { colors, typography } from '../design/roboagentTokens';
 
 export default function SettingsPanel({
   realSyncStatus,
@@ -12,82 +14,79 @@ export default function SettingsPanel({
   setReplayMode,
 }) {
   return (
-    <section className="space-y-4">
-      <TeslaSyncHealthPanel
-        vehicle={vehicle}
-        realSyncStatus={realSyncStatus}
-        isLoading={isLoadingReal}
-        onSync={onSync}
-      />
+    <AppSection title="Settings" tier="primary" aria-label="Fleet settings">
+      <div className="space-y-4">
+        <TeslaSyncHealthPanel
+          vehicle={vehicle}
+          realSyncStatus={realSyncStatus}
+          isLoading={isLoadingReal}
+          onSync={onSync}
+        />
 
-      <DataPrivacyPanel />
+        <DataPrivacyPanel />
 
-      <article className="rounded-lg border border-white/10 bg-slate-900/80 p-5 shadow-lg shadow-black/10">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-emerald-300">
-          Product Feedback
-        </p>
-        <h2 className="text-2xl font-black tracking-tight">Beta Feedback</h2>
-        <p className="mt-2 text-sm text-slate-400">
-          Report bugs, confusing flows, or feature ideas. Feedback is no longer shown on the Command screen.
-        </p>
-        <div className="mt-5">
-          <BetaFeedbackForm route="settings" />
-        </div>
-      </article>
+        <AppCard>
+          <p className={typography.label}>Product Feedback</p>
+          <h2 className={`mt-1 ${typography.cardTitle}`}>Beta Feedback</h2>
+          <p className="mt-2 text-sm font-medium text-slate-600">
+            Report bugs, confusing flows, or feature ideas.
+          </p>
+          <div className="mt-5">
+            <BetaFeedbackForm route="settings" />
+          </div>
+        </AppCard>
 
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-      <article className="rounded-lg border border-white/10 bg-slate-900/80 p-5 shadow-lg shadow-black/10">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-emerald-300">
-          Tesla Integration
-        </p>
-        <h2 className="text-2xl font-black tracking-tight">Telemetry Sync</h2>
-        <div className="mt-5 space-y-3 text-sm">
-          <div className="flex justify-between gap-4">
-            <span className="text-slate-400">Status</span>
-            <span className="font-bold text-slate-100">{realSyncStatus?.state || 'idle'}</span>
-          </div>
-          <div className="flex justify-between gap-4">
-            <span className="text-slate-400">Last Message</span>
-            <span className="max-w-[60%] text-right font-bold text-slate-100">{realSyncStatus?.message || 'Unavailable'}</span>
-          </div>
-        </div>
-        <button
-          type="button"
-          onClick={onSync}
-          disabled={isLoadingReal}
-          className="mt-5 w-full rounded-md border border-sky-400/30 bg-sky-400/10 px-4 py-3 text-sm font-bold text-sky-100 transition hover:bg-sky-400/20 disabled:cursor-wait disabled:opacity-60"
-        >
-          {isLoadingReal ? 'Syncing Tesla...' : 'Sync Tesla Telemetry'}
-        </button>
-      </article>
-
-      <article className="rounded-lg border border-white/10 bg-slate-900/80 p-5 shadow-lg shadow-black/10">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-sky-300">
-          AI Runtime
-        </p>
-        <h2 className="text-2xl font-black tracking-tight">Agent Configuration</h2>
-        <div className="mt-5 space-y-3 text-sm">
-          <div className="flex justify-between">
-            <span className="text-slate-400">Provider</span>
-            <span className="font-bold text-slate-100">{aiAnalysis?.provider || 'pending'}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-slate-400">Model</span>
-            <span className="font-bold text-slate-100">{aiAnalysis?.model || 'pending'}</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-slate-400">Replay Engine</span>
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+          <AppCard>
+            <p className={typography.label}>Tesla Integration</p>
+            <h2 className={`mt-1 ${typography.cardTitle}`}>Telemetry Sync</h2>
+            <div className="mt-5 space-y-3 text-sm">
+              <div className="flex justify-between gap-4">
+                <span className="font-medium text-slate-500">Status</span>
+                <span className="font-bold text-slate-900">{realSyncStatus?.state || 'idle'}</span>
+              </div>
+              <div className="flex justify-between gap-4">
+                <span className="font-medium text-slate-500">Last Message</span>
+                <span className="max-w-[60%] text-right font-bold text-slate-900">{realSyncStatus?.message || 'Unavailable'}</span>
+              </div>
+            </div>
             <button
               type="button"
-              onClick={() => setReplayMode(!replayMode)}
-              className={`rounded-md px-3 py-1 text-xs font-black ${replayMode ? 'bg-sky-300 text-slate-950' : 'bg-slate-800 text-slate-300'}`}
+              onClick={onSync}
+              disabled={isLoadingReal}
+              className="mt-5 w-full rounded-2xl px-4 py-3 text-sm font-bold text-white transition disabled:cursor-wait disabled:opacity-60"
+              style={{ backgroundColor: colors.primary }}
             >
-              {replayMode ? 'ACTIVE' : 'OFFLINE'}
+              {isLoadingReal ? 'Syncing Tesla…' : 'Sync Tesla Telemetry'}
             </button>
-          </div>
+          </AppCard>
+
+          <AppCard>
+            <p className={typography.label}>AI Runtime</p>
+            <h2 className={`mt-1 ${typography.cardTitle}`}>Agent Configuration</h2>
+            <div className="mt-5 space-y-3 text-sm">
+              <div className="flex justify-between">
+                <span className="font-medium text-slate-500">Provider</span>
+                <span className="font-bold text-slate-900">{aiAnalysis?.provider || 'pending'}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-medium text-slate-500">Model</span>
+                <span className="font-bold text-slate-900">{aiAnalysis?.model || 'pending'}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-medium text-slate-500">Replay Engine</span>
+                <button
+                  type="button"
+                  onClick={() => setReplayMode?.(!replayMode)}
+                  className="font-bold text-blue-600"
+                >
+                  {replayMode ? 'On' : 'Off'}
+                </button>
+              </div>
+            </div>
+          </AppCard>
         </div>
-      </article>
       </div>
-    </section>
+    </AppSection>
   );
 }

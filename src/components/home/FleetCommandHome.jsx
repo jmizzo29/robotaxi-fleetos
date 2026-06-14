@@ -12,7 +12,9 @@ import {
 import CommandMapPreview from './CommandMapPreview';
 import { AppCard, AppHeader, AppSection, AppShell, HeroCardFrame } from '../shell';
 import {
+  fleetStatusNeedsAttention,
   getCommandAiPlan,
+  getCommandAlertCount,
   getFleetActivityFeed,
 } from '../../utils/commandHomeUtils';
 import { getExpansionRecommendation } from '../../utils/networkIntelligenceUtils';
@@ -35,22 +37,24 @@ function EarningsSparkline() {
   );
 }
 
-function CommandHeaderActions({ onNavigate }) {
+function CommandHeaderActions({ onNavigate, alertCount }) {
   return (
     <>
       <button
         type="button"
         onClick={() => onNavigate('alerts')}
         className="relative flex h-9 w-9 items-center justify-center rounded-full bg-white shadow-sm"
-        aria-label="Fleet alerts"
+        aria-label={alertCount > 0 ? `${alertCount} fleet alerts` : 'Fleet alerts'}
       >
         <Bell className="h-[17px] w-[17px] text-slate-700" strokeWidth={icon.navStrokeIdle} />
-        <span
-          className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold text-white"
-          style={{ backgroundColor: colors.error }}
-        >
-          2
-        </span>
+        {alertCount > 0 && (
+          <span
+            className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold text-white"
+            style={{ backgroundColor: colors.error }}
+          >
+            {alertCount > 9 ? '9+' : alertCount}
+          </span>
+        )}
       </button>
       <button
         type="button"
@@ -66,20 +70,31 @@ function CommandHeaderActions({ onNavigate }) {
 
 function EarningsHeroCard({ hero }) {
   const liveLabel = hero.liveLabel || 'Live';
+  const isProjected = Boolean(hero.operational);
 
   return (
-    <section aria-label="Net earnings today">
+    <section aria-label={hero.label}>
       <HeroCardFrame className="px-5 pb-5 pt-4">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(255,255,255,0.18),transparent_55%)]" />
         <div className="relative flex items-start justify-between gap-3">
           <div className="min-w-0 flex-1">
-            <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-white/80">Net Earnings Today</p>
-            {hero.earningsContext && (
-              <p className="mt-1 text-[10px] font-bold uppercase tracking-[0.08em] text-white/60">
-                {hero.earningsContext}
-              </p>
+            {isProjected ? (
+              <div className="mb-3 inline-flex max-w-full items-center gap-2 rounded-full border-2 border-amber-200/70 bg-amber-300/25 px-3 py-1.5">
+                <span className="text-[11px] font-black uppercase tracking-[0.14em] text-amber-50">
+                  Projected — not verified
+                </span>
+              </div>
+            ) : (
+              <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/15 px-3 py-1.5">
+                <span className="text-[11px] font-black uppercase tracking-[0.12em] text-white/90">
+                  Verified Tesla revenue
+                </span>
+              </div>
             )}
-            <p className={`mt-2 text-white ${typography.display}`}>{hero.amount}</p>
+            <p className="text-[11px] font-bold uppercase tracking-[0.1em] text-white/80">{hero.label}</p>
+            <p className={`mt-2 text-white ${isProjected ? 'text-[3rem] font-bold leading-[0.92] tracking-[-0.04em]' : typography.display}`}>
+              {hero.amount}
+            </p>
             {hero.delta ? (
               <p className="mt-2 text-[15px] font-semibold" style={{ color: colors.heroDelta }}>{hero.delta}</p>
             ) : hero.hint ? (
@@ -115,6 +130,37 @@ function EarningsHeroCard({ hero }) {
           ))}
         </div>
       </HeroCardFrame>
+    </section>
+  );
+}
+
+function CommandActionBar({ plan, alertCount, onNavigate }) {
+  return (
+    <section aria-label="Next operator action" className={spacing.sectionPrimary}>
+      <AppCard variant="alert" className="bg-white">
+        <p className={typography.label}>Do this now</p>
+        <p className={`mt-1.5 ${typography.cardTitle}`}>{plan.action}</p>
+        <p className="mt-2 text-sm font-medium text-slate-600">{plan.summary}</p>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => onNavigate('dispatch')}
+            className="rounded-2xl px-4 py-2.5 text-sm font-bold text-white transition active:scale-[0.99]"
+            style={{ backgroundColor: colors.primary }}
+          >
+            Execute in Operations →
+          </button>
+          {alertCount > 0 && (
+            <button
+              type="button"
+              onClick={() => onNavigate('alerts')}
+              className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-bold text-slate-700 transition active:scale-[0.99]"
+            >
+              Review {alertCount} alert{alertCount === 1 ? '' : 's'}
+            </button>
+          )}
+        </div>
+      </AppCard>
     </section>
   );
 }
@@ -164,6 +210,23 @@ function FleetStatusGrid({ strip, onNavigate }) {
   );
 }
 
+function FleetStatusCompact({ strip, onNavigate }) {
+  return (
+    <button
+      type="button"
+      onClick={() => onNavigate('fleet')}
+      className="flex w-full items-center justify-between gap-3 rounded-[20px] border border-slate-200/90 bg-white px-4 py-3.5 text-left shadow-[0_4px_18px_-16px_rgba(15,23,42,0.22)] transition active:scale-[0.99]"
+    >
+      <p className={typography.bodyMd}>
+        {strip.active.value} active · {strip.charging.value} charging · fleet healthy
+      </p>
+      <span className="shrink-0 text-[13px] font-semibold" style={{ color: colors.primary }}>
+        Fleet →
+      </span>
+    </button>
+  );
+}
+
 const ACTIVITY_ICON = {
   trip: { bg: semantic.positiveBg, text: semantic.positive },
   milestone: { bg: semantic.positiveBg, text: semantic.positive },
@@ -173,7 +236,7 @@ const ACTIVITY_ICON = {
 };
 
 function ActivityStatusIcon({ eventType }) {
-  const shell = `flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px]`;
+  const shell = 'flex h-10 w-10 shrink-0 items-center justify-center rounded-[14px]';
   const palette = ACTIVITY_ICON[eventType] || ACTIVITY_ICON.charging;
   const Icon = eventType === 'trip' || eventType === 'milestone'
     ? CircleDollarSign
@@ -242,26 +305,17 @@ function FleetActivitySection({ events }) {
 
 function AiOperationsBrief({ plan, onNavigate }) {
   return (
-    <AppSection title="AI Operations Brief" actionLabel="Execute" onAction={() => onNavigate('ai')} tier="tertiary" className="pb-2">
-      <AppCard variant="alert">
+    <AppSection title="AI Operations Brief" actionLabel="Operations" onAction={() => onNavigate('dispatch')} tier="tertiary" className="pb-2">
+      <AppCard variant="subdued">
         <div className="flex items-center gap-2">
           <ClipboardList className="h-4 w-4" style={{ color: colors.primary }} strokeWidth={icon.stroke} />
           <p className={typography.sectionSm}>Prepared for your fleet</p>
         </div>
-        <p className={`mt-3 ${typography.cardTitle}`}>{plan.summary}</p>
-        <p className="mt-2 font-semibold" style={{ color: colors.primary }}>{plan.action}</p>
-        <div className="mt-4 grid grid-cols-2 gap-4 border-t border-slate-100 pt-4">
-          <div>
-            <p className={typography.label}>Expected demand increase</p>
-            <p className={`mt-1.5 ${typography.metricSm}`} style={{ color: colors.primary }}>{plan.demandIncrease}</p>
-          </div>
-          <div>
-            <p className={typography.label}>Est. additional earnings</p>
-            <p className={`mt-1.5 ${typography.metricSm}`} style={{ color: semantic.positive }}>{plan.expectedRevenueImpact}</p>
-          </div>
-        </div>
-        <p className="mt-4 text-[13px] font-semibold text-slate-600">
+        <p className={`mt-3 ${typography.bodyMd}`}>{plan.summary}</p>
+        <p className="mt-3 text-[13px] font-semibold text-slate-600">
           Confidence: <span style={{ color: colors.primary }}>{plan.confidenceLabel}</span>
+          {' · '}
+          Est. impact: <span style={{ color: semantic.positive }}>{plan.expectedRevenueImpact}</span>
         </p>
       </AppCard>
     </AppSection>
@@ -274,6 +328,7 @@ export default function FleetCommandHome({
   realSyncStatus = null,
   isLoadingReal = false,
   commandQueue = [],
+  aiAnalysis = null,
   onNavigate = () => {},
 }) {
   const syncState = isLoadingReal ? 'loading' : (realSyncStatus?.state ?? 'idle');
@@ -285,12 +340,16 @@ export default function FleetCommandHome({
   const expansion = getExpansionRecommendation(fleet);
   const activeCount = Number(strip.active.value) || 0;
   const totalCount = strip.total || fleet.length;
+  const alertCount = getCommandAlertCount({ aiAnalysis, commandQueue, strip });
+  const showStatusGrid = fleetStatusNeedsAttention(strip);
 
   return (
     <AppShell>
-      <AppHeader trailing={<CommandHeaderActions onNavigate={onNavigate} />} />
+      <AppHeader trailing={<CommandHeaderActions onNavigate={onNavigate} alertCount={alertCount} />} />
 
       <EarningsHeroCard hero={hero} />
+
+      <CommandActionBar plan={plan} alertCount={alertCount} onNavigate={onNavigate} />
 
       <CommandMapPreview
         fleet={fleet}
@@ -310,7 +369,14 @@ export default function FleetCommandHome({
         <GrowthSignal expansion={expansion} onNavigate={onNavigate} />
       </div>
 
-      <FleetStatusGrid strip={strip} onNavigate={onNavigate} />
+      {showStatusGrid ? (
+        <FleetStatusGrid strip={strip} onNavigate={onNavigate} />
+      ) : (
+        <div className={spacing.sectionSecondary}>
+          <FleetStatusCompact strip={strip} onNavigate={onNavigate} />
+        </div>
+      )}
+
       <AiOperationsBrief plan={plan} onNavigate={onNavigate} />
     </AppShell>
   );

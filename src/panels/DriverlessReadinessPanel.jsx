@@ -1,4 +1,6 @@
 import { getVehicleOwnership } from '../data/vehicleOwnership';
+import { AppCard, AppSection } from '../components/shell';
+import { colors, semantic, typography } from '../design/roboagentTokens';
 
 function daysUntil(value) {
   if (!value) return null;
@@ -50,31 +52,31 @@ function scoreVehicle(vehicle) {
 }
 
 function toneForScore(score) {
-  if (score >= 84) return 'text-emerald-300';
-  if (score >= 70) return 'text-amber-300';
-  return 'text-rose-300';
+  if (score >= 84) return semantic.positive;
+  if (score >= 70) return semantic.caution;
+  return semantic.alert;
 }
 
-function badgeTone(status) {
-  if (status === 'Ready') return 'border-emerald-400/25 bg-emerald-400/10 text-emerald-200';
-  if (status === 'Needs Review') return 'border-amber-400/25 bg-amber-400/10 text-amber-200';
-  return 'border-rose-400/25 bg-rose-400/10 text-rose-200';
+function badgeStyle(status) {
+  if (status === 'Ready') return { bg: semantic.positiveBg, color: semantic.positive };
+  if (status === 'Needs Review') return { bg: semantic.cautionBg, color: semantic.caution };
+  return { bg: semantic.alertBg, color: semantic.alert };
 }
 
-function Metric({ label, value, tone = 'text-slate-100' }) {
+function MetricCard({ label, value, accent }) {
   return (
-    <div className="rounded-lg border border-white/10 bg-slate-950/50 p-4">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">{label}</p>
-      <p className={`mt-2 text-2xl font-black ${tone}`}>{value}</p>
-    </div>
+    <AppCard variant="metric">
+      <p className={typography.label}>{label}</p>
+      <p className={`mt-2 ${typography.metricSm}`} style={{ color: accent }}>{value}</p>
+    </AppCard>
   );
 }
 
 function ScoreBar({ score }) {
-  const color = score >= 84 ? 'bg-emerald-300' : score >= 70 ? 'bg-amber-300' : 'bg-rose-300';
+  const color = score >= 84 ? 'bg-emerald-500' : score >= 70 ? 'bg-amber-500' : 'bg-rose-500';
 
   return (
-    <div className="h-2 overflow-hidden rounded-full bg-slate-950">
+    <div className="h-2 overflow-hidden rounded-full bg-slate-100">
       <div className={`h-full rounded-full ${color}`} style={{ width: `${Math.max(0, Math.min(100, score))}%` }} />
     </div>
   );
@@ -83,6 +85,7 @@ function ScoreBar({ score }) {
 function ReadinessCard({ item, onQueueCommand }) {
   const { vehicle, ownership, score, status, categories } = item;
   const vehicleName = vehicle.name || vehicle.display_name || vehicle.id;
+  const badge = badgeStyle(status);
 
   const handleReview = () => {
     onQueueCommand?.(
@@ -92,27 +95,31 @@ function ReadinessCard({ item, onQueueCommand }) {
   };
 
   return (
-    <article className="rounded-lg border border-white/10 bg-slate-900/80 p-5 shadow-lg shadow-black/10">
+    <AppCard>
       <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
           <div className="mb-2 flex flex-wrap gap-2">
-            <span className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase ${badgeTone(status)}`}>
+            <span
+              className="rounded-full px-3 py-1 text-[10px] font-bold uppercase"
+              style={{ backgroundColor: badge.bg, color: badge.color }}
+            >
               {status}
             </span>
-            <span className="rounded-full border border-white/10 bg-slate-950/70 px-3 py-1 text-[10px] font-black uppercase text-slate-300">
+            <span className="rounded-full bg-slate-100 px-3 py-1 text-[10px] font-bold uppercase text-slate-600">
               {ownership.tag || vehicle.id}
             </span>
           </div>
-          <h3 className="truncate text-2xl font-black tracking-tight">{vehicleName}</h3>
-          <p className="mt-1 text-sm text-slate-400">
-            {ownership.modelYear || 'Unknown'} {ownership.model || 'Vehicle'} - robotaxi readiness estimate
+          <h3 className={`truncate ${typography.cardTitle}`}>{vehicleName}</h3>
+          <p className="mt-1 text-sm font-medium text-slate-600">
+            {ownership.modelYear || 'Unknown'} {ownership.model || 'Vehicle'} · robotaxi readiness estimate
           </p>
         </div>
 
         <button
           type="button"
           onClick={handleReview}
-          className="rounded-md border border-violet-400/30 bg-violet-400/10 px-4 py-2.5 text-sm font-bold text-violet-100 transition hover:bg-violet-400/20"
+          className="rounded-2xl px-4 py-2.5 text-sm font-bold text-white transition active:scale-[0.99]"
+          style={{ backgroundColor: colors.primary }}
         >
           AI Review
         </button>
@@ -120,25 +127,25 @@ function ReadinessCard({ item, onQueueCommand }) {
 
       <div className="mb-5">
         <div className="mb-2 flex items-end justify-between">
-          <span className="text-sm font-semibold text-slate-400">Readiness Score</span>
-          <span className={`text-3xl font-black ${toneForScore(score)}`}>{score}</span>
+          <span className="text-sm font-semibold text-slate-500">Readiness Score</span>
+          <span className={`text-3xl font-bold`} style={{ color: toneForScore(score) }}>{score}</span>
         </div>
         <ScoreBar score={score} />
       </div>
 
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">
         {categories.map(([label, value, detail]) => (
-          <div key={label} className="rounded-lg border border-white/10 bg-slate-950/50 p-4">
+          <div key={label} className="rounded-2xl border border-slate-200/90 bg-slate-50 p-4">
             <div className="mb-2 flex items-center justify-between gap-3">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">{label}</p>
-              <p className={`text-sm font-black ${toneForScore(value)}`}>{Math.round(value)}</p>
+              <p className={typography.label}>{label}</p>
+              <p className="text-sm font-bold" style={{ color: toneForScore(value) }}>{Math.round(value)}</p>
             </div>
             <ScoreBar score={value} />
-            <p className="mt-2 text-xs leading-5 text-slate-400">{detail}</p>
+            <p className="mt-2 text-xs font-medium leading-5 text-slate-600">{detail}</p>
           </div>
         ))}
       </div>
-    </article>
+    </AppCard>
   );
 }
 
@@ -152,23 +159,19 @@ export default function DriverlessReadinessPanel({ fleet = [], onQueueCommand })
     : 0;
 
   return (
-    <section className="space-y-5">
-      <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
-        <Metric label="Avg Readiness" value={`${average}/100`} tone={toneForScore(average)} />
-        <Metric label="Ready" value={ready} tone="text-emerald-300" />
-        <Metric label="Needs Review" value={review} tone={review ? 'text-amber-300' : 'text-slate-100'} />
-        <Metric label="Blocked" value={blocked} tone={blocked ? 'text-rose-300' : 'text-slate-100'} />
+    <AppSection title="Driverless Readiness" tier="primary" aria-label="Driverless readiness scores">
+      <div className="mb-4 grid grid-cols-2 gap-3 xl:grid-cols-4">
+        <MetricCard label="Avg Readiness" value={`${average}/100`} accent={toneForScore(average)} />
+        <MetricCard label="Ready" value={ready} accent={semantic.positive} />
+        <MetricCard label="Needs Review" value={review} accent={review ? semantic.caution : colors.inkMuted} />
+        <MetricCard label="Blocked" value={blocked} accent={blocked ? semantic.alert : colors.inkMuted} />
       </div>
 
-      <article className="rounded-lg border border-white/10 bg-slate-900/85 p-5 shadow-xl shadow-black/15">
-        <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-emerald-300">
-          Robotaxi-Ready, Tesla-Honest
+      <AppCard variant="subdued" className="mb-4">
+        <p className={typography.bodyMd}>
+          ROBOAGENT scores operational readiness across energy, telemetry, maintenance, risk, compliance, and autonomy dependency. Tesla still controls autonomous dispatch eligibility.
         </p>
-        <h2 className="text-2xl font-black tracking-tight">Driverless Readiness Score</h2>
-        <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">
-          ROBOAGENT can evaluate whether a vehicle is operationally ready for a future driverless network: energy, telemetry, maintenance, anomaly risk, compliance, and autonomy dependency. Tesla still controls whether autonomous dispatch is available and where it can operate.
-        </p>
-      </article>
+      </AppCard>
 
       <div className="grid grid-cols-1 gap-4">
         {readiness.map((item) => (
@@ -179,6 +182,6 @@ export default function DriverlessReadinessPanel({ fleet = [], onQueueCommand })
           />
         ))}
       </div>
-    </section>
+    </AppSection>
   );
 }
