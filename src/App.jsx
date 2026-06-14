@@ -32,7 +32,7 @@ import Login from './components/Auth/Login';
 import Signup from './components/Auth/Signup';
 import LegalPage from './panels/LegalPage';
 import MemoryEventsPanel from './panels/MemoryEventsPanel';
-import FleetCommandHome from './components/home/FleetCommandHome';
+import { MonumentToday } from './components/monument';
 import OnboardingPanel from './panels/OnboardingPanel';
 import AddVehiclePanel from './panels/AddVehiclePanel';
 import OperationsReportPanel from './panels/OperationsReportPanel';
@@ -428,14 +428,13 @@ function FleetApp() {
 
   const pages = {
     overview: (
-      <FleetCommandHome
+      <MonumentToday
         fleet={fleet}
         realFleet={realVehicles}
         realSyncStatus={realSyncStatus}
         isLoadingReal={isLoadingReal}
         commandQueue={commandQueue}
-        aiAnalysis={aiAnalysis}
-        onNavigate={navigate}
+        onQueueCommand={enqueueCommand}
       />
     ),
     onboarding: (
@@ -832,21 +831,19 @@ function FleetApp() {
   if (route === 'overview') {
     return (
       <>
-        <div className="flex min-h-screen" style={{ backgroundColor: '#f3f4f8' }}>
+        <div className="flex min-h-screen" style={{ backgroundColor: '#FAFAF8' }}>
           <Sidebar commandQueue={commandQueue} route={route} onNavigate={navigate} />
           <main className="flex-1 overflow-y-auto">
-            <FleetCommandHome
+            <MonumentToday
               fleet={fleet}
               realFleet={realVehicles}
               realSyncStatus={realSyncStatus}
               isLoadingReal={isLoadingReal}
               commandQueue={commandQueue}
-              aiAnalysis={aiAnalysis}
-              onNavigate={navigate}
+              onQueueCommand={enqueueCommand}
             />
           </main>
         </div>
-        <MobileBottomNav route={route} onNavigate={navigate} pendingCount={commandQueue.length} />
         <FeedbackButton route={route} />
       </>
     );
