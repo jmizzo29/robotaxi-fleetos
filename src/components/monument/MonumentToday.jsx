@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react';
 import ConfirmActionSheet from './ConfirmActionSheet';
 import FleetLedger from './FleetLedger';
 import MonumentDotNav from './MonumentDotNav';
-import { monument, monumentType } from '../../design/monumentTokens';
+import { monument, monumentType } from './monumentTokens';
 import {
   getFleetLedger,
   getMonumentAction,

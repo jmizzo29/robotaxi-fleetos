@@ -1,4 +1,4 @@
-import { monument, monumentType } from '../../design/monumentTokens';
+import { monument, monumentType } from './monumentTokens';
 
 function toneColor(tone) {
   if (tone === 'positive' || tone === 'surge') return monument.money;

@@ -1,4 +1,4 @@
-import { monument } from '../../design/monumentTokens';
+import { monument } from './monumentTokens';
 
 export default function MonumentSheet({
   open,

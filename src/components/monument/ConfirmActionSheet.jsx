@@ -1,5 +1,5 @@
 import MonumentSheet from './MonumentSheet';
-import { monument, monumentType } from '../../design/monumentTokens';
+import { monument, monumentType } from './monumentTokens';
 
 export default function ConfirmActionSheet({
   open,

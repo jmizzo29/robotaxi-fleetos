@@ -1,4 +1,4 @@
-import { monument } from '../../design/monumentTokens';
+import { monument } from './monumentTokens';
 
 const TABS = ['today', 'fleet', 'grow'];
 
