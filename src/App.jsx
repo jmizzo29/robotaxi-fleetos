@@ -25,7 +25,9 @@ import FleetHealthDashboard from './panels/FleetHealthDashboard';
 import FleetListPanel from './panels/FleetListPanel';
 import IntelligentAlertCenter from './panels/IntelligentAlertCenter';
 import IntegrationsPanel from './panels/IntegrationsPanel';
-import LandingPage, { AgentAboutPage, AgentChatPage, HowItWorksPage } from './panels/LandingPage';
+import LandingPage, { AgentChatPage, HowItWorksPage } from './panels/LandingPage';
+import AboutMonument from './components/landing/AboutMonument';
+import LegalMonument from './components/landing/LegalMonument';
 import Landing from './pages/Landing';
 import LandingEntry from './pages/LandingEntry';
 import Login from './components/Auth/Login';
@@ -721,11 +723,7 @@ function FleetApp() {
   }
 
   if (isPublicAboutRoute) {
-    return (
-      <div className="robo-minimal">
-        <AgentAboutPage onNavigate={navigate} />
-      </div>
-    );
+    return <AboutMonument onNavigate={navigate} />;
   }
 
   if (isPublicHowItWorksRoute) {
@@ -733,24 +731,7 @@ function FleetApp() {
   }
 
   if (isPublicLegalRoute) {
-    return (
-      <div className="robo-minimal min-h-screen bg-[#f7f7f5] px-5 py-6 text-[#141b27]">
-        <header className="mx-auto mb-8 flex max-w-5xl items-center justify-between">
-          <button type="button" onClick={() => navigate('landing')} className="flex items-center gap-3">
-            <RoboLogo className="h-8 w-8" />
-            <RoboWordmark className="text-lg" />
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate('landing')}
-            className="rounded-full border border-[#172231]/15 bg-white px-4 py-2 text-sm font-bold text-[#172231] shadow-sm transition hover:bg-slate-100"
-          >
-            Back to Home
-          </button>
-        </header>
-        <LegalPage type={route} />
-      </div>
-    );
+    return <LegalMonument type={route} onNavigate={navigate} />;
   }
 
   if (isPublicOnboardingRoute) {

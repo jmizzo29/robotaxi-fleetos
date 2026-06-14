@@ -2,17 +2,11 @@ import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import RoboLogo from '../RoboLogo';
 import RoboWordmark from '../RoboWordmark';
+import LandingHowItWorksCard from './LandingHowItWorksCard';
 import { monument, monumentType } from '../monument/monumentTokens';
 
-const navItems = [
-  { label: 'How it works', route: 'how-it-works' },
-  { label: 'Sign in', route: 'login' },
-  { label: 'About', route: 'about' },
-];
-
-export default function LandingHeader({ onNavigate, onConnect, variant = 'default' }) {
+export default function LandingHeader({ onNavigate, variant = 'default' }) {
   const [open, setOpen] = useState(false);
-  const connect = onConnect || (() => onNavigate('onboarding'));
   const isEntry = variant === 'entry';
   const isMonument = variant === 'monument';
   const homeRoute = 'landing';
@@ -76,30 +70,19 @@ export default function LandingHeader({ onNavigate, onConnect, variant = 'defaul
           aria-hidden={!open}
         >
           <div className="flex flex-col gap-1">
-            {navItems.map(({ label, route }) => (
-              <button
-                key={route}
-                type="button"
-                onClick={() => go(route)}
-                className={`rounded-xl px-3 py-3.5 text-left ${monumentType.sheetBody} transition active:bg-black/[0.03]`}
-                style={{ color: monument.ink }}
-              >
-                {label}
-              </button>
-            ))}
-          </div>
+            <LandingHowItWorksCard onClick={() => go('how-it-works')} />
 
-          <button
-            type="button"
-            onClick={() => {
-              setOpen(false);
-              connect();
-            }}
-            className={`mt-8 w-full rounded-xl py-3.5 ${monumentType.buttonPrimary} text-white`}
-            style={{ backgroundColor: monument.action }}
-          >
-            Connect Tesla
-          </button>
+            <div className="my-4 h-px" style={{ backgroundColor: monument.hairline }} />
+
+            <button
+              type="button"
+              onClick={() => go('about')}
+              className={`rounded-xl px-3 py-3.5 text-left ${monumentType.sheetBody} transition active:bg-black/[0.03]`}
+              style={{ color: monument.ink }}
+            >
+              About
+            </button>
+          </div>
         </nav>
       </>
     );
@@ -151,28 +134,26 @@ export default function LandingHeader({ onNavigate, onConnect, variant = 'defaul
         aria-hidden={!open}
       >
         <div className="flex flex-col gap-1">
-          {navItems.map(({ label, route }) => (
-            <button
-              key={route}
-              type="button"
-              onClick={() => go(route)}
-              className="rounded-xl px-3 py-3.5 text-left text-[15px] font-medium text-white/80 transition hover:bg-white/5 hover:text-white"
-            >
-              {label}
-            </button>
-          ))}
-        </div>
+          <button
+            type="button"
+            onClick={() => go('how-it-works')}
+            className="rounded-xl border px-3 py-3.5 text-left transition hover:bg-white/5"
+            style={{ borderColor: 'rgba(255,255,255,0.12)' }}
+          >
+            <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-white/45">How it works</p>
+            <p className="mt-1.5 text-[15px] font-semibold text-white">3 steps · you approve</p>
+          </button>
 
-        <button
-          type="button"
-          onClick={() => {
-            setOpen(false);
-            connect();
-          }}
-          className="mt-8 w-full rounded-full bg-white px-5 py-3.5 text-[15px] font-semibold text-black transition hover:bg-white/90"
-        >
-          Connect Tesla
-        </button>
+          <div className="my-3 h-px bg-white/10" />
+
+          <button
+            type="button"
+            onClick={() => go('about')}
+            className="rounded-xl px-3 py-3.5 text-left text-[15px] font-medium text-white/80 transition hover:bg-white/5 hover:text-white"
+          >
+            About
+          </button>
+        </div>
       </nav>
     </>
   );

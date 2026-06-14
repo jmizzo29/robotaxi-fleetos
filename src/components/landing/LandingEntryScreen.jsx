@@ -1,5 +1,6 @@
 import { Loader2 } from 'lucide-react';
 import LandingHeader from './LandingHeader';
+import LandingLegalLinks from './LandingLegalLinks';
 import { monument, monumentType } from '../monument/monumentTokens';
 
 function Hairline() {
@@ -59,6 +60,9 @@ export default function LandingEntryScreen({
           <p className={`mt-4 pb-2 ${monumentType.revealHint}`} style={{ color: monument.inkGhost }}>
             Fleet OS for Tesla owners
           </p>
+          <div className="mt-3 pb-1">
+            <LandingLegalLinks onNavigate={onNavigate} layout="inline" />
+          </div>
         </div>
       </div>
     </div>
