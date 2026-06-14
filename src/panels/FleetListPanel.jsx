@@ -100,7 +100,7 @@ export default function FleetListPanel({ fleet = [], onSelect }) {
 
   return (
     <section className="animate-fade-up space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-3">
+      <div className="hidden flex-wrap items-center justify-between gap-3 lg:flex">
         <div>
           <h2 className="text-xl font-semibold text-ink sm:text-2xl">Fleet</h2>
           <p className="mt-1 text-sm text-ink-muted">

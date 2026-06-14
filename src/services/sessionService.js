@@ -1,4 +1,6 @@
 import { fetchApiJson } from './apiClient';
+import { clearTeslaConnectionLocalState } from './betaCompliance';
+import { logTeslaDisconnect, mapTeslaDisconnectError } from './teslaDisconnectUtils';
 
 export async function getFleetOsSession() {
   return fetchApiJson('/auth/session');
@@ -41,5 +43,27 @@ export async function getFleetOsBillingStatus() {
 }
 
 export async function disconnectTeslaForUser() {
-  return fetchApiJson('/tesla/disconnect', { method: 'POST' });
+  logTeslaDisconnect('click', { route: 'account' });
+
+  try {
+    const result = await fetchApiJson('/tesla/disconnect', { method: 'POST' });
+    logTeslaDisconnect('api_success', {
+      hadActiveConnection: result.hadActiveConnection,
+      teslaConnected: result.teslaConnected,
+      message: result.message,
+    });
+    clearTeslaConnectionLocalState();
+    return result;
+  } catch (error) {
+    logTeslaDisconnect('api_failure', {
+      status: error.status,
+      code: error.code,
+      message: error.message,
+    });
+    const mapped = mapTeslaDisconnectError(error);
+    const wrapped = new Error(mapped);
+    wrapped.status = error.status;
+    wrapped.code = error.code;
+    throw wrapped;
+  }
 }

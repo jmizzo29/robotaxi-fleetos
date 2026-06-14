@@ -596,13 +596,45 @@ export async function teslaRequestForSession(req, res, path, options = {}) {
 
 export async function disconnectTesla(req, res) {
   const session = await getSession(req, res);
-  if (!session) return false;
-  // Clear both tokens so a "disconnect" fully severs Tesla access.
-  await query(
+  if (!session) {
+    const error = new Error('Sign in before disconnecting Tesla.');
+    error.status = 401;
+    error.code = 'LOGIN_REQUIRED';
+    throw error;
+  }
+
+  console.info('[ROBOAGENT][TeslaDisconnect] start', {
+    userId: session.userId,
+    authProvider: session.authProvider || 'fleetos',
+  });
+
+  const { rows } = await query(
     `update fleetos_tesla_connections
-     set revoked_at = now(), access_token_enc = null, refresh_token_enc = null, updated_at = now()
-     where user_id = $1 and provider = 'tesla'`,
+     set revoked_at = now(),
+         access_token_enc = null,
+         refresh_token_enc = 'revoked',
+         updated_at = now()
+     where user_id = $1
+       and provider = 'tesla'
+       and revoked_at is null
+     returning id`,
     [session.userId],
   );
-  return true;
+
+  const hadActiveConnection = rows.length > 0;
+
+  console.info('[ROBOAGENT][TeslaDisconnect] complete', {
+    userId: session.userId,
+    hadActiveConnection,
+    revokedConnectionId: rows[0]?.id || null,
+  });
+
+  return {
+    disconnected: true,
+    hadActiveConnection,
+    teslaConnected: false,
+    message: hadActiveConnection
+      ? 'Tesla account disconnected successfully.'
+      : 'No active Tesla connection found.',
+  };
 }

@@ -6,6 +6,8 @@ import CommandSafetyModal from './components/CommandSafetyModal';
 import FeedbackButton from './components/FeedbackButton';
 import MobileBottomNav from './components/MobileBottomNav';
 import PageHeader from './components/PageHeader';
+import { AppHeader, AppShell } from './components/shell';
+import { mobileScreenBadge } from './design/roboagentTokens';
 import RoboLogo from './components/RoboLogo';
 import RoboWordmark from './components/RoboWordmark';
 import Logo from './components/Logo';
@@ -838,11 +840,19 @@ function FleetApp() {
 
   if (isPublicAccountRoute) {
     return (
-      <div className="min-h-screen bg-surface text-ink pb-20 lg:pb-0">
-        <AccountPanel onNavigate={navigate} />
+      <>
+        <div className="lg:hidden">
+          <AppShell>
+            <AppHeader badge="Account" />
+            <AccountPanel embedded onNavigate={navigate} />
+          </AppShell>
+        </div>
+        <div className="hidden min-h-screen bg-surface text-ink lg:block">
+          <AccountPanel onNavigate={navigate} />
+        </div>
         <MobileBottomNav route={route} onNavigate={navigate} pendingCount={commandQueue.length} />
         <FeedbackButton route={route} />
-      </div>
+      </>
     );
   }
 
@@ -900,18 +910,28 @@ function FleetApp() {
   }
 
   return (
-    <div className="robo-minimal flex min-h-screen bg-[#f7f7f5] text-[#141b27]">
+    <div className="robo-minimal flex min-h-screen text-[#141b27] lg:bg-[#f7f7f5]">
       <Sidebar
         commandQueue={commandQueue}
         route={route}
         onNavigate={navigate}
       />
 
-      <main className="flex-1 overflow-y-auto bg-[#f7f7f5] p-4 pb-28 sm:p-6 sm:pb-28 lg:p-8">
+      <main className="flex-1 overflow-y-auto lg:bg-[#f7f7f5] lg:p-8">
         <div className="mx-auto max-w-[1900px]">
-          <ErrorBoundary>
-            {pages[route] || pages.overview}
-          </ErrorBoundary>
+          <div className="lg:hidden">
+            <AppShell>
+              <AppHeader badge={mobileScreenBadge(route)} />
+              <ErrorBoundary>
+                {pages[route] || pages.overview}
+              </ErrorBoundary>
+            </AppShell>
+          </div>
+          <div className="hidden p-4 sm:p-6 lg:block">
+            <ErrorBoundary>
+              {pages[route] || pages.overview}
+            </ErrorBoundary>
+          </div>
         </div>
       </main>
 

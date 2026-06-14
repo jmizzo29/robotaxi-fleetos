@@ -5,6 +5,8 @@ import HeatmapLayer from '../HeatmapLayer';
 import heatmapData from '../../data/heatmapData';
 import demandZones from '../../data/demandZones';
 import { vehicleStateLabel } from '../../utils/vehicleDisplayUtils';
+import { AppSection } from '../shell';
+import { radius, shadow } from '../../design/roboagentTokens';
 
 const ORLANDO_VIEW = {
   longitude: -81.3792,
@@ -133,27 +135,16 @@ export default function CommandMapPreview({
     return !status.includes('OFFLINE') && !status.includes('ASLEEP') && !status.includes('CHARG');
   }).length;
 
-  const titleClass = tier === 'primary'
-    ? 'text-[24px] font-bold tracking-[-0.03em] text-slate-950'
-    : 'text-[18px] font-bold tracking-[-0.02em] text-slate-800';
-
   return (
-    <section aria-label="Live fleet map">
-      <div className="mb-3.5 flex items-center justify-between gap-3">
-        <h2 className={titleClass}>Live Fleet Map</h2>
-        <button
-          type="button"
-          onClick={() => onNavigate('map')}
-          className="shrink-0 text-[13px] font-semibold text-[#2563eb]"
-        >
-          Full map
-        </button>
-      </div>
-
-      <div className="rounded-[24px] bg-gradient-to-b from-slate-100 to-slate-200/80 p-1 shadow-[0_20px_48px_-24px_rgba(15,23,42,0.45)]">
-        <div
-          className={`relative overflow-hidden rounded-[20px] border border-slate-300/60 shadow-inner ${mapHeightClass}`}
-        >
+    <AppSection
+      title="Live Fleet Map"
+      actionLabel="Full map"
+      onAction={() => onNavigate('map')}
+      tier={tier}
+      aria-label="Live fleet map"
+    >
+      <div className={`${radius.cardLg} bg-gradient-to-b from-slate-100 to-slate-200/80 p-1 ${shadow.map}`}>
+        <div className={`relative overflow-hidden ${radius.card} border border-slate-300/60 shadow-inner ${mapHeightClass}`}>
           {!mapboxToken ? (
             <>
               <div className="absolute inset-0 flex items-center justify-center bg-[#06080c] px-6 text-center">
@@ -194,6 +185,6 @@ export default function CommandMapPreview({
           {mapboxToken && <MapFooter total={total} active={active} />}
         </div>
       </div>
-    </section>
+    </AppSection>
   );
 }

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import BetaConsentPanel from '../components/BetaConsentPanel';
 import { deleteUserData, revokeTeslaConsent } from '../services/betaCompliance';
+import { disconnectTeslaForUser } from '../services/sessionService';
 
 export default function DataPrivacyPanel() {
   const [message, setMessage] = useState('');
@@ -18,8 +19,13 @@ export default function DataPrivacyPanel() {
   };
 
   const revoke = async () => {
-    await revokeTeslaConsent();
-    setMessage('ROBOAGENT Tesla telemetry consent was revoked and the stored Tesla connection was disconnected. Also revoke ROBOAGENT from Tesla third-party app access controls.');
+    try {
+      const result = await disconnectTeslaForUser();
+      await revokeTeslaConsent();
+      setMessage(result.message || 'Connection removed. Also revoke ROBOAGENT from Tesla third-party app access controls.');
+    } catch (error) {
+      setMessage(error.message || 'Unable to remove the Tesla connection. Try again.');
+    }
   };
 
   return (

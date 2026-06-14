@@ -1,6 +1,6 @@
 export default function PageHeader({ eyebrow, title, description, action }) {
   return (
-    <header className="mb-5 animate-fade-up sm:mb-6">
+    <header className="page-header-desktop mb-5 hidden animate-fade-up lg:mb-6 lg:block">
       <div className="flex flex-wrap items-start justify-between gap-4">
         <div className="min-w-0">
           {eyebrow && (

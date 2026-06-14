@@ -23,6 +23,7 @@ import {
   getFleetOsSession,
   updateFleetOsProfile,
 } from '../services/sessionService';
+import { logTeslaDisconnect } from '../services/teslaDisconnectUtils';
 
 function Spinner({ className = '' }) {
   return <Loader2 className={`h-4 w-4 animate-spin ${className}`} aria-hidden="true" />;
@@ -53,13 +54,18 @@ function initials(name, email) {
   return source.slice(0, 2).toUpperCase();
 }
 
-function teslaStatusTone(session, billing) {
-  if (!session?.teslaConnected) return 'offline';
+function teslaStatusTone(session, billing, disconnectState = 'idle') {
+  if (disconnectState === 'disconnecting') return 'caution';
+  if (disconnectState === 'failed') return 'critical';
+  if (disconnectState === 'disconnected' || !session?.teslaConnected) return 'offline';
   if ((billing?.vehicleCount || 0) > 0) return 'ready';
   return 'caution';
 }
 
-function teslaStatusLabel(session, billing) {
+function teslaStatusLabel(session, billing, disconnectState = 'idle') {
+  if (disconnectState === 'disconnecting') return 'Disconnecting…';
+  if (disconnectState === 'failed') return 'Disconnect failed';
+  if (disconnectState === 'disconnected') return 'Disconnected';
   if (!session?.teslaConnected) return 'Not connected';
   const count = billing?.vehicleCount || 0;
   if (count === 0) return 'Connected · awaiting first sync';
@@ -338,16 +344,18 @@ function ProfileSection({ user, profileName, isBusy, onProfileNameChange, onSave
 function TeslaSection({
   session,
   billing,
-  isBusy,
+  disconnectState,
   confirmDisconnect,
   onManage,
   onConfirmDisconnect,
   onCancelDisconnect,
   onDisconnect,
 }) {
-  const tone = teslaStatusTone(session, billing);
-  const label = teslaStatusLabel(session, billing);
-  const connectedAt = formatConnectedAt(session?.teslaConnectedAt);
+  const isDisconnecting = disconnectState === 'disconnecting';
+  const showConnected = Boolean(session?.teslaConnected) && disconnectState !== 'disconnected';
+  const tone = teslaStatusTone(session, billing, disconnectState);
+  const label = teslaStatusLabel(session, billing, disconnectState);
+  const connectedAt = showConnected ? formatConnectedAt(session?.teslaConnectedAt) : null;
 
   return (
     <Card padding="p-5 sm:p-6" className="animate-fade-up">
@@ -379,28 +387,28 @@ function TeslaSection({
       )}
 
       <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-        <Button className="flex-1" onClick={onManage}>
-          {session?.teslaConnected ? 'Manage vehicles' : 'Connect Tesla'}
+        <Button className="flex-1" onClick={onManage} disabled={isDisconnecting}>
+          {showConnected ? 'Manage vehicles' : 'Connect Tesla'}
         </Button>
-        {session?.teslaConnected && (
+        {showConnected && (
           confirmDisconnect ? (
             <div className="flex flex-1 gap-2">
-              <Button variant="secondary" className="flex-1" disabled={isBusy} onClick={onCancelDisconnect}>
+              <Button variant="secondary" className="flex-1" disabled={isDisconnecting} onClick={onCancelDisconnect}>
                 Cancel
               </Button>
               <Button
                 variant="danger"
                 className="flex-1"
-                disabled={isBusy}
-                aria-busy={isBusy}
+                disabled={isDisconnecting}
+                aria-busy={isDisconnecting}
                 onClick={onDisconnect}
               >
-                {isBusy && <Spinner />}
-                {isBusy ? 'Disconnecting…' : 'Confirm'}
+                {isDisconnecting && <Spinner />}
+                {isDisconnecting ? 'Disconnecting…' : 'Confirm'}
               </Button>
             </div>
           ) : (
-            <Button variant="danger" className="flex-1" disabled={isBusy} onClick={onConfirmDisconnect}>
+            <Button variant="danger" className="flex-1" disabled={isDisconnecting} onClick={onConfirmDisconnect}>
               Disconnect
             </Button>
           )
@@ -473,6 +481,7 @@ export default function AccountPanel({ onNavigate, embedded = false }) {
   const [isBusy, setIsBusy] = useState(false);
   const [authBusy, setAuthBusy] = useState('');
   const [confirmDisconnect, setConfirmDisconnect] = useState(false);
+  const [teslaDisconnectState, setTeslaDisconnectState] = useState('idle');
 
   const clerkReady = isClerkConfigured();
   const user = session?.user || {};
@@ -517,6 +526,25 @@ export default function AccountPanel({ onNavigate, embedded = false }) {
       });
     }, 0);
     return () => window.clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    if (session?.teslaConnected) {
+      setTeslaDisconnectState('idle');
+    }
+  }, [session?.teslaConnected]);
+
+  useEffect(() => {
+    const onTeslaDisconnected = () => {
+      setSession((current) => (
+        current ? { ...current, teslaConnected: false, teslaConnectedAt: null } : current
+      ));
+      setTeslaDisconnectState('disconnected');
+      logTeslaDisconnect('local_cleanup', { source: 'fleetos-tesla-disconnected' });
+    };
+
+    window.addEventListener('fleetos-tesla-disconnected', onTeslaDisconnected);
+    return () => window.removeEventListener('fleetos-tesla-disconnected', onTeslaDisconnected);
   }, []);
 
   const runAction = async (action, success) => {
@@ -565,18 +593,28 @@ export default function AccountPanel({ onNavigate, embedded = false }) {
   };
 
   const disconnectTesla = async () => {
-    setIsBusy(true);
+    logTeslaDisconnect('click', { surface: 'account' });
+    setTeslaDisconnectState('disconnecting');
     setError('');
     setMessage('');
+
     try {
-      await disconnectTeslaForUser();
-      await refresh();
-      setMessage('Tesla access revoked. You can reconnect anytime from onboarding.');
+      const result = await disconnectTeslaForUser();
+      setSession((current) => (
+        current ? { ...current, teslaConnected: false, teslaConnectedAt: null } : current
+      ));
+      setTeslaDisconnectState('disconnected');
       setConfirmDisconnect(false);
-    } catch {
-      setError('Could not disconnect right now. Please try again.');
-    } finally {
-      setIsBusy(false);
+      setMessage(result.message || 'Connection removed.');
+      logTeslaDisconnect('ui_success', {
+        hadActiveConnection: result.hadActiveConnection,
+        teslaConnected: false,
+      });
+      await refresh();
+    } catch (disconnectError) {
+      setTeslaDisconnectState('failed');
+      setError(disconnectError.message || 'Unable to remove the Tesla connection. Try again.');
+      logTeslaDisconnect('ui_failure', { message: disconnectError.message });
     }
   };
 
@@ -616,7 +654,7 @@ export default function AccountPanel({ onNavigate, embedded = false }) {
       <TeslaSection
         session={session}
         billing={billing}
-        isBusy={isBusy}
+        disconnectState={teslaDisconnectState}
         confirmDisconnect={confirmDisconnect}
         onManage={() => onNavigate?.('onboarding')}
         onConfirmDisconnect={() => setConfirmDisconnect(true)}

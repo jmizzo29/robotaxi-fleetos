@@ -3,6 +3,7 @@ import BetaConsentPanel from '../components/BetaConsentPanel';
 import TeslaIndependenceNotice from '../components/TeslaIndependenceNotice';
 import { canUseTeslaTelemetry } from '../services/betaCompliance';
 import { disconnectTeslaForUser, getFleetOsSession } from '../services/sessionService';
+import { logTeslaDisconnect } from '../services/teslaDisconnectUtils';
 import { getTeslaLoginUrl, getTeslaSyncHealth } from '../services/teslaHealthService';
 
 function healthTone(status) {
@@ -60,6 +61,8 @@ export default function TeslaSyncHealthPanel({
   const [healthError, setHealthError] = useState(null);
   const [session, setSession] = useState(null);
   const [complianceRevision, setComplianceRevision] = useState(0);
+  const [disconnectState, setDisconnectState] = useState('idle');
+  const [disconnectMessage, setDisconnectMessage] = useState('');
   const teslaLoginUrl = getTeslaLoginUrl();
   const consentReady = canUseTeslaTelemetry();
 
@@ -81,12 +84,31 @@ export default function TeslaSyncHealthPanel({
   };
 
   const disconnectTesla = async () => {
+    logTeslaDisconnect('click', { surface: 'tesla-sync-health' });
+    setDisconnectState('disconnecting');
+    setDisconnectMessage('');
+    setHealthError(null);
     setIsLoadingHealth(true);
+
     try {
-      await disconnectTeslaForUser();
+      const result = await disconnectTeslaForUser();
+      setSession((current) => (
+        current ? { ...current, teslaConnected: false, teslaConnectedAt: null } : current
+      ));
+      setDisconnectState('disconnected');
+      setDisconnectMessage(result.message || 'Connection removed.');
+      logTeslaDisconnect('ui_success', {
+        hadActiveConnection: result.hadActiveConnection,
+        surface: 'tesla-sync-health',
+      });
       await refreshHealth();
     } catch (error) {
-      setHealthError(error.message || 'Tesla disconnect failed.');
+      setDisconnectState('failed');
+      setHealthError(error.message || 'Unable to remove the Tesla connection. Try again.');
+      logTeslaDisconnect('ui_failure', {
+        surface: 'tesla-sync-health',
+        message: error.message,
+      });
     } finally {
       setIsLoadingHealth(false);
     }
@@ -108,10 +130,20 @@ export default function TeslaSyncHealthPanel({
   }, []);
 
   useEffect(() => {
+    if (session?.teslaConnected) {
+      setDisconnectState('idle');
+      setDisconnectMessage('');
+    }
+  }, [session?.teslaConnected]);
+
+  useEffect(() => {
     const refresh = () => setComplianceRevision((current) => current + 1);
     window.addEventListener('fleetos-compliance-updated', refresh);
     return () => window.removeEventListener('fleetos-compliance-updated', refresh);
   }, []);
+
+  const showConnected = Boolean(session?.teslaConnected) && disconnectState !== 'disconnected';
+  const isDisconnecting = disconnectState === 'disconnecting';
 
   const checks = useMemo(() => {
     const hasLocation = Number.isFinite(Number(vehicle?.latitude)) && Number.isFinite(Number(vehicle?.longitude));
@@ -217,21 +249,31 @@ export default function TeslaSyncHealthPanel({
               href={teslaLoginUrl}
               className="rounded-md border border-emerald-400/30 bg-emerald-400/10 px-4 py-2.5 text-center text-sm font-bold text-emerald-100 transition hover:bg-emerald-400/20"
             >
-              {session?.teslaConnected ? 'Reconnect Tesla' : 'Connect Tesla'}
+              {showConnected ? 'Reconnect Tesla' : 'Connect Tesla'}
             </a>
           )}
-          {session?.teslaConnected && (
+          {showConnected && (
             <button
               type="button"
               onClick={disconnectTesla}
-              disabled={isLoadingHealth}
+              disabled={isLoadingHealth || isDisconnecting}
+              aria-busy={isDisconnecting}
               className="rounded-md border border-rose-400/30 bg-rose-400/10 px-4 py-2.5 text-sm font-bold text-rose-100 transition hover:bg-rose-400/20 disabled:cursor-wait disabled:opacity-60"
             >
-              Disconnect
+              {isDisconnecting ? 'Disconnecting…' : 'Disconnect'}
             </button>
           )}
         </div>
       </div>
+
+      {(disconnectMessage || disconnectState === 'failed') && (
+        <p
+          role={disconnectState === 'failed' ? 'alert' : 'status'}
+          className={`mt-4 text-sm font-semibold ${disconnectState === 'failed' ? 'text-rose-300' : 'text-emerald-300'}`}
+        >
+          {disconnectState === 'failed' ? healthError : disconnectMessage}
+        </p>
+      )}
 
       {!consentReady && (
         <div className="mt-5">

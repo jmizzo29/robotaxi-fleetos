@@ -47,14 +47,18 @@ export function acceptTeslaConsent() {
 
 export async function revokeTeslaConsent() {
   localStorage.removeItem(CONSENT_KEY);
-  const apiBase = getApiBase();
-  const token = await getAuthToken();
-  await fetch(`${apiBase}/tesla/disconnect`, {
-    method: 'POST',
-    credentials: 'include',
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
-  }).catch(() => {});
   window.dispatchEvent(new CustomEvent('fleetos-compliance-updated'));
+}
+
+/** Clear local Tesla consent without calling the API. */
+export function clearTeslaConnectionLocalState() {
+  try {
+    localStorage.removeItem(CONSENT_KEY);
+  } catch {
+    // Storage may be unavailable.
+  }
+  window.dispatchEvent(new CustomEvent('fleetos-compliance-updated'));
+  window.dispatchEvent(new CustomEvent('fleetos-tesla-disconnected'));
 }
 
 export function canUseTeslaTelemetry() {
