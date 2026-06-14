@@ -560,21 +560,13 @@ function FleetApp() {
       </>
     ),
     dispatch: (
-      <>
-        <PageHeader
-          eyebrow="AI Planning"
-          title="Dispatch Planner"
-          description="Plan tonight's staging, charging, and revenue opportunities while keeping Tesla autonomous execution boundaries clear."
-          action={operationsStatus}
-        />
-        <DispatchPlannerPanel
-          fleet={fleet}
-          demandZones={demandZones}
-          chargingStations={chargingStations}
-          onQueueCommand={requestCommand}
-          onShowMap={() => navigate('map')}
-        />
-      </>
+      <DispatchPlannerPanel
+        fleet={fleet}
+        demandZones={demandZones}
+        chargingStations={chargingStations}
+        onQueueCommand={requestCommand}
+        onShowMap={() => navigate('map')}
+      />
     ),
     readiness: (
       <>

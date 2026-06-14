@@ -1,3 +1,6 @@
+import { AppCard, AppSection } from '../components/shell';
+import { colors, semantic, spacing, typography } from '../design/roboagentTokens';
+
 function formatCurrency(value) {
   if (!Number.isFinite(value)) return '$0';
   return value.toLocaleString('en-US', {
@@ -78,12 +81,12 @@ function planForVehicle(vehicle, demandZones, chargingStations) {
   };
 }
 
-function Metric({ label, value, tone = 'text-slate-100' }) {
+function Metric({ label, value, tone }) {
   return (
-    <div className="rounded-lg border border-white/10 bg-slate-950/50 p-4">
-      <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">{label}</p>
-      <p className={`mt-2 text-2xl font-black ${tone}`}>{value}</p>
-    </div>
+    <AppCard variant="metric" className="!p-4">
+      <p className={typography.label}>{label}</p>
+      <p className={`mt-2 ${typography.metricSm}`} style={tone ? { color: tone } : undefined}>{value}</p>
+    </AppCard>
   );
 }
 
@@ -101,40 +104,44 @@ function PlanCard({ plan, onQueueCommand, onShowMap }) {
     );
   };
 
+  const riskStyle = plan.riskLabel === 'Elevated'
+    ? { borderColor: `${semantic.alert}33`, backgroundColor: semantic.alertBg, color: semantic.alert }
+    : plan.riskLabel === 'Managed'
+      ? { borderColor: `${semantic.caution}33`, backgroundColor: semantic.cautionBg, color: semantic.caution }
+      : { borderColor: `${semantic.positive}33`, backgroundColor: semantic.positiveBg, color: semantic.positive };
+
   return (
-    <article className="rounded-lg border border-white/10 bg-slate-900/80 p-5 shadow-lg shadow-black/10">
+    <AppCard className="p-5">
       <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="min-w-0">
           <div className="mb-2 flex flex-wrap gap-2">
-            <span className="rounded-full border border-sky-400/25 bg-sky-400/10 px-3 py-1 text-[10px] font-black uppercase text-sky-200">
+            <span
+              className="rounded-full border px-3 py-1 text-[10px] font-bold uppercase"
+              style={{ borderColor: `${colors.primary}33`, backgroundColor: colors.primaryLight, color: colors.primary }}
+            >
               {plan.status}
             </span>
-            <span className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase ${
-              plan.riskLabel === 'Elevated'
-                ? 'border-rose-400/25 bg-rose-400/10 text-rose-200'
-                : plan.riskLabel === 'Managed'
-                  ? 'border-amber-400/25 bg-amber-400/10 text-amber-200'
-                  : 'border-emerald-400/25 bg-emerald-400/10 text-emerald-200'
-            }`}>
+            <span className="rounded-full border px-3 py-1 text-[10px] font-bold uppercase" style={riskStyle}>
               {plan.riskLabel} Risk
             </span>
           </div>
-          <h3 className="truncate text-2xl font-black tracking-tight">{vehicleName}</h3>
-          <p className="mt-1 text-sm leading-6 text-slate-400">{actionText}</p>
+          <h3 className={`truncate ${typography.pageTitle}`}>{vehicleName}</h3>
+          <p className={`mt-1 ${typography.bodyMd} text-slate-600`}>{actionText}</p>
         </div>
 
         <div className="grid grid-cols-2 gap-2 sm:min-w-[220px]">
           <button
             type="button"
             onClick={handleApprove}
-            className="rounded-md border border-emerald-400/30 bg-emerald-400/10 px-3 py-2 text-sm font-bold text-emerald-100 transition hover:bg-emerald-400/20"
+            className="rounded-[14px] border px-3 py-2 text-sm font-bold transition active:opacity-90"
+            style={{ borderColor: `${semantic.positive}33`, backgroundColor: semantic.positiveBg, color: semantic.positive }}
           >
             Approve
           </button>
           <button
             type="button"
             onClick={onShowMap}
-            className="rounded-md border border-white/10 bg-white/5 px-3 py-2 text-sm font-bold text-slate-100 transition hover:bg-white/10"
+            className="rounded-[14px] border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-bold text-slate-700 transition active:bg-slate-100"
           >
             Map
           </button>
@@ -142,33 +149,33 @@ function PlanCard({ plan, onQueueCommand, onShowMap }) {
       </div>
 
       <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
-        <Metric label="Target Zone" value={zone?.name || 'Unavailable'} tone="text-sky-300" />
+        <Metric label="Target Zone" value={zone?.name || 'Unavailable'} tone={colors.primary} />
         <Metric label="Distance" value={`${zone?.distance || 0} mi`} />
-        <Metric label="Revenue" value={formatCurrency(plan.expectedRevenue)} tone="text-emerald-300" />
-        <Metric label="Confidence" value={`${plan.confidence}%`} tone="text-violet-300" />
+        <Metric label="Revenue" value={formatCurrency(plan.expectedRevenue)} tone={semantic.positive} />
+        <Metric label="Confidence" value={`${plan.confidence}%`} tone={colors.primaryDark} />
       </div>
 
       <div className="mt-4 grid grid-cols-1 gap-3 lg:grid-cols-3">
-        <div className="rounded-lg border border-white/10 bg-slate-950/50 p-4">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">Battery Plan</p>
-          <p className="mt-2 text-sm font-bold text-slate-100">
+        <AppCard variant="subdued" className="p-4">
+          <p className={typography.label}>Battery Plan</p>
+          <p className={`mt-2 ${typography.bodyMd}`}>
             {needsCharge ? `Charge to ${plan.chargeTarget}% before dispatch` : `Current battery ${vehicle.battery}% is dispatch-ready`}
           </p>
-        </div>
-        <div className="rounded-lg border border-white/10 bg-slate-950/50 p-4">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">Nearest Charger</p>
-          <p className="mt-2 text-sm font-bold text-slate-100">
+        </AppCard>
+        <AppCard variant="subdued" className="p-4">
+          <p className={typography.label}>Nearest Charger</p>
+          <p className={`mt-2 ${typography.bodyMd}`}>
             {charger ? `${charger.name} - ${charger.distance} mi, ${charger.occupancy}% occupied` : 'Unavailable'}
           </p>
-        </div>
-        <div className="rounded-lg border border-amber-400/20 bg-amber-400/10 p-4">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-amber-200">Tesla Boundary</p>
-          <p className="mt-2 text-sm font-bold text-amber-50">
+        </AppCard>
+        <AppCard variant="subdued" className="p-4" style={{ borderLeft: `4px solid ${semantic.caution}` }}>
+          <p className={typography.label}>Tesla Boundary</p>
+          <p className={`mt-2 ${typography.bodyMd}`}>
             ROBOAGENT plans; Tesla controls autonomous execution.
           </p>
-        </div>
+        </AppCard>
       </div>
-    </article>
+    </AppCard>
   );
 }
 
@@ -179,10 +186,10 @@ export default function DispatchPlannerPanel({
   onQueueCommand,
   onShowMap,
 }) {
-  // Demo/simulated vehicles are excluded from dispatch plans and revenue projections.
   const realFleet = fleet.filter((vehicle) => vehicle.isReal);
+  const planningFleet = realFleet.length > 0 ? realFleet : fleet.filter((vehicle) => !vehicle.isReal);
   const demoCount = fleet.length - realFleet.length;
-  const plans = realFleet
+  const plans = planningFleet
     .map((vehicle) => planForVehicle(vehicle, demandZones, chargingStations))
     .sort((a, b) => b.expectedRevenue - a.expectedRevenue);
 
@@ -201,52 +208,45 @@ export default function DispatchPlannerPanel({
   };
 
   return (
-    <section className="space-y-5">
-      {demoCount > 0 && (
-        <div className="rounded-lg border border-amber-400/25 bg-amber-400/10 p-4 text-sm font-semibold text-amber-100">
-          {demoCount} demo vehicle{demoCount === 1 ? ' is' : 's are'} excluded from dispatch plans and revenue projections.
-          {realFleet.length === 0 && ' Connect a Tesla to generate a dispatch plan.'}
-        </div>
+    <section className={spacing.stackSm}>
+      {demoCount > 0 && realFleet.length === 0 && (
+        <AppCard className="p-4 text-sm font-semibold" style={{ backgroundColor: semantic.cautionBg, color: semantic.caution }}>
+          Operating fleet plan shown. Connect Tesla to generate plans from live vehicles.
+        </AppCard>
       )}
+
       <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
-        <Metric label="Projected Revenue" value={formatCurrency(totalRevenue)} tone="text-emerald-300" />
-        <Metric label="Charge First" value={chargeFirst} tone={chargeFirst ? 'text-amber-300' : 'text-slate-100'} />
-        <Metric label="Avg Confidence" value={`${avgConfidence}%`} tone="text-violet-300" />
-        <Metric label="Top Zone" value={topZone} tone="text-sky-300" />
+        <Metric label="Projected Revenue" value={formatCurrency(totalRevenue)} tone={semantic.positive} />
+        <Metric label="Charge First" value={chargeFirst} tone={chargeFirst ? semantic.caution : undefined} />
+        <Metric label="Avg Confidence" value={`${avgConfidence}%`} tone={colors.primary} />
+        <Metric label="Top Zone" value={topZone} tone={colors.primary} />
       </div>
 
-      <article className="rounded-lg border border-white/10 bg-slate-900/85 p-5 shadow-xl shadow-black/15">
-        <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
-          <div>
-            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-sky-300">
-              AI Dispatch Planner
-            </p>
-            <h2 className="text-2xl font-black tracking-tight">Tonight's Fleet Plan</h2>
-            <p className="mt-2 max-w-4xl text-sm leading-6 text-slate-400">
-              ROBOAGENT can recommend where each vehicle should stage, whether it should charge first, and what revenue window to expect. The app is planning operator intent; Tesla still controls any autonomous driving capability.
-            </p>
-          </div>
-
+      <AppSection title="Tonight's Fleet Plan" tier="secondary" className="!mt-0">
+        <AppCard variant="alert">
+          <p className={typography.sectionSm}>AI Dispatch Planner</p>
+          <p className={`mt-3 ${typography.cardTitle}`}>Stage, charge, and revenue windows for tonight</p>
+          <p className={`mt-2 ${typography.bodyMd} text-slate-600`}>
+            ROBOAGENT recommends where each vehicle should stage and whether it should charge first. Tesla controls autonomous execution.
+          </p>
           <button
             type="button"
             onClick={handleGenerate}
-            className="rounded-md border border-sky-400/30 bg-sky-400/10 px-4 py-3 text-sm font-black text-sky-100 transition hover:bg-sky-400/20"
+            className="mt-4 w-full rounded-[14px] px-4 py-3.5 text-sm font-bold text-white transition active:opacity-90"
+            style={{ backgroundColor: colors.primary }}
           >
             Generate Plan
           </button>
-        </div>
-      </article>
+        </AppCard>
+      </AppSection>
 
-      <div className="grid grid-cols-1 gap-4">
+      <ul className={spacing.stackSm}>
         {plans.map((plan) => (
-          <PlanCard
-            key={plan.vehicle.vin || plan.vehicle.id}
-            plan={plan}
-            onQueueCommand={onQueueCommand}
-            onShowMap={onShowMap}
-          />
+          <li key={plan.vehicle.vin || plan.vehicle.id}>
+            <PlanCard plan={plan} onQueueCommand={onQueueCommand} onShowMap={onShowMap} />
+          </li>
         ))}
-      </div>
+      </ul>
     </section>
   );
 }
