@@ -13,25 +13,25 @@ export default function FleetLedger({ ledger, compact = false, onSelectRow }) {
     <div className={compact ? 'px-4' : 'px-[18px]'}>
       {!compact && (
         <div className="pb-2 text-center">
-          <p className={`${monumentType.label}`} style={{ color: monument.inkGhost }}>
+          <p className={monumentType.ledgerLabel} style={{ color: monument.inkGhost }}>
             {`Fleet ledger · ${ledger.dateLabel}`}
           </p>
         </div>
       )}
 
-      <div className={monumentType.monoSm}>
+      <div className={monumentType.ledgerMono}>
         {ledger.rows.map((row) => (
           <button
             key={`${row.time}-${row.cab}-${row.event}`}
             type="button"
             onClick={() => onSelectRow?.(row)}
-            className="flex w-full items-center gap-2 border-b py-1.5 text-left"
+            className="flex w-full items-center gap-2.5 border-b py-2 text-left"
             style={{ borderColor: monument.hairline }}
           >
-            <span className="w-9 shrink-0" style={{ color: monument.inkGhost }}>{row.time}</span>
-            <span className="w-11 shrink-0 truncate">{row.cab}</span>
+            <span className="w-11 shrink-0" style={{ color: monument.inkGhost }}>{row.time}</span>
+            <span className="w-14 shrink-0 truncate">{row.cab}</span>
             <span className="min-w-0 flex-1 truncate" style={{ color: monument.inkMuted }}>{row.event}</span>
-            <span className="w-14 shrink-0 text-right font-semibold" style={{ color: toneColor(row.tone) }}>
+            <span className="w-[4.5rem] shrink-0 text-right font-semibold" style={{ color: toneColor(row.tone) }}>
               {row.value}
             </span>
           </button>
@@ -39,7 +39,7 @@ export default function FleetLedger({ ledger, compact = false, onSelectRow }) {
       </div>
 
       <div
-        className={`mt-2 border-t border-dashed pt-2 ${monumentType.monoSm}`}
+        className={`mt-2.5 border-t border-dashed pt-2.5 ${monumentType.ledgerMono}`}
         style={{ borderColor: monument.hairline }}
       >
         <div className="flex justify-between font-semibold">

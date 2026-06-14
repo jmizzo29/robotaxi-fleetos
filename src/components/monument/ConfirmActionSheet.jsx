@@ -39,7 +39,7 @@ export default function ConfirmActionSheet({
           type="button"
           disabled={confirming}
           onClick={onConfirm}
-          className="mt-4 w-full rounded-xl py-3 text-xs font-bold text-white transition active:scale-[0.98] disabled:opacity-60"
+          className={`mt-4 w-full rounded-xl py-3 ${monumentType.buttonPrimary} text-white transition active:scale-[0.98] disabled:opacity-60`}
           style={{ backgroundColor: monument.action }}
         >
           {confirming ? 'Confirming…' : payload.primaryLabel}

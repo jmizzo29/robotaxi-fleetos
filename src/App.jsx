@@ -831,9 +831,9 @@ function FleetApp() {
   if (route === 'overview') {
     return (
       <>
-        <div className="flex min-h-screen" style={{ backgroundColor: '#FAFAF8' }}>
+        <div className="flex h-screen min-h-0" style={{ backgroundColor: '#FAFAF8' }}>
           <Sidebar commandQueue={commandQueue} route={route} onNavigate={navigate} />
-          <main className="flex-1 overflow-y-auto">
+          <main className="flex min-h-0 flex-1 flex-col overflow-hidden">
             <MonumentToday
               fleet={fleet}
               realFleet={realVehicles}
