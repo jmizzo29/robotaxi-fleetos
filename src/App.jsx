@@ -32,7 +32,7 @@ import Login from './components/Auth/Login';
 import Signup from './components/Auth/Signup';
 import LegalPage from './panels/LegalPage';
 import MemoryEventsPanel from './panels/MemoryEventsPanel';
-import { MonumentToday } from './components/monument';
+import { MonumentToday, MonumentOperations } from './components/monument';
 import OnboardingPanel from './panels/OnboardingPanel';
 import AddVehiclePanel from './panels/AddVehiclePanel';
 import OperationsReportPanel from './panels/OperationsReportPanel';
@@ -50,6 +50,9 @@ import { useFleetSimulation } from './hooks/useFleetSimulation';
 import { useFleetAuthStatus } from './auth/FleetAuthContext';
 import { canUseTeslaTelemetry } from './services/betaCompliance';
 import { getFleetOsSession } from './services/sessionService';
+import { routeToOperationsTab } from './utils/operationsUtils';
+
+const OPERATIONS_ROUTES = new Set(['dispatch', 'charging', 'health', 'readiness', 'alerts']);
 
 const FleetMap = lazy(() => import('./components/FleetMap'));
 const NetworkPanel = lazy(() => import('./panels/NetworkPanel'));
@@ -837,6 +840,29 @@ function FleetApp() {
               commandQueue={commandQueue}
               onQueueCommand={enqueueCommand}
               onNavigate={navigate}
+            />
+          </main>
+        </div>
+        <FeedbackButton route={route} />
+      </>
+    );
+  }
+
+  if (OPERATIONS_ROUTES.has(route)) {
+    return (
+      <>
+        <div className="flex h-screen min-h-0" style={{ backgroundColor: '#FAFAF8' }}>
+          <Sidebar commandQueue={commandQueue} route={route} onNavigate={navigate} />
+          <main className="flex min-h-0 flex-1 flex-col overflow-hidden">
+            <MonumentOperations
+              fleet={fleet}
+              realFleet={realVehicles}
+              realSyncStatus={realSyncStatus}
+              isLoadingReal={isLoadingReal}
+              commandQueue={commandQueue}
+              onQueueCommand={enqueueCommand}
+              onNavigate={navigate}
+              initialTab={routeToOperationsTab(route)}
             />
           </main>
         </div>

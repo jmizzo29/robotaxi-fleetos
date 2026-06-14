@@ -1,6 +1,6 @@
 import { monument, monumentType } from './monumentTokens';
 
-const PAGES = [
+const DEFAULT_PAGES = [
   { id: 'today', label: 'Today' },
   { id: 'fleet', label: 'Fleet' },
   { id: 'grow', label: 'Grow' },
@@ -11,9 +11,11 @@ export default function MonumentSwipeStrip({
   onSelect,
   onLongPress,
   showSwipeHint = true,
+  pages = DEFAULT_PAGES,
+  ariaLabel = 'Command sections',
 }) {
-  const activeIndex = PAGES.findIndex((page) => page.id === active);
-  const nextLabel = activeIndex < PAGES.length - 1 ? PAGES[activeIndex + 1].label : null;
+  const activeIndex = pages.findIndex((page) => page.id === active);
+  const nextLabel = activeIndex < pages.length - 1 ? pages[activeIndex + 1].label : null;
 
   return (
     <div
@@ -35,9 +37,9 @@ export default function MonumentSwipeStrip({
       <div
         className="flex items-center justify-center gap-6 px-4 pb-2 pt-3"
         role="tablist"
-        aria-label="Command sections"
+        aria-label={ariaLabel}
       >
-        {PAGES.map((page) => {
+        {pages.map((page) => {
           const isActive = page.id === active;
           return (
             <button

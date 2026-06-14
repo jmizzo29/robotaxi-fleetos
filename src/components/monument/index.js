@@ -1,4 +1,5 @@
 export { default as MonumentToday } from './MonumentToday';
+export { default as MonumentOperations } from './MonumentOperations';
 export { default as MonumentSheet } from './MonumentSheet';
 export { default as ConfirmActionSheet } from './ConfirmActionSheet';
 export { default as AssetDetailSheet } from './AssetDetailSheet';
