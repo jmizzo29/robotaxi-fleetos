@@ -207,6 +207,7 @@ export default function CommandMapPreview({
   totalCount = 0,
   mapHeightClass = 'h-[420px]',
   tier = 'primary',
+  bare = false,
 }) {
   const [viewState, setViewState] = useState(ORLANDO_VIEW);
   const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
@@ -224,68 +225,76 @@ export default function CommandMapPreview({
     return !status.includes('OFFLINE') && !status.includes('ASLEEP') && !status.includes('CHARG');
   }).length;
 
+  const mapFrame = (
+    <div className={bare ? 'w-full px-5' : `${radius.cardLg} bg-gradient-to-b from-slate-100 to-slate-200/80 p-1 ${shadow.map}`}>
+      <div
+        className={`relative overflow-hidden ${bare ? 'rounded-xl border border-[#E5E5E0]' : `${radius.card} border border-slate-300/60 shadow-inner`} ${mapHeightClass}`}
+      >
+        {!mapboxToken ? (
+          <>
+            <div className="absolute inset-0 flex items-center justify-center bg-[#06080c] px-6 text-center">
+              <div>
+                <p className="text-sm font-semibold text-white/80">Mapbox token required</p>
+                <p className="mt-1 text-[11px] text-white/45">
+                  Add <code className="rounded bg-white/10 px-1 py-0.5">VITE_MAPBOX_TOKEN</code> for the live map.
+                </p>
+              </div>
+            </div>
+            <MapFooter total={total} active={active} />
+          </>
+        ) : (
+          <Map
+            {...viewState}
+            onMove={(event) => setViewState(event.viewState)}
+            mapStyle="mapbox://styles/mapbox/dark-v11"
+            mapboxAccessToken={mapboxToken}
+            style={{ width: '100%', height: '100%' }}
+            attributionControl={false}
+            reuseMaps
+            touchPitch={false}
+          >
+            <HeatmapLayer heatmapData={heatmapData} />
+            <DemandZonesLayer />
+            <TripTracesLayer vehicles={vehicles} zones={featuredZones} />
+            {featuredZones.map((zone) => (
+              <Marker
+                key={zone.name}
+                longitude={zone.longitude}
+                latitude={zone.latitude}
+                anchor="bottom"
+              >
+                <DemandZoneLabel zone={zone} />
+              </Marker>
+            ))}
+            {vehicles.map((vehicle, index) => (
+              <Marker
+                key={vehicle.id || getVehicleLabel(vehicle, index)}
+                longitude={Number(vehicle.longitude)}
+                latitude={Number(vehicle.latitude)}
+                anchor="bottom"
+              >
+                <LiveVehicleMarker vehicle={vehicle} label={getVehicleLabel(vehicle, index)} />
+              </Marker>
+            ))}
+          </Map>
+        )}
+
+        {mapboxToken && <MapFooter total={total} active={active} />}
+      </div>
+    </div>
+  );
+
+  if (bare) return mapFrame;
+
   return (
     <AppSection
       title="Live Fleet Map"
       actionLabel="Full map"
-      onAction={() => onNavigate('map')}
+      onAction={() => onNavigate?.('map')}
       tier={tier}
       aria-label="Live fleet map"
     >
-      <div className={`${radius.cardLg} bg-gradient-to-b from-slate-100 to-slate-200/80 p-1 ${shadow.map}`}>
-        <div className={`relative overflow-hidden ${radius.card} border border-slate-300/60 shadow-inner ${mapHeightClass}`}>
-          {!mapboxToken ? (
-            <>
-              <div className="absolute inset-0 flex items-center justify-center bg-[#06080c] px-6 text-center">
-                <div>
-                  <p className="text-sm font-semibold text-white/80">Mapbox token required</p>
-                  <p className="mt-1 text-[11px] text-white/45">
-                    Add <code className="rounded bg-white/10 px-1 py-0.5">VITE_MAPBOX_TOKEN</code> for the live map.
-                  </p>
-                </div>
-              </div>
-              <MapFooter total={total} active={active} />
-            </>
-          ) : (
-            <Map
-              {...viewState}
-              onMove={(event) => setViewState(event.viewState)}
-              mapStyle="mapbox://styles/mapbox/dark-v11"
-              mapboxAccessToken={mapboxToken}
-              style={{ width: '100%', height: '100%' }}
-              attributionControl={false}
-              reuseMaps
-              touchPitch={false}
-            >
-              <HeatmapLayer heatmapData={heatmapData} />
-              <DemandZonesLayer />
-              <TripTracesLayer vehicles={vehicles} zones={featuredZones} />
-              {featuredZones.map((zone) => (
-                <Marker
-                  key={zone.name}
-                  longitude={zone.longitude}
-                  latitude={zone.latitude}
-                  anchor="bottom"
-                >
-                  <DemandZoneLabel zone={zone} />
-                </Marker>
-              ))}
-              {vehicles.map((vehicle, index) => (
-                <Marker
-                  key={vehicle.id || getVehicleLabel(vehicle, index)}
-                  longitude={Number(vehicle.longitude)}
-                  latitude={Number(vehicle.latitude)}
-                  anchor="bottom"
-                >
-                  <LiveVehicleMarker vehicle={vehicle} label={getVehicleLabel(vehicle, index)} />
-                </Marker>
-              ))}
-            </Map>
-          )}
-
-          {mapboxToken && <MapFooter total={total} active={active} />}
-        </div>
-      </div>
+      {mapFrame}
     </AppSection>
   );
 }

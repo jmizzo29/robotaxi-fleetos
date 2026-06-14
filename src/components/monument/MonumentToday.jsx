@@ -6,6 +6,8 @@ import ConfirmActionSheet from './ConfirmActionSheet';
 import ExploreMarketSheet from './ExploreMarketSheet';
 import FleetMonumentPanel from './FleetMonumentPanel';
 import MonumentSwipeStrip from './MonumentSwipeStrip';
+import MonumentActionFooter from './MonumentActionFooter';
+import TelemetryDetailSheet from './TelemetryDetailSheet';
 import TodayDetailSheet from './TodayDetailSheet';
 import { monument, monumentType } from './monumentTokens';
 import { clearLocalComplianceState } from '../../services/betaCompliance';
@@ -20,16 +22,11 @@ import {
   getTodayDetailPayload,
   getTopEarner,
 } from '../../utils/monumentUtils';
+import { getTelemetryFocusTarget, getTelemetrySheetPayload } from '../../utils/telemetryUtils';
 import { getCommandFleetStatusStrip } from '../../utils/vehicleDisplayUtils';
 import { getExpansionRecommendation } from '../../utils/networkIntelligenceUtils';
 
 const TAB_ORDER = ['today', 'fleet', 'grow'];
-
-function Hairline() {
-  return (
-    <div className="mx-auto my-0 h-px w-6" style={{ backgroundColor: monument.hairline }} />
-  );
-}
 
 function MonumentHero({ label, amount, subline, labelColor, onTapAmount }) {
   return (
@@ -44,33 +41,6 @@ function MonumentHero({ label, amount, subline, labelColor, onTapAmount }) {
         {amount}
       </button>
       <p className={`mt-4 ${monumentType.subline}`} style={{ color: monument.inkMuted }}>{subline}</p>
-    </div>
-  );
-}
-
-function ActionFooter({ line, onDoIt, doItLabel = 'Do it', secondaryLabel, onSecondary }) {
-  return (
-    <div className="shrink-0 px-7 pb-2 text-center">
-      <Hairline />
-      <p className={`mt-6 ${monumentType.actionLine}`} style={{ color: monument.ink }}>{line}</p>
-      <button
-        type="button"
-        onClick={onDoIt}
-        className={`mt-4 ${monumentType.actionLink}`}
-        style={{ color: monument.action }}
-      >
-        {doItLabel}
-      </button>
-      {secondaryLabel && onSecondary && (
-        <button
-          type="button"
-          onClick={onSecondary}
-          className={`mt-3 block w-full ${monumentType.actionLink}`}
-          style={{ color: monument.inkMuted }}
-        >
-          {secondaryLabel}
-        </button>
-      )}
     </div>
   );
 }
@@ -98,12 +68,13 @@ export default function MonumentToday({
   const [actionDone, setActionDone] = useState('');
   const [growCity, setGrowCity] = useState('Tampa');
   const [assetTarget, setAssetTarget] = useState(null);
+  const [telemetryOpen, setTelemetryOpen] = useState(false);
+  const [telemetryTarget, setTelemetryTarget] = useState(null);
   const pagerRef = useRef(null);
   const scrollRaf = useRef(null);
 
   const syncState = isLoadingReal ? 'loading' : (realSyncStatus?.state ?? 'idle');
   const totalEarnings = realFleet.reduce((sum, vehicle) => sum + (Number(vehicle.revenue) || 0), 0);
-
   const take = useMemo(
     () => getMonumentTake(fleet, realFleet, totalEarnings, syncState),
     [fleet, realFleet, totalEarnings, syncState],
@@ -177,6 +148,24 @@ export default function MonumentToday({
     setAssetTarget(target || getTopEarner(fleet, realFleet, totalEarnings, syncState));
     setAssetOpen(true);
   };
+
+  const openTelemetrySheet = (preferredCab = null) => {
+    const target = getTelemetryFocusTarget(
+      fleet,
+      realFleet,
+      totalEarnings,
+      syncState,
+      preferredCab || action.secondary?.cab,
+    );
+    if (!target?.vehicle) return;
+    setTelemetryTarget(target);
+    setTelemetryOpen(true);
+  };
+
+  const telemetryPayload = useMemo(
+    () => getTelemetrySheetPayload(telemetryTarget?.vehicle, telemetryTarget?.cab, realSyncStatus),
+    [telemetryTarget, realSyncStatus],
+  );
 
   const handleHeroTap = (pageId) => {
     if (pageId === 'grow') {
@@ -293,6 +282,8 @@ export default function MonumentToday({
         doItLabel: 'Do it',
         secondaryLabel: action.secondary?.label,
         onSecondary: () => openAssetSheet(),
+        tertiaryLabel: 'View telemetry',
+        onTertiary: () => openTelemetrySheet(),
       },
       showFleetPanel: true,
     },
@@ -340,12 +331,14 @@ export default function MonumentToday({
                 onSelectStatus={() => openAssetSheet()}
               />
             )}
-            <ActionFooter
+            <MonumentActionFooter
               line={page.footer.line}
               onDoIt={() => handleDoIt(page.id)}
               doItLabel={page.footer.doItLabel}
               secondaryLabel={page.footer.secondaryLabel}
               onSecondary={page.footer.onSecondary}
+              tertiaryLabel={page.footer.tertiaryLabel}
+              onTertiary={page.footer.onTertiary}
             />
           </section>
         ))}
@@ -372,6 +365,16 @@ export default function MonumentToday({
         onLetItRun={() => setAssetOpen(false)}
         onNudgeRoute={handleNudgeRoute}
         nudging={nudging}
+        onViewTelemetry={() => {
+          setAssetOpen(false);
+          openTelemetrySheet(assetPayload?.cab);
+        }}
+      />
+
+      <TelemetryDetailSheet
+        open={telemetryOpen}
+        payload={telemetryPayload}
+        onClose={() => setTelemetryOpen(false)}
       />
 
       <ExploreMarketSheet

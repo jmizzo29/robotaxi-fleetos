@@ -28,6 +28,7 @@ export default function AssetDetailSheet({
   onLetItRun,
   onNudgeRoute,
   nudging = false,
+  onViewTelemetry,
 }) {
   if (!payload) return null;
 
@@ -97,6 +98,16 @@ export default function AssetDetailSheet({
         >
           {nudging ? 'Queuing…' : 'Nudge route'}
         </button>
+        {onViewTelemetry && (
+          <button
+            type="button"
+            onClick={onViewTelemetry}
+            className={`mt-2.5 w-full py-2.5 ${monumentType.actionLink}`}
+            style={{ color: monument.action }}
+          >
+            View telemetry
+          </button>
+        )}
       </div>
     </MonumentSheet>
   );

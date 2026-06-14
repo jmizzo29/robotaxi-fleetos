@@ -32,7 +32,7 @@ import Login from './components/Auth/Login';
 import Signup from './components/Auth/Signup';
 import LegalPage from './panels/LegalPage';
 import MemoryEventsPanel from './panels/MemoryEventsPanel';
-import { MonumentToday, MonumentOperations } from './components/monument';
+import { MonumentToday, MonumentOperations, MonumentMap, MonumentNetwork, MonumentIntegrations, MonumentSettings } from './components/monument';
 import OnboardingPanel from './panels/OnboardingPanel';
 import AddVehiclePanel from './panels/AddVehiclePanel';
 import OperationsReportPanel from './panels/OperationsReportPanel';
@@ -45,7 +45,7 @@ import chargingStations from './data/chargingStations';
 import demandZones from './data/demandZones';
 import weatherZones from './data/weatherZones';
 import useAiFleetAnalysis from './hooks/useAiFleetAnalysis';
-import useHashRoute, { isExplicitLandingHash, isImplicitLandingEntry } from './hooks/useHashRoute';
+import useHashRoute from './hooks/useHashRoute';
 import { useFleetSimulation } from './hooks/useFleetSimulation';
 import { useFleetAuthStatus } from './auth/FleetAuthContext';
 import { canUseTeslaTelemetry } from './services/betaCompliance';
@@ -53,6 +53,7 @@ import { getFleetOsSession } from './services/sessionService';
 import { routeToOperationsTab } from './utils/operationsUtils';
 
 const OPERATIONS_ROUTES = new Set(['dispatch', 'charging', 'health', 'readiness', 'alerts']);
+const MONUMENT_UTILITY_ROUTES = new Set(['map', 'network', 'integrations', 'settings']);
 
 const FleetMap = lazy(() => import('./components/FleetMap'));
 const NetworkPanel = lazy(() => import('./panels/NetworkPanel'));
@@ -264,31 +265,6 @@ function FleetApp() {
   const [sessionCheck, setSessionCheck] = useState('checking'); // 'checking' | 'authed' | 'guest'
   // Clerk-signed-in users are authenticated without a server round trip.
   const sessionAllowed = isSignedIn || sessionCheck === 'authed';
-
-  useEffect(() => {
-    if (!isPublicLandingOnly || !isAuthReady) return undefined;
-
-    let cancelled = false;
-
-    getFleetOsSession()
-      .then((session) => {
-        if (cancelled) return;
-        const shouldAutoEnterApp = session?.authenticated
-          && session?.teslaConnected
-          && isImplicitLandingEntry()
-          && !isExplicitLandingHash();
-        if (shouldAutoEnterApp) {
-          navigate('overview');
-        }
-      })
-      .catch(() => {});
-
-    return () => {
-      cancelled = true;
-    };
-    // navigate is stable in behavior (sets window.location.hash); intentionally omitted.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isPublicLandingOnly, isAuthReady, route]);
 
   useEffect(() => {
     if (!isProtectedRoute || !isAuthReady || isSignedIn) return undefined;
@@ -871,19 +847,55 @@ function FleetApp() {
     );
   }
 
-  if (route === 'network') {
+  if (MONUMENT_UTILITY_ROUTES.has(route)) {
+    const utilityPage = {
+      map: (
+        <MonumentMap
+          fleet={fleet}
+          realFleet={realVehicles}
+          realSyncStatus={realSyncStatus}
+          isLoadingReal={isLoadingReal}
+          onNavigate={navigate}
+        />
+      ),
+      network: (
+        <MonumentNetwork
+          fleet={fleet}
+          realFleet={realVehicles}
+          realSyncStatus={realSyncStatus}
+          onNavigate={navigate}
+        />
+      ),
+      integrations: (
+        <MonumentIntegrations
+          fleet={fleet}
+          realFleet={realVehicles}
+          realSyncStatus={realSyncStatus}
+          aiAnalysis={aiAnalysis}
+          onNavigate={navigate}
+        />
+      ),
+      settings: (
+        <MonumentSettings
+          fleet={fleet}
+          realFleet={realVehicles}
+          realSyncStatus={realSyncStatus}
+          aiAnalysis={aiAnalysis}
+          isLoadingReal={isLoadingReal}
+          onSync={refreshRealTesla}
+          onNavigate={navigate}
+        />
+      ),
+    }[route];
+
     return (
       <>
-        <Suspense
-          fallback={(
-            <div className="flex min-h-screen items-center justify-center bg-black text-white">
-              <Loader2 className="h-6 w-6 animate-spin text-white/60" />
-            </div>
-          )}
-        >
-          <NetworkPanel fleet={fleet} onNavigate={navigate} />
-        </Suspense>
-        <MobileBottomNav route={route} onNavigate={navigate} pendingCount={commandQueue.length} />
+        <div className="flex h-screen min-h-0" style={{ backgroundColor: '#FAFAF8' }}>
+          <Sidebar commandQueue={commandQueue} route={route} onNavigate={navigate} />
+          <main className="flex min-h-0 flex-1 flex-col overflow-hidden">
+            {utilityPage}
+          </main>
+        </div>
         <FeedbackButton route={route} />
       </>
     );

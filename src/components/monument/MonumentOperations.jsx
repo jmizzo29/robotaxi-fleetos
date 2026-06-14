@@ -3,10 +3,12 @@ import { useUser } from '@clerk/react';
 import AccountSheet from './AccountSheet';
 import AssetDetailSheet from './AssetDetailSheet';
 import ConfirmActionSheet from './ConfirmActionSheet';
+import MonumentActionFooter from './MonumentActionFooter';
 import MonumentSwipeStrip from './MonumentSwipeStrip';
 import OperationsLedgerStrip from './OperationsLedgerStrip';
 import OperationsMonumentPanel from './OperationsMonumentPanel';
 import PlanDetailSheet from './PlanDetailSheet';
+import TelemetryDetailSheet from './TelemetryDetailSheet';
 import { monument, monumentType } from './monumentTokens';
 import { clearLocalComplianceState } from '../../services/betaCompliance';
 import { logoutFleetOsAccount } from '../../services/sessionService';
@@ -24,6 +26,7 @@ import {
   getOperationsHero,
   getPlanDetailPayload,
 } from '../../utils/operationsUtils';
+import { getTelemetryFocusTarget, getTelemetrySheetPayload } from '../../utils/telemetryUtils';
 
 const TAB_ORDER = ['plan', 'charge', 'alerts'];
 
@@ -32,12 +35,6 @@ const SWIPE_PAGES = [
   { id: 'charge', label: 'Charge' },
   { id: 'alerts', label: 'Alerts' },
 ];
-
-function Hairline() {
-  return (
-    <div className="mx-auto my-0 h-px w-6" style={{ backgroundColor: monument.hairline }} />
-  );
-}
 
 function amountStyle(kind) {
   if (kind === 'projected') return monument.projected;
@@ -58,33 +55,6 @@ function MonumentHero({ label, amount, subline, labelColor, amountColor, onTapAm
         {amount}
       </button>
       <p className={`mt-4 ${monumentType.subline}`} style={{ color: monument.inkMuted }}>{subline}</p>
-    </div>
-  );
-}
-
-function ActionFooter({ line, onDoIt, doItLabel = 'Do it', secondaryLabel, onSecondary }) {
-  return (
-    <div className="shrink-0 px-7 pb-2 text-center">
-      <Hairline />
-      <p className={`mt-6 ${monumentType.actionLine}`} style={{ color: monument.ink }}>{line}</p>
-      <button
-        type="button"
-        onClick={onDoIt}
-        className={`mt-4 ${monumentType.actionLink}`}
-        style={{ color: monument.action }}
-      >
-        {doItLabel}
-      </button>
-      {secondaryLabel && onSecondary && (
-        <button
-          type="button"
-          onClick={onSecondary}
-          className={`mt-3 block w-full ${monumentType.actionLink}`}
-          style={{ color: monument.inkMuted }}
-        >
-          {secondaryLabel}
-        </button>
-      )}
     </div>
   );
 }
@@ -110,6 +80,8 @@ export default function MonumentOperations({
   const [signingOut, setSigningOut] = useState(false);
   const [actionDone, setActionDone] = useState('');
   const [assetTarget, setAssetTarget] = useState(null);
+  const [telemetryOpen, setTelemetryOpen] = useState(false);
+  const [telemetryTarget, setTelemetryTarget] = useState(null);
   const pagerRef = useRef(null);
   const scrollRaf = useRef(null);
 
@@ -184,6 +156,24 @@ export default function MonumentOperations({
     setAssetTarget(target);
     setAssetOpen(true);
   };
+
+  const openTelemetrySheet = (preferredCab = null) => {
+    const target = getTelemetryFocusTarget(
+      fleet,
+      realFleet,
+      totalEarnings,
+      syncState,
+      preferredCab || action.secondary?.cab,
+    );
+    if (!target?.vehicle) return;
+    setTelemetryTarget(target);
+    setTelemetryOpen(true);
+  };
+
+  const telemetryPayload = useMemo(
+    () => getTelemetrySheetPayload(telemetryTarget?.vehicle, telemetryTarget?.cab, realSyncStatus),
+    [telemetryTarget, realSyncStatus],
+  );
 
   const handleLedgerRow = (row) => {
     if (!row?.cab || row.cab === 'MCO') return;
@@ -268,6 +258,7 @@ export default function MonumentOperations({
   const pages = useMemo(() => TAB_ORDER.map((pageId) => {
     const hero = getOperationsHero(convoy, pageId);
     const footerLine = getOperationsFooterLine(convoy, pageId, actionDone);
+    const showTelemetry = pageId === 'plan' || pageId === 'alerts';
 
     return {
       id: pageId,
@@ -275,19 +266,36 @@ export default function MonumentOperations({
       footer: {
         line: footerLine,
         doItLabel: pageId === 'plan' ? 'Do it' : pageId === 'charge' ? 'Queue charging' : 'Review alerts',
-        secondaryLabel: pageId === 'alerts' && secondaryCab ? `View ${secondaryCab}` : null,
-        onSecondary: pageId === 'alerts' && secondaryCab
+        secondaryLabel: pageId === 'plan'
+          ? action.secondary?.label
+          : pageId === 'alerts' && secondaryCab
+            ? `View ${secondaryCab}`
+            : null,
+        onSecondary: pageId === 'plan' && action.secondary
           ? () => {
-            const target = findVehicleByCab(secondaryCab, fleet, realFleet, totalEarnings, syncState);
+            const target = findVehicleByCab(
+              action.secondary.cab,
+              fleet,
+              realFleet,
+              totalEarnings,
+              syncState,
+            );
             if (target) openAssetSheet(target);
           }
-          : null,
+          : pageId === 'alerts' && secondaryCab
+            ? () => {
+              const target = findVehicleByCab(secondaryCab, fleet, realFleet, totalEarnings, syncState);
+              if (target) openAssetSheet(target);
+            }
+            : null,
+        tertiaryLabel: showTelemetry ? 'View telemetry' : null,
+        onTertiary: showTelemetry ? () => openTelemetrySheet() : null,
       },
       showConvoy: pageId === 'plan',
       planRows: pageId === 'plan' ? planPayload.rows.slice(0, 3) : [],
       ledgerRows: pageId === 'charge' ? chargeRows : pageId === 'alerts' ? alertRows : [],
     };
-  }), [convoy, actionDone, secondaryCab, chargeRows, alertRows, planPayload.rows, fleet, realFleet, totalEarnings, syncState]);
+  }), [convoy, actionDone, secondaryCab, action.secondary, chargeRows, alertRows, planPayload.rows, fleet, realFleet, totalEarnings, syncState]);
 
   return (
     <div
@@ -328,7 +336,7 @@ export default function MonumentOperations({
                 onSelectRow={handleLedgerRow}
               />
             )}
-            <ActionFooter
+            <MonumentActionFooter
               line={page.id === 'plan' && offline > 0 && !actionDone
                 ? 'CAB offline — resolve before peak.'
                 : page.footer.line}
@@ -336,6 +344,8 @@ export default function MonumentOperations({
               doItLabel={page.footer.doItLabel}
               secondaryLabel={page.footer.secondaryLabel}
               onSecondary={page.footer.onSecondary}
+              tertiaryLabel={page.footer.tertiaryLabel}
+              onTertiary={page.footer.onTertiary}
             />
           </section>
         ))}
@@ -374,6 +384,16 @@ export default function MonumentOperations({
         onLetItRun={() => setAssetOpen(false)}
         onNudgeRoute={handleNudgeRoute}
         nudging={nudging}
+        onViewTelemetry={() => {
+          setAssetOpen(false);
+          openTelemetrySheet(assetPayload?.cab);
+        }}
+      />
+
+      <TelemetryDetailSheet
+        open={telemetryOpen}
+        payload={telemetryPayload}
+        onClose={() => setTelemetryOpen(false)}
       />
 
       <AccountSheet

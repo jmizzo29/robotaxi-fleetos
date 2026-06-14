@@ -6,7 +6,7 @@ import { clerkPublishableKey, isClerkConfigured } from './clerkConfig';
 import { FleetAuthContext } from './FleetAuthContext';
 import { SsoCallbackPage } from '../App';
 
-const PUBLIC_AUTH_ROUTES = new Set(['landing', 'login', 'signup', 'onboarding', 'add-vehicle']);
+const PUBLIC_AUTH_ROUTES = new Set(['landing', 'landing-entry', 'login', 'signup', 'onboarding', 'add-vehicle']);
 
 function ClerkSessionBridge({ children }) {
   const { getToken, isLoaded, isSignedIn } = useAuth();
