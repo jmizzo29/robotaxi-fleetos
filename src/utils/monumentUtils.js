@@ -1,12 +1,51 @@
 import { getCommandAiPlan, getFleetActivityFeed } from './commandHomeUtils';
-import { getCommandEarningsHero } from './vehicleDisplayUtils';
+import { getExpansionRecommendation, getExpansionScoreboard } from './networkIntelligenceUtils';
+import {
+  getCommandEarningsHero,
+  getCommandOperationalSource,
+  vehicleBatteryPercent,
+  vehicleStateLabel,
+} from './vehicleDisplayUtils';
 
 const DEFAULT_TIMES = ['08:12', '09:44', '10:18', '10:52', '11:06'];
+
+function commandSource(fleet, realFleet, totalEarnings, syncState) {
+  return getCommandOperationalSource(fleet, realFleet, totalEarnings, syncState);
+}
+
+function cabLabel(vehicle, index) {
+  const id = String(vehicle?.id || vehicle?.name || '');
+  const carMatch = id.match(/CAR-(\d+)/i);
+  if (carMatch) return `CAB-${carMatch[1].padStart(2, '0')}`;
+  const match = id.match(/\d+/);
+  if (match) return `CAB-${String(match[0]).padStart(2, '0')}`;
+  return `CAB-${String(index + 1).padStart(2, '0')}`;
+}
 
 function parseAmount(amount) {
   if (!amount || amount === '—') return 0;
   const n = Number(String(amount).replace(/[^0-9.-]/g, ''));
   return Number.isFinite(n) ? n : 0;
+}
+
+function assetStatusLine(vehicle) {
+  const status = vehicleStateLabel(vehicle);
+  const raw = String(vehicle?.status || '').toUpperCase();
+
+  if (status === 'Charging') return 'Charging';
+  if (status === 'Offline' || status === 'Asleep') return 'Offline';
+  if (raw.includes('MCO') || raw.includes('AIRPORT')) return 'En route → MCO';
+  if (raw.includes('PICK') || raw.includes('ROUTE') || raw.includes('SERVICE')) {
+    const city = String(vehicle?.city || 'demand zone').split(',')[0].trim();
+    return `En route → ${city}`;
+  }
+  if (status === 'Parked') return 'Parked · ready';
+  return 'Online';
+}
+
+function ownerCityLabel(fleet = []) {
+  const city = fleet.find((vehicle) => vehicle.city)?.city;
+  return city ? String(city).split(',')[0].trim() : 'Orlando';
 }
 
 function actionTitle(action = '') {
@@ -49,13 +88,18 @@ export function getMonumentTake(fleet, realFleet, totalEarnings, syncState, city
 
 /** Single action line + confirm payload for Sheet A. */
 export function getMonumentAction(fleet, realFleet, realSyncStatus, commandQueue, totalEarnings) {
+  const syncState = realSyncStatus?.state ?? 'idle';
   const plan = getCommandAiPlan(fleet, realFleet, realSyncStatus, commandQueue, totalEarnings);
   const action = plan.action || 'Review fleet status';
   const line = action.endsWith('.') ? action : `${action}.`;
+  const topEarner = getTopEarner(fleet, realFleet, totalEarnings, syncState);
 
   return {
     line: line.replace(/^Move/i, 'Dispatch').replace(/^Schedule/i, 'Charge'),
     plan,
+    secondary: topEarner
+      ? { label: `View ${topEarner.cab}`, cab: topEarner.cab }
+      : null,
     confirm: {
       title: actionTitle(action),
       body: actionBody(action),
@@ -89,7 +133,156 @@ function feedToLedgerRow(event, index) {
     eventLabel = 'charging';
   }
 
-  return { time, cab, event: eventLabel, value, tone: event.impactTone };
+  return { time, cab, event: eventLabel, value, tone: event.impactTone, vehicle: event.vehicle };
+}
+
+/** Highest revenue vehicle for Sheet B affordance. */
+export function getTopEarner(fleet, realFleet, totalEarnings, syncState) {
+  const source = commandSource(fleet, realFleet, totalEarnings, syncState);
+  if (!source.length) return null;
+
+  let best = source[0];
+  let bestIndex = 0;
+
+  source.forEach((vehicle, index) => {
+    const revenue = Number(vehicle.revenue) || 0;
+    const bestRevenue = Number(best.revenue) || 0;
+    if (revenue > bestRevenue || (revenue === bestRevenue && index < bestIndex)) {
+      best = vehicle;
+      bestIndex = index;
+    }
+  });
+
+  return {
+    vehicle: best,
+    index: bestIndex,
+    cab: cabLabel(best, bestIndex),
+  };
+}
+
+export function findVehicleByCab(cab, fleet, realFleet, totalEarnings = 0, syncState = 'idle') {
+  const source = commandSource(fleet, realFleet, totalEarnings, syncState);
+  const match = source.find((vehicle, index) => cabLabel(vehicle, index) === cab);
+  if (!match) return null;
+  return { vehicle: match, index: source.indexOf(match), cab };
+}
+
+function assetLedgerRows(fleet, realFleet, totalEarnings, syncState, cab) {
+  const feed = getFleetActivityFeed(fleet, realFleet, 12, totalEarnings, syncState);
+  return feed
+    .filter((event) => event.vehicleName === cab)
+    .slice(0, 4)
+    .map(feedToLedgerRow);
+}
+
+/** Sheet B — asset detail for a single CAB. */
+export function getAssetSheetPayload(
+  fleet,
+  realFleet,
+  totalEarnings,
+  syncState,
+  target = null,
+) {
+  const resolved = target?.vehicle
+    ? target
+    : getTopEarner(fleet, realFleet, totalEarnings, syncState);
+
+  if (!resolved?.vehicle) return null;
+
+  const { vehicle, cab } = resolved;
+  const revenue = Math.round(Number(vehicle.revenue) || 0);
+  const battery = vehicleBatteryPercent(vehicle);
+  const hourly = revenue > 0 ? Math.max(24, Math.round(revenue / 5)) : 0;
+  const rows = assetLedgerRows(fleet, realFleet, totalEarnings, syncState, cab);
+
+  return {
+    cab,
+    statusLine: assetStatusLine(vehicle),
+    revenue: `$${revenue.toLocaleString()}`,
+    rows: rows.length
+      ? rows
+      : [
+        { time: '10:18', cab, event: 'trip', value: '+24.00', tone: 'positive' },
+        { time: '11:06', cab, event: 'staging', value: '—', tone: 'neutral' },
+      ],
+    metrics: [
+      { label: 'hourly est.', value: hourly ? `$${hourly}/hr` : '—', positive: hourly > 0 },
+      { label: 'battery', value: battery !== null ? `${battery}%` : '—' },
+    ],
+    hasLocation: Number.isFinite(Number(vehicle.latitude)) && Number.isFinite(Number(vehicle.longitude)),
+    nudgeCommand: `Move ${cab} to MCO demand zone`,
+  };
+}
+
+/** Sheet C — explore expansion market. */
+export function getGrowSheetPayload(fleet = [], city = 'Tampa') {
+  const expansion = getExpansionRecommendation(fleet);
+  const scoreboard = getExpansionScoreboard();
+  const market = scoreboard.find((entry) => entry.city === city) || scoreboard[1];
+  const compare = scoreboard.find((entry) => entry.city === (city === 'Tampa' ? 'Jacksonville' : 'Tampa'));
+  const weekly = Math.round(((expansion.projectedMonthly || 4960) * (market?.score || 88) / 92) / 4);
+
+  const bodyByCity = {
+    Tampa: 'Two Orlando cabs are under-utilized Sunday evenings. Tampa demand fills that gap without new hardware.',
+    Jacksonville: 'Jacksonville airport volume is rising on weekend arrivals. One cab could test the corridor without fleet changes.',
+  };
+
+  return {
+    city: market?.city || city,
+    weeklyAmount: `+$${weekly.toLocaleString()}`,
+    weeklyLabel: 'per week potential',
+    body: bodyByCity[market?.city || city] || bodyByCity.Tampa,
+    metrics: [
+      { label: 'demand gap', value: `+${Math.round((market?.score || 80) / 4)}%`, positive: true },
+      { label: 'headroom', value: `${expansion.deployCount || 2} cabs` },
+      { label: 'proj. weekly', value: weekly.toFixed(2) },
+      { label: 'assumptions', value: 'simulated', projected: true },
+    ],
+    primaryLabel: `Stage ${market?.city || city} plan`,
+    compareCity: compare?.city || 'Tampa',
+    command: `Stage ${expansion.deployCount || 2} vehicles for ${market?.city || city} expansion`,
+    score: market?.score || 88,
+  };
+}
+
+/** Sheet D — today detail from hero tap. */
+export function getTodayDetailPayload(fleet, realFleet, totalEarnings, syncState, heroAmount) {
+  const take = getMonumentTake(fleet, realFleet, totalEarnings, syncState);
+  const ledger = getFleetLedger(fleet, realFleet, totalEarnings, syncState, heroAmount);
+
+  return {
+    amount: take.amount,
+    projected: take.projected,
+    ledger,
+  };
+}
+
+/** Sheet E — account summary. */
+export function getAccountSheetPayload({
+  userName = 'ROBOAGENT Owner',
+  fleet = [],
+  realFleet = [],
+  realSyncStatus = null,
+}) {
+  const syncState = realSyncStatus?.state ?? 'idle';
+  const fleetCount = Math.max(fleet.length, realFleet.length);
+  const city = ownerCityLabel(fleet);
+
+  let syncLabel = 'Idle';
+  if (syncState === 'loading') syncLabel = 'Syncing';
+  else if (syncState === 'success') syncLabel = 'Healthy';
+  else if (syncState === 'error') syncLabel = 'Needs attention';
+
+  return {
+    name: userName,
+    subtitle: `${city} · ${fleetCount} Cybercab${fleetCount === 1 ? '' : 's'}`,
+    rows: [
+      { label: 'Tesla', value: realFleet.length > 0 ? 'Connected' : 'Not connected' },
+      { label: 'Sync', value: syncLabel },
+      { label: 'Settings', value: '→', route: 'settings' },
+      { label: 'Privacy', value: '→', route: 'privacy' },
+    ],
+  };
 }
 
 /** G6 ledger rows + footer totals. */

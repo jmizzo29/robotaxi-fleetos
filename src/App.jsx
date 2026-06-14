@@ -435,6 +435,7 @@ function FleetApp() {
         isLoadingReal={isLoadingReal}
         commandQueue={commandQueue}
         onQueueCommand={enqueueCommand}
+        onNavigate={navigate}
       />
     ),
     onboarding: (
@@ -841,6 +842,7 @@ function FleetApp() {
               isLoadingReal={isLoadingReal}
               commandQueue={commandQueue}
               onQueueCommand={enqueueCommand}
+              onNavigate={navigate}
             />
           </main>
         </div>
