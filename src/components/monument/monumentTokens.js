@@ -18,6 +18,7 @@ export const monument = {
 export const monumentType = {
   label: 'text-[12.96px] font-medium uppercase tracking-[0.22em]',
   navLabel: 'text-[12.96px] font-semibold uppercase tracking-[0.18em]',
+  navLabelCompact: 'text-[10.8px] font-semibold uppercase tracking-[0.06em]',
   monument: 'text-[80.64px] font-bold leading-none tracking-[-0.05em] tabular-nums',
   monumentSm: 'text-[33.6px] font-bold leading-none tracking-[-0.04em] tabular-nums',
   subline: 'text-[17.28px] font-normal',

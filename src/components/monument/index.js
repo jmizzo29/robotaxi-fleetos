@@ -1,3 +1,4 @@
+export { default as MonumentChainShell } from './MonumentChainShell';
 export { default as MonumentToday } from './MonumentToday';
 export { default as MonumentOperations } from './MonumentOperations';
 export { default as MonumentMap } from './MonumentMap';

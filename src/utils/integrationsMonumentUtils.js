@@ -1,21 +1,28 @@
-export function getIntegrationsConvoy(realSyncStatus = null, aiAnalysis = null) {
+export function getIntegrationsConvoy(realSyncStatus = null, aiAnalysis = null, options = {}) {
+  const { signedIn = true } = options;
   const teslaLive = realSyncStatus?.state === 'success';
   const aiReady = Boolean(aiAnalysis?.provider);
   const mapboxLive = Boolean(import.meta.env.VITE_MAPBOX_TOKEN);
   const memoryPlanned = false;
+  const authLive = signedIn;
+  const signalsPlanned = false;
 
-  const connected = [teslaLive, mapboxLive, aiReady, memoryPlanned].filter(Boolean).length;
+  const liveFlags = [teslaLive, mapboxLive, aiReady, authLive, memoryPlanned, signalsPlanned];
+  const connected = liveFlags.filter(Boolean).length;
 
   return {
-    total: 4,
+    total: liveFlags.length,
     connected,
     tesla: teslaLive ? 'On' : '—',
     mapbox: mapboxLive ? 'On' : '—',
     ai: aiReady ? 'On' : '—',
     memory: memoryPlanned ? 'On' : '—',
+    auth: authLive ? 'On' : '—',
+    signals: signalsPlanned ? 'On' : '—',
     teslaLive,
     mapboxLive,
     aiReady,
+    authLive,
   };
 }
 
@@ -53,6 +60,16 @@ export function getIntegrationDetail(ckey, convoy) {
     memory: {
       title: 'Fleet Memory',
       body: 'Historical events, recommendations, and retrieval memory.',
+      status: 'Planned',
+    },
+    auth: {
+      title: 'Clerk Auth',
+      body: 'Secure sign-in, session management, and fleet owner identity.',
+      status: convoy.authLive ? 'Live' : 'Setup',
+    },
+    signals: {
+      title: 'Social Signals',
+      body: 'Tesla and market updates from X for expansion timing.',
       status: 'Planned',
     },
   };

@@ -18,6 +18,7 @@ export default function MonumentBottomChrome({
   showCommandRow = true,
   commandAriaLabel = 'Command sections',
   showSwipeHint = true,
+  swipeHint = null,
 }) {
   const handleCommandSelect = (pageId) => {
     if (onCommandSelect) {
@@ -41,7 +42,8 @@ export default function MonumentBottomChrome({
           pages={commandPages}
           onSelect={handleCommandSelect}
           onLongPress={onLongPress}
-          showSwipeHint={showSwipeHint && Boolean(commandActive)}
+          showSwipeHint={showSwipeHint && Boolean(swipeHint || commandActive)}
+          swipeHint={swipeHint}
           ariaLabel={commandAriaLabel}
         />
       ) : (

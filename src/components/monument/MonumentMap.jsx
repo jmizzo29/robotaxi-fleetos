@@ -19,6 +19,7 @@ export default function MonumentMap({
   isLoadingReal = false,
   onNavigate = () => {},
   onDisconnect = null,
+  embedded = false,
 }) {
   const { user } = useUser();
   const [mapOpen, setMapOpen] = useState(false);
@@ -95,11 +96,13 @@ export default function MonumentMap({
         onDoIt={() => setMapOpen(true)}
       />
 
+      {!embedded && (
       <MonumentBottomChrome
         utilityActive="map"
         onNavigate={onNavigate}
         onLongPress={() => setAccountOpen(true)}
       />
+      )}
 
       <MapDetailSheet
         open={mapOpen}

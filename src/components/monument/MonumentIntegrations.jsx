@@ -24,8 +24,11 @@ export default function MonumentIntegrations({
   realFleet = [],
   realSyncStatus = null,
   aiAnalysis = null,
+  isLoadingReal = false,
   onNavigate = () => {},
+  onSync = () => {},
   onDisconnect = null,
+  embedded = false,
 }) {
   const { user } = useUser();
   const [accountOpen, setAccountOpen] = useState(false);
@@ -47,8 +50,8 @@ export default function MonumentIntegrations({
   } = useMonumentTeslaDisconnect(onDisconnect);
 
   const convoy = useMemo(
-    () => getIntegrationsConvoy(realSyncStatus, aiAnalysis),
-    [realSyncStatus, aiAnalysis],
+    () => getIntegrationsConvoy(realSyncStatus, aiAnalysis, { signedIn: Boolean(user) }),
+    [realSyncStatus, aiAnalysis, user],
   );
   const hero = useMemo(() => getIntegrationsHero(convoy), [convoy]);
   const footerLine = useMemo(() => getIntegrationsFooterLine(convoy), [convoy]);
@@ -108,20 +111,21 @@ export default function MonumentIntegrations({
 
       <MonumentActionFooter
         line={footerLine}
-        doItLabel="View Tesla"
-        onDoIt={() => {
-          setDetailKey('tesla');
-          setDetailOpen(true);
-        }}
+        doItLabel={teslaConnected ? 'Add vehicle' : 'Connect Tesla'}
+        onDoIt={() => onNavigate('add-vehicle')}
         secondaryLabel={teslaConnected ? 'Disconnect Tesla' : null}
         onSecondary={teslaConnected ? requestDisconnect : undefined}
+        tertiaryLabel={teslaConnected ? (isLoadingReal ? 'Syncing…' : 'Sync now') : null}
+        onTertiary={teslaConnected ? onSync : undefined}
       />
 
+      {!embedded && (
       <MonumentBottomChrome
         utilityActive="integrations"
         onNavigate={onNavigate}
         onLongPress={() => setAccountOpen(true)}
       />
+      )}
 
       <IntegrationDetailSheet
         open={detailOpen}

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import BetaFeedbackForm from './BetaFeedbackForm';
 
-const OPERATIONAL_ROUTES = new Set([
+const HIDDEN_ROUTES = new Set([
   'overview',
   'fleet',
   'dispatch',
@@ -13,12 +13,15 @@ const OPERATIONAL_ROUTES = new Set([
   'health',
   'finance',
   'readiness',
+  'integrations',
+  'settings',
+  'account',
 ]);
 
 export default function FeedbackButton({ route }) {
   const [open, setOpen] = useState(false);
 
-  if (OPERATIONAL_ROUTES.has(route)) return null;
+  if (HIDDEN_ROUTES.has(route)) return null;
 
   return (
     <>
@@ -26,7 +29,8 @@ export default function FeedbackButton({ route }) {
         type="button"
         onClick={() => setOpen(true)}
         aria-label="Open feedback form"
-        className="fixed bottom-20 left-4 z-50 flex rounded-full border border-emerald-300/30 bg-emerald-400 px-4 py-2.5 text-sm font-black text-slate-950 shadow-2xl shadow-black/30 active:bg-emerald-300 lg:bottom-4 lg:px-5 lg:py-3"
+        className="fixed right-4 z-40 rounded-full border border-slate-200/90 bg-white/95 px-3 py-1.5 text-[11px] font-semibold text-slate-600 shadow-sm backdrop-blur transition active:scale-[0.98] lg:top-4"
+        style={{ top: 'max(1rem, env(safe-area-inset-top))' }}
       >
         Feedback
       </button>

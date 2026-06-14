@@ -27,8 +27,7 @@ export default function MonumentUtilityLinks({
   if (layout === 'strip') {
     return (
       <nav
-        className="flex items-center gap-6 overflow-x-auto overscroll-x-contain px-4 py-3 snap-x snap-mandatory touch-pan-x [&::-webkit-scrollbar]:hidden"
-        style={{ WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none' }}
+        className="grid grid-cols-4 gap-0.5 px-2 py-2.5"
         aria-label="Fleet utilities"
       >
         {UTILITY_LINKS.map((link) => {
@@ -39,7 +38,8 @@ export default function MonumentUtilityLinks({
               ref={isActive ? activeRef : null}
               type="button"
               onClick={() => onNavigate?.(link.id)}
-              className={`shrink-0 snap-center whitespace-nowrap ${monumentType.navLabel} transition-opacity active:opacity-70 ${
+              aria-label={link.label}
+              className={`min-w-0 px-0.5 py-1 text-center ${monumentType.navLabelCompact} transition-opacity active:opacity-70 ${
                 isActive ? 'opacity-100' : 'opacity-40'
               }`}
               style={{ color: isActive ? monument.action : monument.inkGhost }}
@@ -55,8 +55,7 @@ export default function MonumentUtilityLinks({
   if (layout === 'dock') {
     return (
       <nav
-        className="flex items-center gap-6 overflow-x-auto overscroll-x-contain px-4 py-3 snap-x snap-mandatory touch-pan-x [&::-webkit-scrollbar]:hidden"
-        style={{ WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none' }}
+        className="grid grid-cols-4 gap-0.5 px-2 py-2.5"
         aria-label="Fleet utilities"
       >
         {UTILITY_LINKS.map((link) => {
@@ -67,7 +66,8 @@ export default function MonumentUtilityLinks({
               ref={isActive ? activeRef : null}
               type="button"
               onClick={() => onNavigate?.(link.id)}
-              className={`shrink-0 snap-center whitespace-nowrap rounded-xl px-2 py-2 ${monumentType.navLabel} transition active:scale-[0.98] ${
+              aria-label={link.label}
+              className={`min-w-0 rounded-xl px-0.5 py-1.5 text-center ${monumentType.navLabelCompact} transition active:scale-[0.98] ${
                 isActive ? 'opacity-100' : 'opacity-40'
               }`}
               style={{

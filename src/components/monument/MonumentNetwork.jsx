@@ -24,6 +24,7 @@ export default function MonumentNetwork({
   realSyncStatus = null,
   onNavigate = () => {},
   onDisconnect = null,
+  embedded = false,
 }) {
   const { user } = useUser();
   const [accountOpen, setAccountOpen] = useState(false);
@@ -102,11 +103,13 @@ export default function MonumentNetwork({
         }}
       />
 
+      {!embedded && (
       <MonumentBottomChrome
         utilityActive="network"
         onNavigate={onNavigate}
         onLongPress={() => setAccountOpen(true)}
       />
+      )}
 
       <ExploreMarketSheet
         open={exploreOpen}

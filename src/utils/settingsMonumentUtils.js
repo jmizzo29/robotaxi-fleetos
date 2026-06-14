@@ -1,50 +1,30 @@
-export function getSettingsHero(realSyncStatus = null) {
-  const state = realSyncStatus?.state ?? 'idle';
-  let amount = 'Healthy';
-  let subline = 'Tesla sync · Orlando';
-
-  if (state === 'loading') {
-    amount = 'Syncing';
-    subline = 'refreshing telemetry';
-  } else if (state === 'error') {
-    amount = 'Attention';
-    subline = 'sync needs review';
-  } else if (state !== 'success') {
-    amount = 'Setup';
-    subline = 'connect Tesla to begin';
-  }
+export function getSettingsHero(realFleet = []) {
+  const count = Array.isArray(realFleet) ? realFleet.length : 0;
 
   return {
     label: 'SETTINGS',
-    amount,
-    subline,
-    healthy: amount === 'Healthy',
+    amount: count > 0 ? `${count} Cybercab${count === 1 ? '' : 's'}` : 'Account',
+    subline: 'Beta program · privacy & support',
+    healthy: true,
   };
 }
 
-export function getSettingsRows(realSyncStatus = null, aiAnalysis = null) {
-  const syncState = realSyncStatus?.state ?? 'idle';
-  const syncValue = syncState === 'success' ? 'Connected' : syncState === 'loading' ? 'Syncing' : 'Setup';
+export function getSettingsRows(realFleet = []) {
+  const count = Array.isArray(realFleet) ? realFleet.length : 0;
 
   return [
-    { cab: 'Program', event: 'ROBOAGENT beta', value: 'Active', tone: 'neutral' },
-    { cab: 'Tesla', event: 'Fleet connection', value: syncValue, tone: syncState === 'success' ? 'positive' : 'alert' },
-    { cab: 'Privacy', event: 'Beta consent', value: 'OK', tone: 'positive' },
-    { cab: 'Feedback', event: 'Beta form', value: 'Open', tone: 'neutral' },
+    { cab: 'Program', event: 'ROBOAGENT beta', value: 'Active', tone: 'positive' },
     {
-      cab: 'AI',
-      event: aiAnalysis?.provider || 'Runtime',
-      value: aiAnalysis?.model ? 'Ready' : 'Pending',
-      tone: aiAnalysis?.provider ? 'positive' : 'neutral',
+      cab: 'Fleet',
+      event: 'Linked vehicles',
+      value: count > 0 ? String(count) : '—',
+      tone: count > 0 ? 'positive' : 'neutral',
     },
+    { cab: 'Privacy', event: 'Telemetry consent', value: 'OK', tone: 'positive' },
+    { cab: 'Support', event: 'Beta feedback', value: 'Account', tone: 'neutral' },
   ];
 }
 
-export function getSettingsFooterLine(realSyncStatus = null) {
-  const message = realSyncStatus?.message;
-  if (message && realSyncStatus?.state === 'success') {
-    return message.endsWith('.') ? message : `${message}.`;
-  }
-  if (realSyncStatus?.state === 'success') return 'Last sync completed recently.';
-  return 'Connect and sync Tesla to unlock fleet settings.';
+export function getSettingsFooterLine() {
+  return 'Privacy, program status, and account preferences.';
 }

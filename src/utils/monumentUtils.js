@@ -336,6 +336,7 @@ export function getAccountSheetPayload({
       { label: 'Network', value: '→', route: 'network' },
       { label: 'Integrations', value: '→', route: 'integrations' },
       { label: 'Settings', value: '→', route: 'settings' },
+      { label: 'Feedback', value: '→', action: 'feedback' },
       { label: 'Privacy', value: '→', route: 'privacy' },
     ],
   };

@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useUser } from '@clerk/react';
 import AccountSheet from './AccountSheet';
-import ConfirmActionSheet from './ConfirmActionSheet';
 import MonumentActionFooter from './MonumentActionFooter';
 import MonumentHero from './MonumentHero';
 import MonumentBottomChrome from './MonumentBottomChrome';
@@ -9,7 +8,6 @@ import OperationsLedgerStrip from './OperationsLedgerStrip';
 import { monument } from './monumentTokens';
 import { clearLocalComplianceState } from '../../services/betaCompliance';
 import { logoutFleetOsAccount } from '../../services/sessionService';
-import useMonumentTeslaDisconnect from '../../hooks/useMonumentTeslaDisconnect';
 import { getAccountSheetPayload, isTeslaConnected } from '../../utils/monumentUtils';
 import {
   getSettingsFooterLine,
@@ -21,11 +19,9 @@ export default function MonumentSettings({
   fleet = [],
   realFleet = [],
   realSyncStatus = null,
-  aiAnalysis = null,
-  isLoadingReal = false,
-  onSync = () => {},
   onNavigate = () => {},
   onDisconnect = null,
+  embedded = false,
 }) {
   const { user } = useUser();
   const [accountOpen, setAccountOpen] = useState(false);
@@ -35,18 +31,10 @@ export default function MonumentSettings({
     () => isTeslaConnected(realFleet, realSyncStatus),
     [realFleet, realSyncStatus],
   );
-  const {
-    confirmOpen,
-    setConfirmOpen,
-    disconnecting,
-    confirmPayload,
-    requestDisconnect,
-    handleConfirm,
-  } = useMonumentTeslaDisconnect(onDisconnect);
 
-  const hero = useMemo(() => getSettingsHero(realSyncStatus), [realSyncStatus]);
-  const rows = useMemo(() => getSettingsRows(realSyncStatus, aiAnalysis), [realSyncStatus, aiAnalysis]);
-  const footerLine = useMemo(() => getSettingsFooterLine(realSyncStatus), [realSyncStatus]);
+  const hero = useMemo(() => getSettingsHero(realFleet), [realFleet]);
+  const rows = useMemo(() => getSettingsRows(realFleet), [realFleet]);
+  const footerLine = useMemo(() => getSettingsFooterLine(), []);
 
   const accountPayload = useMemo(
     () => getAccountSheetPayload({
@@ -89,25 +77,19 @@ export default function MonumentSettings({
 
       <MonumentActionFooter
         line={footerLine}
-        doItLabel={isLoadingReal ? 'Syncing…' : 'Sync Tesla'}
-        onDoIt={onSync}
-        secondaryLabel={teslaConnected ? 'Disconnect Tesla' : null}
-        onSecondary={teslaConnected ? requestDisconnect : undefined}
+        doItLabel="Privacy"
+        onDoIt={() => onNavigate('privacy')}
+        secondaryLabel="Terms"
+        onSecondary={() => onNavigate('terms')}
       />
 
+      {!embedded && (
       <MonumentBottomChrome
         utilityActive="settings"
         onNavigate={onNavigate}
         onLongPress={() => setAccountOpen(true)}
       />
-
-      <ConfirmActionSheet
-        open={confirmOpen}
-        payload={confirmPayload}
-        confirming={disconnecting}
-        onClose={() => setConfirmOpen(false)}
-        onConfirm={handleConfirm}
-      />
+      )}
 
       <AccountSheet
         open={accountOpen}

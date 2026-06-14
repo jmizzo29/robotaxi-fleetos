@@ -13,7 +13,7 @@ export default function AddVehiclePanel({ onNavigate }) {
           className="flex items-center gap-2 text-white/70 hover:text-white mb-12 transition text-sm"
         >
           <ArrowLeft className="w-4 h-4" />
-          Back to Dashboard
+          Back to Fleet
         </button>
 
         {/* Logo */}

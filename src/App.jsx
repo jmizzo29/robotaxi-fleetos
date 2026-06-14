@@ -33,7 +33,7 @@ import Login from './components/Auth/Login';
 import Signup from './components/Auth/Signup';
 import LegalPage from './panels/LegalPage';
 import MemoryEventsPanel from './panels/MemoryEventsPanel';
-import { MonumentToday, MonumentOperations, MonumentMap, MonumentNetwork, MonumentIntegrations, MonumentSettings } from './components/monument';
+import { MonumentChainShell, MonumentOperations } from './components/monument';
 import OnboardingPanel from './panels/OnboardingPanel';
 import AddVehiclePanel from './panels/AddVehiclePanel';
 import OperationsReportPanel from './panels/OperationsReportPanel';
@@ -55,6 +55,7 @@ import { routeToOperationsTab } from './utils/operationsUtils';
 
 const OPERATIONS_ROUTES = new Set(['dispatch', 'charging', 'health', 'readiness', 'alerts']);
 const MONUMENT_UTILITY_ROUTES = new Set(['map', 'network', 'integrations', 'settings']);
+const MONUMENT_CHAIN_ROUTES = new Set(['overview', ...MONUMENT_UTILITY_ROUTES]);
 
 const FleetMap = lazy(() => import('./components/FleetMap'));
 const NetworkPanel = lazy(() => import('./panels/NetworkPanel'));
@@ -400,12 +401,14 @@ function FleetApp() {
 
   const pages = {
     overview: (
-      <MonumentToday
+      <MonumentChainShell
+        route="overview"
         fleet={fleet}
         realFleet={realVehicles}
         realSyncStatus={realSyncStatus}
         isLoadingReal={isLoadingReal}
         commandQueue={commandQueue}
+        aiAnalysis={aiAnalysis}
         onQueueCommand={enqueueCommand}
         onNavigate={navigate}
         onSync={refreshRealTesla}
@@ -784,18 +787,20 @@ function FleetApp() {
 
   // New premium dark dashboard (matches Landing + Auth + Onboarding style)
   // Includes its own clean sidebar for the full dark experience
-  if (route === 'overview') {
+  if (MONUMENT_CHAIN_ROUTES.has(route)) {
     return (
       <>
         <div className="flex h-screen min-h-0" style={{ backgroundColor: '#FAFAF8' }}>
           <Sidebar commandQueue={commandQueue} route={route} onNavigate={navigate} />
           <main className="flex min-h-0 flex-1 flex-col overflow-hidden">
-            <MonumentToday
+            <MonumentChainShell
+              route={route}
               fleet={fleet}
               realFleet={realVehicles}
               realSyncStatus={realSyncStatus}
               isLoadingReal={isLoadingReal}
               commandQueue={commandQueue}
+              aiAnalysis={aiAnalysis}
               onQueueCommand={enqueueCommand}
               onNavigate={navigate}
               onSync={refreshRealTesla}
@@ -824,65 +829,8 @@ function FleetApp() {
               onNavigate={navigate}
               initialTab={routeToOperationsTab(route)}
               onDisconnect={disconnectRealTesla}
+              route={route}
             />
-          </main>
-        </div>
-        <FeedbackButton route={route} />
-      </>
-    );
-  }
-
-  if (MONUMENT_UTILITY_ROUTES.has(route)) {
-    const utilityPage = {
-      map: (
-        <MonumentMap
-          fleet={fleet}
-          realFleet={realVehicles}
-          realSyncStatus={realSyncStatus}
-          isLoadingReal={isLoadingReal}
-          onNavigate={navigate}
-          onDisconnect={disconnectRealTesla}
-        />
-      ),
-      network: (
-        <MonumentNetwork
-          fleet={fleet}
-          realFleet={realVehicles}
-          realSyncStatus={realSyncStatus}
-          onNavigate={navigate}
-          onDisconnect={disconnectRealTesla}
-        />
-      ),
-      integrations: (
-        <MonumentIntegrations
-          fleet={fleet}
-          realFleet={realVehicles}
-          realSyncStatus={realSyncStatus}
-          aiAnalysis={aiAnalysis}
-          onNavigate={navigate}
-          onDisconnect={disconnectRealTesla}
-        />
-      ),
-      settings: (
-        <MonumentSettings
-          fleet={fleet}
-          realFleet={realVehicles}
-          realSyncStatus={realSyncStatus}
-          aiAnalysis={aiAnalysis}
-          isLoadingReal={isLoadingReal}
-          onSync={refreshRealTesla}
-          onNavigate={navigate}
-          onDisconnect={disconnectRealTesla}
-        />
-      ),
-    }[route];
-
-    return (
-      <>
-        <div className="flex h-screen min-h-0" style={{ backgroundColor: '#FAFAF8' }}>
-          <Sidebar commandQueue={commandQueue} route={route} onNavigate={navigate} />
-          <main className="flex min-h-0 flex-1 flex-col overflow-hidden">
-            {utilityPage}
           </main>
         </div>
         <FeedbackButton route={route} />

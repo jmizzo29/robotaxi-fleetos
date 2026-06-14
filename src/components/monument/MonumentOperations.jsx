@@ -70,6 +70,7 @@ export default function MonumentOperations({
   onNavigate = () => {},
   initialTab = 'plan',
   onDisconnect = null,
+  route = 'dispatch',
 }) {
   const { user } = useUser();
   const [tab, setTab] = useState(initialTab);
@@ -412,6 +413,7 @@ export default function MonumentOperations({
         signingOut={signingOut}
         teslaConnected={teslaConnected}
         onDisconnectTesla={onDisconnect}
+        feedbackRoute={route}
       />
     </div>
   );

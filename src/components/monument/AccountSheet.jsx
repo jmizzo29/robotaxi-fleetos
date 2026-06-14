@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import ConfirmActionSheet from './ConfirmActionSheet';
+import MonumentFeedbackSheet from './MonumentFeedbackSheet';
 import MonumentSheet from './MonumentSheet';
 import { monument, monumentType } from './monumentTokens';
 
@@ -12,10 +13,12 @@ export default function AccountSheet({
   signingOut = false,
   teslaConnected = false,
   onDisconnectTesla,
+  feedbackRoute = 'overview',
 }) {
   const [confirmDisconnect, setConfirmDisconnect] = useState(false);
   const [disconnecting, setDisconnecting] = useState(false);
   const [disconnectError, setDisconnectError] = useState('');
+  const [feedbackOpen, setFeedbackOpen] = useState(false);
 
   if (!payload) return null;
 
@@ -48,7 +51,7 @@ export default function AccountSheet({
           </div>
 
           {payload.rows.map((row) => {
-            const interactive = Boolean(row.route);
+            const interactive = Boolean(row.route || row.action);
             return (
               <button
                 key={row.label}
@@ -58,6 +61,10 @@ export default function AccountSheet({
                   if (row.route) {
                     onClose?.();
                     onNavigate?.(row.route);
+                    return;
+                  }
+                  if (row.action === 'feedback') {
+                    setFeedbackOpen(true);
                   }
                 }}
                 className={`flex w-full items-center justify-between border-t px-[18px] py-3 text-left ${monumentType.sheetBody} ${
@@ -112,6 +119,12 @@ export default function AccountSheet({
       {disconnectError && (
         <p className="sr-only" role="alert">{disconnectError}</p>
       )}
+
+      <MonumentFeedbackSheet
+        open={feedbackOpen}
+        route={feedbackRoute}
+        onClose={() => setFeedbackOpen(false)}
+      />
     </>
   );
 }

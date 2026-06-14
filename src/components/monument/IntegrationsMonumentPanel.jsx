@@ -2,8 +2,7 @@ import { monument, monumentType } from './monumentTokens';
 
 function tileValueColor(kind) {
   if (kind === 'tesla') return monument.money;
-  if (kind === 'mapbox') return monument.action;
-  if (kind === 'ai') return monument.action;
+  if (kind === 'mapbox' || kind === 'ai' || kind === 'auth') return monument.action;
   return monument.inkMuted;
 }
 
@@ -15,11 +14,13 @@ export default function IntegrationsMonumentPanel({ convoy, onSelectTile }) {
     { key: 'mapbox', label: 'Mapbox', value: convoy.mapbox },
     { key: 'ai', label: 'AI', value: convoy.ai },
     { key: 'memory', label: 'Memory', value: convoy.memory },
+    { key: 'auth', label: 'Auth', value: convoy.auth },
+    { key: 'signals', label: 'Signals', value: convoy.signals },
   ];
 
   return (
     <div className="w-full px-5 pb-3">
-      <div className="grid grid-cols-4 gap-2">
+      <div className="grid grid-cols-3 gap-2">
         {tiles.map((tile) => (
           <button
             key={tile.key}
