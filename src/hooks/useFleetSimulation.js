@@ -65,6 +65,7 @@ export function useFleetSimulation({
   replayModeInitial = false,
   autoSyncReal = true,
   canSyncReal = true,
+  syncOwnership = true,
 } = {}) {
   const [fleet, setFleet] = useState(initialFleet);
   const [replayMode, setReplayMode] = useState(replayModeInitial);
@@ -93,6 +94,8 @@ export function useFleetSimulation({
   ]);
 
   useEffect(() => {
+    if (!syncOwnership) return undefined;
+
     const refreshOwnership = () => {
       setFleet((current) => current.map((vehicle) => ({
         ...vehicle,
@@ -107,7 +110,7 @@ export function useFleetSimulation({
       window.removeEventListener('fleetos-ownership-updated', refreshOwnership);
       window.removeEventListener('storage', refreshOwnership);
     };
-  }, []);
+  }, [syncOwnership]);
 
   useEffect(() => {
     const interval = setInterval(() => {

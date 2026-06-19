@@ -315,6 +315,7 @@ function FleetApp() {
     replayModeInitial: false,
     autoSyncReal: shouldAutoSyncReal,
     canSyncReal: teslaConsentReady,
+    syncOwnership: !isPublicLandingOnly,
   });
 
   const totalRevenue = useMemo(
@@ -342,7 +343,7 @@ function FleetApp() {
   const { analysis: aiAnalysis, isAnalyzing } = useAiFleetAnalysis({
     fleet,
     realSyncStatus,
-    enabled: !isPublicRoute,
+    enabled: !isPublicLandingOnly,
   });
   const requestCommand = (command, priority = 'NORMAL') => {
     setPendingCommand({

@@ -23,28 +23,18 @@ export default function LandingEntryScreen({
 
       <div className="flex min-h-0 flex-1 flex-col px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-16">
         <div className="mx-auto flex w-full max-w-md flex-1 flex-col items-center justify-center text-center">
-          <p className={monumentType.label} style={{ color: monument.projected }}>Projected</p>
-          <p className={`mt-5 ${monumentType.monument}`} style={{ color: monument.money }}>
-            $4,218
-          </p>
-          <p className={`mt-4 ${monumentType.subline}`} style={{ color: monument.inkMuted }}>
-            10 Cybercabs · Orlando
-          </p>
-          <p className={`mt-3 ${monumentType.revealHint}`} style={{ color: monument.inkGhost }}>
-            Illustrative preview
-          </p>
+          <h1 className="max-w-[340px] text-[29px] font-semibold leading-[1.04] tracking-tight" style={{ color: monument.ink }}>
+            The Fleet Operating System for Tesla Robotaxi Owners
+          </h1>
         </div>
 
         <div className="mx-auto w-full max-w-md shrink-0 text-center">
           <Hairline />
-          <p className={`mt-6 ${monumentType.actionLine}`} style={{ color: monument.ink }}>
-            Your Tesla fleet. One number. One action.
-          </p>
           <button
             type="button"
             onClick={onConnect}
             disabled={connectDisabled}
-            className={`mt-5 w-full rounded-xl py-3.5 text-[16.56px] font-bold text-white transition active:scale-[0.98] disabled:cursor-wait disabled:opacity-60`}
+            className={`mt-6 w-full rounded-xl py-3.5 text-[16.56px] font-bold text-white transition active:scale-[0.98] disabled:cursor-wait disabled:opacity-60`}
             style={{ backgroundColor: monument.action }}
           >
             {connectDisabled ? (
@@ -56,11 +46,7 @@ export default function LandingEntryScreen({
               'Connect Tesla'
             )}
           </button>
-
-          <p className={`mt-4 pb-2 ${monumentType.revealHint}`} style={{ color: monument.inkGhost }}>
-            Fleet OS for Tesla owners · First Cybercab free during beta
-          </p>
-          <div className="mt-4 pb-1">
+          <div className="mt-5 pb-1">
             <LandingLegalLinks onNavigate={onNavigate} layout="inline" />
           </div>
         </div>
