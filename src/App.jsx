@@ -56,6 +56,15 @@ import { routeToOperationsTab } from './utils/operationsUtils';
 const OPERATIONS_ROUTES = new Set(['dispatch', 'charging', 'health', 'readiness', 'alerts']);
 const MONUMENT_UTILITY_ROUTES = new Set(['map', 'network', 'integrations', 'settings']);
 const MONUMENT_CHAIN_ROUTES = new Set(['overview', ...MONUMENT_UTILITY_ROUTES]);
+const TESLA_CONNECT_ENTRY_ROUTES = new Set([
+  'landing',
+  'landing-entry',
+  'login',
+  'signup',
+  'signup-email',
+  'onboarding',
+  'add-vehicle',
+]);
 
 const FleetMap = lazy(() => import('./components/FleetMap'));
 const NetworkPanel = lazy(() => import('./panels/NetworkPanel'));
@@ -236,6 +245,7 @@ function FleetApp() {
   const isPublicOnboardingRoute = route === 'onboarding';
   const isPublicAddVehicleRoute = route === 'add-vehicle';
   const isPublicAccountRoute = route === 'account';
+  const shouldRestoreTeslaLaunchRoute = TESLA_CONNECT_ENTRY_ROUTES.has(route);
   const teslaConsentReady = canUseTeslaTelemetry();
   const shouldAutoSyncReal = !(
     isPublicRoute ||
@@ -265,8 +275,45 @@ function FleetApp() {
   // who type #/overview etc. are redirected to the landing page.
   const { isAuthReady, isSignedIn } = useFleetAuthStatus();
   const [sessionCheck, setSessionCheck] = useState('checking'); // 'checking' | 'authed' | 'guest'
+  const [startupTeslaRestore, setStartupTeslaRestore] = useState({ route: null, status: 'idle' });
   // Clerk-signed-in users are authenticated without a server round trip.
   const sessionAllowed = isSignedIn || sessionCheck === 'authed';
+
+  useEffect(() => {
+    if (!shouldRestoreTeslaLaunchRoute) return undefined;
+    if (!isAuthReady) return undefined;
+
+    let cancelled = false;
+
+    async function restoreTeslaSession() {
+      await Promise.resolve();
+      if (cancelled) return;
+      setStartupTeslaRestore({ route, status: 'checking' });
+
+      try {
+        const session = await getFleetOsSession();
+        if (cancelled) return;
+        if (session?.authenticated && session?.teslaConnected) {
+          setSessionCheck('authed');
+          navigate('overview');
+          return;
+        }
+      } catch {
+        // If the session endpoint is unavailable, leave the connect route usable.
+      }
+
+      if (!cancelled) setStartupTeslaRestore({ route, status: 'done' });
+    }
+
+    restoreTeslaSession();
+
+    return () => {
+      cancelled = true;
+    };
+    // navigate sets window.location.hash; it is intentionally omitted to avoid
+    // repeating the startup session probe on every render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shouldRestoreTeslaLaunchRoute, isAuthReady, route]);
 
   useEffect(() => {
     if (!isProtectedRoute || !isAuthReady || isSignedIn) return undefined;
@@ -694,6 +741,22 @@ function FleetApp() {
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="h-6 w-6 animate-spin" style={{ color: '#9CA3AF' }} />
           <p className="text-sm" style={{ color: '#6B7280' }}>Loading…</p>
+        </div>
+      </div>
+    );
+  }
+
+  const isRestoringTeslaSession = (
+    shouldRestoreTeslaLaunchRoute &&
+    (!isAuthReady || startupTeslaRestore.route !== route || startupTeslaRestore.status === 'checking')
+  );
+
+  if (isRestoringTeslaSession) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[#0a0a0a] text-white">
+        <div className="flex flex-col items-center gap-3">
+          <Loader2 className="h-6 w-6 animate-spin text-white/60" />
+          <p className="text-sm text-white/60">Checking your Tesla connection...</p>
         </div>
       </div>
     );
