@@ -21,21 +21,9 @@ function LedgerRow({ left, right, tone = 'neutral' }) {
 }
 
 const STEPS = [
-  {
-    step: '01',
-    title: 'Connect your Tesla',
-    body: 'Secure OAuth via Tesla Fleet API. ROBOAGENT never sees your password.',
-  },
-  {
-    step: '02',
-    title: 'Get daily AI plans',
-    body: 'Every morning: pricing, charging, and staging recommendations from live telemetry.',
-  },
-  {
-    step: '03',
-    title: 'Approve what you want',
-    body: 'Nothing runs without your explicit approval. Full audit trail included.',
-  },
+  { step: '01', title: 'Connect your Tesla' },
+  { step: '02', title: 'Get daily AI plans' },
+  { step: '03', title: 'Approve what you want' },
 ];
 
 const TELEMETRY_ROWS = [
@@ -71,9 +59,6 @@ export default function HowItWorksMonument({ onNavigate }) {
                   {step.title}
                 </p>
               </div>
-              <p className={`mt-2 ${monumentType.revealHint} leading-relaxed`} style={{ color: monument.inkMuted }}>
-                {step.body}
-              </p>
             </div>
           ))}
 
@@ -93,13 +78,10 @@ export default function HowItWorksMonument({ onNavigate }) {
           </div>
 
           <Hairline />
-          <p className={`mt-5 text-center ${monumentType.actionLine}`} style={{ color: monument.ink }}>
-            First Tesla is free during beta.
-          </p>
           <button
             type="button"
             onClick={() => onNavigate('onboarding')}
-            className={`mt-4 w-full rounded-xl py-3.5 ${monumentType.buttonPrimary} text-white transition active:scale-[0.98]`}
+            className={`mt-5 w-full rounded-xl py-3.5 ${monumentType.buttonPrimary} text-white transition active:scale-[0.98]`}
             style={{ backgroundColor: monument.action }}
           >
             Connect Tesla
