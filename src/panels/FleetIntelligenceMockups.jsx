@@ -91,18 +91,20 @@ function Card({ option, title, children }) {
       <div className="flex items-start justify-between gap-4 border-b px-4 py-4" style={{ borderColor: monument.hairline }}>
         <div>
           <p className={monumentType.ledgerLabel} style={{ color: monument.action }}>
-            Mockup {option}
+            {option ? `Mockup ${option}` : 'Fleet Intelligence'}
           </p>
           <h2 className="mt-1 text-[22px] font-semibold leading-tight" style={{ color: monument.ink }}>
             {title}
           </h2>
         </div>
-        <span
-          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border text-[13px] font-bold"
-          style={{ color: monument.action, borderColor: monument.hairline, backgroundColor: monument.canvas }}
-        >
-          {option}
-        </span>
+        {option && (
+          <span
+            className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full border text-[13px] font-bold"
+            style={{ color: monument.action, borderColor: monument.hairline, backgroundColor: monument.canvas }}
+          >
+            {option}
+          </span>
+        )}
       </div>
       {children}
     </article>
@@ -388,28 +390,235 @@ function OptionD({ rows }) {
   );
 }
 
+function LeakSegment({ label, amount, width, tone }) {
+  return (
+    <div>
+      <div className="flex items-center justify-between gap-3 text-[12px] font-semibold">
+        <span style={{ color: monument.ink }}>{label}</span>
+        <span className="tabular-nums" style={{ color: monument.inkMuted }}>{money(amount)}</span>
+      </div>
+      <div className="mt-1.5 h-3 overflow-hidden rounded-full" style={{ backgroundColor: monument.hairline }}>
+        <div className="h-full rounded-full" style={{ width, backgroundColor: tone }} />
+      </div>
+    </div>
+  );
+}
+
+function OptionE({ rows }) {
+  const idle = [...rows].sort((a, b) => a.utilization - b.utilization)[0];
+  const risk = [...rows].sort((a, b) => b.risk - a.risk)[0];
+  const unavailable = rows.filter((row) => row.state === 'Offline' || row.state === 'Charging').length;
+  const idleLeak = Math.round((100 - (idle?.utilization || 0)) * 6.5);
+  const riskLeak = Math.round((risk?.risk || 0) * 5.2);
+  const offlineLeak = Math.round(unavailable * 185);
+  const totalLeak = idleLeak + riskLeak + offlineLeak;
+  const max = Math.max(idleLeak, riskLeak, offlineLeak, 1);
+
+  return (
+    <Card option="E" title="Profit Leak Finder">
+      <QuestionHero
+        question="Where is money leaking out of my fleet?"
+        answer={`${idle?.name || 'One asset'} is the biggest idle-capacity leak. ${risk?.name || 'One asset'} is the biggest protection leak.`}
+        Icon={CircleDollarSign}
+        tone={monument.money}
+      />
+      <div className="grid grid-cols-2 gap-2.5 px-4 pb-4">
+        <StatTile label="Est. Leak" value={money(totalLeak)} sub="Today at risk" tone={monument.projected} />
+        <StatTile label="Fix First" value={idle?.name || 'Asset'} sub="Lowest utilization" tone={monument.money} />
+      </div>
+      <div className="px-4 pb-4">
+        <div className="rounded-lg border p-4" style={{ borderColor: monument.hairline, backgroundColor: monument.canvas }}>
+          <p className={monumentType.ledgerLabel} style={{ color: monument.inkGhost }}>Leak Sources</p>
+          <div className="mt-4 space-y-4">
+            <LeakSegment label="Idle capacity" amount={idleLeak} width={`${Math.max(10, (idleLeak / max) * 100)}%`} tone={monument.money} />
+            <LeakSegment label="Risk drag" amount={riskLeak} width={`${Math.max(10, (riskLeak / max) * 100)}%`} tone={monument.projected} />
+            <LeakSegment label="Unavailable time" amount={offlineLeak} width={`${Math.max(10, (offlineLeak / max) * 100)}%`} tone={monument.action} />
+          </div>
+        </div>
+      </div>
+      <div className="space-y-2.5 px-4 pb-4">
+        <ActionRow title={`Recover idle time from ${idle?.name || 'the lowest-use asset'}`} body="Reposition or price this asset before adding more vehicles." Icon={ArrowUpRight} tone={monument.money} />
+      </div>
+    </Card>
+  );
+}
+
+function ScoreStrip({ label, value, tone }) {
+  return (
+    <div className="rounded-lg border px-3 py-3" style={{ borderColor: monument.hairline, backgroundColor: monument.canvas }}>
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-[12px] font-bold" style={{ color: monument.ink }}>{label}</p>
+        <p className="text-[13px] font-bold tabular-nums" style={{ color: tone }}>{percent(value)}</p>
+      </div>
+      <div className="mt-2 h-2 overflow-hidden rounded-full" style={{ backgroundColor: monument.hairline }}>
+        <div className="h-full rounded-full" style={{ width: `${clamp(value, 6, 100)}%`, backgroundColor: tone }} />
+      </div>
+    </div>
+  );
+}
+
+function OptionF({ rows }) {
+  const scored = [...rows].map((row) => ({
+    ...row,
+    capitalScore: Math.round((row.revenue / 7) + row.availability * 0.32 + row.health * 0.28 - row.risk * 0.2),
+  })).sort((a, b) => b.capitalScore - a.capitalScore);
+  const leader = scored[0];
+  const laggard = scored[scored.length - 1];
+
+  return (
+    <Card option="F" title="Capital Allocation">
+      <QuestionHero
+        question="Which asset deserves more investment?"
+        answer={`${leader?.name || 'The lead asset'} has the best blend of earnings, availability, and health. ${laggard?.name || 'The laggard'} needs proof before more capital.`}
+        Icon={Target}
+        tone={monument.action}
+      />
+      <div className="px-4 pb-4">
+        <div className="rounded-xl border p-4" style={{ borderColor: monument.hairline }}>
+          <p className={monumentType.ledgerLabel} style={{ color: monument.inkGhost }}>Capital Score</p>
+          <div className="mt-4 space-y-2.5">
+            {scored.map((row) => (
+              <ScoreStrip key={row.id} label={row.name} value={row.capitalScore} tone={row === leader ? monument.money : monument.action} />
+            ))}
+          </div>
+        </div>
+      </div>
+      <div className="grid grid-cols-2 gap-2.5 px-4 pb-4">
+        <StatTile label="Fund" value={leader?.name || 'Asset'} sub="Best capital score" tone={monument.money} />
+        <StatTile label="Hold" value={laggard?.name || 'Asset'} sub="Needs improvement" tone={monument.projected} />
+      </div>
+    </Card>
+  );
+}
+
+function ReadinessRail({ row }) {
+  const energy = row.battery ?? 75;
+  const readiness = Math.round((row.availability * 0.35) + (row.health * 0.35) + (energy * 0.2) - (row.risk * 0.12));
+  const tone = readiness >= 80 ? monument.money : readiness >= 65 ? monument.action : monument.projected;
+  return (
+    <div className="rounded-lg border p-3" style={{ borderColor: monument.hairline, backgroundColor: monument.canvas }}>
+      <div className="flex items-center justify-between gap-3">
+        <div>
+          <p className="text-[14px] font-bold leading-tight" style={{ color: monument.ink }}>{row.name}</p>
+          <p className="mt-1 text-[11px]" style={{ color: monument.inkMuted }}>{row.state} - {row.city}</p>
+        </div>
+        <p className="text-[24px] font-bold leading-none tabular-nums" style={{ color: tone }}>
+          {readiness}
+        </p>
+      </div>
+      <div className="mt-3 grid grid-cols-3 gap-2 text-center">
+        <StatTile label="Avail" value={percent(row.availability)} tone={monument.action} />
+        <StatTile label="Health" value={percent(row.health)} tone={monument.money} />
+        <StatTile label="Energy" value={row.battery === null ? '--' : percent(row.battery)} tone={monument.projected} />
+      </div>
+    </div>
+  );
+}
+
+function OptionG({ rows, production = false }) {
+  const ready = rows
+    .map((row) => ({
+      ...row,
+      readiness: Math.round((row.availability * 0.35) + (row.health * 0.35) + ((row.battery ?? 75) * 0.2) - (row.risk * 0.12)),
+    }))
+    .sort((a, b) => b.readiness - a.readiness);
+  const topReady = ready[0];
+  const notReady = ready.filter((row) => row.readiness < 70).length;
+
+  return (
+    <Card option={production ? null : 'G'} title="Earning Readiness">
+      <QuestionHero
+        question="Which vehicles are safe to send out now?"
+        answer={`${topReady?.name || 'One asset'} is most ready to earn. ${notReady} asset${notReady === 1 ? '' : 's'} should be held back or checked first.`}
+        Icon={ShieldCheck}
+        tone={monument.money}
+      />
+      <div className="space-y-2.5 px-4 pb-4">
+        {ready.map((row) => (
+          <ReadinessRail key={row.id} row={row} />
+        ))}
+      </div>
+    </Card>
+  );
+}
+
+function ScenarioColumn({ label, value, sub, tone, height }) {
+  return (
+    <div className="flex flex-col items-center justify-end gap-2">
+      <div className="flex h-[150px] w-full items-end rounded-xl border px-3 py-3" style={{ borderColor: monument.hairline, backgroundColor: monument.canvas }}>
+        <div className="w-full rounded-lg" style={{ height, backgroundColor: tone }} />
+      </div>
+      <p className="text-[11px] font-bold" style={{ color: monument.ink }}>{label}</p>
+      <p className="text-[15px] font-bold tabular-nums" style={{ color: tone }}>{value}</p>
+      <p className="text-center text-[10px] leading-tight" style={{ color: monument.inkGhost }}>{sub}</p>
+    </div>
+  );
+}
+
+function OptionH({ rows }) {
+  const currentRevenue = rows.reduce((sum, row) => sum + row.revenue, 0);
+  const avgAsset = rows.length ? currentRevenue / rows.length : 0;
+  const nextVehicleLift = Math.round(avgAsset * 0.82);
+  const optimizeLift = Math.round(currentRevenue * 0.18);
+  const totalExpansion = currentRevenue + nextVehicleLift;
+  const totalOptimize = currentRevenue + optimizeLift;
+
+  return (
+    <Card option="H" title="Growth Scenario">
+      <QuestionHero
+        question="Should I add a vehicle or optimize the fleet I have?"
+        answer={`Adding one vehicle could lift revenue more, but optimization recovers ${money(optimizeLift)} without new asset risk.`}
+        Icon={TrendingUp}
+        tone={monument.money}
+      />
+      <div className="grid grid-cols-3 gap-2.5 px-4 pb-4">
+        <ScenarioColumn label="Now" value={money(currentRevenue)} sub="Current fleet" tone="#64748B" height="52%" />
+        <ScenarioColumn label="Optimize" value={money(totalOptimize)} sub="No new vehicle" tone={monument.action} height="68%" />
+        <ScenarioColumn label="Add +1" value={money(totalExpansion)} sub="New asset" tone={monument.money} height="84%" />
+      </div>
+      <div className="space-y-2.5 px-4 pb-4">
+        <ActionRow title="Optimize first, then expand" body="If idle time and risk are not fixed, a new vehicle may amplify the same operating leaks." Icon={Target} tone={monument.action} />
+      </div>
+    </Card>
+  );
+}
+
 export default function FleetIntelligenceMockups({ fleet = [] }) {
   const rows = buildRows(fleet);
+  const showMockupBoard = typeof window !== 'undefined'
+    && new URLSearchParams(window.location.search).has('mock');
 
   return (
     <section className="min-h-full" style={{ backgroundColor: monument.canvas }}>
       <div className="mx-auto max-w-[440px] space-y-4 px-4 py-5">
         <div className="rounded-xl border px-5 py-5" style={{ backgroundColor: monument.surface, borderColor: monument.hairline }}>
           <p className={monumentType.label} style={{ color: monument.inkGhost }}>
-            Fleet Intelligence Mockups
+            {showMockupBoard ? 'Fleet Intelligence Mockups' : 'Asset Performance Center'}
           </p>
           <h1 className="mt-3 text-[36px] font-bold leading-none" style={{ color: monument.ink }}>
-            Real questions owners ask
+            {showMockupBoard ? 'Real questions owners ask' : 'Which vehicles are safe to send out now?'}
           </h1>
           <p className="mt-4 text-[14px] leading-snug" style={{ color: monument.inkMuted }}>
-            Four ways ROBOAGENT can turn Tesla/fleet fields into decisions about revenue, risk, deployment, and charging.
+            {showMockupBoard
+              ? 'Eight ways ROBOAGENT can turn Tesla/fleet fields into decisions about revenue, risk, deployment, charging, and expansion.'
+              : 'ROBOAGENT ranks each asset by availability, health, energy, and risk so owners know what can earn and what should be held back.'}
           </p>
         </div>
 
-        <OptionA rows={rows} />
-        <OptionB rows={rows} />
-        <OptionC rows={rows} />
-        <OptionD rows={rows} />
+        {showMockupBoard ? (
+          <>
+            <OptionA rows={rows} />
+            <OptionB rows={rows} />
+            <OptionC rows={rows} />
+            <OptionD rows={rows} />
+            <OptionE rows={rows} />
+            <OptionF rows={rows} />
+            <OptionG rows={rows} />
+            <OptionH rows={rows} />
+          </>
+        ) : (
+          <OptionG rows={rows} production />
+        )}
       </div>
     </section>
   );
