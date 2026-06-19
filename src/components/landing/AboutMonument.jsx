@@ -8,58 +8,42 @@ function Hairline() {
   );
 }
 
-function LedgerRow({ left, right }) {
-  return (
-    <div
-      className={`flex items-center justify-between gap-3 border-b py-2.5 ${monumentType.monoSm}`}
-      style={{ borderColor: monument.hairline }}
-    >
-      <span style={{ color: monument.inkGhost }}>{left}</span>
-      <span className="text-right font-semibold" style={{ color: monument.inkMuted }}>{right}</span>
-    </div>
-  );
-}
-
-const ABOUT_ROWS = [
-  ['built for', 'Tesla fleet owners'],
-  ['program', 'Beta'],
-  ['fleet size', '1 to 100+ Cybercabs'],
-  ['data source', 'Tesla Fleet API'],
-  ['you control', 'approve every action'],
-];
-
 export default function AboutMonument({ onNavigate }) {
   return (
     <div className="flex min-h-[100dvh] flex-col" style={{ backgroundColor: monument.canvas }}>
       <LandingHeader onNavigate={onNavigate} variant="monument" />
 
       <div className="mx-auto flex w-full max-w-md flex-1 flex-col px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-16">
-        <div className="flex flex-1 flex-col items-center justify-center text-center">
-          <p className={monumentType.label} style={{ color: monument.inkGhost }}>About</p>
-          <p className={`mt-5 ${monumentType.monumentSm}`} style={{ color: monument.ink }}>
-            ROBOAGENT
-          </p>
-          <p className={`mt-4 ${monumentType.subline}`} style={{ color: monument.inkMuted }}>
-            Fleet OS for Tesla owners
-          </p>
+        <div className="flex flex-1 flex-col justify-center">
+          <article className="space-y-4 text-left">
+            <h1 className={monumentType.sheetTitle} style={{ color: monument.ink }}>
+              About ROBOAGENT
+            </h1>
+            <p className={monumentType.sheetBody} style={{ color: monument.inkMuted }}>
+              In 2026, Tesla announced that eligible Tesla owners and future Cybercab owners would be able to place vehicles on the Robotaxi Network and earn revenue.
+            </p>
+            <p className={monumentType.sheetBody} style={{ color: monument.inkMuted }}>
+              ROBOAGENT was built for this new era of vehicle ownership.
+            </p>
+            <p className={monumentType.sheetBody} style={{ color: monument.inkMuted }}>
+              As vehicles become income-producing assets, owners need more than a vehicle app. They need a way to monitor their fleet, track revenue, protect assets, and identify growth opportunities.
+            </p>
+            <p className={monumentType.sheetBody} style={{ color: monument.ink }}>
+              Tesla manages the vehicles.
+            </p>
+            <p className={monumentType.sheetBody} style={{ color: monument.ink }}>
+              ROBOAGENT helps owners manage the business.
+            </p>
+            <p className={monumentType.sheetBody} style={{ color: monument.inkMuted }}>
+              Whether you own one Tesla or a fleet of future Cybercabs, ROBOAGENT gives you a single command center to operate, grow, and profit from your transportation business.
+            </p>
+            <p className={`${monumentType.actionLine} font-semibold`} style={{ color: monument.money }}>
+              Operate. Grow. Profit.
+            </p>
+          </article>
         </div>
 
         <div className="shrink-0 space-y-3">
-          <div
-            className="rounded-xl px-4 py-3.5"
-            style={{ backgroundColor: monument.ledgerWash }}
-          >
-            <p className={monumentType.label} style={{ color: monument.inkGhost }}>Overview</p>
-            <p className={`mt-2 ${monumentType.sheetBody} leading-relaxed`} style={{ color: monument.ink }}>
-              One number for your fleet. One action when you are ready. Real Tesla telemetry — never vehicle controls without your approval.
-            </p>
-            <div className="mt-3">
-              {ABOUT_ROWS.map(([left, right]) => (
-                <LedgerRow key={left} left={left} right={right} />
-              ))}
-            </div>
-          </div>
-
           <div
             className="rounded-xl border px-4 py-1"
             style={{ borderColor: monument.hairline, backgroundColor: monument.surface }}
