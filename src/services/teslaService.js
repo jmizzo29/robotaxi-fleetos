@@ -9,7 +9,7 @@ const PARKED_TESLA_ANCHOR = {
   longitude: -81.22,
 };
 
-export async function getTeslaVehicles() {
+export async function getTeslaVehicles({ force = false } = {}) {
   if (!API_BASE) {
     console.warn('Tesla backend URL is not configured for this deployment, using simulation only');
     return null;
@@ -18,7 +18,8 @@ export async function getTeslaVehicles() {
   let response;
   try {
     const token = await getAuthToken();
-    response = await fetch(`${API_BASE}/vehicles?ts=${Date.now()}`, {
+    const forceQuery = force ? '&force=1' : '';
+    response = await fetch(`${API_BASE}/vehicles?ts=${Date.now()}${forceQuery}`, {
       cache: 'no-store',
       credentials: 'include',
       headers: token ? { Authorization: `Bearer ${token}` } : {},

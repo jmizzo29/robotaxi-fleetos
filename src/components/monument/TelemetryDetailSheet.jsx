@@ -21,6 +21,11 @@ export default function TelemetryDetailSheet({ open, payload, onClose }) {
         >
           {payload.statusLine}
         </p>
+        {payload.offline && payload.filledCount < payload.totalCount && (
+          <p className={`mt-2 ${monumentType.revealHint}`} style={{ color: monument.inkGhost }}>
+            {payload.filledCount} of {payload.totalCount} signals live — wake & sync for the rest.
+          </p>
+        )}
 
         <div className={`mt-4 ${monumentType.ledgerMono}`}>
           {payload.rows.map((row) => (

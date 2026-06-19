@@ -13,7 +13,7 @@ import MonumentSettings from './MonumentSettings';
 import TelemetryDetailSheet from './TelemetryDetailSheet';
 import TodayDetailSheet from './TodayDetailSheet';
 import { monument } from './monumentTokens';
-import useMonumentCommand from '../../hooks/useMonumentCommand';
+import useMonumentCommand, { FLEET_WAKE_CONFIRM } from '../../hooks/useMonumentCommand';
 import {
   chainEntryFromIndex,
   chainIndexFromRoute,
@@ -181,6 +181,14 @@ export default function MonumentChainShell({
         confirming={command.confirming}
         onClose={() => command.setConfirmOpen(false)}
         onConfirm={command.handleConfirm}
+      />
+
+      <ConfirmActionSheet
+        open={command.wakeConfirmOpen}
+        payload={FLEET_WAKE_CONFIRM}
+        confirming={command.wakingFleet}
+        onClose={() => command.setWakeConfirmOpen(false)}
+        onConfirm={command.handleWakeConfirm}
       />
 
       <AssetDetailSheet

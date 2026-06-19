@@ -3,6 +3,7 @@ import { useUser } from '@clerk/react';
 import { monument } from '../components/monument/monumentTokens';
 import { clearLocalComplianceState } from '../services/betaCompliance';
 import { logoutFleetOsAccount } from '../services/sessionService';
+import { wakeTeslaVehicle } from '../services/teslaService';
 import {
   findVehicleByCab,
   getAccountSheetPayload,
@@ -17,6 +18,12 @@ import {
 import { getTelemetryFocusTarget, getTelemetrySheetPayload } from '../utils/telemetryUtils';
 import { getCommandFleetStatusStrip } from '../utils/vehicleDisplayUtils';
 import { getExpansionRecommendation } from '../utils/networkIntelligenceUtils';
+
+export const FLEET_WAKE_CONFIRM = {
+  title: 'Wake vehicle?',
+  body: 'This asks Tesla to bring your Cybercab online. It may use vehicle power. After wake, ROBOAGENT refreshes telemetry automatically.',
+  primaryLabel: 'Wake & sync',
+};
 
 export default function useMonumentCommand({
   fleet = [],
@@ -45,6 +52,8 @@ export default function useMonumentCommand({
   const [telemetryTarget, setTelemetryTarget] = useState(null);
   const [fleetBrowseOpen, setFleetBrowseOpen] = useState(false);
   const [fleetBrowseKey, setFleetBrowseKey] = useState('active');
+  const [wakeConfirmOpen, setWakeConfirmOpen] = useState(false);
+  const [wakingFleet, setWakingFleet] = useState(false);
 
   const syncState = isLoadingReal ? 'loading' : (realSyncStatus?.state ?? 'idle');
   const teslaConnected = useMemo(
@@ -101,6 +110,7 @@ export default function useMonumentCommand({
 
   const actionLine = actionDone || action.line.replace(/\.$/, '');
   const offline = Number(strip.offline?.value) || 0;
+  const fleetAsleep = realFleet.length > 0 && offline > 0;
   const fleetSyncHint = realFleet.length === 0 && realSyncStatus?.state === 'error'
     ? realSyncStatus.message
     : realFleet.length === 0 && !isLoadingReal
@@ -130,6 +140,32 @@ export default function useMonumentCommand({
     [telemetryTarget, realSyncStatus],
   );
 
+  const wakeTarget = useMemo(
+    () => getTelemetryFocusTarget(fleet, realFleet, totalEarnings, syncState),
+    [fleet, realFleet, totalEarnings, syncState],
+  );
+
+  const handleWakeConfirm = async () => {
+    const vehicle = wakeTarget?.vehicle;
+    if (!vehicle) return;
+
+    setWakingFleet(true);
+    try {
+      await wakeTeslaVehicle(vehicle);
+      setWakeConfirmOpen(false);
+      setActionDone('Wake sent — syncing telemetry…');
+      window.setTimeout(() => {
+        onSync({ force: true });
+      }, 2000);
+      window.setTimeout(() => setActionDone(''), 5000);
+    } catch (error) {
+      setActionDone(error.message || 'Wake request failed.');
+      window.setTimeout(() => setActionDone(''), 5000);
+    } finally {
+      setWakingFleet(false);
+    }
+  };
+
   const pages = useMemo(() => [
     {
       id: 'today',
@@ -154,15 +190,28 @@ export default function useMonumentCommand({
         subline: fleetSyncHint || `active now · ${fleetCity}`,
         labelColor: monument.inkGhost,
       },
-      footer: {
-        line: fleetSyncHint || (offline > 0 ? 'CAB offline — needs reconnect.' : 'Fleet healthy.'),
-        doItLabel: fleetSyncHint ? 'Sync Tesla' : 'Do it',
-        onDoItOverride: fleetSyncHint ? () => onSync() : null,
-        secondaryLabel: fleetSyncHint ? null : 'Add vehicle',
-        onSecondary: fleetSyncHint ? null : () => onNavigate('add-vehicle'),
-        tertiaryLabel: fleetSyncHint ? null : 'View telemetry',
-        onTertiary: fleetSyncHint ? null : () => openTelemetrySheet(),
-      },
+      footer: fleetAsleep
+        ? {
+          line: 'CAB asleep — wake & sync to load all telemetry.',
+          doItLabel: wakingFleet || isLoadingReal ? 'Syncing…' : 'Wake & sync',
+          onDoItOverride: () => {
+            if (wakingFleet || isLoadingReal) return;
+            setWakeConfirmOpen(true);
+          },
+          secondaryLabel: 'Sync now',
+          onSecondary: () => onSync({ force: true }),
+          tertiaryLabel: 'View telemetry',
+          onTertiary: () => openTelemetrySheet(),
+        }
+        : {
+          line: fleetSyncHint || (offline > 0 ? 'CAB offline — needs reconnect.' : 'Fleet healthy.'),
+          doItLabel: fleetSyncHint ? 'Sync Tesla' : 'Do it',
+          onDoItOverride: fleetSyncHint ? () => onSync({ force: true }) : null,
+          secondaryLabel: fleetSyncHint ? null : 'Add vehicle',
+          onSecondary: fleetSyncHint ? null : () => onNavigate('add-vehicle'),
+          tertiaryLabel: fleetSyncHint ? null : 'View telemetry',
+          onTertiary: fleetSyncHint ? null : () => openTelemetrySheet(),
+        },
       showFleetPanel: true,
     },
     {
@@ -180,7 +229,7 @@ export default function useMonumentCommand({
         onSecondary: null,
       },
     },
-  ], [take, actionLine, action.secondary, strip, realFleet.length, fleetCity, offline, expansion, fleetSyncHint, isLoadingReal, onSync, onNavigate]);
+  ], [take, actionLine, action.secondary, strip, realFleet.length, fleetCity, offline, fleetAsleep, expansion, fleetSyncHint, isLoadingReal, wakingFleet, onSync, onNavigate]);
 
   const handleHeroTap = (pageId) => {
     if (pageId === 'grow') {
@@ -311,9 +360,13 @@ export default function useMonumentCommand({
     handleLedgerRow,
     handleFleetStatusSelect,
     handleSignOut,
+    handleWakeConfirm,
     openAssetSheet,
     openTelemetrySheet,
     telemetryOpen,
     setTelemetryOpen,
+    wakeConfirmOpen,
+    setWakeConfirmOpen,
+    wakingFleet,
   };
 }

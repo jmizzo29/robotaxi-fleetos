@@ -1,7 +1,6 @@
 import { Loader2 } from 'lucide-react';
 import LandingHeader from './LandingHeader';
 import LandingLegalLinks from './LandingLegalLinks';
-import MonumentLaunchSignup from './MonumentLaunchSignup';
 import { monument, monumentType } from '../monument/monumentTokens';
 
 function Hairline() {
@@ -61,9 +60,6 @@ export default function LandingEntryScreen({
           <p className={`mt-4 pb-2 ${monumentType.revealHint}`} style={{ color: monument.inkGhost }}>
             Fleet OS for Tesla owners · First Cybercab free during beta
           </p>
-          <div className="mt-3">
-            <MonumentLaunchSignup layout="inline" />
-          </div>
           <div className="mt-4 pb-1">
             <LandingLegalLinks onNavigate={onNavigate} layout="inline" />
           </div>

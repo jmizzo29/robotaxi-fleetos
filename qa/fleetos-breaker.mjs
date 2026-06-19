@@ -115,6 +115,9 @@ async function testStaleCopy() {
     'Start free, then pay only when ROBOAGENT helps manage more Teslas',
     'Open ROBOAGENT Console',
     'Tesla OAuth only',
+    'Your Tesla Fleet.',
+    'One Command Center.',
+    'Get Started Free',
   ];
   const found = forbidden.filter((phrase) => bundle?.text.includes(phrase));
   if (found.length > 0) {
@@ -126,31 +129,26 @@ async function testStaleCopy() {
 async function testExpectedLandingCopy() {
   const { bundle } = await getIndexAndBundle();
   const expected = [
-    'Your AI Agent for Tesla Rentals & Robotaxis',
-    'Maximize earnings with intelligent daily plans for pricing, charging, maintenance & more.',
-    'Get Started Free',
-    'How does it work',
-    'How ROBOAGENT Works',
-    'Tesla Telemetry',
-    'Smart Pricing',
-    'Ask ROBOAGENT',
-    'Charging Strategy',
-    'Ask ROBOAGENT anything',
+    'The Fleet Operating System for Tesla Robotaxi Owners',
+    'Manage vehicles, maximize revenue, protect assets',
+    'Connect Tesla',
+    'Every Day, Owners Need Answers',
+    'How much money did I make?',
+    'Are my assets healthy?',
+    'Where are my vehicles?',
+    'Where should I grow next?',
+    'Tesla Manages Vehicles.',
+    'ROBOAGENT Manages Ownership.',
+    'Operate your fleet. Protect your assets. Grow your business.',
     'public-agent-question',
-    'PREDICTIVE MAINTENANCE',
+    'Ask ROBOAGENT',
+    'Tesla Telemetry',
     'ROBOAGENT Command Center',
     'The AI agent is the product.',
+    'PREDICTIVE MAINTENANCE',
     '7:04 AM AI Plan Ready',
     'Approve Plan',
-    'Earnings Today',
-    'Fleet Health',
-    'Utilization',
-    'My Tesla Vehicle Map',
-    'Demand and pricing zones',
-    'Health on the map',
-    'Tesla Robotaxi / Cybercab Updates from X',
-    'Live Market Signal',
-    'X API Ready',
+    'Net Earnings Today',
   ];
   const missing = expected.filter((phrase) => !bundle?.text.includes(phrase));
   if (missing.length > 0) {

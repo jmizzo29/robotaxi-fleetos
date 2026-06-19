@@ -80,13 +80,13 @@ async function testLanding(browser, profile) {
   const { page, context } = telemetry;
   await page.goto(routeUrl('?qa=browser'), { waitUntil: 'domcontentloaded' });
   const main = page.getByRole('main');
-  await page.getByText('Your Tesla Fleet.').waitFor({ timeout: 15000 });
-  await page.getByText('AI Optimized.').waitFor({ timeout: 15000 });
+  await page.getByText('The Fleet Operating System for Tesla Robotaxi Owners').waitFor({ timeout: 15000 });
+  await page.getByText('Manage vehicles, maximize revenue, protect assets').waitFor({ timeout: 15000 });
   await main.getByText('ROBOAGENT', { exact: true }).first().waitFor({ timeout: 15000 });
-  await page.getByText('Daily AI plans for pricing, charging, maintenance, and profit.').waitFor({ timeout: 15000 });
-  await page.getByText('First vehicle is free').waitFor({ timeout: 15000 });
-  await page.getByRole('button', { name: 'Get Started' }).waitFor({ timeout: 15000 });
-  await page.getByRole('button', { name: 'How does it work' }).waitFor({ timeout: 15000 });
+  await page.getByText('Every Day, Owners Need Answers').waitFor({ timeout: 15000 });
+  await page.getByText('How much money did I make?').waitFor({ timeout: 15000 });
+  await page.getByText('Tesla Manages Vehicles.').waitFor({ timeout: 15000 });
+  await page.getByRole('button', { name: 'Connect Tesla' }).first().waitFor({ timeout: 15000 });
   if (await page.locator('[data-testid="agent-command-center"]').count()) {
     throw new Error('Agent command center should live on About, not the home page.');
   }
@@ -233,32 +233,26 @@ async function testLandingCtas(browser, profile) {
   const telemetry = await makePage(browser, profile);
   const { page, context } = telemetry;
   await page.goto(routeUrl('/'), { waitUntil: 'networkidle' });
-  if (profile === 'desktop') {
-    await page.getByRole('button', { name: 'How does it work' }).click();
+  const openHowItWorks = async () => {
+    await page.getByRole('button', { name: 'Open menu' }).click();
+    await page.locator('button').filter({ hasText: 'How it works' }).click();
     await page.waitForURL('**/#/how-it-works', { timeout: 10000 });
-    const howItWorks = page.locator('[data-testid="how-it-works"]');
-    await howItWorks.getByText('How ROBOAGENT Works').waitFor({ timeout: 15000 });
-    await howItWorks.getByText('Tesla Telemetry').waitFor({ timeout: 15000 });
-    await howItWorks.getByText('Smart Pricing').waitFor({ timeout: 15000 });
-    await howItWorks.getByRole('button', { name: 'Back Home' }).click();
+    await page.getByText('steps · you approve everything').waitFor({ timeout: 15000 });
+    await page.getByText('Connect your Tesla').waitFor({ timeout: 15000 });
+    await page.getByRole('button', { name: 'Back to home' }).click();
     await page.waitForURL('**/#/landing', { timeout: 10000 }).catch(async () => {
       await page.waitForURL('**/', { timeout: 10000 });
     });
-    await page.getByRole('button', { name: 'Get Started', exact: true }).first().click();
+  };
+
+  if (profile === 'desktop') {
+    await openHowItWorks();
+    await page.getByRole('button', { name: 'Connect Tesla' }).first().click();
     await page.waitForURL('**/#/onboarding', { timeout: 10000 });
     await page.getByText('Create Your ROBOAGENT Account').waitFor({ timeout: 15000 });
   } else {
-    await page.getByRole('button', { name: 'How does it work' }).click();
-    await page.waitForURL('**/#/how-it-works', { timeout: 10000 });
-    const howItWorks = page.locator('[data-testid="how-it-works"]');
-    await howItWorks.getByText('How ROBOAGENT Works').waitFor({ timeout: 15000 });
-    await howItWorks.getByText('Turo Rentals').waitFor({ timeout: 15000 });
-    await howItWorks.getByText('Earnings Forecasts').waitFor({ timeout: 15000 });
-    await howItWorks.getByRole('button', { name: 'Back Home' }).click();
-    await page.waitForURL('**/#/landing', { timeout: 10000 }).catch(async () => {
-      await page.waitForURL('**/', { timeout: 10000 });
-    });
-    await page.getByRole('button', { name: 'Get Started' }).first().click();
+    await openHowItWorks();
+    await page.getByRole('button', { name: 'Connect Tesla' }).first().click();
     await page.waitForURL('**/#/onboarding', { timeout: 10000 });
     await page.getByText('Create Your ROBOAGENT Account').waitFor({ timeout: 15000 });
   }

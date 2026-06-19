@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { updateFleet } from '../engine/simulationEngine';
 import chargingStationsFallback from '../data/chargingStations';
 import demandZones from '../data/demandZones';
@@ -134,7 +134,8 @@ export function useFleetSimulation({
     return () => clearInterval(interval);
   }, [chargingStations, replayMode]);
 
-  const refreshRealTesla = useCallback(async () => {
+  const refreshRealTesla = useCallback(async (options = {}) => {
+    const force = options?.force === true;
     if (!canSyncReal) {
       setRealSyncStatus({
         state: 'error',
@@ -148,11 +149,11 @@ export function useFleetSimulation({
     setRealSyncStatus((current) => ({
       ...current,
       state: 'loading',
-      message: 'Syncing Tesla telemetry...',
+      message: force ? 'Refreshing Tesla telemetry...' : 'Syncing Tesla telemetry...',
     }));
 
     try {
-      const realVehicles = await getTeslaVehicles();
+      const realVehicles = await getTeslaVehicles({ force });
 
       if (!realVehicles || realVehicles.length === 0) {
         setRealSyncStatus({
@@ -237,6 +238,12 @@ export function useFleetSimulation({
     return result;
   }, []);
 
+  const syncMetaRef = useRef({ lastSyncedAt: null, isLoading: false });
+  syncMetaRef.current = {
+    lastSyncedAt: realSyncStatus?.lastSyncedAt || null,
+    isLoading: isLoadingReal,
+  };
+
   useEffect(() => {
     if (!autoSyncReal || !canSyncReal) return undefined;
 
@@ -245,6 +252,28 @@ export function useFleetSimulation({
     }, 0);
 
     return () => window.clearTimeout(timer);
+  }, [autoSyncReal, canSyncReal, refreshRealTesla]);
+
+  useEffect(() => {
+    if (!autoSyncReal || !canSyncReal) return undefined;
+
+    const MIN_VISIBLE_REFRESH_MS = 30_000;
+
+    const handleVisibility = () => {
+      if (document.visibilityState !== 'visible') return;
+      const { lastSyncedAt, isLoading } = syncMetaRef.current;
+      if (isLoading) return;
+
+      const elapsed = lastSyncedAt
+        ? Date.now() - new Date(lastSyncedAt).getTime()
+        : Infinity;
+      if (elapsed < MIN_VISIBLE_REFRESH_MS) return;
+
+      refreshRealTesla({ force: true });
+    };
+
+    document.addEventListener('visibilitychange', handleVisibility);
+    return () => document.removeEventListener('visibilitychange', handleVisibility);
   }, [autoSyncReal, canSyncReal, refreshRealTesla]);
 
   const enqueueCommand = (command, priority = 'NORMAL') => {

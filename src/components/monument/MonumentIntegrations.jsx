@@ -116,7 +116,7 @@ export default function MonumentIntegrations({
         secondaryLabel={teslaConnected ? 'Disconnect Tesla' : null}
         onSecondary={teslaConnected ? requestDisconnect : undefined}
         tertiaryLabel={teslaConnected ? (isLoadingReal ? 'Syncing…' : 'Sync now') : null}
-        onTertiary={teslaConnected ? onSync : undefined}
+        onTertiary={teslaConnected ? () => onSync({ force: true }) : undefined}
       />
 
       {!embedded && (
