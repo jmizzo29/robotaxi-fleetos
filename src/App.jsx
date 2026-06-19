@@ -750,6 +750,9 @@ function FleetApp() {
     shouldRestoreTeslaLaunchRoute &&
     (!isAuthReady || startupTeslaRestore.route !== route || startupTeslaRestore.status === 'checking')
   );
+  const isMockPreview = typeof window !== 'undefined'
+    && new URLSearchParams(window.location.search).has('mock');
+  const hideFloatingDeleteAccount = isMockPreview || route === 'fleet';
 
   if (isRestoringTeslaSession) {
     return (
@@ -934,7 +937,7 @@ function FleetApp() {
         onConfirm={confirmCommand}
       />
       <FeedbackButton route={route} />
-      <DeleteAccountButton />
+      {!hideFloatingDeleteAccount && <DeleteAccountButton />}
     </div>
   );
 }
