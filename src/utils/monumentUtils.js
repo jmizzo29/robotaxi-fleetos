@@ -111,13 +111,14 @@ export function getFleetStatusCardPayload({
 } = {}) {
   const source = commandSource(fleet, realFleet, totalEarnings, syncState);
   const hero = getCommandEarningsHero(fleet, realFleet, totalEarnings, syncState);
-  const active = Number(strip?.active?.value) || 0;
-  const charging = Number(strip?.charging?.value) || 0;
-  const service = Number(strip?.service?.value) || 0;
-  const offline = Number(strip?.offline?.value) || 0;
-  const total = Number(strip?.total) || source.length;
+  const teslaSynced = realFleet.length > 0;
+  const active = teslaSynced ? Number(strip?.active?.value) || 0 : 0;
+  const charging = teslaSynced ? Number(strip?.charging?.value) || 0 : 0;
+  const service = teslaSynced ? Number(strip?.service?.value) || 0 : 0;
+  const offline = teslaSynced ? Number(strip?.offline?.value) || 0 : 0;
+  const total = teslaSynced ? Number(strip?.total) || source.length : 0;
   const attentionCount = service + offline;
-  const hasRevenue = realFleet.length > 0 && !hero.operational && hero.amount !== 'â€”' && hero.amount !== '$0';
+  const hasRevenue = teslaSynced && !hero.operational && hero.amount !== 'â€”' && hero.amount !== '$0';
   const growthCity = expansion?.city || 'Tampa';
   const hasGrowthSignal = total > 0
     && !attentionCount
@@ -126,7 +127,9 @@ export function getFleetStatusCardPayload({
     && Number(expansion?.projectedDaily) >= 400;
 
   let state = 'normal';
-  if (syncState === 'error' || attentionCount > 0) {
+  if (!teslaSynced) {
+    state = 'recommended';
+  } else if (syncState === 'error' || attentionCount > 0) {
     state = 'attention';
   } else if (!total || syncState === 'loading' || charging > 0 || active < total) {
     state = 'recommended';
@@ -146,7 +149,7 @@ export function getFleetStatusCardPayload({
       normal: total > 0 ? 'All vehicles are available and telemetry is current.' : 'Connect Tesla to begin fleet monitoring.',
       recommended: syncState === 'loading'
         ? 'Tesla telemetry is syncing now.'
-        : total > 0
+        : teslaSynced
           ? 'A small fleet action can improve readiness.'
           : 'Connect Tesla to activate the fleet pulse.',
       attention: syncState === 'error'
@@ -158,25 +161,27 @@ export function getFleetStatusCardPayload({
       {
         label: 'Operations',
         value: total > 0 ? `${active}/${total}` : '0/0',
-        detail: total > 0 ? 'active now' : 'awaiting sync',
+        detail: teslaSynced ? 'active now' : 'no Teslas synced',
         tone: active === total && total > 0 ? 'normal' : 'recommended',
       },
       {
         label: 'Revenue',
-        value: hasRevenue ? hero.amount : (realFleet.length > 0 ? 'Live' : 'Pending'),
-        detail: hasRevenue ? 'today' : (realFleet.length > 0 ? 'tracking' : 'connect Tesla'),
+        value: hasRevenue ? hero.amount : (teslaSynced ? 'Live' : '0'),
+        detail: hasRevenue ? 'today' : (teslaSynced ? 'tracking' : 'no revenue yet'),
         tone: hasRevenue ? 'normal' : 'neutral',
       },
       {
         label: 'Protection',
-        value: attentionCount > 0 ? String(attentionCount) : 'Clear',
-        detail: attentionCount > 0 ? 'needs review' : 'assets protected',
+        value: teslaSynced ? (attentionCount > 0 ? String(attentionCount) : 'Clear') : '0',
+        detail: teslaSynced
+          ? (attentionCount > 0 ? 'needs review' : 'assets protected')
+          : 'no assets synced',
         tone: attentionCount > 0 ? 'attention' : 'normal',
       },
       {
         label: 'Growth',
-        value: growthCity,
-        detail: hasGrowthSignal ? 'opportunity' : 'monitoring',
+        value: teslaSynced ? growthCity : '0 synced',
+        detail: teslaSynced ? (hasGrowthSignal ? 'opportunity' : 'monitoring') : 'not monitoring',
         tone: hasGrowthSignal ? 'growth' : 'neutral',
       },
     ],
