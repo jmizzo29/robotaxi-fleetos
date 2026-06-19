@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useUser } from '@clerk/react';
+import { useFleetAuthStatus } from '../../auth/FleetAuthContext';
 import AccountSheet from './AccountSheet';
 import CommandMapPreview from '../home/CommandMapPreview';
 import MapDetailSheet from './MapDetailSheet';
@@ -21,7 +21,7 @@ export default function MonumentMap({
   onDisconnect = null,
   embedded = false,
 }) {
-  const { user } = useUser();
+  const { user } = useFleetAuthStatus();
   const [mapOpen, setMapOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);

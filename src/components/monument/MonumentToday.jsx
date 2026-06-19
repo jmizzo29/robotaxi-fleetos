@@ -1,5 +1,5 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
-import { useUser } from '@clerk/react';
+import { useFleetAuthStatus } from '../../auth/FleetAuthContext';
 import AccountSheet from './AccountSheet';
 import AssetDetailSheet from './AssetDetailSheet';
 import ConfirmActionSheet from './ConfirmActionSheet';
@@ -58,7 +58,7 @@ export default function MonumentToday({
   onSync = () => {},
   onDisconnect = null,
 }) {
-  const { user } = useUser();
+  const { user } = useFleetAuthStatus();
   const [tab, setTab] = useState('today');
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [assetOpen, setAssetOpen] = useState(false);

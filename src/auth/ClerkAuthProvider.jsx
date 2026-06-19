@@ -1,4 +1,4 @@
-import { ClerkProvider, useAuth, AuthenticateWithRedirectCallback } from '@clerk/react';
+import { ClerkProvider, useAuth, useUser, AuthenticateWithRedirectCallback } from '@clerk/react';
 import { useEffect } from 'react';
 import useHashRoute from '../hooks/useHashRoute';
 import { setAuthTokenProvider } from '../services/authTokenStore';
@@ -10,6 +10,7 @@ const PUBLIC_AUTH_ROUTES = new Set(['landing', 'landing-entry', 'login', 'signup
 
 function ClerkSessionBridge({ children }) {
   const { getToken, isLoaded, isSignedIn } = useAuth();
+  const { user } = useUser();
 
   useEffect(() => {
     if (!isSignedIn) {
@@ -26,6 +27,7 @@ function ClerkSessionBridge({ children }) {
       isAuthReady: Boolean(isLoaded),
       isSignedIn: Boolean(isSignedIn),
       authMode: 'clerk',
+      user,
     }}
     >
       {children}
@@ -46,7 +48,7 @@ export default function ClerkAuthProvider({ children }) {
     // This guarantees the "Continue with Tesla Account" / "Connect Tesla Account" buttons
     // do a direct backend redirect to Tesla OAuth with no Clerk UI interference.
     return (
-      <FleetAuthContext.Provider value={{ isAuthReady: true, isSignedIn: false, authMode: 'native' }}>
+      <FleetAuthContext.Provider value={{ isAuthReady: true, isSignedIn: false, authMode: 'native', user: null }}>
         {children}
       </FleetAuthContext.Provider>
     );
@@ -57,7 +59,7 @@ export default function ClerkAuthProvider({ children }) {
       return <SsoCallbackPage />;
     }
     return (
-      <FleetAuthContext.Provider value={{ isAuthReady: true, isSignedIn: false, authMode: 'native' }}>
+      <FleetAuthContext.Provider value={{ isAuthReady: true, isSignedIn: false, authMode: 'native', user: null }}>
         {children}
       </FleetAuthContext.Provider>
     );

@@ -1,4 +1,5 @@
 import FleetMonumentPanel from './FleetMonumentPanel';
+import FleetStatusCard from './FleetStatusCard';
 import MonumentActionFooter from './MonumentActionFooter';
 import { monument, monumentType } from './monumentTokens';
 
@@ -19,6 +20,14 @@ function MonumentHero({ label, amount, subline, labelColor, onTapAmount }) {
   );
 }
 
+function MonumentStatusHero({ payload }) {
+  return (
+    <div className="flex flex-1 items-center justify-center px-5 py-6">
+      <FleetStatusCard payload={payload} />
+    </div>
+  );
+}
+
 export default function MonumentCommandSlide({
   page,
   strip,
@@ -30,10 +39,14 @@ export default function MonumentCommandSlide({
 
   return (
     <div className="flex h-full min-h-0 flex-col" style={{ backgroundColor: monument.canvas }}>
-      <MonumentHero
-        {...page.hero}
-        onTapAmount={() => onHeroTap(page.id)}
-      />
+      {page.statusCard ? (
+        <MonumentStatusHero payload={page.statusCard} />
+      ) : (
+        <MonumentHero
+          {...page.hero}
+          onTapAmount={() => onHeroTap(page.id)}
+        />
+      )}
       {page.showFleetPanel && (
         <FleetMonumentPanel
           strip={strip}

@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useUser } from '@clerk/react';
+import { useFleetAuthStatus } from '../../auth/FleetAuthContext';
 import AccountSheet from './AccountSheet';
 import ConfirmActionSheet from './ConfirmActionSheet';
 import IntegrationDetailSheet from './IntegrationDetailSheet';
@@ -30,7 +30,7 @@ export default function MonumentIntegrations({
   onDisconnect = null,
   embedded = false,
 }) {
-  const { user } = useUser();
+  const { user } = useFleetAuthStatus();
   const [accountOpen, setAccountOpen] = useState(false);
   const [detailOpen, setDetailOpen] = useState(false);
   const [detailKey, setDetailKey] = useState('tesla');

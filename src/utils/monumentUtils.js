@@ -100,6 +100,89 @@ export function getMonumentTake(fleet, realFleet, totalEarnings, syncState, city
   };
 }
 
+/** Fleet Status Card â€” command pulse for owners. */
+export function getFleetStatusCardPayload({
+  fleet = [],
+  realFleet = [],
+  totalEarnings = 0,
+  syncState = 'idle',
+  strip = null,
+  expansion = null,
+} = {}) {
+  const source = commandSource(fleet, realFleet, totalEarnings, syncState);
+  const hero = getCommandEarningsHero(fleet, realFleet, totalEarnings, syncState);
+  const active = Number(strip?.active?.value) || 0;
+  const charging = Number(strip?.charging?.value) || 0;
+  const service = Number(strip?.service?.value) || 0;
+  const offline = Number(strip?.offline?.value) || 0;
+  const total = Number(strip?.total) || source.length;
+  const attentionCount = service + offline;
+  const hasRevenue = realFleet.length > 0 && !hero.operational && hero.amount !== 'â€”' && hero.amount !== '$0';
+  const growthCity = expansion?.city || 'Tampa';
+  const hasGrowthSignal = total > 0
+    && !attentionCount
+    && syncState !== 'loading'
+    && expansion?.confidenceLabel === 'High'
+    && Number(expansion?.projectedDaily) >= 400;
+
+  let state = 'normal';
+  if (syncState === 'error' || attentionCount > 0) {
+    state = 'attention';
+  } else if (!total || syncState === 'loading' || charging > 0 || active < total) {
+    state = 'recommended';
+  } else if (hasGrowthSignal) {
+    state = 'growth';
+  }
+
+  return {
+    state,
+    headline: {
+      normal: 'Fleet Operating Normally',
+      recommended: 'Action Recommended',
+      attention: 'Fleet Needs Attention',
+      growth: 'Growth Opportunity Detected',
+    }[state],
+    detail: {
+      normal: total > 0 ? 'All vehicles are available and telemetry is current.' : 'Connect Tesla to begin fleet monitoring.',
+      recommended: syncState === 'loading'
+        ? 'Tesla telemetry is syncing now.'
+        : total > 0
+          ? 'A small fleet action can improve readiness.'
+          : 'Connect Tesla to activate the fleet pulse.',
+      attention: syncState === 'error'
+        ? 'Tesla sync needs a retry before the fleet pulse is current.'
+        : `${attentionCount} asset${attentionCount === 1 ? '' : 's'} need review.`,
+      growth: `${growthCity} demand signal is ready for review.`,
+    }[state],
+    items: [
+      {
+        label: 'Operations',
+        value: total > 0 ? `${active}/${total}` : '0/0',
+        detail: total > 0 ? 'active now' : 'awaiting sync',
+        tone: active === total && total > 0 ? 'normal' : 'recommended',
+      },
+      {
+        label: 'Revenue',
+        value: hasRevenue ? hero.amount : (realFleet.length > 0 ? 'Live' : 'Pending'),
+        detail: hasRevenue ? 'today' : (realFleet.length > 0 ? 'tracking' : 'connect Tesla'),
+        tone: hasRevenue ? 'normal' : 'neutral',
+      },
+      {
+        label: 'Protection',
+        value: attentionCount > 0 ? String(attentionCount) : 'Clear',
+        detail: attentionCount > 0 ? 'needs review' : 'assets protected',
+        tone: attentionCount > 0 ? 'attention' : 'normal',
+      },
+      {
+        label: 'Growth',
+        value: growthCity,
+        detail: hasGrowthSignal ? 'opportunity' : 'monitoring',
+        tone: hasGrowthSignal ? 'growth' : 'neutral',
+      },
+    ],
+  };
+}
+
 /** Single action line + confirm payload for Sheet A. */
 export function getMonumentAction(fleet, realFleet, realSyncStatus, commandQueue, totalEarnings) {
   const syncState = realSyncStatus?.state ?? 'idle';

@@ -4,6 +4,7 @@ export const FleetAuthContext = createContext({
   isAuthReady: true,
   isSignedIn: false,
   authMode: 'none',
+  user: null,
 });
 
 export function useFleetAuthStatus() {

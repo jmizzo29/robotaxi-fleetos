@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useUser } from '@clerk/react';
+import { useFleetAuthStatus } from '../auth/FleetAuthContext';
 import { monument } from '../components/monument/monumentTokens';
 import { clearLocalComplianceState } from '../services/betaCompliance';
 import { logoutFleetOsAccount } from '../services/sessionService';
@@ -8,6 +8,7 @@ import {
   findVehicleByCab,
   getAccountSheetPayload,
   getAssetSheetPayload,
+  getFleetStatusCardPayload,
   getGrowSheetPayload,
   getMonumentAction,
   getMonumentTake,
@@ -35,7 +36,7 @@ export default function useMonumentCommand({
   onNavigate = () => {},
   onSync = () => {},
 }) {
-  const { user } = useUser();
+  const { user } = useFleetAuthStatus();
   const [confirmOpen, setConfirmOpen] = useState(false);
   const [assetOpen, setAssetOpen] = useState(false);
   const [exploreOpen, setExploreOpen] = useState(false);
@@ -77,6 +78,17 @@ export default function useMonumentCommand({
   );
 
   const expansion = useMemo(() => getExpansionRecommendation(fleet), [fleet]);
+  const statusCard = useMemo(
+    () => getFleetStatusCardPayload({
+      fleet,
+      realFleet,
+      totalEarnings,
+      syncState,
+      strip,
+      expansion,
+    }),
+    [fleet, realFleet, totalEarnings, syncState, strip, expansion],
+  );
 
   const fleetCity = useMemo(() => {
     const city = fleet.find((vehicle) => vehicle.city)?.city;
@@ -175,6 +187,7 @@ export default function useMonumentCommand({
         subline: take.subline,
         labelColor: take.projected ? monument.projected : monument.inkGhost,
       },
+      statusCard,
       footer: {
         line: actionLine,
         doItLabel: 'Do it',
@@ -229,7 +242,7 @@ export default function useMonumentCommand({
         onSecondary: null,
       },
     },
-  ], [take, actionLine, action.secondary, strip, realFleet.length, fleetCity, offline, fleetAsleep, expansion, fleetSyncHint, isLoadingReal, wakingFleet, onSync, onNavigate]);
+  ], [take, statusCard, actionLine, action.secondary, strip, realFleet.length, fleetCity, offline, fleetAsleep, expansion, fleetSyncHint, isLoadingReal, wakingFleet, onSync, onNavigate]);
 
   const handleHeroTap = (pageId) => {
     if (pageId === 'grow') {

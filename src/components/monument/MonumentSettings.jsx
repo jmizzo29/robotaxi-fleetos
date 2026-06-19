@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useUser } from '@clerk/react';
+import { useFleetAuthStatus } from '../../auth/FleetAuthContext';
 import AccountSheet from './AccountSheet';
 import MonumentActionFooter from './MonumentActionFooter';
 import MonumentHero from './MonumentHero';
@@ -23,7 +23,7 @@ export default function MonumentSettings({
   onDisconnect = null,
   embedded = false,
 }) {
-  const { user } = useUser();
+  const { user } = useFleetAuthStatus();
   const [accountOpen, setAccountOpen] = useState(false);
   const [signingOut, setSigningOut] = useState(false);
 
