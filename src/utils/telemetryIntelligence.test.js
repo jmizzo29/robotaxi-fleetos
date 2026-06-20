@@ -56,7 +56,7 @@ describe('getVehicleTelemetryIntelligence', () => {
 
     expect(intelligence.assetHealth.label).toBe('Needs Attention');
     expect(intelligence.availability.state).toBe('service');
-    expect(intelligence.attention.recommendedAction).toBe('Service mode active');
+    expect(intelligence.attention.recommendedAction).toBe('Review service mode before assigning work.');
   });
 
   it('reduces confidence and readiness when telemetry is stale', () => {

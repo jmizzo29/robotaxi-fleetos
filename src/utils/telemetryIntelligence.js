@@ -259,7 +259,7 @@ function deriveActivity(vehicle, telemetry) {
 }
 
 function topVehicleAction(readiness, health, availability) {
-  if (availability.state === 'service') return availability.reason;
+  if (availability.state === 'service') return health.recommendedAction;
   if (health.state === 'attention') return health.recommendedAction;
   if (readiness.state === 'hold') return readiness.recommendedAction;
   if (health.issues.length > 0) return health.recommendedAction;

@@ -1,6 +1,7 @@
 import { AlertTriangle, ArrowUpRight, BatteryCharging, CircleDollarSign, MapPin, ShieldCheck, Target, TrendingUp, Zap } from 'lucide-react';
 import demandZones from '../data/demandZones';
 import { monument, monumentType } from '../components/monument/monumentTokens';
+import { getVehicleTelemetryIntelligence } from '../utils/telemetryIntelligence';
 
 function money(value) {
   const num = Math.round(Number(value) || 0);
@@ -57,11 +58,28 @@ function batteryFor(vehicle) {
   return Number.isFinite(battery) ? clamp(battery) : null;
 }
 
+function syncFreshnessLabel(telemetry, confidence) {
+  if (confidence.syncAgeMinutes === null) return 'sync pending';
+  if (confidence.syncAgeMinutes < 1) return 'synced now';
+  if (confidence.syncAgeMinutes < 60) return `${confidence.syncAgeMinutes}m sync`;
+  return `${Math.floor(confidence.syncAgeMinutes / 60)}h sync`;
+}
+
+function locationLabel(vehicle, telemetry) {
+  const city = vehicle?.city || vehicle?.location;
+  if (city) return String(city).split(',')[0].trim();
+  if (Number.isFinite(Number(telemetry.latitude)) && Number.isFinite(Number(telemetry.longitude))) {
+    return `${Number(telemetry.latitude).toFixed(2)}, ${Number(telemetry.longitude).toFixed(2)}`;
+  }
+  return 'location pending';
+}
+
 function buildRows(fleet) {
   return fleet.map((vehicle, index) => {
+    const intelligence = getVehicleTelemetryIntelligence(vehicle, { index });
     const revenue = revenueFor(vehicle, index);
-    const availability = availabilityFor(vehicle);
-    const health = healthFor(vehicle);
+    const availability = intelligence.availability.available ? intelligence.revenueReadiness.score : availabilityFor(vehicle);
+    const health = intelligence.assetHealth.score ?? healthFor(vehicle);
     const battery = batteryFor(vehicle);
     const risk = clamp(vehicle.anomalyRisk || (100 - health));
     const score = Math.round((revenue / 70) + (availability * 0.35) + (health * 0.3) - (risk * 0.18));
@@ -77,7 +95,8 @@ function buildRows(fleet) {
       utilization: clamp(vehicle.utilization || availability),
       risk,
       score: clamp(score),
-      state: stateFor(vehicle),
+      state: intelligence.activity.label || stateFor(vehicle),
+      intelligence,
     };
   });
 }
@@ -491,25 +510,72 @@ function OptionF({ rows }) {
   );
 }
 
+function Chip({ label, value }) {
+  return (
+    <span
+      className="min-w-0 rounded-full border px-2.5 py-1 text-[10px] font-semibold leading-none"
+      style={{ borderColor: monument.hairline, color: monument.inkMuted, backgroundColor: monument.surface }}
+    >
+      <span className="text-[9px] uppercase" style={{ color: monument.inkGhost }}>{label}</span>
+      {' '}
+      <span className="tabular-nums">{value}</span>
+    </span>
+  );
+}
+
+function serviceReadinessLabel(readiness) {
+  if (readiness.score >= 90) return 'Ready For Service';
+  if (readiness.score >= 75) return 'Available For Service';
+  if (readiness.score >= 50) return 'Limited Service';
+  return 'Hold Back';
+}
+
 function ReadinessRail({ row }) {
-  const energy = row.battery ?? 75;
-  const readiness = Math.round((row.availability * 0.35) + (row.health * 0.35) + (energy * 0.2) - (row.risk * 0.12));
-  const tone = readiness >= 80 ? monument.money : readiness >= 65 ? monument.action : monument.projected;
+  const intelligence = row.intelligence;
+  const readiness = intelligence.revenueReadiness.score;
+  const tone = readiness >= 90 ? monument.money : readiness >= 75 ? monument.action : monument.projected;
+  const telemetry = intelligence.telemetry;
+  const battery = telemetry.battery ?? row.battery;
+  const action = intelligence.attention.recommendedAction;
+  const availabilityTone = intelligence.availability.available ? monument.money : monument.projected;
+  const healthTone = intelligence.assetHealth.state === 'attention' || intelligence.assetHealth.state === 'watch'
+    ? monument.projected
+    : monument.money;
+
   return (
     <div className="rounded-lg border p-3" style={{ borderColor: monument.hairline, backgroundColor: monument.canvas }}>
-      <div className="flex items-center justify-between gap-3">
-        <div>
-          <p className="text-[14px] font-bold leading-tight" style={{ color: monument.ink }}>{row.name}</p>
-          <p className="mt-1 text-[11px]" style={{ color: monument.inkMuted }}>{row.state} - {row.city}</p>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="truncate text-[14px] font-bold leading-tight" style={{ color: monument.ink }}>{row.name}</p>
+          <p className="mt-1 text-[11px] font-semibold" style={{ color: tone }}>
+            {serviceReadinessLabel(intelligence.revenueReadiness)}
+          </p>
         </div>
-        <p className="text-[24px] font-bold leading-none tabular-nums" style={{ color: tone }}>
-          {readiness}
+        <div className="shrink-0 text-right">
+          <p className="text-[10px] font-semibold uppercase" style={{ color: monument.inkGhost }}>Ready For Service</p>
+          <p className="mt-1 text-[28px] font-bold leading-none tabular-nums" style={{ color: tone }}>{readiness}</p>
+        </div>
+      </div>
+
+      <div className="mt-3 grid grid-cols-2 gap-2">
+        <StatTile label="Health" value={intelligence.assetHealth.label} sub={`${intelligence.assetHealth.score}/100`} tone={healthTone} />
+        <StatTile label="Availability" value={intelligence.availability.label} sub={intelligence.availability.reason} tone={availabilityTone} />
+      </div>
+
+      <div className="mt-3 rounded-lg border px-3 py-3" style={{ borderColor: monument.hairline, backgroundColor: monument.surface }}>
+        <p className={monumentType.ledgerLabel} style={{ color: monument.inkGhost }}>
+          Recommended Action
+        </p>
+        <p className="mt-1 text-[13px] font-semibold leading-snug" style={{ color: monument.ink }}>
+          {action}
         </p>
       </div>
-      <div className="mt-3 grid grid-cols-3 gap-2 text-center">
-        <StatTile label="Avail" value={percent(row.availability)} tone={monument.action} />
-        <StatTile label="Health" value={percent(row.health)} tone={monument.money} />
-        <StatTile label="Energy" value={row.battery === null ? '--' : percent(row.battery)} tone={monument.projected} />
+
+      <div className="mt-3 flex flex-wrap gap-1.5">
+        <Chip label="battery" value={battery === null || battery === undefined ? '--' : percent(battery)} />
+        <Chip label="sync" value={syncFreshnessLabel(telemetry, intelligence.confidence)} />
+        <Chip label="charge" value={telemetry.chargingState || 'idle'} />
+        <Chip label="place" value={locationLabel(row, telemetry)} />
       </div>
     </div>
   );
@@ -519,7 +585,7 @@ function OptionG({ rows, production = false }) {
   const ready = rows
     .map((row) => ({
       ...row,
-      readiness: Math.round((row.availability * 0.35) + (row.health * 0.35) + ((row.battery ?? 75) * 0.2) - (row.risk * 0.12)),
+      readiness: row.intelligence.revenueReadiness.score,
     }))
     .sort((a, b) => b.readiness - a.readiness);
   const topReady = ready[0];
