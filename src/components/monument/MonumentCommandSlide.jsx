@@ -3,6 +3,7 @@ import FleetStatusCard from './FleetStatusCard';
 import GrowthIntelligenceMockups from './GrowthIntelligenceMockups';
 import MonumentActionFooter from './MonumentActionFooter';
 import { monument, monumentType } from './monumentTokens';
+import FleetIntelligenceMockups from '../../panels/FleetIntelligenceMockups';
 
 function MonumentHero({ label, amount, subline, labelColor, onTapAmount }) {
   return (
@@ -40,6 +41,10 @@ export default function MonumentCommandSlide({
 
   if (page.growthMockups) {
     return <GrowthIntelligenceMockups fleet={page.growthMockups.fleet} />;
+  }
+
+  if (page.fleetIntelligence) {
+    return <FleetIntelligenceMockups fleet={page.fleetIntelligence.fleet} />;
   }
 
   return (

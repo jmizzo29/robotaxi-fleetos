@@ -197,6 +197,7 @@ export default function useMonumentCommand({
     },
     {
       id: 'fleet',
+      fleetIntelligence: { fleet },
       hero: {
         label: 'FLEET',
         amount: `${strip.active?.value || 0}/${strip.total || realFleet.length || 0}`,

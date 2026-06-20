@@ -589,36 +589,38 @@ export default function FleetIntelligenceMockups({ fleet = [] }) {
     && new URLSearchParams(window.location.search).has('mock');
 
   return (
-    <section className="min-h-full" style={{ backgroundColor: monument.canvas }}>
-      <div className="mx-auto max-w-[440px] space-y-4 px-4 py-5">
-        <div className="rounded-xl border px-5 py-5" style={{ backgroundColor: monument.surface, borderColor: monument.hairline }}>
-          <p className={monumentType.label} style={{ color: monument.inkGhost }}>
-            {showMockupBoard ? 'Fleet Intelligence Mockups' : 'Asset Performance Center'}
-          </p>
-          <h1 className="mt-3 text-[36px] font-bold leading-none" style={{ color: monument.ink }}>
-            {showMockupBoard ? 'Real questions owners ask' : 'Which vehicles are safe to send out now?'}
-          </h1>
-          <p className="mt-4 text-[14px] leading-snug" style={{ color: monument.inkMuted }}>
-            {showMockupBoard
-              ? 'Eight ways ROBOAGENT can turn Tesla/fleet fields into decisions about revenue, risk, deployment, charging, and expansion.'
-              : 'ROBOAGENT ranks each asset by availability, health, energy, and risk so owners know what can earn and what should be held back.'}
-          </p>
-        </div>
+    <section className="flex h-full min-h-0 flex-col" style={{ backgroundColor: monument.canvas }}>
+      <div className="min-h-0 flex-1 overflow-y-auto px-4 py-5">
+        <div className="mx-auto max-w-[440px] space-y-4 pb-4">
+          <div className="rounded-xl border px-5 py-5" style={{ backgroundColor: monument.surface, borderColor: monument.hairline }}>
+            <p className={monumentType.label} style={{ color: monument.inkGhost }}>
+              {showMockupBoard ? 'Fleet Intelligence Mockups' : 'Asset Performance Center'}
+            </p>
+            <h1 className="mt-3 text-[36px] font-bold leading-none" style={{ color: monument.ink }}>
+              {showMockupBoard ? 'Real questions owners ask' : 'Which vehicles are safe to send out now?'}
+            </h1>
+            <p className="mt-4 text-[14px] leading-snug" style={{ color: monument.inkMuted }}>
+              {showMockupBoard
+                ? 'Eight ways ROBOAGENT can turn Tesla/fleet fields into decisions about revenue, risk, deployment, charging, and expansion.'
+                : 'ROBOAGENT ranks each asset by availability, health, energy, and risk so owners know what can earn and what should be held back.'}
+            </p>
+          </div>
 
-        {showMockupBoard ? (
-          <>
-            <OptionA rows={rows} />
-            <OptionB rows={rows} />
-            <OptionC rows={rows} />
-            <OptionD rows={rows} />
-            <OptionE rows={rows} />
-            <OptionF rows={rows} />
-            <OptionG rows={rows} />
-            <OptionH rows={rows} />
-          </>
-        ) : (
-          <OptionG rows={rows} production />
-        )}
+          {showMockupBoard ? (
+            <>
+              <OptionA rows={rows} />
+              <OptionB rows={rows} />
+              <OptionC rows={rows} />
+              <OptionD rows={rows} />
+              <OptionE rows={rows} />
+              <OptionF rows={rows} />
+              <OptionG rows={rows} />
+              <OptionH rows={rows} />
+            </>
+          ) : (
+            <OptionG rows={rows} production />
+          )}
+        </div>
       </div>
     </section>
   );
