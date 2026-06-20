@@ -229,6 +229,7 @@ export default function useMonumentCommand({
     },
     {
       id: 'grow',
+      growthMockups: { fleet },
       hero: {
         label: 'GROW',
         amount: `+$${Math.round((expansion.projectedMonthly || 4960) / 4).toLocaleString()}`,
@@ -242,7 +243,7 @@ export default function useMonumentCommand({
         onSecondary: null,
       },
     },
-  ], [take, statusCard, actionLine, action.secondary, strip, realFleet.length, fleetCity, offline, fleetAsleep, expansion, fleetSyncHint, isLoadingReal, wakingFleet, onSync, onNavigate]);
+  ], [take, statusCard, actionLine, action.secondary, strip, fleet, realFleet.length, fleetCity, offline, fleetAsleep, expansion, fleetSyncHint, isLoadingReal, wakingFleet, onSync, onNavigate]);
 
   const handleHeroTap = (pageId) => {
     if (pageId === 'grow') {

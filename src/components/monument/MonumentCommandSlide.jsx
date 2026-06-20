@@ -1,5 +1,6 @@
 import FleetMonumentPanel from './FleetMonumentPanel';
 import FleetStatusCard from './FleetStatusCard';
+import GrowthIntelligenceMockups from './GrowthIntelligenceMockups';
 import MonumentActionFooter from './MonumentActionFooter';
 import { monument, monumentType } from './monumentTokens';
 
@@ -36,6 +37,10 @@ export default function MonumentCommandSlide({
   onFleetStatusSelect,
 }) {
   if (!page) return null;
+
+  if (page.growthMockups) {
+    return <GrowthIntelligenceMockups fleet={page.growthMockups.fleet} />;
+  }
 
   return (
     <div className="flex h-full min-h-0 flex-col" style={{ backgroundColor: monument.canvas }}>
