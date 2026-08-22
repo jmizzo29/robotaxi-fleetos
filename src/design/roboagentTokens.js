@@ -1,27 +1,31 @@
-/** ROBOAGENT design system — single source of truth for mobile fleet OS surfaces. */
+/** ROBOAGENT design system — Tesla-slick command layer. Single source of truth. */
 
 export const colors = {
-  primary: '#2563eb',
-  primaryLight: '#eff6ff',
-  primaryDark: '#1e3a8a',
-  canvas: '#f3f4f8',
-  surface: '#ffffff',
-  ink: '#0f172a',
-  inkMuted: '#64748b',
-  inkSubtle: '#94a3b8',
-  border: 'rgba(15,23,42,0.09)',
-  earningsGradient: 'linear-gradient(135deg, #2563eb 0%, #4f46e5 48%, #7c3aed 100%)',
-  success: '#15803d',
-  successBg: '#ecfdf3',
-  warning: '#a16207',
-  warningBg: '#fefce8',
-  error: '#dc2626',
-  errorBg: '#fef2f2',
-  service: '#c2410c',
-  serviceBg: '#fff7ed',
-  heroDelta: '#bbf7d0',
-  heroPulse: '#4ade80',
-  navActiveLabel: '#1e3a8a',
+  primary: '#5BA8A0',
+  primaryLight: 'rgba(91,168,160,0.14)',
+  primaryDark: '#3E7D77',
+  canvas: '#0E0F12',
+  surface: '#16181C',
+  surfaceRaised: '#1C1E23',
+  ink: '#F3F3F1',
+  inkMuted: '#8B8E94',
+  inkSubtle: '#5C5F66',
+  border: 'rgba(243,243,241,0.08)',
+  earningsGradient: 'linear-gradient(180deg, #1A1C20 0%, #0E0F12 100%)',
+  success: '#5BA8A0',
+  successBg: 'rgba(91,168,160,0.12)',
+  warning: '#C4A35A',
+  warningBg: 'rgba(196,163,90,0.12)',
+  error: '#C45C4A',
+  errorBg: 'rgba(196,92,74,0.12)',
+  service: '#C4A35A',
+  serviceBg: 'rgba(196,163,90,0.12)',
+  heroDelta: '#5BA8A0',
+  heroPulse: '#5BA8A0',
+  navActiveLabel: '#F3F3F1',
+  accent: '#5BA8A0',
+  accentHover: '#4A8F88',
+  scrim: 'rgba(6,7,9,0.72)',
 };
 
 export const semantic = {
@@ -36,63 +40,63 @@ export const semantic = {
 };
 
 export const typography = {
-  wordmark: 'text-[1.05rem] font-bold uppercase tracking-[0.04em]',
-  wordmarkColor: 'text-[#1e3a8a]',
-  screenBadge: 'text-[11px] font-bold uppercase tracking-[0.12em] text-[#2563eb]',
-  display: 'text-[4rem] font-bold leading-[0.9] tracking-[-0.045em]',
-  pageTitle: 'text-[24px] font-bold tracking-[-0.03em] text-slate-950',
-  section: 'text-[18px] font-bold tracking-[-0.02em] text-slate-800',
-  sectionSm: 'text-[13px] font-bold uppercase tracking-[0.1em] text-slate-500',
-  cardTitle: 'text-[17px] font-bold leading-snug text-slate-950',
-  body: 'text-[15px] font-semibold leading-snug text-slate-900',
-  bodyMd: 'text-[14px] font-semibold text-slate-900',
-  metric: 'text-[38px] font-bold leading-none tabular-nums',
-  metricSm: 'text-[24px] font-bold tabular-nums',
-  caption: 'text-[11px] font-medium text-slate-400',
-  label: 'text-[11px] font-bold uppercase tracking-[0.08em] text-slate-400',
-  navLabel: 'text-[10px] font-semibold leading-tight',
+  wordmark: 'text-[0.92rem] font-semibold uppercase tracking-[0.28em]',
+  wordmarkColor: 'text-[#F3F3F1]',
+  screenBadge: 'text-[11px] font-medium uppercase tracking-[0.22em] text-[#8B8E94]',
+  display: 'text-[4.5rem] font-medium leading-[0.88] tracking-[-0.05em]',
+  pageTitle: 'text-[24px] font-medium tracking-[-0.03em] text-[#F3F3F1]',
+  section: 'text-[18px] font-medium tracking-[-0.02em] text-[#E8E8E6]',
+  sectionSm: 'text-[12px] font-medium uppercase tracking-[0.18em] text-[#8B8E94]',
+  cardTitle: 'text-[17px] font-medium leading-snug text-[#F3F3F1]',
+  body: 'text-[15px] font-normal leading-snug text-[#F3F3F1]',
+  bodyMd: 'text-[14px] font-normal text-[#F3F3F1]',
+  metric: 'text-[38px] font-medium leading-none tabular-nums',
+  metricSm: 'text-[24px] font-medium tabular-nums',
+  caption: 'text-[11px] font-normal text-[#5C5F66]',
+  label: 'text-[11px] font-medium uppercase tracking-[0.18em] text-[#5C5F66]',
+  navLabel: 'text-[10px] font-medium uppercase tracking-[0.14em] leading-tight',
 };
 
 export const spacing = {
-  page: 'px-4 pt-2 pb-[5.5rem]',
-  headerMb: 'mb-4',
-  sectionPrimary: 'mt-7',
-  sectionSecondary: 'mt-6',
-  sectionTertiary: 'mt-5',
+  page: 'px-5 pt-3 pb-[5.5rem]',
+  headerMb: 'mb-6',
+  sectionPrimary: 'mt-10',
+  sectionSecondary: 'mt-8',
+  sectionTertiary: 'mt-6',
   cardPad: 'p-4',
   cardPadLg: 'px-4 py-4',
   stackSm: 'space-y-2.5',
 };
 
 export const radius = {
-  card: 'rounded-[20px]',
-  cardLg: 'rounded-[24px]',
-  icon: 'rounded-[14px]',
+  card: 'rounded-[8px]',
+  cardLg: 'rounded-[10px]',
+  icon: 'rounded-[8px]',
   pill: 'rounded-full',
 };
 
 export const shadow = {
-  card: 'shadow-[0_8px_24px_-18px_rgba(15,23,42,0.28)]',
-  cardSubdued: 'shadow-[0_4px_18px_-16px_rgba(15,23,42,0.22)]',
-  hero: 'shadow-[0_24px_56px_-24px_rgba(37,99,235,0.72)]',
-  map: 'shadow-[0_20px_48px_-24px_rgba(15,23,42,0.45)]',
-  nav: 'shadow-[0_-8px_32px_-12px_rgba(15,23,42,0.18)]',
+  card: 'shadow-none',
+  cardSubdued: 'shadow-none',
+  hero: 'shadow-none',
+  map: 'shadow-none',
+  nav: 'shadow-none',
 };
 
 export const card = {
-  base: `${radius.card} border border-slate-200/90 bg-white ${shadow.card}`,
-  subdued: `${shadow.cardSubdued}`,
-  accent: 'border-l-[4px] border-l-blue-600',
+  base: `${radius.card} border border-white/[0.08] bg-[#16181C]`,
+  subdued: '',
+  accent: 'border-l-[2px] border-l-[#5BA8A0]',
 };
 
 export const icon = {
-  nav: 21,
-  navStroke: 2.4,
-  navStrokeIdle: 2,
+  nav: 20,
+  navStroke: 1.75,
+  navStrokeIdle: 1.5,
   md: 18,
   lg: 22,
-  stroke: 2.2,
-  strokeBold: 2.3,
+  stroke: 1.8,
+  strokeBold: 2,
 };
 
 export const mobileNavItems = [

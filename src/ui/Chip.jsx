@@ -1,8 +1,8 @@
 export default function Chip({ children, active = false, onClick, className = '' }) {
-  const base = 'rounded-full px-3 py-1.5 text-xs font-medium transition';
+  const base = 'rounded-full px-3 py-1.5 text-xs font-medium uppercase tracking-[0.12em] transition';
   const styles = active
-    ? 'bg-accent text-white'
-    : 'border border-ink/10 bg-surface-raised text-ink-muted hover:border-ink/15 hover:text-ink';
+    ? 'bg-white text-[#0E0F12]'
+    : 'border border-white/10 bg-transparent text-[#8B8E94] hover:border-white/18 hover:text-[#F3F3F1]';
 
   if (onClick) {
     return (

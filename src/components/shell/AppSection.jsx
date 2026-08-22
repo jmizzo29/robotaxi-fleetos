@@ -36,7 +36,7 @@ export default function AppSection({
             <button
               type="button"
               onClick={onAction}
-              className="shrink-0 text-[13px] font-semibold text-[#2563eb]"
+              className="shrink-0 text-[12px] font-medium uppercase tracking-[0.14em] text-[#5BA8A0]"
             >
               {actionLabel}
             </button>

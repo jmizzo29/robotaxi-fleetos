@@ -415,31 +415,31 @@ function FleetApp() {
   ];
 
   const operationsStatus = (
-    <div className="w-full rounded-lg border border-[#141b27]/10 bg-white/80 p-4 shadow-xl shadow-slate-900/10 sm:min-w-[280px] sm:w-auto sm:p-5">
-      <p className="mb-3 text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+    <div className="w-full border border-white/[0.08] bg-[#16181C] p-4 sm:min-w-[280px] sm:w-auto sm:p-5">
+      <p className="mb-3 text-xs font-medium uppercase tracking-[0.18em] text-[#8B8E94]">
         Operations Status
       </p>
 
       <div className="space-y-3">
         <div className="flex justify-between">
-          <span className="text-slate-500">Active Vehicles</span>
-          <span className="font-bold text-[#141b27]">{fleet.length}</span>
+          <span className="text-[#8B8E94]">Active Vehicles</span>
+          <span className="font-medium text-[#F3F3F1]">{fleet.length}</span>
         </div>
 
         <div className="flex justify-between">
-          <span className="text-slate-500">Real Tesla</span>
-          <span className="font-bold text-[#141b27]">{realVehicles.length}</span>
+          <span className="text-[#8B8E94]">Real Tesla</span>
+          <span className="font-medium text-[#F3F3F1]">{realVehicles.length}</span>
         </div>
 
         <div className="flex justify-between">
-          <span className="text-slate-500">Simulation Fleet</span>
-          <span className="font-bold text-slate-700">{simulatedVehicles.length}</span>
+          <span className="text-[#8B8E94]">Simulation Fleet</span>
+          <span className="font-medium text-[#F3F3F1]">{simulatedVehicles.length}</span>
         </div>
 
         <button
           onClick={refreshRealTesla}
           disabled={isLoadingReal}
-          className="w-full rounded-md border border-[#172231]/15 bg-[#172231] px-4 py-3 text-sm font-bold text-white transition hover:bg-[#243044] disabled:cursor-wait disabled:opacity-60"
+          className="w-full rounded-full bg-white px-4 py-3 text-[13px] font-semibold uppercase tracking-[0.14em] text-[#0E0F12] transition hover:bg-white/90 disabled:cursor-wait disabled:opacity-60"
         >
           {isLoadingReal ? 'Syncing Tesla...' : 'Sync Tesla Telemetry'}
         </button>
@@ -481,7 +481,7 @@ function FleetApp() {
     map: (
       <Suspense
         fallback={(
-          <div className="flex h-[70vh] min-h-[460px] items-center justify-center rounded-2xl border border-[#141b27]/10 bg-white/80 text-sm font-medium text-slate-500 shadow-sm lg:h-[calc(100vh-8rem)]">
+          <div className="flex h-[70vh] min-h-[460px] items-center justify-center border border-white/[0.08] bg-[#16181C] text-sm font-medium text-[#8B8E94] lg:h-[calc(100vh-8rem)]">
             Loading fleet map...
           </div>
         )}
@@ -736,11 +736,11 @@ function FleetApp() {
     return (
       <div
         className="flex min-h-screen items-center justify-center"
-        style={{ backgroundColor: '#FAFAF8' }}
+        style={{ backgroundColor: '#0E0F12' }}
       >
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="h-6 w-6 animate-spin" style={{ color: '#9CA3AF' }} />
-          <p className="text-sm" style={{ color: '#6B7280' }}>Loading…</p>
+          <Loader2 className="h-6 w-6 animate-spin" style={{ color: '#8B8E94' }} />
+          <p className="text-sm" style={{ color: '#8B8E94' }}>Loading…</p>
         </div>
       </div>
     );
@@ -830,7 +830,7 @@ function FleetApp() {
             <AccountPanel embedded onNavigate={navigate} />
           </AppShell>
         </div>
-        <div className="hidden min-h-screen bg-surface text-ink lg:block">
+        <div className="hidden min-h-screen bg-[#0E0F12] text-[#F3F3F1] lg:block">
           <AccountPanel onNavigate={navigate} />
         </div>
         <FeedbackButton route={route} />
@@ -857,7 +857,7 @@ function FleetApp() {
   if (MONUMENT_CHAIN_ROUTES.has(route)) {
     return (
       <>
-        <div className="flex h-screen min-h-0" style={{ backgroundColor: '#FAFAF8' }}>
+        <div className="flex h-screen min-h-0" style={{ backgroundColor: '#0E0F12' }}>
           <Sidebar commandQueue={commandQueue} route={route} onNavigate={navigate} />
           <main className="flex min-h-0 flex-1 flex-col overflow-hidden">
             <MonumentChainShell
@@ -883,7 +883,7 @@ function FleetApp() {
   if (OPERATIONS_ROUTES.has(route)) {
     return (
       <>
-        <div className="flex h-screen min-h-0" style={{ backgroundColor: '#FAFAF8' }}>
+        <div className="flex h-screen min-h-0" style={{ backgroundColor: '#0E0F12' }}>
           <Sidebar commandQueue={commandQueue} route={route} onNavigate={navigate} />
           <main className="flex min-h-0 flex-1 flex-col overflow-hidden">
             <MonumentOperations
@@ -906,14 +906,14 @@ function FleetApp() {
   }
 
   return (
-    <div className="robo-minimal flex min-h-screen text-[#141b27] lg:bg-[#f7f7f5]">
+    <div className="robo-minimal flex min-h-screen text-[#F3F3F1] lg:bg-[#0E0F12]">
       <Sidebar
         commandQueue={commandQueue}
         route={route}
         onNavigate={navigate}
       />
 
-      <main className="flex-1 overflow-y-auto lg:bg-[#f7f7f5] lg:p-8">
+      <main className="flex-1 overflow-y-auto lg:bg-[#0E0F12] lg:p-8">
         <div className="mx-auto max-w-[1900px]">
           <div className="lg:hidden">
             <AppShell>

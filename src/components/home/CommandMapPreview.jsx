@@ -6,7 +6,7 @@ import heatmapData from '../../data/heatmapData';
 import demandZones from '../../data/demandZones';
 import { getCommandOperationalSource, vehicleStateLabel } from '../../utils/vehicleDisplayUtils';
 import { AppSection } from '../shell';
-import { radius, shadow } from '../../design/roboagentTokens';
+import { radius } from '../../design/roboagentTokens';
 
 const ORLANDO_VIEW = {
   longitude: -81.3792,
@@ -64,14 +64,14 @@ function getMapFleet(fleet, realFleet, totalEarnings, syncState) {
 
 function MapFooter({ total, active }) {
   return (
-    <div className="pointer-events-none absolute bottom-0 left-0 right-0 flex items-center justify-between gap-2 border-t border-slate-200/80 bg-white/96 px-4 py-3 backdrop-blur-md">
-      <p className="text-[12px] font-semibold text-slate-800">
-        {total} Vehicles <span className="text-slate-300">|</span> {active} Active now
+    <div className="pointer-events-none absolute bottom-0 left-0 right-0 flex items-center justify-between gap-2 bg-gradient-to-t from-[#0E0F12] via-[#0E0F12]/80 to-transparent px-5 pb-4 pt-10">
+      <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-white/80">
+        {total} vehicles <span className="text-white/30">·</span> {active} active
       </p>
-      <div className="flex items-center gap-2.5 text-[10px] font-semibold text-slate-500">
-        <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-[#22c55e]" />Active</span>
-        <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-[#eab308]" />Charging</span>
-        <span className="inline-flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-[#ef4444]" />Offline</span>
+      <div className="flex items-center gap-3 text-[10px] font-medium uppercase tracking-[0.12em] text-white/45">
+        <span className="inline-flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-[#5BA8A0]" />Active</span>
+        <span className="inline-flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-[#C4A35A]" />Charge</span>
+        <span className="inline-flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-[#C45C4A]" />Off</span>
       </div>
     </div>
   );
@@ -212,6 +212,7 @@ export default function CommandMapPreview({
   mapHeightClass = 'h-[420px]',
   tier = 'primary',
   bare = false,
+  flush = false,
 }) {
   const [viewState, setViewState] = useState(ORLANDO_VIEW);
   const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
@@ -230,9 +231,9 @@ export default function CommandMapPreview({
   }).length;
 
   const mapFrame = (
-    <div className={bare ? 'w-full px-5' : `${radius.cardLg} bg-gradient-to-b from-slate-100 to-slate-200/80 p-1 ${shadow.map}`}>
+    <div className={flush ? 'h-full w-full' : bare ? 'w-full px-5' : `${radius.cardLg} bg-[#16181C] p-px`}>
       <div
-        className={`relative overflow-hidden ${bare ? 'rounded-xl border border-[#E5E5E0]' : `${radius.card} border border-slate-300/60 shadow-inner`} ${mapHeightClass}`}
+        className={`relative overflow-hidden ${flush ? 'h-full' : bare ? 'rounded-[8px] border border-white/[0.08]' : `${radius.card} border border-white/[0.08]`} ${mapHeightClass}`}
       >
         {!mapboxToken ? (
           <>

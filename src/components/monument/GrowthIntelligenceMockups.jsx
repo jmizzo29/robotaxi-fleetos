@@ -203,7 +203,7 @@ function InsightList({ insights }) {
         >
           <span
             className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full"
-            style={{ backgroundColor: insight.tint || '#EBF2FF', color: insight.accent || monument.action }}
+            style={{ backgroundColor: insight.tint || 'rgba(91,168,160,0.12)', color: insight.accent || monument.action }}
           >
             {insight.icon || <ArrowUpRight className="h-4 w-4" />}
           </span>
@@ -260,7 +260,7 @@ function OptionA({ expansion, events }) {
       body: `${airportZone.demand} demand score with ${airportZone.profitability} profitability.`,
       icon: <Target className="h-4 w-4" />,
       accent: monument.action,
-      tint: '#EAF0FF',
+      tint: 'rgba(91,168,160,0.12)',
     },
     {
       title: 'Demand exceeds planned coverage',
@@ -332,7 +332,7 @@ function OptionC({ expansion, events, scores }) {
       body: 'Keep monitoring post-event demand before adding permanent capacity.',
       icon: <Target className="h-4 w-4" />,
       accent: monument.action,
-      tint: '#EAF0FF',
+      tint: 'rgba(91,168,160,0.12)',
     },
   ];
 

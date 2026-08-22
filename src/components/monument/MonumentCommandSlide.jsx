@@ -1,31 +1,20 @@
 import FleetMonumentPanel from './FleetMonumentPanel';
-import FleetStatusCard from './FleetStatusCard';
-import GrowthIntelligenceMockups from './GrowthIntelligenceMockups';
 import MonumentActionFooter from './MonumentActionFooter';
 import { monument, monumentType } from './monumentTokens';
-import FleetIntelligenceMockups from '../../panels/FleetIntelligenceMockups';
 
 function MonumentHero({ label, amount, subline, labelColor, onTapAmount }) {
   return (
-    <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
+    <div className="flex min-h-0 flex-1 flex-col items-center justify-center px-6 text-center">
       <p className={monumentType.label} style={{ color: labelColor || monument.inkGhost }}>{label}</p>
       <button
         type="button"
         onClick={onTapAmount}
-        className={`mt-5 ${monumentType.monument}`}
-        style={{ color: monument.money }}
+        className={`mt-6 ${monumentType.monument}`}
+        style={{ color: monument.ink }}
       >
         {amount}
       </button>
-      <p className={`mt-4 ${monumentType.subline}`} style={{ color: monument.inkMuted }}>{subline}</p>
-    </div>
-  );
-}
-
-function MonumentStatusHero({ payload }) {
-  return (
-    <div className="flex flex-1 items-center justify-center px-5 py-6">
-      <FleetStatusCard payload={payload} />
+      <p className={`mt-5 ${monumentType.subline}`} style={{ color: monument.inkMuted }}>{subline}</p>
     </div>
   );
 }
@@ -39,24 +28,12 @@ export default function MonumentCommandSlide({
 }) {
   if (!page) return null;
 
-  if (page.growthMockups) {
-    return <GrowthIntelligenceMockups fleet={page.growthMockups.fleet} />;
-  }
-
-  if (page.fleetIntelligence) {
-    return <FleetIntelligenceMockups fleet={page.fleetIntelligence.fleet} />;
-  }
-
   return (
     <div className="flex h-full min-h-0 flex-col" style={{ backgroundColor: monument.canvas }}>
-      {page.statusCard ? (
-        <MonumentStatusHero payload={page.statusCard} />
-      ) : (
-        <MonumentHero
-          {...page.hero}
-          onTapAmount={() => onHeroTap(page.id)}
-        />
-      )}
+      <MonumentHero
+        {...page.hero}
+        onTapAmount={() => onHeroTap(page.id)}
+      />
       {page.showFleetPanel && (
         <FleetMonumentPanel
           strip={strip}

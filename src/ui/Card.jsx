@@ -11,7 +11,7 @@ export default function Card({
   return (
     <Tag
       className={`${card.base} transition ${
-        interactive ? 'active:scale-[0.99] hover:border-slate-300/90' : ''
+        interactive ? 'active:scale-[0.99] hover:border-white/16' : ''
       } ${padding} ${className}`}
       {...props}
     >

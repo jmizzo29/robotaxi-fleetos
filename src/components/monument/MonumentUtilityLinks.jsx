@@ -71,7 +71,7 @@ export default function MonumentUtilityLinks({
                 isActive ? 'opacity-100' : 'opacity-40'
               }`}
               style={{
-                backgroundColor: isActive ? monument.ledgerWash : 'transparent',
+                backgroundColor: isActive ? 'rgba(243,243,241,0.06)' : 'transparent',
                 color: isActive ? monument.ink : monument.inkMuted,
               }}
             >

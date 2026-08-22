@@ -1,18 +1,18 @@
 export default function RoboWordmark({
   className = '',
-  colorClass = 'text-[#172231]',
+  colorClass = 'text-[#F3F3F1]',
   variant = 'default',
 }) {
   if (variant === 'calm') {
     return (
-      <span className={`font-brand font-semibold tracking-tight ${colorClass} ${className}`}>
+      <span className={`font-semibold tracking-[0.18em] ${colorClass} ${className}`}>
         RoboAgent
       </span>
     );
   }
 
   return (
-    <span className={`font-brand font-bold uppercase ${colorClass} ${className}`}>
+    <span className={`font-semibold uppercase tracking-[0.28em] ${colorClass} ${className}`}>
       ROBOAGENT
     </span>
   );

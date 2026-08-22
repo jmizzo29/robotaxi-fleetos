@@ -1,35 +1,10 @@
 import LandingHeader from './LandingHeader';
 import { monument, monumentType } from '../monument/monumentTokens';
 
-function Hairline() {
-  return (
-    <div className="mx-auto my-0 h-px w-6" style={{ backgroundColor: monument.hairline }} />
-  );
-}
-
-function LedgerRow({ left, right, tone = 'neutral' }) {
-  const rightColor = tone === 'positive' ? monument.money : monument.inkMuted;
-  return (
-    <div
-      className={`flex items-center justify-between gap-3 border-b py-2.5 ${monumentType.monoSm}`}
-      style={{ borderColor: monument.hairline }}
-    >
-      <span style={{ color: monument.inkGhost }}>{left}</span>
-      <span className="font-semibold text-right" style={{ color: rightColor }}>{right}</span>
-    </div>
-  );
-}
-
 const STEPS = [
   { step: '01', title: 'Connect your Tesla' },
   { step: '02', title: 'Get daily AI plans' },
   { step: '03', title: 'Approve what you want' },
-];
-
-const TELEMETRY_ROWS = [
-  ['battery', 'level · range · charging'],
-  ['location', 'position · speed · heading'],
-  ['fleet health', 'odometer · software · alerts'],
 ];
 
 export default function HowItWorksMonument({ onNavigate }) {
@@ -37,52 +12,33 @@ export default function HowItWorksMonument({ onNavigate }) {
     <div className="flex min-h-[100dvh] flex-col" style={{ backgroundColor: monument.canvas }}>
       <LandingHeader onNavigate={onNavigate} variant="monument" />
 
-      <div className="mx-auto flex w-full max-w-md flex-1 flex-col px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-16">
-        <div className="flex flex-1 flex-col items-center justify-center text-center">
+      <div className="mx-auto flex w-full max-w-lg flex-1 flex-col px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-16">
+        <div className="flex min-h-0 flex-1 flex-col items-center justify-center text-center">
           <p className={monumentType.label} style={{ color: monument.inkGhost }}>How it works</p>
-          <p className={`mt-5 ${monumentType.monument}`} style={{ color: monument.money }}>3</p>
-          <p className={`mt-4 ${monumentType.subline}`} style={{ color: monument.inkMuted }}>
+          <p className={`mt-6 ${monumentType.monument}`} style={{ color: monument.ink }}>3</p>
+          <p className={`mt-5 ${monumentType.subline}`} style={{ color: monument.inkMuted }}>
             steps · you approve everything
           </p>
         </div>
 
-        <div className="shrink-0 space-y-3">
+        <div className="shrink-0 space-y-0">
           {STEPS.map((step) => (
             <div
               key={step.step}
-              className="rounded-xl border px-4 py-3.5"
-              style={{ borderColor: monument.hairline, backgroundColor: monument.surface }}
+              className="flex items-baseline justify-between gap-6 border-t py-4"
+              style={{ borderColor: monument.hairline }}
             >
-              <div className="flex items-center justify-between gap-3">
-                <p className={monumentType.label} style={{ color: monument.inkGhost }}>{step.step}</p>
-                <p className={`${monumentType.sheetBody} font-semibold`} style={{ color: monument.ink }}>
-                  {step.title}
-                </p>
-              </div>
+              <p className={monumentType.label} style={{ color: monument.inkGhost }}>{step.step}</p>
+              <p className={`${monumentType.sheetBody} text-right font-medium`} style={{ color: monument.ink }}>
+                {step.title}
+              </p>
             </div>
           ))}
 
-          <div
-            className="rounded-xl px-4 py-3.5"
-            style={{ backgroundColor: monument.ledgerWash }}
-          >
-            <p className={monumentType.label} style={{ color: monument.inkGhost }}>Telemetry</p>
-            <p className={`mt-2 ${monumentType.sheetBody}`} style={{ color: monument.ink }}>
-              Official Tesla Fleet API only.
-            </p>
-            <div className="mt-2">
-              {TELEMETRY_ROWS.map(([left, right]) => (
-                <LedgerRow key={left} left={left} right={right} tone="positive" />
-              ))}
-            </div>
-          </div>
-
-          <Hairline />
           <button
             type="button"
             onClick={() => onNavigate('onboarding')}
-            className={`mt-5 w-full rounded-xl py-3.5 ${monumentType.buttonPrimary} text-white transition active:scale-[0.98]`}
-            style={{ backgroundColor: monument.action }}
+            className="mt-8 w-full rounded-full bg-white py-3.5 text-[13px] font-semibold uppercase tracking-[0.16em] text-[#0E0F12] transition active:scale-[0.98]"
           >
             Connect Tesla
           </button>
@@ -92,7 +48,7 @@ export default function HowItWorksMonument({ onNavigate }) {
             className={`mt-3 w-full py-2.5 ${monumentType.actionLink}`}
             style={{ color: monument.inkMuted }}
           >
-            Back to home
+            Back
           </button>
         </div>
       </div>

@@ -3,21 +3,21 @@
 @theme {
   --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
 
-  --color-surface: #f7f7f5;
-  --color-surface-raised: #ffffff;
-  --color-ink: #141b27;
-  --color-ink-muted: #64748b;
-  --color-ink-subtle: #94a3b8;
-  --color-accent: #172231;
-  --color-accent-hover: #243044;
+  --color-surface: #0E0F12;
+  --color-surface-raised: #16181C;
+  --color-ink: #F3F3F1;
+  --color-ink-muted: #8B8E94;
+  --color-ink-subtle: #5C5F66;
+  --color-accent: #5BA8A0;
+  --color-accent-hover: #4A8F88;
 
-  --color-status-ready: #10b981;
-  --color-status-caution: #f59e0b;
-  --color-status-critical: #ef4444;
-  --color-status-active: #0ea5e9;
+  --color-status-ready: #5BA8A0;
+  --color-status-caution: #C4A35A;
+  --color-status-critical: #C45C4A;
+  --color-status-active: #5BA8A0;
 
-  --radius-card: 1rem;
-  --shadow-soft: 0 8px 30px rgba(20, 27, 39, 0.06);
+  --radius-card: 0.5rem;
+  --shadow-soft: none;
 }
 
 html,
@@ -26,7 +26,8 @@ body,
   margin: 0;
   padding: 0;
   min-height: 100%;
-  background: var(--color-surface);
+  background: #0E0F12;
+  color: #F3F3F1;
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -98,13 +99,13 @@ body,
 }
 
 @keyframes command-status-live {
-  0%, 100% { box-shadow: inset 0 0 0 1px rgba(16, 185, 129, 0.12); }
-  50% { box-shadow: inset 0 0 0 1px rgba(16, 185, 129, 0.35), 0 0 18px rgba(16, 185, 129, 0.08); }
+  0%, 100% { box-shadow: inset 0 0 0 1px rgba(91, 168, 160, 0.12); }
+  50% { box-shadow: inset 0 0 0 1px rgba(91, 168, 160, 0.35), 0 0 18px rgba(91, 168, 160, 0.08); }
 }
 
 @keyframes command-led-live {
-  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(52, 211, 153, 0.5); }
-  50% { opacity: 0.75; box-shadow: 0 0 0 4px rgba(52, 211, 153, 0); }
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(91, 168, 160, 0.5); }
+  50% { opacity: 0.75; box-shadow: 0 0 0 4px rgba(91, 168, 160, 0); }
 }
 
 @keyframes command-led-charge {
@@ -156,95 +157,20 @@ body,
   display: none;
 }
 
-
 .font-brand {
-  font-family: 'Orbitron', sans-serif;
+  font-family: Inter, ui-sans-serif, system-ui, sans-serif;
 }
 
 .brand-glow {
-  text-shadow:
-    0 0 20px rgba(59, 130, 246, 0.95),
-    0 0 50px rgba(59, 130, 246, 0.7),
-    0 0 90px rgba(37, 99, 235, 0.45);
+  text-shadow: none;
 }
 
 .robo-minimal {
-  background: #f7f7f5;
-  color: #141b27;
-  /* calmer command surfaces */
+  background: #0E0F12;
+  color: #F3F3F1;
 }
 .robo-minimal main {
-  background: #f7f7f5;
-}
-
-.robo-minimal [class*="bg-slate-900"],
-.robo-minimal [class*="bg-slate-950"],
-.robo-minimal [class*="bg-zinc-900"],
-.robo-minimal [class*="bg-zinc-950"],
-.robo-minimal [class*="bg-black"],
-.robo-minimal [class*="bg-[#111111]"],
-.robo-minimal [class*="bg-[#151821]"],
-.robo-minimal [class*="bg-[#0a0a0a]"],
-.robo-minimal [class*="bg-[#050506]"],
-.robo-minimal [class*="from-zinc-900"],
-.robo-minimal [class*="from-zinc-950"],
-.robo-minimal [class*="from-slate-900"],
-.robo-minimal [class*="to-zinc-950"],
-.robo-minimal [class*="to-black"],
-.robo-minimal [class*="to-slate-950"] {
-  background: rgba(255, 255, 255, 0.82) !important;
-  color: #141b27 !important;
-}
-
-.robo-minimal [class*="bg-gradient-to"] {
-  background-image: none !important;
-}
-
-.robo-minimal [class*="border-white/10"],
-.robo-minimal [class*="border-zinc-800"],
-.robo-minimal [class*="border-slate-800"] {
-  border-color: rgba(20, 27, 39, 0.12) !important;
-}
-
-.robo-minimal [class*="text-white"],
-.robo-minimal [class*="text-slate-50"],
-.robo-minimal [class*="text-slate-100"],
-.robo-minimal [class*="text-zinc-100"] {
-  color: #141b27 !important;
-}
-
-.robo-minimal [class*="text-slate-200"],
-.robo-minimal [class*="text-slate-300"],
-.robo-minimal [class*="text-zinc-200"],
-.robo-minimal [class*="text-zinc-300"] {
-  color: #334155 !important;
-}
-
-.robo-minimal [class*="text-slate-400"],
-.robo-minimal [class*="text-slate-500"],
-.robo-minimal [class*="text-zinc-400"],
-.robo-minimal [class*="text-zinc-500"] {
-  color: #64748b !important;
-}
-
-.robo-minimal button[class*="bg-[#172231]"],
-.robo-minimal a[class*="bg-[#172231]"],
-.robo-minimal [class*="bg-[#172231]"][class*="text-white"],
-.robo-minimal [class*="bg-[#172231]"] [class*="text-white"] {
-  color: #ffffff !important;
-}
-
-.robo-minimal [class*="shadow-black"] {
-  --tw-shadow-color: rgba(15, 23, 42, 0.14) !important;
-  --tw-shadow: var(--tw-shadow-colored) !important;
-}
-
-.robo-minimal input,
-.robo-minimal select,
-.robo-minimal textarea {
-  background: rgba(255, 255, 255, 0.9) !important;
-  color: #141b27 !important;
-  border-color: rgba(20, 27, 39, 0.16) !important;
+  background: #0E0F12;
 }
 
 .mapboxgl-popup.fleetos-popup {
@@ -256,13 +182,13 @@ body,
   padding: 0;
   overflow: visible;
   background: transparent;
-  border-radius: 14px;
-  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45);
+  border-radius: 8px;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.55);
 }
 
 .mapboxgl-popup.fleetos-popup .mapboxgl-popup-tip {
-  border-top-color: rgba(2, 6, 23, 0.92);
-  border-bottom-color: rgba(2, 6, 23, 0.92);
+  border-top-color: #16181C;
+  border-bottom-color: #16181C;
 }
 
 .mapboxgl-popup.fleetos-popup .mapboxgl-popup-close-button {
@@ -272,30 +198,30 @@ body,
   width: 22px;
   z-index: 2;
   border-radius: 999px;
-  color: #cbd5e1;
+  color: #8B8E94;
   font-size: 16px;
   line-height: 20px;
-  background: rgba(15, 23, 42, 0.72);
+  background: rgba(14, 15, 18, 0.8);
 }
 
 .mapboxgl-popup.fleetos-popup .mapboxgl-popup-close-button:hover {
-  color: white;
-  background: rgba(51, 65, 85, 0.95);
+  color: #F3F3F1;
+  background: rgba(28, 30, 35, 0.95);
 }
 
-/* Clerk renders outside our component tree, so keep auth modals readable with hard overrides. */
+/* Clerk renders outside our component tree. */
 .cl-modalBackdrop,
 .cl-modalBackdrop__modal {
-  background: rgba(15, 23, 42, 0.24) !important;
-  backdrop-filter: blur(8px) !important;
+  background: rgba(6, 7, 9, 0.72) !important;
+  backdrop-filter: blur(12px) !important;
 }
 
 .cl-card,
 .cl-cardBox {
-  background: #ffffff !important;
-  color: #141b27 !important;
-  border: 1px solid rgba(20, 27, 39, 0.12) !important;
-  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.18) !important;
+  background: #16181C !important;
+  color: #F3F3F1 !important;
+  border: 1px solid rgba(243, 243, 241, 0.08) !important;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45) !important;
 }
 
 .cl-headerTitle,
@@ -305,13 +231,13 @@ body,
 .cl-identityPreviewText,
 .cl-formHeaderTitle,
 .cl-formHeaderSubtitle {
-  color: #141b27 !important;
+  color: #F3F3F1 !important;
 }
 
 .cl-headerTitle,
 .cl-formHeaderTitle {
-  font-weight: 600 !important;
-  letter-spacing: -0.01em !important;
+  font-weight: 500 !important;
+  letter-spacing: -0.02em !important;
 }
 
 .cl-formButtonPrimary {
@@ -321,40 +247,40 @@ body,
 .cl-headerSubtitle,
 .cl-formHeaderSubtitle,
 .cl-footerAction {
-  color: #64748b !important;
+  color: #8B8E94 !important;
 }
 
 .cl-formFieldInput,
 .cl-input {
-  background: #ffffff !important;
-  color: #141b27 !important;
-  border-color: #cbd5e1 !important;
+  background: #0E0F12 !important;
+  color: #F3F3F1 !important;
+  border-color: rgba(243, 243, 241, 0.16) !important;
   box-shadow: none !important;
 }
 
 .cl-formFieldInput::placeholder,
 .cl-input::placeholder {
-  color: #94a3b8 !important;
+  color: #5C5F66 !important;
 }
 
 .cl-formButtonPrimary {
-  background: #172231 !important;
-  color: #ffffff !important;
+  background: #F3F3F1 !important;
+  color: #0E0F12 !important;
   box-shadow: none !important;
 }
 
 .cl-formButtonPrimary:hover {
-  background: #243044 !important;
+  background: #DCDCD8 !important;
 }
 
 .cl-socialButtonsBlockButton {
-  background: #ffffff !important;
-  color: #141b27 !important;
-  border-color: #cbd5e1 !important;
+  background: #16181C !important;
+  color: #F3F3F1 !important;
+  border-color: rgba(243, 243, 241, 0.12) !important;
 }
 
 .cl-socialButtonsBlockButton:hover {
-  background: #f8fafc !important;
+  background: #1C1E23 !important;
 }
 
 .cl-socialButtonsBlockButtonText,
@@ -362,18 +288,18 @@ body,
 .cl-footerActionText,
 .cl-footerActionLink,
 .cl-formResendCodeLink {
-  color: #172231 !important;
+  color: #F3F3F1 !important;
 }
 
 .cl-footer,
 .cl-footerPages {
-  background: #ffffff !important;
-  border-color: #e2e8f0 !important;
+  background: #16181C !important;
+  border-color: rgba(243, 243, 241, 0.08) !important;
 }
 
 .cl-internal-b3fm6y,
 .cl-internal-1dauvpw {
-  color: #64748b !important;
+  color: #8B8E94 !important;
 }
 
 button[data-provider="github"],
