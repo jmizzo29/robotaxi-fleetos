@@ -267,7 +267,7 @@ function OptionA({ expansion, events }) {
       body: topEvent.recommendation,
       icon: <Sparkles className="h-4 w-4" />,
       accent: monument.projected,
-      tint: '#FFF4D6',
+      tint: 'rgba(196,163,90,0.14)',
     },
   ];
 
@@ -318,14 +318,14 @@ function OptionC({ expansion, events, scores }) {
       body: `Adding ${expansion.deployCount} vehicles could add ${expansion.projectedLabel} in monthly revenue.`,
       icon: <TrendingUp className="h-4 w-4" />,
       accent: monument.money,
-      tint: '#E7F4EE',
+      tint: 'rgba(91,168,160,0.12)',
     },
     {
       title: 'Convention demand is expected to rise',
       body: normalizeOpportunity(events.find((event) => event.title.includes('Expo'))).recommendation,
       icon: <Sparkles className="h-4 w-4" />,
       accent: monument.projected,
-      tint: '#FFF4D6',
+      tint: 'rgba(196,163,90,0.14)',
     },
     {
       title: 'Tampa remains a secondary expansion play',

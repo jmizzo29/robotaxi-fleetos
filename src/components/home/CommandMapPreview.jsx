@@ -237,13 +237,13 @@ export default function CommandMapPreview({
       >
         {!mapboxToken ? (
           <>
-            <div className="absolute inset-0 flex items-center justify-center bg-[#06080c] px-6 text-center">
-              <div>
-                <p className="text-sm font-semibold text-white/80">Mapbox token required</p>
-                <p className="mt-1 text-[11px] text-white/45">
-                  Add <code className="rounded bg-white/10 px-1 py-0.5">VITE_MAPBOX_TOKEN</code> for the live map.
-                </p>
-              </div>
+            <div className="absolute inset-0">
+              <img
+                src="/landing/night-command.jpg"
+                alt=""
+                className="h-full w-full object-cover opacity-45"
+              />
+              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(14,15,18,0.35)_0%,rgba(14,15,18,0.15)_40%,rgba(14,15,18,0.72)_100%)]" />
             </div>
             <MapFooter total={total} active={active} />
           </>

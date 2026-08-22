@@ -166,14 +166,16 @@ export default function MonumentChainShell({
         </section>
       </div>
 
-      <MonumentBottomChrome
-        utilityActive={utilityActive}
-        commandActive={commandActive}
-        onNavigate={handleUtilitySelect}
-        onCommandSelect={handleCommandSelect}
-        onLongPress={() => command.setAccountOpen(true)}
-        swipeHint={swipeHint}
-      />
+      <div className="lg:hidden">
+        <MonumentBottomChrome
+          utilityActive={utilityActive}
+          commandActive={commandActive}
+          onNavigate={handleUtilitySelect}
+          onCommandSelect={handleCommandSelect}
+          onLongPress={() => command.setAccountOpen(true)}
+          swipeHint={swipeHint}
+        />
+      </div>
 
       <ConfirmActionSheet
         open={command.confirmOpen}
