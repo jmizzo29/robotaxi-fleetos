@@ -1,4 +1,5 @@
 import LandingHeader from './LandingHeader';
+import LandingHeroAmbience from './LandingHeroAmbience';
 import { monument, monumentType } from '../monument/monumentTokens';
 
 const STEPS = [
@@ -9,29 +10,27 @@ const STEPS = [
 
 export default function HowItWorksMonument({ onNavigate }) {
   return (
-    <div className="flex min-h-[100dvh] flex-col" style={{ backgroundColor: monument.canvas }}>
-      <LandingHeader onNavigate={onNavigate} variant="monument" />
+    <div className="relative flex min-h-[100dvh] flex-col overflow-hidden bg-[#0E0F12] text-[#F3F3F1]">
+      <LandingHeroAmbience />
+      <LandingHeader onNavigate={onNavigate} variant="cinematic" />
 
-      <div className="mx-auto flex w-full max-w-lg flex-1 flex-col px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-16">
+      <div className="relative z-10 mx-auto flex w-full max-w-lg flex-1 flex-col px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-16">
         <div className="flex min-h-0 flex-1 flex-col items-center justify-center text-center">
-          <p className={monumentType.label} style={{ color: monument.inkGhost }}>How it works</p>
-          <p className={`mt-6 ${monumentType.monument}`} style={{ color: monument.ink }}>3</p>
-          <p className={`mt-5 ${monumentType.subline}`} style={{ color: monument.inkMuted }}>
-            steps · you approve everything
+          <p className={`${monumentType.label} text-white/45`}>How it works</p>
+          <p className={`mt-6 ${monumentType.monument} text-white`}>3</p>
+          <p className="mt-5 text-[17px] font-normal tracking-[-0.01em] text-white/70">
+            You approve everything.
           </p>
         </div>
 
-        <div className="shrink-0 space-y-0">
+        <div className="shrink-0">
           {STEPS.map((step) => (
             <div
               key={step.step}
-              className="flex items-baseline justify-between gap-6 border-t py-4"
-              style={{ borderColor: monument.hairline }}
+              className="flex items-baseline justify-between gap-6 border-t border-white/10 py-4"
             >
-              <p className={monumentType.label} style={{ color: monument.inkGhost }}>{step.step}</p>
-              <p className={`${monumentType.sheetBody} text-right font-medium`} style={{ color: monument.ink }}>
-                {step.title}
-              </p>
+              <p className={monumentType.label} style={{ color: 'rgba(243,243,241,0.35)' }}>{step.step}</p>
+              <p className="text-right text-[15px] font-medium text-white">{step.title}</p>
             </div>
           ))}
 
@@ -45,8 +44,7 @@ export default function HowItWorksMonument({ onNavigate }) {
           <button
             type="button"
             onClick={() => onNavigate('landing')}
-            className={`mt-3 w-full py-2.5 ${monumentType.actionLink}`}
-            style={{ color: monument.inkMuted }}
+            className={`mt-3 w-full py-2.5 ${monumentType.actionLink} text-white/45`}
           >
             Back
           </button>

@@ -2,9 +2,8 @@ import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import RoboLogo from '../RoboLogo';
 import RoboWordmark from '../RoboWordmark';
-import LandingHowItWorksCard from './LandingHowItWorksCard';
 import MonumentBetaBadge from '../monument/MonumentBetaBadge';
-import { monument, monumentType } from '../monument/monumentTokens';
+import { monument } from '../monument/monumentTokens';
 
 export default function LandingHeader({ onNavigate, variant = 'default' }) {
   const [open, setOpen] = useState(false);
@@ -73,19 +72,20 @@ export default function LandingHeader({ onNavigate, variant = 'default' }) {
           style={{ backgroundColor: monument.canvas }}
           aria-hidden={!open}
         >
-          <div className="flex flex-col gap-1">
-            <LandingHowItWorksCard onClick={() => go('how-it-works')} />
-
-            <div className="my-4 h-px" style={{ backgroundColor: monument.hairline }} />
-
-            <button
-              type="button"
-              onClick={() => go('about')}
-              className={`rounded-lg px-3 py-3.5 text-left ${monumentType.sheetBody} transition active:bg-white/[0.04]`}
-              style={{ color: monument.ink }}
-            >
-              About
-            </button>
+          <div className="flex flex-col">
+            {[
+              { route: 'how-it-works', label: 'How it works' },
+              { route: 'about', label: 'About' },
+            ].map((item) => (
+              <button
+                key={item.route}
+                type="button"
+                onClick={() => go(item.route)}
+                className="border-b border-white/10 py-4 text-left text-[15px] font-medium text-white/80 transition hover:text-white"
+              >
+                {item.label}
+              </button>
+            ))}
           </div>
         </nav>
       </>
@@ -137,26 +137,20 @@ export default function LandingHeader({ onNavigate, variant = 'default' }) {
         }`}
         aria-hidden={!open}
       >
-        <div className="flex flex-col gap-1">
-          <button
-            type="button"
-            onClick={() => go('how-it-works')}
-            className="rounded-lg border px-3 py-3.5 text-left transition hover:bg-white/5"
-            style={{ borderColor: 'rgba(255,255,255,0.08)' }}
-          >
-            <p className="text-[11px] font-medium uppercase tracking-[0.22em] text-white/45">How it works</p>
-            <p className="mt-1.5 text-[15px] font-medium text-white">3 steps · you approve</p>
-          </button>
-
-          <div className="my-3 h-px bg-white/10" />
-
-          <button
-            type="button"
-            onClick={() => go('about')}
-            className="rounded-lg px-3 py-3.5 text-left text-[15px] font-medium text-white/80 transition hover:bg-white/5 hover:text-white"
-          >
-            About
-          </button>
+        <div className="flex flex-col">
+          {[
+            { route: 'how-it-works', label: 'How it works' },
+            { route: 'about', label: 'About' },
+          ].map((item) => (
+            <button
+              key={item.route}
+              type="button"
+              onClick={() => go(item.route)}
+              className="border-b border-white/10 py-4 text-left text-[15px] font-medium text-white/80 transition hover:text-white"
+            >
+              {item.label}
+            </button>
+          ))}
         </div>
       </nav>
     </>
