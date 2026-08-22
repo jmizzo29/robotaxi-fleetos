@@ -416,55 +416,55 @@ export function AgentChatPage({ onNavigate }) {
   const primaryAction = response.steps?.[0] || 'Charge Model Y after 11 PM and clean both cars before Saturday bookings.';
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#f7f7f5] text-[#141b27]">
-      <header className="sticky top-0 z-50 flex items-center justify-between border-b border-[#141b27]/10 bg-white/90 p-4 backdrop-blur-md">
+    <div className="flex min-h-screen flex-col bg-[#0E0F12] text-[#F3F3F1]">
+      <header className="sticky top-0 z-50 flex items-center justify-between border-b border-white/[0.08] bg-[#0E0F12]/90 p-4 backdrop-blur-md">
         <div className="flex items-center gap-3">
-          <RoboLogo className="h-10 w-10 shrink-0" />
+          <RoboLogo className="h-10 w-10 shrink-0 text-white" />
           <div>
             <p className="text-lg">
               <RoboWordmark />
             </p>
-            <p data-testid="agent-online-status" className="flex items-center gap-1 text-xs text-teal-400 before:mr-1 before:content-['●'] [&>span:first-child]:hidden">
+            <p data-testid="agent-online-status" className="flex items-center gap-1 text-xs text-[#5BA8A0] before:mr-1 before:content-['●'] [&>span:first-child]:hidden">
               <span aria-hidden="true">●</span>
               <span>Online</span>
             </p>
           </div>
         </div>
-        <button type="button" onClick={() => onNavigate('landing')} className="text-xl text-slate-500 hover:text-black" aria-label="Back home">
+        <button type="button" onClick={() => onNavigate('landing')} className="text-xl text-[#8B8E94] hover:text-white" aria-label="Back home">
           ...
         </button>
       </header>
 
       <main className="flex-1 space-y-6 overflow-y-auto p-4 pb-32">
         <div className="flex gap-3">
-          <RoboLogo className="h-9 w-9 shrink-0" />
-          <div className="max-w-[75%] rounded-3xl rounded-tl-none border border-[#141b27]/10 bg-white px-5 py-4 shadow-sm">
-            <p className="text-slate-700">
+          <RoboLogo className="h-9 w-9 shrink-0 text-white" />
+          <div className="max-w-[75%] rounded-2xl rounded-tl-none border border-white/[0.08] bg-[#16181C] px-5 py-4">
+            <p className="text-[#C8C8C4]">
               Good morning! I&apos;ve analyzed your fleet. Here&apos;s what I recommend for today:
             </p>
           </div>
         </div>
 
         <div className="flex justify-end">
-          <div className="max-w-[70%] rounded-3xl rounded-tr-none bg-[#172231] px-5 py-4">
-            <p className="text-white">{goal || "What's the best plan for this weekend?"}</p>
+          <div className="max-w-[70%] rounded-2xl rounded-tr-none bg-white px-5 py-4">
+            <p className="text-[#0E0F12]">{goal || "What's the best plan for this weekend?"}</p>
           </div>
         </div>
 
         <div className="flex gap-3">
-          <RoboLogo className="h-9 w-9 shrink-0" />
-          <div className="max-w-[75%] rounded-3xl rounded-tl-none border border-[#141b27]/10 bg-white px-5 py-4 shadow-sm">
-            <p className="font-medium text-[#141b27]">{firstMetric}</p>
-            <p className="mt-2 text-slate-600">{primaryAction}</p>
-            <p className="mt-3 text-xs text-slate-500">
-              Expected impact: <span className="font-bold">{response.impact || '$284 projected'}</span>
+          <RoboLogo className="h-9 w-9 shrink-0 text-white" />
+          <div className="max-w-[75%] rounded-2xl rounded-tl-none border border-white/[0.08] bg-[#16181C] px-5 py-4">
+            <p className="font-medium text-[#F3F3F1]">{firstMetric}</p>
+            <p className="mt-2 text-[#8B8E94]">{primaryAction}</p>
+            <p className="mt-3 text-xs text-[#5C5F66]">
+              Expected impact: <span className="font-semibold text-[#5BA8A0]">{response.impact || '$284 projected'}</span>
             </p>
             <span className="hidden">{response.title}</span>
           </div>
         </div>
       </main>
 
-      <div className="border-t border-[#141b27]/10 bg-[#f7f7f5] px-4 pb-4">
+      <div className="border-t border-white/[0.08] bg-[#0E0F12] px-4 pb-4">
         <div className="flex gap-2 overflow-x-auto pb-3 pt-3">
           {prompts.map(([chip, prompt]) => (
             <button
@@ -474,7 +474,7 @@ export function AgentChatPage({ onNavigate }) {
                 setGoal(prompt);
                 setResponse(buildDemoResponse(prompt));
               }}
-              className="whitespace-nowrap rounded-2xl border border-[#141b27]/10 bg-white px-5 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100"
+              className="whitespace-nowrap rounded-full border border-white/10 bg-transparent px-5 py-2 text-sm font-medium text-[#8B8E94] hover:border-white/20 hover:text-[#F3F3F1]"
             >
               {chip}
             </button>
@@ -482,8 +482,8 @@ export function AgentChatPage({ onNavigate }) {
         </div>
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 border-t border-[#141b27]/10 bg-white p-4">
-        <div className="flex items-center rounded-3xl border border-[#141b27]/10 bg-slate-50 px-5 py-2">
+      <div className="fixed bottom-0 left-0 right-0 border-t border-white/[0.08] bg-[#0E0F12] p-4">
+        <div className="flex items-center rounded-full border border-white/10 bg-[#16181C] px-5 py-2">
           <input
             id="public-agent-question"
             type="text"
@@ -493,13 +493,13 @@ export function AgentChatPage({ onNavigate }) {
               if (event.key === 'Enter') askAgent();
             }}
             placeholder="Ask ROBOAGENT anything..."
-            className="flex-1 bg-transparent text-[#141b27] outline-none placeholder:text-slate-400"
+            className="flex-1 bg-transparent text-[#F3F3F1] outline-none placeholder:text-[#5C5F66]"
           />
           <button
             type="button"
             onClick={askAgent}
             disabled={isThinking}
-            className="ml-3 flex h-10 min-w-16 items-center justify-center rounded-2xl bg-[#172231] px-4 text-sm font-black text-white hover:bg-[#243044] disabled:cursor-wait disabled:opacity-70"
+            className="ml-3 flex h-10 min-w-16 items-center justify-center rounded-full bg-white px-4 text-sm font-semibold text-[#0E0F12] hover:bg-white/90 disabled:cursor-wait disabled:opacity-70"
             aria-label="Ask ROBOAGENT"
           >
             Send

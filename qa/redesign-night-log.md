@@ -13,7 +13,10 @@ Goal: iterate until the app looks and feels ready to show Elon Musk / a top desi
 - How it works: TESLA CINEMATIC — same night photograph, giant 3, hairline steps, Connect Tesla. No white cards, no beige telemetry card, no blue pill.
 - Home / Command: TESLA COMMAND LAYER — giant number on empty graphite. Status-card / intelligence mockup card farms removed from the default path.
 - Map: full-bleed dark surface with overlay type.
-- Agent chat / Fleet list / Onboarding / Login: inherit dark tokens; do not restore Orbitron or cream monument.
+- Agent chat: raised onto graphite. Same conversation structure, prompts, and test ids. No cream canvas, no font-black, no Orbitron.
+- Fleet list: still the existing intelligence panel; Command Fleet tab is the owner-facing list (giant 3/4, not a card farm).
+- Vehicle detail: already on token primitives (Card/Metric/Chip). Inherits graphite. Mid-redesign tabs kept.
+- Onboarding / Login: already dark; left alone.
 - Money / Finance / Analytics / Health / Charging / Dispatch / Settings: inherit tokens; not first-viewport work.
 - In-app dashboard is behind Tesla OAuth — no public demo to screenshot.
 
