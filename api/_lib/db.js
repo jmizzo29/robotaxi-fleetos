@@ -289,6 +289,33 @@ export async function ensureFleetSchema() {
       created_at timestamptz not null default now()
     );
 
+    create table if not exists fleetos_owner_alert_prefs (
+      user_id text primary key references fleetos_users(id) on delete cascade,
+      enabled boolean not null default true,
+      updated_at timestamptz not null default now()
+    );
+
+    create table if not exists fleetos_push_subscriptions (
+      endpoint text primary key,
+      user_id text not null references fleetos_users(id) on delete cascade,
+      p256dh text not null,
+      auth text not null,
+      created_at timestamptz not null default now(),
+      updated_at timestamptz not null default now()
+    );
+
+    create table if not exists fleetos_owner_alert_sends (
+      user_id text not null references fleetos_users(id) on delete cascade,
+      vin text not null,
+      trigger text not null,
+      last_sent_at timestamptz not null default now(),
+      last_payload jsonb not null default '{}'::jsonb,
+      primary key (user_id, vin, trigger)
+    );
+
+    create index if not exists idx_fleetos_push_subscriptions_user on fleetos_push_subscriptions(user_id);
+    create index if not exists idx_fleetos_owner_alert_sends_user on fleetos_owner_alert_sends(user_id, last_sent_at desc);
+
     create index if not exists idx_fleetos_vehicles_fleet on fleetos_vehicles(fleet_id);
     create index if not exists idx_fleetos_vehicles_vin on fleetos_vehicles(vin);
     create index if not exists idx_fleetos_sessions_user on fleetos_sessions(user_id);

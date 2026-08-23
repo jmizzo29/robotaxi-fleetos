@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useFleetAuthStatus } from '../../auth/FleetAuthContext';
 import SignOutButton from '../SignOutButton';
 import TeslaChargingScopeNotice from '../TeslaChargingScopeNotice';
+import OwnerAlertToggle from './OwnerAlertToggle';
 import { getFleetOsSession } from '../../services/sessionService';
 import AccountSheet from './AccountSheet';
 import MonumentActionFooter from './MonumentActionFooter';
@@ -23,6 +24,7 @@ export default function MonumentSettings({
   onNavigate = () => {},
   onDisconnect = null,
   embedded = false,
+  ownerAlert = null,
 }) {
   const { user } = useFleetAuthStatus();
   const [accountOpen, setAccountOpen] = useState(false);
@@ -75,6 +77,17 @@ export default function MonumentSettings({
       />
 
       <OperationsLedgerStrip rows={rows} />
+
+      {ownerAlert && (
+        <OwnerAlertToggle
+          enabled={ownerAlert.enabled}
+          busy={ownerAlert.busy}
+          permission={ownerAlert.permission}
+          error={ownerAlert.error}
+          onEnable={ownerAlert.enableAlerts}
+          onDisable={ownerAlert.disableAlerts}
+        />
+      )}
 
       <MonumentActionFooter
         line={footerLine}

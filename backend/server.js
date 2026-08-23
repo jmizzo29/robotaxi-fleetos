@@ -112,6 +112,14 @@ app.post('/api/ai/analyze', (req, res) => handleServerlessRoute('api/ai/analyze.
 app.post('/api/agent/ask', (req, res) => handleServerlessRoute('api/agent/ask.js', req, res));
 app.get('/api/social/x-updates', (req, res) => handleServerlessRoute('api/social/x-updates.js', req, res));
 app.post('/api/admin/purge-user', (req, res) => handleServerlessRoute('api/admin/purge-user.js', req, res));
+app.get('/api/owner-alerts/prefs', (req, res) => handleServerlessRoute('api/owner-alerts/prefs.js', req, res));
+app.patch('/api/owner-alerts/prefs', (req, res) => handleServerlessRoute('api/owner-alerts/prefs.js', req, res));
+app.post('/api/owner-alerts/subscribe', (req, res) => handleServerlessRoute('api/owner-alerts/subscribe.js', req, res));
+app.delete('/api/owner-alerts/subscribe', (req, res) => handleServerlessRoute('api/owner-alerts/subscribe.js', req, res));
+app.get('/api/owner-alerts/active', (req, res) => handleServerlessRoute('api/owner-alerts/active.js', req, res));
+app.post('/api/owner-alerts/dismiss', (req, res) => handleServerlessRoute('api/owner-alerts/dismiss.js', req, res));
+app.get('/api/cron/owner-alerts', (req, res) => handleServerlessRoute('api/cron/owner-alerts.js', req, res));
+app.post('/api/cron/owner-alerts', (req, res) => handleServerlessRoute('api/cron/owner-alerts.js', req, res));
 
 function updateLocalEnv(updates) {
   const current = fs.existsSync(ENV_PATH) ? fs.readFileSync(ENV_PATH, 'utf8') : '';

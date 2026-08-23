@@ -12,8 +12,12 @@ import MonumentNetwork from './MonumentNetwork';
 import MonumentSettings from './MonumentSettings';
 import TelemetryDetailSheet from './TelemetryDetailSheet';
 import TodayDetailSheet from './TodayDetailSheet';
+import OwnerAlertBanner from './OwnerAlertBanner';
 import { monument } from './monumentTokens';
 import useMonumentCommand, { FLEET_WAKE_CONFIRM } from '../../hooks/useMonumentCommand';
+import useOwnerAlert from '../../hooks/useOwnerAlert';
+import { sendTeslaChargingCommand } from '../../services/teslaChargingService';
+import { chargeConfirmFromAlert } from '../../utils/evaluateOwnerAlert';
 import {
   chainEntryFromIndex,
   chainIndexFromRoute,
@@ -49,6 +53,12 @@ export default function MonumentChainShell({
     onNavigate,
     onSync,
   });
+  const ownerAlert = useOwnerAlert({
+    realFleet,
+    teslaConnected: command.teslaConnected,
+  });
+  const [chargeConfirm, setChargeConfirm] = useState(null);
+  const [chargeConfirming, setChargeConfirming] = useState(false);
 
   const chainIndex = useMemo(
     () => chainIndexFromRoute(route, commandTab),
@@ -113,6 +123,37 @@ export default function MonumentChainShell({
   const commandActive = chainIndex <= 2 ? chainEntryFromIndex(chainIndex).id : null;
   const swipeHint = chainSwipeHint(chainIndex);
 
+  const handleOwnerAlertAction = useCallback((alert) => {
+    if (alert?.action === 'charge') {
+      setChargeConfirm(chargeConfirmFromAlert(alert));
+      return;
+    }
+    const vehicle = realFleet.find((item) => item.vin === alert?.vin);
+    if (vehicle) {
+      command.openAssetSheet({
+        vehicle,
+        cab: vehicle.name || vehicle.display_name || 'Tesla',
+        index: 0,
+      });
+    }
+  }, [command, realFleet]);
+
+  const handleOwnerChargeConfirm = useCallback(async () => {
+    if (!chargeConfirm?.teslaAction) return;
+    setChargeConfirming(true);
+    try {
+      await sendTeslaChargingCommand(chargeConfirm.teslaAction);
+      setChargeConfirm(null);
+      await ownerAlert.dismiss();
+    } catch (error) {
+      setChargeConfirm((current) => (
+        current ? { ...current, body: error.message || 'Tesla rejected the charging command.' } : current
+      ));
+    } finally {
+      setChargeConfirming(false);
+    }
+  }, [chargeConfirm, ownerAlert]);
+
   const sharedUtilityProps = {
     fleet,
     realFleet,
@@ -123,6 +164,7 @@ export default function MonumentChainShell({
     onSync,
     onDisconnect,
     embedded: true,
+    ownerAlert,
   };
 
   return (
@@ -130,6 +172,13 @@ export default function MonumentChainShell({
       className="flex h-full min-h-0 flex-col"
       style={{ backgroundColor: monument.canvas, backgroundImage: monument.canvasWash }}
     >
+      {commandActive && (
+        <OwnerAlertBanner
+          alert={ownerAlert.alert}
+          onAction={handleOwnerAlertAction}
+          onDismiss={ownerAlert.dismiss}
+        />
+      )}
       <div
         ref={pagerRef}
         onScroll={handlePagerScroll}
@@ -183,6 +232,14 @@ export default function MonumentChainShell({
         confirming={command.confirming}
         onClose={() => command.setConfirmOpen(false)}
         onConfirm={command.handleConfirm}
+      />
+
+      <ConfirmActionSheet
+        open={Boolean(chargeConfirm)}
+        payload={chargeConfirm}
+        confirming={chargeConfirming}
+        onClose={() => setChargeConfirm(null)}
+        onConfirm={handleOwnerChargeConfirm}
       />
 
       <ConfirmActionSheet
