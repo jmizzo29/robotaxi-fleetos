@@ -43,7 +43,7 @@ export default function MobileBottomNav({ route, onNavigate, pendingCount = 0 })
                   size={icon.nav}
                   strokeWidth={active ? icon.navStroke : icon.navStrokeIdle}
                   className="flex-shrink-0"
-                  style={{ color: active ? colors.ink : colors.inkSubtle }}
+                  style={{ color: active ? colors.ink : colors.navIdle }}
                 />
                 {showBadge && (
                   <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#C45C4A] px-1 text-[9px] font-bold text-white">
@@ -53,7 +53,7 @@ export default function MobileBottomNav({ route, onNavigate, pendingCount = 0 })
               </span>
               <span
                 className={`w-full max-w-[4.75rem] px-0.5 text-center ${typography.navLabel}`}
-                style={{ color: active ? colors.navActiveLabel : colors.inkSubtle }}
+                style={{ color: active ? colors.navActiveLabel : colors.navIdle }}
               >
                 {label}
               </span>

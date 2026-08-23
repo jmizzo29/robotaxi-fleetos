@@ -138,7 +138,7 @@ function TabBar({ active, onChange }) {
             className={`flex-1 whitespace-nowrap rounded-xl px-4 py-2 text-sm font-medium transition ${
               isActive
                 ? 'bg-accent text-white shadow-sm'
-                : 'text-ink-muted hover:bg-ink/5 hover:text-ink'
+                : 'text-[#C4C6CB] hover:bg-ink/5 hover:text-ink'
             }`}
           >
             {tab.label}

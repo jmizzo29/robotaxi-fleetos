@@ -8,6 +8,7 @@ export const monument = {
   ink: colors.ink,
   inkMuted: colors.inkMuted,
   inkGhost: colors.inkSubtle,
+  navIdle: colors.navIdle,
   money: colors.ink,
   projected: colors.warning,
   action: colors.primary,

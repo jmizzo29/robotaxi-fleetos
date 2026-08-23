@@ -10,6 +10,7 @@ export const colors = {
   ink: '#F3F3F1',
   inkMuted: '#8B8E94',
   inkSubtle: '#5C5F66',
+  navIdle: '#C4C6CB',
   border: 'rgba(243,243,241,0.08)',
   earningsGradient: 'linear-gradient(180deg, #1A1C20 0%, #0E0F12 100%)',
   success: '#5BA8A0',

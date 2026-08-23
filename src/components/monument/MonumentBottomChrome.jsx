@@ -63,7 +63,7 @@ export default function MonumentBottomChrome({
             delete event.currentTarget.dataset.pressStart;
           }}
         >
-          <p className="text-center text-[10.8px] font-medium" style={{ color: monument.inkGhost }}>
+          <p className="text-center text-[10.8px] font-medium" style={{ color: monument.navIdle }}>
             Long-press for Account
           </p>
         </div>

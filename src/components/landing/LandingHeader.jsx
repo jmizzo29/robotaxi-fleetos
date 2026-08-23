@@ -47,7 +47,7 @@ export default function LandingHeader({ onNavigate, variant = 'default' }) {
           <button
             type="button"
             onClick={() => setOpen((current) => !current)}
-            className="flex h-10 w-10 items-center justify-center rounded-full text-white/70 transition hover:text-white active:scale-[0.98]"
+            className="flex h-10 w-10 items-center justify-center rounded-full text-[#C4C6CB] transition hover:text-white active:scale-[0.98]"
             aria-label={open ? 'Close menu' : 'Open menu'}
             aria-expanded={open}
           >
@@ -81,7 +81,7 @@ export default function LandingHeader({ onNavigate, variant = 'default' }) {
                 key={item.route}
                 type="button"
                 onClick={() => go(item.route)}
-                className="border-b border-white/10 py-4 text-left text-[15px] font-medium text-white/80 transition hover:text-white"
+                className="border-b border-white/10 py-4 text-left text-[15px] font-medium text-[#C4C6CB] transition hover:text-white"
               >
                 {item.label}
               </button>
@@ -119,7 +119,7 @@ export default function LandingHeader({ onNavigate, variant = 'default' }) {
         <button
           type="button"
           onClick={() => setOpen((current) => !current)}
-          className="flex h-10 w-10 items-center justify-center rounded-full text-white/80 transition hover:bg-white/10 hover:text-white"
+          className="flex h-10 w-10 items-center justify-center rounded-full text-[#C4C6CB] transition hover:bg-white/10 hover:text-white"
           aria-label={open ? 'Close menu' : 'Open menu'}
           aria-expanded={open}
         >
@@ -146,7 +146,7 @@ export default function LandingHeader({ onNavigate, variant = 'default' }) {
               key={item.route}
               type="button"
               onClick={() => go(item.route)}
-              className="border-b border-white/10 py-4 text-left text-[15px] font-medium text-white/80 transition hover:text-white"
+              className="border-b border-white/10 py-4 text-left text-[15px] font-medium text-[#C4C6CB] transition hover:text-white"
             >
               {item.label}
             </button>

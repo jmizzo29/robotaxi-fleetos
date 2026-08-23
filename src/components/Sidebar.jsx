@@ -32,7 +32,7 @@ export default function Sidebar({
                 type="button"
                 onClick={() => onNavigate(id)}
                 className="flex w-full items-center justify-between px-1 py-3 text-left text-[13px] font-medium uppercase tracking-[0.16em] transition"
-                style={{ color: active ? colors.ink : colors.inkSubtle }}
+                style={{ color: active ? colors.ink : colors.navIdle }}
               >
                 <span>{label}</span>
                 {showBadge && (
@@ -49,7 +49,7 @@ export default function Sidebar({
       <div className="border-t border-white/[0.08] px-6 py-6">
         <SignOutButton
           onSignedOut={() => onNavigate('landing')}
-          className="w-full py-2 text-left text-[12px] font-medium uppercase tracking-[0.16em] text-[#8B8E94] transition hover:text-[#F3F3F1]"
+          className="w-full py-2 text-left text-[12px] font-medium uppercase tracking-[0.16em] text-[#C4C6CB] transition hover:text-[#F3F3F1]"
           label="Sign out"
           compact
         />

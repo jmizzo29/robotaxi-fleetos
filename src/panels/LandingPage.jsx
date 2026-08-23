@@ -474,7 +474,7 @@ export function AgentChatPage({ onNavigate }) {
                 setGoal(prompt);
                 setResponse(buildDemoResponse(prompt));
               }}
-              className="whitespace-nowrap rounded-full border border-white/10 bg-transparent px-5 py-2 text-sm font-medium text-[#8B8E94] hover:border-white/20 hover:text-[#F3F3F1]"
+              className="whitespace-nowrap rounded-full border border-white/10 bg-transparent px-5 py-2 text-sm font-medium text-[#C4C6CB] hover:border-white/20 hover:text-[#F3F3F1]"
             >
               {chip}
             </button>

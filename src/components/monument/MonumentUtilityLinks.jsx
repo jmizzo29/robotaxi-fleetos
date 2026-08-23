@@ -39,10 +39,8 @@ export default function MonumentUtilityLinks({
               type="button"
               onClick={() => onNavigate?.(link.id)}
               aria-label={link.label}
-              className={`min-w-0 px-0.5 py-1 text-center ${monumentType.navLabelCompact} transition-opacity active:opacity-70 ${
-                isActive ? 'opacity-100' : 'opacity-40'
-              }`}
-              style={{ color: isActive ? monument.action : monument.inkGhost }}
+              className={`min-w-0 px-0.5 py-1 text-center ${monumentType.navLabelCompact} transition-colors active:opacity-80`}
+              style={{ color: isActive ? monument.action : monument.navIdle }}
             >
               {link.label}
             </button>
@@ -67,12 +65,10 @@ export default function MonumentUtilityLinks({
               type="button"
               onClick={() => onNavigate?.(link.id)}
               aria-label={link.label}
-              className={`min-w-0 rounded-xl px-0.5 py-1.5 text-center ${monumentType.navLabelCompact} transition active:scale-[0.98] ${
-                isActive ? 'opacity-100' : 'opacity-40'
-              }`}
+              className={`min-w-0 rounded-xl px-0.5 py-1.5 text-center ${monumentType.navLabelCompact} transition active:scale-[0.98]`}
               style={{
                 backgroundColor: isActive ? 'rgba(243,243,241,0.06)' : 'transparent',
-                color: isActive ? monument.ink : monument.inkMuted,
+                color: isActive ? monument.ink : monument.navIdle,
               }}
             >
               {link.label}
