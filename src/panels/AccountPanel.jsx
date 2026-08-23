@@ -464,8 +464,8 @@ function SessionSection({ onSignedOut }) {
       <SignOutButton
         label="Sign out"
         onSignedOut={onSignedOut}
-        className="mt-5 w-full rounded-2xl border border-ink/12 bg-surface px-5 py-3.5 text-center text-sm font-semibold text-ink-muted transition hover:bg-white hover:text-ink focus:outline-none focus-visible:ring-2 focus-visible:ring-status-active/30"
-        confirmClassName="mt-5 rounded-2xl border border-status-caution/20 bg-status-caution/5"
+        className="mt-5 w-full min-h-12 rounded-full border border-[rgba(91,168,160,0.18)] bg-[#25262B] px-5 py-3.5 text-center text-[13px] font-semibold uppercase tracking-[0.16em] text-[#F3F3F1] transition hover:bg-[#2C2D33] disabled:cursor-wait disabled:opacity-60"
+        confirmClassName="mt-5"
       />
     </Card>
   );
@@ -651,6 +651,8 @@ export default function AccountPanel({ onNavigate, embedded = false }) {
         onOpenSettings={() => onNavigate?.('settings')}
       />
 
+      <SessionSection onSignedOut={handleSignedOut} />
+
       <TeslaSection
         session={session}
         billing={billing}
@@ -663,8 +665,6 @@ export default function AccountPanel({ onNavigate, embedded = false }) {
       />
 
       <PlanSection billing={billing} />
-
-      <SessionSection onSignedOut={handleSignedOut} />
     </div>
   );
 
