@@ -16,7 +16,7 @@ export default function HowItWorksMonument({ onNavigate }) {
 
       <div className="relative z-10 mx-auto flex w-full max-w-lg flex-1 flex-col px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-16">
         <div className="flex min-h-0 flex-1 flex-col items-center justify-center text-center">
-          <p className={`${monumentType.label} text-white/45`}>How it works</p>
+          <p className={monumentType.label} style={{ color: monument.navIdle }}>How it works</p>
           <p className={`mt-6 ${monumentType.monument} text-white`}>3</p>
           <p className="mt-5 text-[17px] font-normal tracking-[-0.01em] text-white/70">
             You approve everything.
@@ -29,7 +29,7 @@ export default function HowItWorksMonument({ onNavigate }) {
               key={step.step}
               className="flex items-baseline justify-between gap-6 border-t border-white/10 py-4"
             >
-              <p className={monumentType.label} style={{ color: 'rgba(243,243,241,0.35)' }}>{step.step}</p>
+              <p className={monumentType.label} style={{ color: monument.navIdle }}>{step.step}</p>
               <p className="text-right text-[15px] font-medium text-white">{step.title}</p>
             </div>
           ))}
@@ -44,7 +44,8 @@ export default function HowItWorksMonument({ onNavigate }) {
           <button
             type="button"
             onClick={() => onNavigate('landing')}
-            className={`mt-3 w-full py-2.5 ${monumentType.actionLink} text-white/45`}
+            className={`mt-3 w-full py-2.5 ${monumentType.actionLink}`}
+            style={{ color: monument.navIdle }}
           >
             Back
           </button>
