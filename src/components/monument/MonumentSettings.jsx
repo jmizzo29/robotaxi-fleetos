@@ -1,13 +1,12 @@
 import { useMemo, useState } from 'react';
 import { useFleetAuthStatus } from '../../auth/FleetAuthContext';
+import SignOutButton from '../SignOutButton';
 import AccountSheet from './AccountSheet';
 import MonumentActionFooter from './MonumentActionFooter';
 import MonumentHero from './MonumentHero';
 import MonumentBottomChrome from './MonumentBottomChrome';
 import OperationsLedgerStrip from './OperationsLedgerStrip';
 import { monument } from './monumentTokens';
-import { clearLocalComplianceState } from '../../services/betaCompliance';
-import { logoutFleetOsAccount } from '../../services/sessionService';
 import { getAccountSheetPayload, isTeslaConnected } from '../../utils/monumentUtils';
 import {
   getSettingsFooterLine,
@@ -25,7 +24,6 @@ export default function MonumentSettings({
 }) {
   const { user } = useFleetAuthStatus();
   const [accountOpen, setAccountOpen] = useState(false);
-  const [signingOut, setSigningOut] = useState(false);
 
   const teslaConnected = useMemo(
     () => isTeslaConnected(realFleet, realSyncStatus),
@@ -46,24 +44,6 @@ export default function MonumentSettings({
     [user, fleet, realFleet, realSyncStatus],
   );
 
-  const handleSignOut = async () => {
-    setSigningOut(true);
-    try {
-      clearLocalComplianceState();
-      try { sessionStorage.clear(); } catch {}
-      await logoutFleetOsAccount().catch(() => {});
-      if (window.Clerk?.loaded && typeof window.Clerk.signOut === 'function') {
-        await window.Clerk.signOut();
-      }
-      setAccountOpen(false);
-      onNavigate('landing');
-      window.location.hash = '#/landing';
-      window.location.reload();
-    } finally {
-      setSigningOut(false);
-    }
-  };
-
   return (
     <div className="flex h-full min-h-0 flex-col" style={{ backgroundColor: monument.canvas }}>
       <MonumentHero
@@ -83,6 +63,15 @@ export default function MonumentSettings({
         onSecondary={() => onNavigate('terms')}
       />
 
+      <div className="shrink-0 px-5 pb-3 pt-2">
+        <SignOutButton
+          label="Sign out"
+          compact
+          onSignedOut={() => onNavigate('landing')}
+          className="w-full min-h-12 rounded-full border border-[rgba(91,168,160,0.18)] bg-[#25262B] px-5 py-3.5 text-center text-[13px] font-semibold uppercase tracking-[0.16em] text-[#F3F3F1] transition hover:bg-[#2C2D33] disabled:cursor-wait disabled:opacity-60"
+        />
+      </div>
+
       {!embedded && (
       <MonumentBottomChrome
         utilityActive="settings"
@@ -96,8 +85,6 @@ export default function MonumentSettings({
         payload={accountPayload}
         onClose={() => setAccountOpen(false)}
         onNavigate={onNavigate}
-        onSignOut={handleSignOut}
-        signingOut={signingOut}
         teslaConnected={teslaConnected}
         onDisconnectTesla={onDisconnect}
       />

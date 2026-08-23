@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import SignOutButton from '../SignOutButton';
 import ConfirmActionSheet from './ConfirmActionSheet';
 import MonumentFeedbackSheet from './MonumentFeedbackSheet';
 import MonumentSheet from './MonumentSheet';
@@ -92,15 +93,17 @@ export default function AccountSheet({
             </button>
           )}
 
-          <button
-            type="button"
-            disabled={signingOut}
-            onClick={onSignOut}
-            className={`w-full py-2.5 ${monumentType.revealHint} disabled:opacity-60`}
-            style={{ color: monument.inkGhost }}
-          >
-            {signingOut ? 'Signing out…' : 'Sign out'}
-          </button>
+          <div className="px-[18px] pb-1 pt-3">
+            <SignOutButton
+              label="Sign out"
+              compact
+              onSignedOut={() => {
+                onClose?.();
+                onNavigate?.('landing');
+              }}
+              className="w-full min-h-12 rounded-full border border-[rgba(91,168,160,0.18)] bg-[#25262B] px-5 py-3.5 text-center text-[13px] font-semibold uppercase tracking-[0.16em] text-[#F3F3F1] transition hover:bg-[#2C2D33] disabled:cursor-wait disabled:opacity-60"
+            />
+          </div>
         </div>
       </MonumentSheet>
 

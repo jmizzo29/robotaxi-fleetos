@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { colors } from '../design/roboagentTokens';
 import { clearLocalComplianceState } from '../services/betaCompliance';
 import { logoutFleetOsAccount } from '../services/sessionService';
 
@@ -6,7 +7,7 @@ export default function SignOutButton({
   onSignedOut,
   className = '',
   confirmClassName = '',
-  label = 'Sign out of this device',
+  label = 'Sign out',
   compact = false,
 }) {
   const [isConfirming, setIsConfirming] = useState(false);
@@ -39,10 +40,15 @@ export default function SignOutButton({
 
   if (isConfirming) {
     return (
-      <div className={`rounded-2xl border border-amber-200 bg-amber-50 p-3 ${confirmClassName}`}>
-        <p className="text-sm font-black text-amber-950">Sign out?</p>
+      <div
+        className={`rounded-[10px] border p-4 ${confirmClassName}`}
+        style={{ borderColor: colors.border, backgroundColor: colors.surface }}
+        role="group"
+        aria-label="Confirm sign out"
+      >
+        <p className="text-[15px] font-medium text-[#F3F3F1]">Sign out?</p>
         {!compact && (
-          <p className="mt-1 text-xs font-semibold leading-5 text-amber-800">
+          <p className="mt-1 text-[13px] font-normal leading-5 text-[#8B8E94]">
             You will need to sign in again to manage your fleet.
           </p>
         )}
@@ -51,7 +57,8 @@ export default function SignOutButton({
             type="button"
             onClick={() => setIsConfirming(false)}
             disabled={isSigningOut}
-            className="rounded-xl border border-amber-300 bg-white px-3 py-2 text-xs font-black text-amber-950 transition hover:bg-amber-100 disabled:cursor-wait disabled:opacity-60"
+            className="rounded-full border px-3 py-2.5 text-[12px] font-semibold uppercase tracking-[0.14em] transition disabled:cursor-wait disabled:opacity-60"
+            style={{ borderColor: colors.border, color: colors.navIdle, backgroundColor: 'transparent' }}
           >
             Cancel
           </button>
@@ -59,9 +66,9 @@ export default function SignOutButton({
             type="button"
             onClick={signOut}
             disabled={isSigningOut}
-            className="rounded-xl bg-[#172231] px-3 py-2 text-xs font-black text-white transition hover:bg-[#243044] disabled:cursor-wait disabled:opacity-60"
+            className="rounded-full bg-white px-3 py-2.5 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#0E0F12] transition hover:bg-white/90 disabled:cursor-wait disabled:opacity-60"
           >
-            {isSigningOut ? 'Signing out...' : 'Sign out'}
+            {isSigningOut ? 'Signing out…' : 'Sign out'}
           </button>
         </div>
       </div>
@@ -75,7 +82,7 @@ export default function SignOutButton({
       disabled={isSigningOut}
       className={className}
     >
-      {isSigningOut ? 'Signing out...' : label}
+      {isSigningOut ? 'Signing out…' : label}
     </button>
   );
 }
