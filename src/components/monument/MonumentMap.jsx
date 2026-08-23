@@ -4,9 +4,8 @@ import AccountSheet from './AccountSheet';
 import CommandMapPreview from '../home/CommandMapPreview';
 import MapDetailSheet from './MapDetailSheet';
 import MonumentActionFooter from './MonumentActionFooter';
-import MonumentHero from './MonumentHero';
 import MonumentBottomChrome from './MonumentBottomChrome';
-import { monument } from './monumentTokens';
+import { monument, monumentType } from './monumentTokens';
 import { clearLocalComplianceState } from '../../services/betaCompliance';
 import { logoutFleetOsAccount } from '../../services/sessionService';
 import { getAccountSheetPayload, isTeslaConnected } from '../../utils/monumentUtils';
@@ -72,29 +71,38 @@ export default function MonumentMap({
   };
 
   return (
-    <div className="flex h-full min-h-0 flex-col" style={{ backgroundColor: monument.canvas }}>
-      <MonumentHero
-        label={hero.label}
-        amount={hero.amount}
-        subline={hero.subline}
-        amountColor="money"
-        onTapAmount={() => setMapOpen(true)}
-      />
+    <div className="relative flex h-full min-h-0 flex-col" style={{ backgroundColor: monument.canvas }}>
+      <div className="relative min-h-0 flex-1">
+        <CommandMapPreview
+          fleet={fleet}
+          realFleet={realFleet}
+          totalEarnings={totalEarnings}
+          syncState={syncState}
+          mapHeightClass="h-full min-h-[280px]"
+          bare
+          flush
+        />
+        <div className="pointer-events-none absolute inset-x-0 top-0 bg-gradient-to-b from-[#0E0F12] via-[#0E0F12]/55 to-transparent px-6 pb-16 pt-8 text-center">
+          <p className={monumentType.label} style={{ color: monument.inkGhost }}>{hero.label}</p>
+          <button
+            type="button"
+            onClick={() => setMapOpen(true)}
+            className={`pointer-events-auto mt-4 ${monumentType.monument}`}
+            style={{ color: monument.ink }}
+          >
+            {hero.amount}
+          </button>
+          <p className={`mt-3 ${monumentType.subline}`} style={{ color: monument.inkMuted }}>{hero.subline}</p>
+        </div>
+      </div>
 
-      <CommandMapPreview
-        fleet={fleet}
-        realFleet={realFleet}
-        totalEarnings={totalEarnings}
-        syncState={syncState}
-        mapHeightClass="h-[148px]"
-        bare
-      />
-
-      <MonumentActionFooter
-        line={footerLine}
-        doItLabel="Open map"
-        onDoIt={() => setMapOpen(true)}
-      />
+      <div className="relative z-10" style={{ backgroundColor: monument.canvas }}>
+        <MonumentActionFooter
+          line={footerLine}
+          doItLabel="Open map"
+          onDoIt={() => setMapOpen(true)}
+        />
+      </div>
 
       {!embedded && (
       <MonumentBottomChrome

@@ -358,14 +358,16 @@ export default function MonumentOperations({
         ))}
       </div>
 
-      <MonumentBottomChrome
-        onNavigate={onNavigate}
-        commandActive={tab}
-        commandPages={SWIPE_PAGES}
-        commandAriaLabel="Operations sections"
-        onCommandSelect={scrollToTab}
-        onLongPress={() => setAccountOpen(true)}
-      />
+      <div className="lg:hidden">
+        <MonumentBottomChrome
+          onNavigate={onNavigate}
+          commandActive={tab}
+          commandPages={SWIPE_PAGES}
+          commandAriaLabel="Operations sections"
+          onCommandSelect={scrollToTab}
+          onLongPress={() => setAccountOpen(true)}
+        />
+      </div>
 
       <ConfirmActionSheet
         open={confirmOpen}

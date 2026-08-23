@@ -1,9 +1,8 @@
 import { monument, monumentType } from './monumentTokens';
 
-function tileValueColor(kind) {
-  if (kind === 'active') return monument.money;
-  if (kind === 'charging') return monument.projected;
-  return monument.inkMuted;
+function tileValueColor(kind, value) {
+  if (kind === 'down' && Number(value) > 0) return monument.projected;
+  return monument.ink;
 }
 
 export default function FleetMonumentPanel({ strip, onSelectStatus }) {
@@ -18,20 +17,19 @@ export default function FleetMonumentPanel({ strip, onSelectStatus }) {
   ];
 
   return (
-    <div className="w-full px-5 pb-3">
-      <div className="grid grid-cols-3 gap-2.5">
+    <div className="w-full px-8 pb-4">
+      <div className="grid grid-cols-3 gap-0 border-t border-white/[0.08]">
         {tiles.map((tile) => (
           <button
             key={tile.key}
             type="button"
             onClick={() => onSelectStatus?.(tile.key)}
-            className="rounded-xl border px-2 py-3 text-center transition active:scale-[0.98]"
-            style={{ borderColor: monument.hairline, backgroundColor: monument.surface }}
+            className="px-2 py-4 text-center transition active:opacity-70"
           >
             <p className={monumentType.label} style={{ color: monument.inkGhost }}>{tile.label}</p>
             <p
               className={`mt-2 ${monumentType.monumentSm}`}
-              style={{ color: tileValueColor(tile.key) }}
+              style={{ color: tileValueColor(tile.key, tile.value) }}
             >
               {tile.value}
             </p>

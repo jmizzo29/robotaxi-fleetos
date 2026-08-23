@@ -1,33 +1,31 @@
 # RoboAgent Overnight Redesign Log
 
-Goal: iterate until the app looks and feels ready to show Elon Musk / a top designer, and is beta-ready. Bar: radical simplicity, instant clarity (<10s), calm premium Tesla/Apple/Linear/Arc aesthetic, mobile-first, delightful micro-interactions, zero clutter, consistent design system.
+Goal: iterate until the app looks and feels ready to show Elon Musk / a top designer, and is beta-ready. Bar: radical simplicity, instant clarity (<10s), calm premium Tesla command-layer aesthetic — type on photography, graphite, one quiet accent. Not Linear/Stripe admin. Not a longer SaaS marketing page.
 
 ## Design system (source of truth)
-- Primitives: `src/ui/{Button,Card,Chip,Metric,StatusDot}` via `import { ... } from '../ui'`
-- Tokens (src/index.css @theme): surface, surface-raised, ink, ink-muted, ink-subtle, accent, accent-hover, status-ready/caution/critical/active; `.animate-fade-up`
-- Avoid old dark slate-900 / font-black uppercase styling and the legacy `.robo-minimal` override hack.
+- Tokens: `src/design/roboagentTokens.js` — graphite canvas `#0E0F12`, white ink, teal accent `#5BA8A0`. Monument tokens map to this file.
+- Primitives: `src/ui/{Button,Card,Chip,Metric,StatusDot}`
+- Wordmark: Inter, wide tracking. Orbitron is gone.
+- `.robo-minimal` is a dark canvas class only. The old light-forcing override hack is retired.
 
 ## Status by screen (update each cycle)
-- Landing: REDESIGNED (editorial hero + dark glowing-map product card)
-- Home / Command dashboard: REDESIGNED
-- Agent chat: REDESIGNED
-- Fleet list: REDESIGNED
-- Onboarding / Login / Signup / Account: REDESIGNED + polish pass in progress
-- Vehicle Detail: redesign in progress (tabs)
-- Command Map: strengthening in progress (integrations + glass controls)
-- Money / Finance: PENDING
-- Analytics / Reports: PENDING
-- Health / Charging / Dispatch / Readiness: PENDING
-- Settings / Integrations / Tesla panels: PENDING
-- Alerts / Memory: PENDING
+- Landing (`#/landing-entry`): TESLA CINEMATIC — full-bleed night photograph, type on the photo, one sentence, one Connect Tesla action. Replaces cream explainer + electric-blue pill (live before).
+- How it works: TESLA CINEMATIC — same night photograph, giant 3, hairline steps, Connect Tesla. No white cards, no beige telemetry card, no blue pill.
+- Home / Command: TESLA COMMAND LAYER — giant number on empty graphite. Status-card / intelligence mockup card farms removed from the default path.
+- Map: full-bleed dark surface with overlay type.
+- Agent chat: raised onto graphite. Same conversation structure, prompts, and test ids. No cream canvas, no font-black, no Orbitron.
+- Fleet list: still the existing intelligence panel; Command Fleet tab is the owner-facing list (giant 3/4, not a card farm).
+- Vehicle detail: already on token primitives (Card/Metric/Chip). Inherits graphite. Mid-redesign tabs kept.
+- Onboarding / Login: already dark; left alone.
+- Money / Finance / Analytics / Health / Charging / Dispatch / Settings: inherit tokens; not first-viewport work.
+- In-app dashboard is behind Tesla OAuth — no public demo to screenshot.
 
-## Known issues / backlog (groomed each cycle)
-- Retire `.robo-minimal` CSS override block once all panels use tokens
+## Known issues / backlog
 - Code-split / trim Mapbox bundle (~1.76MB)
 - Delete orphaned `MobileCommandDashboard.jsx` once confirmed unused
-- Modernize shared consent components (TeslaDataAccessDisclosure, BetaConsentPanel, TeslaIndependenceNotice) onto tokens
-- Fix pre-existing lint errors in: SignOutButton.jsx, AIRecommendationPanel.jsx, OwnerValueDashboard.jsx, (and any newly surfaced)
+- Modernize shared consent components onto tokens
+- Pre-existing lint errors in SignOutButton / AIRecommendationPanel / OwnerValueDashboard left untouched
 
 ## Cycle history
-- Cycle 0: design system + nav + dashboard/agent/fleet + onboarding/login + landing shipped.
-- Logo pass: redesigned the RoboAgent "R" mark. New mark = a calm, geometric monogram "R" — a true-vertical stem, a clean circular-counter bowl, and a single confident forward-kicking leg whose foot aligns to the bowl's right edge for a balanced silhouette. One restrained accent: an emerald (`status-ready` #10b981) "sensor eye" set in the bowl counter, reading as the autonomous/agent core. Built as optimized inline SVG on a pixel-friendly 0 0 32 32 grid (filled shapes, not strokes, so it stays crisp 16→64px). The in-app `RoboLogo` is a bare glyph using `currentColor` (inherits ink on light surfaces, white on the dark Fleet-Command card) + the emerald token, with `useId` masks so multiple instances are valid; `favicon.svg` and a new `robo-mark` symbol in `icons.svg` wrap the identical glyph in a graphite squircle app-tile. Pairs cleanly inline with the ROBOAGENT wordmark. Rejected directions: floating "beacon dot" at the leg foot (read as a blemish/dust), full app-tile as the primary in-app mark (a dark tile disappears on the dark landing card — the adaptive currentColor glyph wins), and a single-continuous-line R (too light/generic at 16px favicon). Monochrome-safe (drop or recolor the eye). Build + lint green for the changed files (pre-existing repo lint errors untouched).
+- Cycle 0: earlier editorial + product-card landing. Live production never shipped that look; production is the cream monument + blue CTA (see official before shots).
+- Cycle Tesla-slick: first viewport is tesla.com/robotaxi structure (photo, display type, one action). Orbitron killed. Command/Map no longer a card farm. Official live befores locked: landing-entry cream explainer, How It Works green 3 + white cards + blue pill.

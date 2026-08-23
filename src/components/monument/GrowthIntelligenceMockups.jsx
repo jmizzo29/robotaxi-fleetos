@@ -203,7 +203,7 @@ function InsightList({ insights }) {
         >
           <span
             className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full"
-            style={{ backgroundColor: insight.tint || '#EBF2FF', color: insight.accent || monument.action }}
+            style={{ backgroundColor: insight.tint || 'rgba(91,168,160,0.12)', color: insight.accent || monument.action }}
           >
             {insight.icon || <ArrowUpRight className="h-4 w-4" />}
           </span>
@@ -260,14 +260,14 @@ function OptionA({ expansion, events }) {
       body: `${airportZone.demand} demand score with ${airportZone.profitability} profitability.`,
       icon: <Target className="h-4 w-4" />,
       accent: monument.action,
-      tint: '#EAF0FF',
+      tint: 'rgba(91,168,160,0.12)',
     },
     {
       title: 'Demand exceeds planned coverage',
       body: topEvent.recommendation,
       icon: <Sparkles className="h-4 w-4" />,
       accent: monument.projected,
-      tint: '#FFF4D6',
+      tint: 'rgba(196,163,90,0.14)',
     },
   ];
 
@@ -318,21 +318,21 @@ function OptionC({ expansion, events, scores }) {
       body: `Adding ${expansion.deployCount} vehicles could add ${expansion.projectedLabel} in monthly revenue.`,
       icon: <TrendingUp className="h-4 w-4" />,
       accent: monument.money,
-      tint: '#E7F4EE',
+      tint: 'rgba(91,168,160,0.12)',
     },
     {
       title: 'Convention demand is expected to rise',
       body: normalizeOpportunity(events.find((event) => event.title.includes('Expo'))).recommendation,
       icon: <Sparkles className="h-4 w-4" />,
       accent: monument.projected,
-      tint: '#FFF4D6',
+      tint: 'rgba(196,163,90,0.14)',
     },
     {
       title: 'Tampa remains a secondary expansion play',
       body: 'Keep monitoring post-event demand before adding permanent capacity.',
       icon: <Target className="h-4 w-4" />,
       accent: monument.action,
-      tint: '#EAF0FF',
+      tint: 'rgba(91,168,160,0.12)',
     },
   ];
 

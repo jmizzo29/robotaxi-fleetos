@@ -25,8 +25,8 @@ export default function MapDetailSheet({
         <button
           type="button"
           onClick={onClose}
-          className="mx-4 mb-2 mt-2 w-[calc(100%-2rem)] py-2.5 text-[14.4px] font-semibold"
-          style={{ color: '#6B7280' }}
+          className="mx-4 mb-2 mt-2 w-[calc(100%-2rem)] py-2.5 text-[13px] font-medium uppercase tracking-[0.16em]"
+          style={{ color: '#8B8E94' }}
         >
           Close
         </button>

@@ -8,7 +8,6 @@ import {
   findVehicleByCab,
   getAccountSheetPayload,
   getAssetSheetPayload,
-  getFleetStatusCardPayload,
   getGrowSheetPayload,
   getMonumentAction,
   getMonumentTake,
@@ -78,18 +77,6 @@ export default function useMonumentCommand({
   );
 
   const expansion = useMemo(() => getExpansionRecommendation(fleet), [fleet]);
-  const statusCard = useMemo(
-    () => getFleetStatusCardPayload({
-      fleet,
-      realFleet,
-      totalEarnings,
-      syncState,
-      strip,
-      expansion,
-    }),
-    [fleet, realFleet, totalEarnings, syncState, strip, expansion],
-  );
-
   const fleetCity = useMemo(() => {
     const city = fleet.find((vehicle) => vehicle.city)?.city;
     return city ? String(city).split(',')[0].trim() : 'Orlando';
@@ -187,7 +174,6 @@ export default function useMonumentCommand({
         subline: take.subline,
         labelColor: take.projected ? monument.projected : monument.inkGhost,
       },
-      statusCard,
       footer: {
         line: actionLine,
         doItLabel: 'Do it',
@@ -197,7 +183,6 @@ export default function useMonumentCommand({
     },
     {
       id: 'fleet',
-      fleetIntelligence: { fleet },
       hero: {
         label: 'FLEET',
         amount: `${strip.active?.value || 0}/${strip.total || realFleet.length || 0}`,
@@ -230,7 +215,6 @@ export default function useMonumentCommand({
     },
     {
       id: 'grow',
-      growthMockups: { fleet },
       hero: {
         label: 'GROW',
         amount: `+$${Math.round((expansion.projectedMonthly || 4960) / 4).toLocaleString()}`,
@@ -244,7 +228,7 @@ export default function useMonumentCommand({
         onSecondary: null,
       },
     },
-  ], [take, statusCard, actionLine, action.secondary, strip, fleet, realFleet.length, fleetCity, offline, fleetAsleep, expansion, fleetSyncHint, isLoadingReal, wakingFleet, onSync, onNavigate]);
+  ], [take, actionLine, action.secondary, strip, realFleet.length, fleetCity, offline, fleetAsleep, expansion, fleetSyncHint, isLoadingReal, wakingFleet, onSync, onNavigate]);
 
   const handleHeroTap = (pageId) => {
     if (pageId === 'grow') {

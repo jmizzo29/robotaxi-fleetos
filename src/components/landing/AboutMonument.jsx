@@ -59,8 +59,7 @@ export default function AboutMonument({ onNavigate }) {
           <button
             type="button"
             onClick={() => onNavigate('onboarding')}
-            className={`mt-4 w-full rounded-xl py-3.5 ${monumentType.buttonPrimary} text-white transition active:scale-[0.98]`}
-            style={{ backgroundColor: monument.action }}
+            className="mt-4 w-full rounded-full bg-white py-3.5 text-[13px] font-semibold uppercase tracking-[0.16em] text-[#0E0F12] transition active:scale-[0.98]"
           >
             Connect Tesla
           </button>

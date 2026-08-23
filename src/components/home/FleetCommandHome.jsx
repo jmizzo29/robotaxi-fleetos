@@ -43,10 +43,10 @@ function CommandHeaderActions({ onNavigate, alertCount }) {
       <button
         type="button"
         onClick={() => onNavigate('alerts')}
-        className="relative flex h-9 w-9 items-center justify-center rounded-full bg-white shadow-sm"
+        className="relative flex h-9 w-9 items-center justify-center rounded-full border border-white/10 bg-white/5"
         aria-label={alertCount > 0 ? `${alertCount} fleet alerts` : 'Fleet alerts'}
       >
-        <Bell className="h-[17px] w-[17px] text-slate-700" strokeWidth={icon.navStrokeIdle} />
+        <Bell className="h-[17px] w-[17px] text-[#F3F3F1]" strokeWidth={icon.navStrokeIdle} />
         {alertCount > 0 && (
           <span
             className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-bold text-white"
@@ -59,10 +59,10 @@ function CommandHeaderActions({ onNavigate, alertCount }) {
       <button
         type="button"
         onClick={() => onNavigate('account')}
-        className="flex h-9 w-9 items-center justify-center rounded-full border-2 border-white bg-slate-200 shadow-sm"
+        className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 bg-white/5"
         aria-label="Account"
       >
-        <User className="h-[18px] w-[18px] text-slate-600" strokeWidth={icon.navStrokeIdle} />
+        <User className="h-[18px] w-[18px] text-[#8B8E94]" strokeWidth={icon.navStrokeIdle} />
       </button>
     </>
   );
@@ -137,10 +137,10 @@ function EarningsHeroCard({ hero }) {
 function CommandActionBar({ plan, alertCount, onNavigate }) {
   return (
     <section aria-label="Next operator action" className={spacing.sectionPrimary}>
-      <AppCard variant="alert" className="bg-white">
+      <AppCard variant="alert">
         <p className={typography.label}>Do this now</p>
         <p className={`mt-1.5 ${typography.cardTitle}`}>{plan.action}</p>
-        <p className="mt-2 text-sm font-medium text-slate-600">{plan.summary}</p>
+        <p className="mt-2 text-sm font-normal text-[#8B8E94]">{plan.summary}</p>
         <div className="mt-4 flex flex-wrap gap-2">
           <button
             type="button"
@@ -154,7 +154,7 @@ function CommandActionBar({ plan, alertCount, onNavigate }) {
             <button
               type="button"
               onClick={() => onNavigate('alerts')}
-              className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm font-bold text-slate-700 transition active:scale-[0.99]"
+              className="rounded-full border border-white/12 bg-transparent px-4 py-2.5 text-sm font-medium text-[#F3F3F1] transition active:scale-[0.99]"
             >
               Review {alertCount} alert{alertCount === 1 ? '' : 's'}
             </button>
@@ -201,7 +201,7 @@ function FleetStatusGrid({ strip, onNavigate }) {
                 </span>
               </div>
               <p className={`mt-2.5 ${typography.metric}`} style={{ color: card.accent }}>{card.value}</p>
-              <p className="mt-2 text-[13px] font-medium text-slate-600">{card.sub}</p>
+              <p className="mt-2 text-[13px] font-normal text-[#8B8E94]">{card.sub}</p>
             </AppCard>
           );
         })}
@@ -215,7 +215,7 @@ function FleetStatusCompact({ strip, onNavigate }) {
     <button
       type="button"
       onClick={() => onNavigate('fleet')}
-      className="flex w-full items-center justify-between gap-3 rounded-[20px] border border-slate-200/90 bg-white px-4 py-3.5 text-left shadow-[0_4px_18px_-16px_rgba(15,23,42,0.22)] transition active:scale-[0.99]"
+      className="flex w-full items-center justify-between gap-3 border-t border-white/[0.08] px-1 py-3.5 text-left transition active:opacity-70"
     >
       <p className={typography.bodyMd}>
         {strip.active.value} active · {strip.charging.value} charging · fleet healthy
@@ -265,7 +265,7 @@ function GrowthSignal({ expansion, onNavigate }) {
     <button
       type="button"
       onClick={() => onNavigate('network')}
-      className="flex w-full items-center justify-between gap-3 rounded-[20px] border border-slate-200/90 bg-white px-4 py-3.5 text-left shadow-[0_4px_18px_-16px_rgba(15,23,42,0.22)] transition active:scale-[0.99]"
+      className="flex w-full items-center justify-between gap-3 border-t border-white/[0.08] px-1 py-3.5 text-left transition active:opacity-70"
     >
       <div className="min-w-0">
         <p className={typography.label}>Where to grow next</p>
@@ -312,7 +312,7 @@ function AiOperationsBrief({ plan, onNavigate }) {
           <p className={typography.sectionSm}>Prepared for your fleet</p>
         </div>
         <p className={`mt-3 ${typography.bodyMd}`}>{plan.summary}</p>
-        <p className="mt-3 text-[13px] font-semibold text-slate-600">
+        <p className="mt-3 text-[13px] font-medium text-[#8B8E94]">
           Confidence: <span style={{ color: colors.primary }}>{plan.confidenceLabel}</span>
           {' · '}
           Est. impact: <span style={{ color: semantic.positive }}>{plan.expectedRevenueImpact}</span>
