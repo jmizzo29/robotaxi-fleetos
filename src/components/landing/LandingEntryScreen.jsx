@@ -10,7 +10,7 @@ export default function LandingEntryScreen({
   connectDisabled = false,
 }) {
   return (
-    <div className="relative flex min-h-[100dvh] flex-col overflow-hidden bg-[#0E0F12] text-[#F3F3F1]">
+    <div className="relative flex min-h-[100dvh] flex-col overflow-hidden bg-[#1C1D21] text-[#F3F3F1]">
       <LandingHeroAmbience />
       <LandingHeader onNavigate={onNavigate} onConnect={onConnect} variant="cinematic" />
 

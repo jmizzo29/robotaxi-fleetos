@@ -4,10 +4,12 @@ import { colors, typography } from '../../design/roboagentTokens';
 
 export const monument = {
   canvas: colors.canvas,
+  canvasWash: colors.canvasWash,
   surface: colors.surface,
   ink: colors.ink,
   inkMuted: colors.inkMuted,
   inkGhost: colors.inkSubtle,
+  navIdle: colors.navIdle,
   money: colors.ink,
   projected: colors.warning,
   action: colors.primary,

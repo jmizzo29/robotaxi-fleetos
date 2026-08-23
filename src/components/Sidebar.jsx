@@ -10,8 +10,8 @@ export default function Sidebar({
 }) {
   return (
     <aside
-      className="hidden w-64 flex-col border-r border-white/[0.08] bg-[#0E0F12] lg:flex"
-      style={{ paddingTop: 'env(safe-area-inset-top)' }}
+      className="hidden w-64 flex-col border-r bg-[#1C1D21] lg:flex"
+      style={{ borderColor: colors.border, paddingTop: 'env(safe-area-inset-top)' }}
     >
       <div className="flex-1 px-6 py-7">
         <div className="mb-14">
@@ -31,8 +31,11 @@ export default function Sidebar({
                 key={id}
                 type="button"
                 onClick={() => onNavigate(id)}
-                className="flex w-full items-center justify-between px-1 py-3 text-left text-[13px] font-medium uppercase tracking-[0.16em] transition"
-                style={{ color: active ? colors.ink : colors.inkSubtle }}
+                className="flex w-full items-center justify-between border-l-2 px-1 py-3 pl-2 text-left text-[13px] font-medium uppercase tracking-[0.16em] transition"
+                style={{
+                  color: active ? colors.ink : colors.navIdle,
+                  borderColor: active ? colors.primary : 'transparent',
+                }}
               >
                 <span>{label}</span>
                 {showBadge && (
@@ -46,10 +49,10 @@ export default function Sidebar({
         </nav>
       </div>
 
-      <div className="border-t border-white/[0.08] px-6 py-6">
+      <div className="border-t px-6 py-6" style={{ borderColor: colors.border }}>
         <SignOutButton
           onSignedOut={() => onNavigate('landing')}
-          className="w-full py-2 text-left text-[12px] font-medium uppercase tracking-[0.16em] text-[#8B8E94] transition hover:text-[#F3F3F1]"
+          className="w-full py-2 text-left text-[12px] font-medium uppercase tracking-[0.16em] text-[#C4C6CB] transition hover:text-[#F3F3F1]"
           label="Sign out"
           compact
         />

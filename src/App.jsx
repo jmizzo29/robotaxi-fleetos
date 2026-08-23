@@ -6,7 +6,7 @@ import CommandSafetyModal from './components/CommandSafetyModal';
 import FeedbackButton from './components/FeedbackButton';
 import PageHeader from './components/PageHeader';
 import { AppHeader, AppShell } from './components/shell';
-import { mobileScreenBadge } from './design/roboagentTokens';
+import { colors, mobileScreenBadge } from './design/roboagentTokens';
 import RoboLogo from './components/RoboLogo';
 import RoboWordmark from './components/RoboWordmark';
 import Logo from './components/Logo';
@@ -170,7 +170,7 @@ export function SsoCallbackPage({ onNavigate }) {
   // Render nothing (or an extremely minimal loader) so the transition feels automatic.
   // The Clerk AuthenticateWithRedirectCallback above us handles the session establishment.
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white flex items-center justify-center">
+    <div className="min-h-screen bg-[#1C1D21] text-white flex items-center justify-center">
       <div className="flex items-center gap-3 text-white/60 text-sm">
         <Loader2 className="w-4 h-4 animate-spin" />
         Returning to app...
@@ -183,7 +183,7 @@ export function SsoCallbackPage({ onNavigate }) {
 // so this route now points users to the Tesla-first signup screen instead of a fake form.
 function EmailSignupFlow({ onNavigate }) {
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white flex items-center justify-center px-6 py-12">
+    <div className="min-h-screen bg-[#1C1D21] text-white flex items-center justify-center px-6 py-12">
       <div className="w-full max-w-[440px]">
         <button
           onClick={() => onNavigate('landing')}
@@ -415,7 +415,7 @@ function FleetApp() {
   ];
 
   const operationsStatus = (
-    <div className="w-full border border-white/[0.08] bg-[#16181C] p-4 sm:min-w-[280px] sm:w-auto sm:p-5">
+    <div className="w-full border border-[rgba(91,168,160,0.18)] bg-[#25262B] p-4 sm:min-w-[280px] sm:w-auto sm:p-5">
       <p className="mb-3 text-xs font-medium uppercase tracking-[0.18em] text-[#8B8E94]">
         Operations Status
       </p>
@@ -481,7 +481,7 @@ function FleetApp() {
     map: (
       <Suspense
         fallback={(
-          <div className="flex h-[70vh] min-h-[460px] items-center justify-center border border-white/[0.08] bg-[#16181C] text-sm font-medium text-[#8B8E94] lg:h-[calc(100vh-8rem)]">
+          <div className="flex h-[70vh] min-h-[460px] items-center justify-center border border-[rgba(91,168,160,0.18)] bg-[#25262B] text-sm font-medium text-[#8B8E94] lg:h-[calc(100vh-8rem)]">
             Loading fleet map...
           </div>
         )}
@@ -736,7 +736,7 @@ function FleetApp() {
     return (
       <div
         className="flex min-h-screen items-center justify-center"
-        style={{ backgroundColor: '#0E0F12' }}
+        style={{ backgroundColor: colors.canvas, backgroundImage: colors.canvasWash }}
       >
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="h-6 w-6 animate-spin" style={{ color: '#8B8E94' }} />
@@ -756,7 +756,7 @@ function FleetApp() {
 
   if (isRestoringTeslaSession) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0a0a0a] text-white">
+      <div className="flex min-h-screen items-center justify-center bg-[#1C1D21] text-white">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="h-6 w-6 animate-spin text-white/60" />
           <p className="text-sm text-white/60">Checking your Tesla connection...</p>
@@ -830,7 +830,7 @@ function FleetApp() {
             <AccountPanel embedded onNavigate={navigate} />
           </AppShell>
         </div>
-        <div className="hidden min-h-screen bg-[#0E0F12] text-[#F3F3F1] lg:block">
+        <div className="hidden min-h-screen bg-[#1C1D21] text-[#F3F3F1] lg:block">
           <AccountPanel onNavigate={navigate} />
         </div>
         <FeedbackButton route={route} />
@@ -843,7 +843,7 @@ function FleetApp() {
   // passes; guests are redirected to #/landing by the guard effect above.
   if (!sessionAllowed) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#0a0a0a] text-white">
+      <div className="flex min-h-screen items-center justify-center bg-[#1C1D21] text-white">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="h-6 w-6 animate-spin text-white/60" />
           <p className="text-sm text-white/60">Checking your session...</p>
@@ -857,7 +857,7 @@ function FleetApp() {
   if (MONUMENT_CHAIN_ROUTES.has(route)) {
     return (
       <>
-        <div className="flex h-screen min-h-0" style={{ backgroundColor: '#0E0F12' }}>
+        <div className="flex h-screen min-h-0" style={{ backgroundColor: colors.canvas, backgroundImage: colors.canvasWash }}>
           <Sidebar commandQueue={commandQueue} route={route} onNavigate={navigate} />
           <main className="flex min-h-0 flex-1 flex-col overflow-hidden">
             <MonumentChainShell
@@ -883,7 +883,7 @@ function FleetApp() {
   if (OPERATIONS_ROUTES.has(route)) {
     return (
       <>
-        <div className="flex h-screen min-h-0" style={{ backgroundColor: '#0E0F12' }}>
+        <div className="flex h-screen min-h-0" style={{ backgroundColor: colors.canvas, backgroundImage: colors.canvasWash }}>
           <Sidebar commandQueue={commandQueue} route={route} onNavigate={navigate} />
           <main className="flex min-h-0 flex-1 flex-col overflow-hidden">
             <MonumentOperations
@@ -906,14 +906,14 @@ function FleetApp() {
   }
 
   return (
-    <div className="robo-minimal flex min-h-screen text-[#F3F3F1] lg:bg-[#0E0F12]">
+    <div className="robo-minimal flex min-h-screen text-[#F3F3F1] lg:bg-[#1C1D21]">
       <Sidebar
         commandQueue={commandQueue}
         route={route}
         onNavigate={navigate}
       />
 
-      <main className="flex-1 overflow-y-auto lg:bg-[#0E0F12] lg:p-8">
+      <main className="flex-1 overflow-y-auto lg:bg-[#1C1D21] lg:p-8">
         <div className="mx-auto max-w-[1900px]">
           <div className="lg:hidden">
             <AppShell>

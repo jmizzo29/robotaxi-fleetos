@@ -82,7 +82,7 @@ export default function MonumentMap({
           bare
           flush
         />
-        <div className="pointer-events-none absolute inset-x-0 top-0 bg-gradient-to-b from-[#0E0F12] via-[#0E0F12]/55 to-transparent px-6 pb-16 pt-8 text-center">
+        <div className="pointer-events-none absolute inset-x-0 top-0 bg-gradient-to-b from-[#1C1D21] via-[#1C1D21]/55 to-transparent px-6 pb-16 pt-8 text-center">
           <p className={monumentType.label} style={{ color: monument.inkGhost }}>{hero.label}</p>
           <button
             type="button"

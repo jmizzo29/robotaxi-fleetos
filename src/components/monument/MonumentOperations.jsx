@@ -307,7 +307,7 @@ export default function MonumentOperations({
   return (
     <div
       className="flex h-full min-h-0 flex-col"
-      style={{ backgroundColor: monument.canvas }}
+      style={{ backgroundColor: monument.canvas, backgroundImage: monument.canvasWash }}
     >
       <div
         ref={pagerRef}

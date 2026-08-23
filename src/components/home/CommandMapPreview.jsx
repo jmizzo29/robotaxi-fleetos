@@ -64,7 +64,7 @@ function getMapFleet(fleet, realFleet, totalEarnings, syncState) {
 
 function MapFooter({ total, active }) {
   return (
-    <div className="pointer-events-none absolute bottom-0 left-0 right-0 flex items-center justify-between gap-2 bg-gradient-to-t from-[#0E0F12] via-[#0E0F12]/80 to-transparent px-5 pb-4 pt-10">
+    <div className="pointer-events-none absolute bottom-0 left-0 right-0 flex items-center justify-between gap-2 bg-gradient-to-t from-[#1C1D21] via-[#1C1D21]/80 to-transparent px-5 pb-4 pt-10">
       <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-white/80">
         {total} vehicles <span className="text-white/30">·</span> {active} active
       </p>
@@ -231,7 +231,7 @@ export default function CommandMapPreview({
   }).length;
 
   const mapFrame = (
-    <div className={flush ? 'h-full w-full' : bare ? 'w-full px-5' : `${radius.cardLg} bg-[#16181C] p-px`}>
+    <div className={flush ? 'h-full w-full' : bare ? 'w-full px-5' : `${radius.cardLg} bg-[#25262B] p-px`}>
       <div
         className={`relative overflow-hidden ${flush ? 'h-full' : bare ? 'rounded-[8px] border border-white/[0.08]' : `${radius.card} border border-white/[0.08]`} ${mapHeightClass}`}
       >

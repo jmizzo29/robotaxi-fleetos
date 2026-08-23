@@ -24,7 +24,7 @@ export default function LandingHeader({ onNavigate, variant = 'default' }) {
         <header
           className="fixed inset-x-0 top-0 z-50 flex h-14 items-center justify-between px-5"
           style={{
-            backgroundColor: cinematic ? 'transparent' : 'rgba(14,15,18,0.82)',
+            backgroundColor: cinematic ? 'transparent' : 'rgba(28,29,33,0.88)',
             backdropFilter: cinematic ? 'none' : 'blur(16px)',
             paddingTop: 'env(safe-area-inset-top)',
           }}
@@ -47,7 +47,7 @@ export default function LandingHeader({ onNavigate, variant = 'default' }) {
           <button
             type="button"
             onClick={() => setOpen((current) => !current)}
-            className="flex h-10 w-10 items-center justify-center rounded-full text-white/70 transition hover:text-white active:scale-[0.98]"
+            className="flex h-10 w-10 items-center justify-center rounded-full text-[#C4C6CB] transition hover:text-white active:scale-[0.98]"
             aria-label={open ? 'Close menu' : 'Open menu'}
             aria-expanded={open}
           >
@@ -81,7 +81,7 @@ export default function LandingHeader({ onNavigate, variant = 'default' }) {
                 key={item.route}
                 type="button"
                 onClick={() => go(item.route)}
-                className="border-b border-white/10 py-4 text-left text-[15px] font-medium text-white/80 transition hover:text-white"
+                className="border-b border-white/10 py-4 text-left text-[15px] font-medium text-[#C4C6CB] transition hover:text-white"
               >
                 {item.label}
               </button>
@@ -119,7 +119,7 @@ export default function LandingHeader({ onNavigate, variant = 'default' }) {
         <button
           type="button"
           onClick={() => setOpen((current) => !current)}
-          className="flex h-10 w-10 items-center justify-center rounded-full text-white/80 transition hover:bg-white/10 hover:text-white"
+          className="flex h-10 w-10 items-center justify-center rounded-full text-[#C4C6CB] transition hover:bg-white/10 hover:text-white"
           aria-label={open ? 'Close menu' : 'Open menu'}
           aria-expanded={open}
         >
@@ -132,7 +132,7 @@ export default function LandingHeader({ onNavigate, variant = 'default' }) {
       )}
 
       <nav
-        className={`fixed right-0 top-0 z-50 flex h-full w-[min(100%,280px)] flex-col bg-[#0E0F12] px-6 pt-20 transition-transform duration-300 ${
+        className={`fixed right-0 top-0 z-50 flex h-full w-[min(100%,280px)] flex-col bg-[#1C1D21] px-6 pt-20 transition-transform duration-300 ${
           open ? 'translate-x-0' : 'translate-x-full'
         }`}
         aria-hidden={!open}
@@ -146,7 +146,7 @@ export default function LandingHeader({ onNavigate, variant = 'default' }) {
               key={item.route}
               type="button"
               onClick={() => go(item.route)}
-              className="border-b border-white/10 py-4 text-left text-[15px] font-medium text-white/80 transition hover:text-white"
+              className="border-b border-white/10 py-4 text-left text-[15px] font-medium text-[#C4C6CB] transition hover:text-white"
             >
               {item.label}
             </button>

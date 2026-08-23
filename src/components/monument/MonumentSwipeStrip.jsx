@@ -51,10 +51,17 @@ export default function MonumentSwipeStrip({
               role="tab"
               aria-selected={isActive}
               onClick={() => onSelect?.(page.id)}
-              className={`min-w-0 px-0.5 py-1 text-center ${monumentType.navLabelCompact} transition-opacity ${isActive ? 'opacity-100' : 'opacity-40'}`}
-              style={{ color: isActive ? monument.ink : monument.inkGhost }}
+              className={`relative min-w-0 px-0.5 py-1 text-center ${monumentType.navLabelCompact} transition-colors`}
+              style={{ color: isActive ? monument.ink : monument.navIdle }}
             >
               {page.label}
+              {isActive && (
+                <span
+                  className="absolute inset-x-6 -bottom-0.5 h-px"
+                  style={{ backgroundColor: monument.action, boxShadow: '0 0 8px rgba(91,168,160,0.4)' }}
+                  aria-hidden="true"
+                />
+              )}
             </button>
           );
         })}
@@ -63,7 +70,7 @@ export default function MonumentSwipeStrip({
       {showSwipeHint && nextLabel && (
         <p
           className={`pb-[max(0.75rem,env(safe-area-inset-bottom))] text-center ${monumentType.revealHint}`}
-          style={{ color: monument.inkGhost }}
+          style={{ color: monument.navIdle }}
         >
           {`Swipe for ${nextLabel}`}
         </p>
