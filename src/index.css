@@ -3,8 +3,8 @@
 @theme {
   --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
 
-  --color-surface: #0E0F12;
-  --color-surface-raised: #16181C;
+  --color-surface: #1C1D21;
+  --color-surface-raised: #25262B;
   --color-ink: #F3F3F1;
   --color-ink-muted: #8B8E94;
   --color-ink-subtle: #5C5F66;
@@ -26,7 +26,9 @@ body,
   margin: 0;
   padding: 0;
   min-height: 100%;
-  background: #0E0F12;
+  background: #1C1D21;
+  background-image: radial-gradient(ellipse 90% 55% at 50% -10%, rgba(91,168,160,0.09), transparent 58%);
+  background-attachment: fixed;
   color: #F3F3F1;
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
@@ -166,11 +168,11 @@ body,
 }
 
 .robo-minimal {
-  background: #0E0F12;
+  background: #1C1D21;
   color: #F3F3F1;
 }
 .robo-minimal main {
-  background: #0E0F12;
+  background: #1C1D21;
 }
 
 .mapboxgl-popup.fleetos-popup {
@@ -187,8 +189,8 @@ body,
 }
 
 .mapboxgl-popup.fleetos-popup .mapboxgl-popup-tip {
-  border-top-color: #16181C;
-  border-bottom-color: #16181C;
+  border-top-color: #25262B;
+  border-bottom-color: #25262B;
 }
 
 .mapboxgl-popup.fleetos-popup .mapboxgl-popup-close-button {
@@ -201,12 +203,12 @@ body,
   color: #8B8E94;
   font-size: 16px;
   line-height: 20px;
-  background: rgba(14, 15, 18, 0.8);
+  background: rgba(28, 29, 33, 0.8);
 }
 
 .mapboxgl-popup.fleetos-popup .mapboxgl-popup-close-button:hover {
   color: #F3F3F1;
-  background: rgba(28, 30, 35, 0.95);
+  background: rgba(44, 45, 51, 0.95);
 }
 
 /* Clerk renders outside our component tree. */
@@ -218,9 +220,9 @@ body,
 
 .cl-card,
 .cl-cardBox {
-  background: #16181C !important;
+  background: #25262B !important;
   color: #F3F3F1 !important;
-  border: 1px solid rgba(243, 243, 241, 0.08) !important;
+  border: 1px solid rgba(91, 168, 160, 0.18) !important;
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45) !important;
 }
 
@@ -252,9 +254,9 @@ body,
 
 .cl-formFieldInput,
 .cl-input {
-  background: #0E0F12 !important;
+  background: #1C1D21 !important;
   color: #F3F3F1 !important;
-  border-color: rgba(243, 243, 241, 0.16) !important;
+  border-color: rgba(91, 168, 160, 0.22) !important;
   box-shadow: none !important;
 }
 
@@ -274,13 +276,13 @@ body,
 }
 
 .cl-socialButtonsBlockButton {
-  background: #16181C !important;
+  background: #25262B !important;
   color: #F3F3F1 !important;
-  border-color: rgba(243, 243, 241, 0.12) !important;
+  border-color: rgba(91, 168, 160, 0.18) !important;
 }
 
 .cl-socialButtonsBlockButton:hover {
-  background: #1C1E23 !important;
+  background: #2C2D33 !important;
 }
 
 .cl-socialButtonsBlockButtonText,
@@ -293,8 +295,8 @@ body,
 
 .cl-footer,
 .cl-footerPages {
-  background: #16181C !important;
-  border-color: rgba(243, 243, 241, 0.08) !important;
+  background: #25262B !important;
+  border-color: rgba(91, 168, 160, 0.18) !important;
 }
 
 .cl-internal-b3fm6y,

@@ -51,10 +51,17 @@ export default function MonumentSwipeStrip({
               role="tab"
               aria-selected={isActive}
               onClick={() => onSelect?.(page.id)}
-              className={`min-w-0 px-0.5 py-1 text-center ${monumentType.navLabelCompact} transition-colors`}
+              className={`relative min-w-0 px-0.5 py-1 text-center ${monumentType.navLabelCompact} transition-colors`}
               style={{ color: isActive ? monument.ink : monument.navIdle }}
             >
               {page.label}
+              {isActive && (
+                <span
+                  className="absolute inset-x-6 -bottom-0.5 h-px"
+                  style={{ backgroundColor: monument.action, boxShadow: '0 0 8px rgba(91,168,160,0.4)' }}
+                  aria-hidden="true"
+                />
+              )}
             </button>
           );
         })}

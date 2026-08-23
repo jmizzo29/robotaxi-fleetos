@@ -29,7 +29,7 @@ export default function MonumentCommandSlide({
   if (!page) return null;
 
   return (
-    <div className="flex h-full min-h-0 flex-col" style={{ backgroundColor: monument.canvas }}>
+    <div className="flex h-full min-h-0 flex-col" style={{ backgroundColor: monument.canvas, backgroundImage: monument.canvasWash }}>
       <MonumentHero
         {...page.hero}
         onTapAmount={() => onHeroTap(page.id)}

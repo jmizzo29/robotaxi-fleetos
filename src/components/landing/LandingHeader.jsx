@@ -24,7 +24,7 @@ export default function LandingHeader({ onNavigate, variant = 'default' }) {
         <header
           className="fixed inset-x-0 top-0 z-50 flex h-14 items-center justify-between px-5"
           style={{
-            backgroundColor: cinematic ? 'transparent' : 'rgba(14,15,18,0.82)',
+            backgroundColor: cinematic ? 'transparent' : 'rgba(28,29,33,0.88)',
             backdropFilter: cinematic ? 'none' : 'blur(16px)',
             paddingTop: 'env(safe-area-inset-top)',
           }}
@@ -132,7 +132,7 @@ export default function LandingHeader({ onNavigate, variant = 'default' }) {
       )}
 
       <nav
-        className={`fixed right-0 top-0 z-50 flex h-full w-[min(100%,280px)] flex-col bg-[#0E0F12] px-6 pt-20 transition-transform duration-300 ${
+        className={`fixed right-0 top-0 z-50 flex h-full w-[min(100%,280px)] flex-col bg-[#1C1D21] px-6 pt-20 transition-transform duration-300 ${
           open ? 'translate-x-0' : 'translate-x-full'
         }`}
         aria-hidden={!open}

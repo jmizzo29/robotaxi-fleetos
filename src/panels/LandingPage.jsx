@@ -416,8 +416,8 @@ export function AgentChatPage({ onNavigate }) {
   const primaryAction = response.steps?.[0] || 'Charge Model Y after 11 PM and clean both cars before Saturday bookings.';
 
   return (
-    <div className="flex min-h-screen flex-col bg-[#0E0F12] text-[#F3F3F1]">
-      <header className="sticky top-0 z-50 flex items-center justify-between border-b border-white/[0.08] bg-[#0E0F12]/90 p-4 backdrop-blur-md">
+    <div className="flex min-h-screen flex-col bg-[#1C1D21] text-[#F3F3F1]">
+      <header className="sticky top-0 z-50 flex items-center justify-between border-b border-[rgba(91,168,160,0.18)] bg-[#1C1D21]/90 p-4 backdrop-blur-md">
         <div className="flex items-center gap-3">
           <RoboLogo className="h-10 w-10 shrink-0 text-white" />
           <div>
@@ -438,7 +438,7 @@ export function AgentChatPage({ onNavigate }) {
       <main className="flex-1 space-y-6 overflow-y-auto p-4 pb-32">
         <div className="flex gap-3">
           <RoboLogo className="h-9 w-9 shrink-0 text-white" />
-          <div className="max-w-[75%] rounded-2xl rounded-tl-none border border-white/[0.08] bg-[#16181C] px-5 py-4">
+          <div className="max-w-[75%] rounded-2xl rounded-tl-none border border-[rgba(91,168,160,0.18)] bg-[#25262B] px-5 py-4">
             <p className="text-[#C8C8C4]">
               Good morning! I&apos;ve analyzed your fleet. Here&apos;s what I recommend for today:
             </p>
@@ -453,7 +453,7 @@ export function AgentChatPage({ onNavigate }) {
 
         <div className="flex gap-3">
           <RoboLogo className="h-9 w-9 shrink-0 text-white" />
-          <div className="max-w-[75%] rounded-2xl rounded-tl-none border border-white/[0.08] bg-[#16181C] px-5 py-4">
+          <div className="max-w-[75%] rounded-2xl rounded-tl-none border border-[rgba(91,168,160,0.18)] bg-[#25262B] px-5 py-4">
             <p className="font-medium text-[#F3F3F1]">{firstMetric}</p>
             <p className="mt-2 text-[#8B8E94]">{primaryAction}</p>
             <p className="mt-3 text-xs text-[#5C5F66]">
@@ -464,7 +464,7 @@ export function AgentChatPage({ onNavigate }) {
         </div>
       </main>
 
-      <div className="border-t border-white/[0.08] bg-[#0E0F12] px-4 pb-4">
+      <div className="border-t border-[rgba(91,168,160,0.18)] bg-[#1C1D21] px-4 pb-4">
         <div className="flex gap-2 overflow-x-auto pb-3 pt-3">
           {prompts.map(([chip, prompt]) => (
             <button
@@ -482,8 +482,8 @@ export function AgentChatPage({ onNavigate }) {
         </div>
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 border-t border-white/[0.08] bg-[#0E0F12] p-4">
-        <div className="flex items-center rounded-full border border-white/10 bg-[#16181C] px-5 py-2">
+      <div className="fixed bottom-0 left-0 right-0 border-t border-[rgba(91,168,160,0.18)] bg-[#1C1D21] p-4">
+        <div className="flex items-center rounded-full border border-[rgba(91,168,160,0.22)] bg-[#25262B] px-5 py-2">
           <input
             id="public-agent-question"
             type="text"

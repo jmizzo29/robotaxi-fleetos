@@ -5,7 +5,7 @@ import Logo from '../components/Logo';
 
 export default function AddVehiclePanel({ onNavigate }) {
   return (
-    <div className="min-h-screen bg-[#0a0a0a] text-white flex items-center justify-center px-6 py-12">
+    <div className="min-h-screen bg-[#1C1D21] text-white flex items-center justify-center px-6 py-12">
       <div className="w-full max-w-[480px]">
         {/* Back to Dashboard */}
         <button

@@ -4,15 +4,16 @@ export const colors = {
   primary: '#5BA8A0',
   primaryLight: 'rgba(91,168,160,0.14)',
   primaryDark: '#3E7D77',
-  canvas: '#0E0F12',
-  surface: '#16181C',
-  surfaceRaised: '#1C1E23',
+  canvas: '#1C1D21',
+  surface: '#25262B',
+  surfaceRaised: '#2C2D33',
   ink: '#F3F3F1',
   inkMuted: '#8B8E94',
   inkSubtle: '#5C5F66',
   navIdle: '#C4C6CB',
-  border: 'rgba(243,243,241,0.08)',
-  earningsGradient: 'linear-gradient(180deg, #1A1C20 0%, #0E0F12 100%)',
+  border: 'rgba(91,168,160,0.18)',
+  earningsGradient: 'linear-gradient(180deg, #2C2D33 0%, #1C1D21 100%)',
+  canvasWash: 'radial-gradient(ellipse 90% 55% at 50% -10%, rgba(91,168,160,0.09), transparent 58%)',
   success: '#5BA8A0',
   successBg: 'rgba(91,168,160,0.12)',
   warning: '#C4A35A',
@@ -85,7 +86,7 @@ export const shadow = {
 };
 
 export const card = {
-  base: `${radius.card} border border-white/[0.08] bg-[#16181C]`,
+  base: `${radius.card} border border-[rgba(91,168,160,0.18)] bg-[#25262B]`,
   subdued: '',
   accent: 'border-l-[2px] border-l-[#5BA8A0]',
 };

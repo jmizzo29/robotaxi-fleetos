@@ -38,7 +38,7 @@ export default function LiveDataPanel({ fleet = [] }) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {/* Total Vehicles */}
-        <div className="bg-[#0a0a0a] rounded-2xl p-6">
+        <div className="bg-[#25262B] rounded-2xl p-6">
           <div className="text-white/60 text-sm">Total Vehicles</div>
           <div className="text-6xl font-semibold mt-2 tabular-nums">{totalVehicles}</div>
           <div className="text-white/40 text-xs mt-1">
@@ -47,7 +47,7 @@ export default function LiveDataPanel({ fleet = [] }) {
         </div>
 
         {/* Battery State of Charge */}
-        <div className="bg-[#0a0a0a] rounded-2xl p-6">
+        <div className="bg-[#25262B] rounded-2xl p-6">
           <div className="text-white/60 text-sm">Battery State of Charge</div>
           <div className="h-40 flex items-end gap-2 mt-4 px-1">
             {displayBars.length > 0 ? (
@@ -70,7 +70,7 @@ export default function LiveDataPanel({ fleet = [] }) {
         </div>
 
         {/* Vehicle Health */}
-        <div className="bg-[#0a0a0a] rounded-2xl p-6">
+        <div className="bg-[#25262B] rounded-2xl p-6">
           <div className="text-white/60 text-sm">Vehicle Health</div>
           <div className="mt-6 text-6xl font-semibold text-emerald-400 tabular-nums">
             {avgHealth}

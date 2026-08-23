@@ -13,9 +13,9 @@ const ICONS = {
 export default function MobileBottomNav({ route, onNavigate, pendingCount = 0 }) {
   return (
     <nav
-      className="fixed bottom-0 left-0 right-0 z-50 border-t border-white/[0.08] bg-[#0E0F12]/96 backdrop-blur-xl lg:hidden"
+      className="fixed bottom-0 left-0 right-0 z-50 border-t bg-[#1C1D21]/96 backdrop-blur-xl lg:hidden"
       aria-label="Primary navigation"
-      style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+      style={{ borderColor: colors.border, paddingBottom: 'env(safe-area-inset-bottom)' }}
     >
       <div className={`grid ${mobileNavItems.length > 5 ? 'grid-cols-6' : 'grid-cols-5'}`}>
         {mobileNavItems.map(({ id, label, routes }) => {
@@ -34,7 +34,7 @@ export default function MobileBottomNav({ route, onNavigate, pendingCount = 0 })
               {active && (
                 <span
                   className="absolute inset-x-5 top-0 h-px"
-                  style={{ backgroundColor: colors.ink }}
+                  style={{ backgroundColor: colors.primary, boxShadow: '0 0 10px rgba(91,168,160,0.45)' }}
                   aria-hidden="true"
                 />
               )}
