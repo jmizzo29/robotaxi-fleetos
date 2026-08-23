@@ -7,6 +7,8 @@ import {
   formatPercent,
 } from '../services/robotaxiOperationsService';
 import { readRevenueRecords, syncRevenueFromBackend } from '../services/revenueService';
+import TeslaChargeHistoryList from '../components/TeslaChargeHistoryList';
+import { getTeslaChargeHistory, isMissingChargingScope } from '../services/teslaChargingService';
 import { AppCard, AppSection } from '../components/shell';
 import { colors, semantic, typography } from '../design/roboagentTokens';
 
@@ -130,6 +132,7 @@ function InsightCard({ alert }) {
 
 export default function FleetHealthDashboard({ fleet = [], onQueueCommand }) {
   const [revenueRecords, setRevenueRecords] = useState(() => readRevenueRecords());
+  const [chargeHistory, setChargeHistory] = useState({ sessions: [], loading: false, error: null, missingScope: false });
 
   useEffect(() => {
     const refresh = () => setRevenueRecords(readRevenueRecords());
@@ -140,6 +143,35 @@ export default function FleetHealthDashboard({ fleet = [], onQueueCommand }) {
 
   // Demo/simulated vehicles are excluded from earnings estimates and health KPIs.
   const realFleet = useMemo(() => fleet.filter((vehicle) => vehicle.isReal), [fleet]);
+  const primaryVin = realFleet.find((vehicle) => vehicle.vin)?.vin;
+
+  useEffect(() => {
+    if (!primaryVin) return undefined;
+    let cancelled = false;
+    setChargeHistory((current) => ({ ...current, loading: true }));
+    getTeslaChargeHistory(primaryVin)
+      .then((payload) => {
+        if (cancelled) return;
+        setChargeHistory({
+          sessions: payload.sessions || [],
+          loading: false,
+          error: null,
+          missingScope: payload.hasChargingCmds === false,
+        });
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        setChargeHistory({
+          sessions: [],
+          loading: false,
+          error: isMissingChargingScope(error) ? null : (error.message || 'Unable to load charge history.'),
+          missingScope: isMissingChargingScope(error),
+        });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [primaryVin]);
   const demoCount = fleet.length - realFleet.length;
   const summary = useMemo(() => buildFleetHealthSummary(realFleet, revenueRecords), [realFleet, revenueRecords]);
   const maintenancePlan = useMemo(() => buildCleaningMaintenancePlan(realFleet, revenueRecords), [realFleet, revenueRecords]);
@@ -168,6 +200,17 @@ export default function FleetHealthDashboard({ fleet = [], onQueueCommand }) {
           ROBOAGENT estimates earnings from utilization, telemetry, battery, health, and owner-entered revenue. The scheduler turns those signals into cleaning and maintenance work before vehicles lose availability.
         </p>
       </AppCard>
+
+      {primaryVin && (
+        <AppCard className="mb-4">
+          <TeslaChargeHistoryList
+            sessions={chargeHistory.sessions}
+            loading={chargeHistory.loading}
+            error={chargeHistory.error}
+            missingScope={chargeHistory.missingScope}
+          />
+        </AppCard>
+      )}
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-[1.1fr_0.9fr]">
         <AppCard>

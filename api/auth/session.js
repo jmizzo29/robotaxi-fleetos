@@ -1,4 +1,4 @@
-import { getBillingStatusForSession, getSession, getTeslaConnectionForSession } from '../_lib/auth.js';
+import { getBillingStatusForSession, getSession, getTeslaConnectionForSession, getTeslaScopeStatusForSession } from '../_lib/auth.js';
 import { hasPostgres } from '../_lib/db.js';
 
 export default async function handler(req, res) {
@@ -33,6 +33,7 @@ export default async function handler(req, res) {
     return;
   }
   const tesla = await getTeslaConnectionForSession(req, res);
+  const teslaScopes = await getTeslaScopeStatusForSession(req, res);
   const billing = await getBillingStatusForSession(req, res, { create: true });
   res.status(200).json({
     authenticated: true,
@@ -41,5 +42,7 @@ export default async function handler(req, res) {
     billing,
     teslaConnected: Boolean(tesla?.connection),
     teslaConnectedAt: tesla?.connection?.connected_at || null,
+    teslaScopes: teslaScopes.scopes,
+    hasChargingCmds: teslaScopes.hasChargingCmds,
   });
 }

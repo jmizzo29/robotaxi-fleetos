@@ -5,8 +5,10 @@ import AssetDetailSheet from './AssetDetailSheet';
 import ConfirmActionSheet from './ConfirmActionSheet';
 import MonumentActionFooter from './MonumentActionFooter';
 import MonumentBottomChrome from './MonumentBottomChrome';
+import MonumentChargePanel from './MonumentChargePanel';
 import OperationsLedgerStrip from './OperationsLedgerStrip';
 import OperationsMonumentPanel from './OperationsMonumentPanel';
+import { sendTeslaChargingCommand } from '../../services/teslaChargingService';
 import PlanDetailSheet from './PlanDetailSheet';
 import TelemetryDetailSheet from './TelemetryDetailSheet';
 import { monument, monumentType } from './monumentTokens';
@@ -75,6 +77,7 @@ export default function MonumentOperations({
   const { user } = useFleetAuthStatus();
   const [tab, setTab] = useState(initialTab);
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [chargeConfirm, setChargeConfirm] = useState(null);
   const [planOpen, setPlanOpen] = useState(false);
   const [assetOpen, setAssetOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
@@ -228,6 +231,41 @@ export default function MonumentOperations({
     }
   };
 
+  const requestChargeCommand = ({ vin, name, action: teslaAction, percent }) => {
+    const labels = {
+      start: { title: 'Start charging?', body: `Ask Tesla to start charging ${name}. Tesla still decides whether the vehicle can charge.`, command: `Start charging ${name}` },
+      stop: { title: 'Stop charging?', body: `Ask Tesla to stop charging ${name}.`, command: `Stop charging ${name}` },
+      set_limit: { title: `Set charge limit to ${percent}%?`, body: `Ask Tesla to set the charge limit for ${name} to ${percent}%.`, command: `Set charge limit on ${name} to ${percent}%` },
+    };
+    const copy = labels[teslaAction];
+    if (!copy) return;
+    setChargeConfirm({
+      title: copy.title,
+      body: copy.body,
+      primaryLabel: 'Confirm',
+      command: copy.command,
+      teslaAction: { vin, action: teslaAction, percent },
+    });
+  };
+
+  const handleChargeConfirm = async () => {
+    if (!chargeConfirm?.teslaAction) return;
+    setConfirming(true);
+    try {
+      await sendTeslaChargingCommand(chargeConfirm.teslaAction);
+      onQueueCommand(chargeConfirm.command, 'HIGH');
+      setActionDone('Tesla charging command sent.');
+      setChargeConfirm(null);
+      window.setTimeout(() => setActionDone(''), 4000);
+    } catch (error) {
+      setChargeConfirm((current) => (
+        current ? { ...current, body: error.message || 'Tesla rejected the charging command.' } : current
+      ));
+    } finally {
+      setConfirming(false);
+    }
+  };
+
   const handleNudgeRoute = async () => {
     if (!assetPayload?.nudgeCommand) return;
     setNudging(true);
@@ -343,6 +381,13 @@ export default function MonumentOperations({
                 onSelectRow={handleLedgerRow}
               />
             )}
+            {page.id === 'charge' && (
+              <MonumentChargePanel
+                realFleet={realFleet}
+                teslaConnected={teslaConnected}
+                onRequestChargeCommand={requestChargeCommand}
+              />
+            )}
             <MonumentActionFooter
               line={page.id === 'plan' && offline > 0 && !actionDone
                 ? 'CAB offline — resolve before peak.'
@@ -375,6 +420,14 @@ export default function MonumentOperations({
         confirming={confirming}
         onClose={() => setConfirmOpen(false)}
         onConfirm={handleConfirm}
+      />
+
+      <ConfirmActionSheet
+        open={Boolean(chargeConfirm)}
+        payload={chargeConfirm}
+        confirming={confirming}
+        onClose={() => setChargeConfirm(null)}
+        onConfirm={handleChargeConfirm}
       />
 
       <PlanDetailSheet

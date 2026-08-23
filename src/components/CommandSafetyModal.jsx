@@ -24,7 +24,7 @@ function classifyCommand(command = '', priority = 'NORMAL') {
   };
 }
 
-export default function CommandSafetyModal({ pendingCommand, onCancel, onConfirm }) {
+export default function CommandSafetyModal({ pendingCommand, onCancel, onConfirm, confirming = false }) {
   if (!pendingCommand) return null;
 
   const risk = classifyCommand(pendingCommand.command, pendingCommand.priority);
@@ -54,6 +54,9 @@ export default function CommandSafetyModal({ pendingCommand, onCancel, onConfirm
             <p className="mt-3 text-xs font-semibold text-slate-500">
               Priority: {pendingCommand.priority || 'NORMAL'}
             </p>
+            {pendingCommand.error && (
+              <p className="mt-3 text-sm font-medium text-rose-300">{pendingCommand.error}</p>
+            )}
           </div>
         </div>
 
@@ -61,16 +64,18 @@ export default function CommandSafetyModal({ pendingCommand, onCancel, onConfirm
           <button
             type="button"
             onClick={onCancel}
-            className="rounded-2xl border border-white/10 bg-white/5 py-4 text-base font-black text-slate-200 active:bg-white/10"
+            disabled={confirming}
+            className="rounded-2xl border border-white/10 bg-white/5 py-4 text-base font-black text-slate-200 active:bg-white/10 disabled:opacity-60"
           >
             Cancel
           </button>
           <button
             type="button"
             onClick={onConfirm}
-            className="rounded-2xl border border-emerald-400/30 bg-emerald-400/10 py-4 text-base font-black text-emerald-100 active:bg-emerald-400/20"
+            disabled={confirming}
+            className="rounded-2xl border border-emerald-400/30 bg-emerald-400/10 py-4 text-base font-black text-emerald-100 active:bg-emerald-400/20 disabled:opacity-60"
           >
-            Confirm &amp; Queue
+            {confirming ? 'Sending…' : pendingCommand.teslaAction ? 'Confirm' : 'Confirm &amp; Queue'}
           </button>
         </div>
       </section>

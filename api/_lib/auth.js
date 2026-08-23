@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import { getVerifiedClerkSession, isClerkAuthRequired } from './clerkAuth.js';
 import { ensureFleetSchema, query } from './db.js';
+import { hasChargingCmds, scopesFromTokenAndRecord } from './teslaScopes.js';
 
 const SESSION_COOKIE = 'fleetos_session';
 const SESSION_DAYS = 30;
@@ -583,15 +584,66 @@ export async function teslaRequestForSession(req, res, path, options = {}) {
     body: options.body ? JSON.stringify(options.body) : undefined,
   });
 
-  if (!response.ok) {
-    const detail = await response.text();
-    throw new Error(detail || `Tesla request failed with ${response.status}`);
-  }
   const text = await response.text();
-  if (!text) {
-    throw new Error(`Tesla request returned an empty response for ${path}`);
+  let parsed = null;
+  if (text) {
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      parsed = null;
+    }
   }
-  return JSON.parse(text);
+
+  if (!response.ok) {
+    const message = parsed?.error_description
+      || parsed?.error
+      || parsed?.message
+      || text
+      || `Tesla request failed with ${response.status}`;
+    const error = new Error(typeof message === 'string' ? message : JSON.stringify(message));
+    error.status = response.status;
+    error.code = parsed?.error || parsed?.errorcode;
+    error.body = parsed;
+    throw error;
+  }
+
+  if (!text) {
+    return { response: {} };
+  }
+  if (!parsed) {
+    throw new Error(`Tesla request returned a non-JSON response for ${path}`);
+  }
+  return parsed;
+}
+
+export async function getTeslaScopeStatusForSession(req, res) {
+  const result = await getTeslaConnectionForSession(req, res);
+  if (!result?.connection) {
+    return { connected: false, scopes: [], hasChargingCmds: false };
+  }
+
+  let accessToken = null;
+  try {
+    const expiresAt = result.connection.expires_at ? new Date(result.connection.expires_at).getTime() : 0;
+    if (result.connection.access_token_enc && expiresAt > Date.now() + 60000) {
+      accessToken = decryptToken(result.connection.access_token_enc);
+    } else {
+      accessToken = await getTeslaAccessTokenForRequest(req, res);
+    }
+  } catch {
+    accessToken = null;
+  }
+
+  const scopes = scopesFromTokenAndRecord({
+    accessToken,
+    storedScope: result.connection.scope,
+  });
+
+  return {
+    connected: true,
+    scopes,
+    hasChargingCmds: hasChargingCmds(scopes),
+  };
 }
 
 export async function disconnectTesla(req, res) {

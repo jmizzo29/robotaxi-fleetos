@@ -16,7 +16,7 @@ const TESLA_AUTHORIZE_URL = process.env.TESLA_AUTHORIZE_URL || 'https://auth.tes
 const TESLA_AUTH_URL = process.env.TESLA_AUTH_URL || 'https://fleet-auth.prd.vn.cloud.tesla.com/oauth2/v3/token';
 const DEFAULT_FLEET_API_BASE = process.env.TESLA_API_BASE || 'https://fleet-api.prd.na.vn.cloud.tesla.com';
 const DEFAULT_REDIRECT_URI = process.env.TESLA_REDIRECT_URI || `http://localhost:${PORT}/callback`;
-const DEFAULT_SCOPES = process.env.TESLA_SCOPES || 'openid offline_access user_data vehicle_device_data vehicle_location';
+const DEFAULT_SCOPES = process.env.TESLA_SCOPES || 'openid offline_access user_data vehicle_device_data vehicle_location vehicle_charging_cmds';
 const TESLA_PARTNER_DOMAIN = process.env.TESLA_PARTNER_DOMAIN || '';
 const AI_PROVIDER = (process.env.AI_PROVIDER || '').toLowerCase();
 const AI_MODEL = process.env.AI_MODEL || (AI_PROVIDER === 'xai' ? 'grok-4' : 'claude-sonnet-4-5');
@@ -1068,6 +1068,90 @@ app.post('/api/vehicles/:vin/wake_up', async (req, res) => {
     res.status(status).json({
       error: 'TESLA_WAKE_UNAVAILABLE',
       message: error.message,
+    });
+  }
+});
+
+const MISSING_CHARGING_SCOPE_MESSAGE = 'Charging history needs Tesla charging permission. Connect Tesla again to grant it. The app is not broken.';
+
+function teslaErrorLooksLikeMissingChargingScope(error) {
+  const detail = error.response?.data || {};
+  const text = `${error.message || ''} ${JSON.stringify(detail)}`.toLowerCase();
+  return (
+    text.includes('vehicle_charging_cmds')
+    || text.includes('missing scope')
+    || text.includes('missing_scopes')
+    || text.includes('insufficient_scope')
+    || ((error.status || error.response?.status) === 403 && text.includes('scope'))
+  );
+}
+
+function extractChargeHistoryRows(payload) {
+  if (Array.isArray(payload)) return payload;
+  if (Array.isArray(payload?.data)) return payload.data;
+  if (Array.isArray(payload?.response)) return payload.response;
+  if (Array.isArray(payload?.data?.data)) return payload.data.data;
+  if (Array.isArray(payload?.sessions)) return payload.sessions;
+  return [];
+}
+
+app.get('/api/vehicles/:vin/charging/history', async (req, res) => {
+  try {
+    const startTime = new Date(Date.now() - 90 * 24 * 60 * 60 * 1000).toISOString();
+    const payload = await teslaRequest('/api/1/dx/charging/history', {
+      params: {
+        vin: req.params.vin,
+        startTime,
+        pageNo: 1,
+        pageSize: 12,
+      },
+    });
+    const sessions = extractChargeHistoryRows(payload).map((session) => ({
+      id: session.sessionId || session.chargeSessionId || session.id,
+      vin: session.vin || req.params.vin,
+      startedAt: session.chargeStartDateTime || session.startDateTime || session.startedAt || null,
+      endedAt: session.chargeStopDateTime || session.endDateTime || session.endedAt || null,
+      energyKwh: session.energyAdded ?? session.energy_added ?? session.kwh ?? null,
+      billedAmount: session.feeTotal ?? session.cost ?? session.billedAmount ?? null,
+      currency: session.currencyCode || 'USD',
+      locationName: session.siteLocationName || session.chargingSiteName || session.locationName || null,
+      latitude: session.chargingLocation?.latitude ?? session.latitude ?? null,
+      longitude: session.chargingLocation?.longitude ?? session.longitude ?? null,
+    }));
+    res.json({ sessions, hasChargingCmds: true });
+  } catch (error) {
+    const status = teslaErrorLooksLikeMissingChargingScope(error) ? 403 : (error.status || error.response?.status || 502);
+    res.status(status).json({
+      error: status === 403 ? 'MISSING_CHARGING_SCOPE' : 'TESLA_CHARGE_HISTORY_UNAVAILABLE',
+      message: status === 403 ? MISSING_CHARGING_SCOPE_MESSAGE : (error.message || 'Charge history unavailable'),
+      hasChargingCmds: status === 403 ? false : undefined,
+    });
+  }
+});
+
+app.post('/api/vehicles/:vin/charging/command', async (req, res) => {
+  const action = String(req.body?.action || '').trim().toLowerCase();
+  const commands = {
+    start: 'charge_start',
+    stop: 'charge_stop',
+    set_limit: 'set_charge_limit',
+  };
+  const path = commands[action];
+  if (!path) {
+    res.status(400).json({ error: 'TESLA_CHARGE_COMMAND_INVALID', message: 'Use start, stop, or set_limit.' });
+    return;
+  }
+  try {
+    const payload = await teslaRequest(`/api/1/vehicles/${req.params.vin}/command/${path}`, {
+      method: 'POST',
+      data: action === 'set_limit' ? { percent: Number(req.body?.percent) } : undefined,
+    });
+    res.json(payload);
+  } catch (error) {
+    const status = teslaErrorLooksLikeMissingChargingScope(error) ? 403 : (error.status || error.response?.status || 502);
+    res.status(status).json({
+      error: status === 403 ? 'MISSING_CHARGING_SCOPE' : 'TESLA_CHARGE_COMMAND_UNAVAILABLE',
+      message: status === 403 ? MISSING_CHARGING_SCOPE_MESSAGE : (error.message || 'Charging command unavailable'),
     });
   }
 });

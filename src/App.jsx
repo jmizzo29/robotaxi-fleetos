@@ -51,6 +51,7 @@ import { useFleetSimulation } from './hooks/useFleetSimulation';
 import { useFleetAuthStatus } from './auth/FleetAuthContext';
 import { canUseTeslaTelemetry } from './services/betaCompliance';
 import { getFleetOsSession } from './services/sessionService';
+import { sendTeslaChargingCommand } from './services/teslaChargingService';
 import { routeToOperationsTab } from './utils/operationsUtils';
 
 const OPERATIONS_ROUTES = new Set(['dispatch', 'charging', 'health', 'readiness', 'alerts']);
@@ -230,6 +231,7 @@ export default function App() {
 function FleetApp() {
   const [selectedVehicle, setSelectedVehicle] = useState(null);
   const [pendingCommand, setPendingCommand] = useState(null);
+  const [commandBusy, setCommandBusy] = useState(false);
   const [, setComplianceRevision] = useState(0);
   const [route, navigate] = useHashRoute();
   const isPublicRoute = route === 'landing';
@@ -392,16 +394,30 @@ function FleetApp() {
     realSyncStatus,
     enabled: !isPublicLandingOnly,
   });
-  const requestCommand = (command, priority = 'NORMAL') => {
+  const requestCommand = (command, priority = 'NORMAL', extras = {}) => {
     setPendingCommand({
       command,
       priority,
       requestedAt: new Date().toISOString(),
+      ...extras,
     });
   };
 
-  const confirmCommand = () => {
+  const confirmCommand = async () => {
     if (!pendingCommand) return;
+    if (pendingCommand.teslaAction) {
+      setCommandBusy(true);
+      try {
+        await sendTeslaChargingCommand(pendingCommand.teslaAction);
+      } catch (error) {
+        setPendingCommand((current) => (
+          current ? { ...current, error: error.message || 'Tesla rejected the charging command.' } : current
+        ));
+        setCommandBusy(false);
+        return;
+      }
+      setCommandBusy(false);
+    }
     enqueueCommand(pendingCommand.command, pendingCommand.priority);
     setPendingCommand(null);
   };
@@ -933,6 +949,7 @@ function FleetApp() {
 
       <CommandSafetyModal
         pendingCommand={pendingCommand}
+        confirming={commandBusy}
         onCancel={() => setPendingCommand(null)}
         onConfirm={confirmCommand}
       />

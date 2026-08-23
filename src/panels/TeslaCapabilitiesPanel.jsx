@@ -9,6 +9,7 @@ const capabilityGroups = [
       ['Vehicle identity', 'VIN, display name, online/asleep state'],
       ['Location', 'GPS coordinates, heading, last GPS timestamp'],
       ['Battery', 'Charge percentage and charging state'],
+      ['Charge history', 'Recent sessions, billed amount, and site location when Tesla returns them'],
       ['Vehicle state', 'Odometer, speed, lock state, service mode, software version'],
     ],
   },
@@ -18,6 +19,7 @@ const capabilityGroups = [
     items: [
       ['Sync telemetry', 'Refresh the latest Fleet API vehicle data'],
       ['Wake vehicle', 'Ask Tesla to bring an asleep vehicle online'],
+      ['Charging commands', 'Start/stop charging and set charge limit, after confirmation'],
       ['Show on map', 'Jump the operations view to the selected vehicle'],
       ['AI review', 'Ask the ROBOAGENT AI layer to explain risk and next best action'],
     ],
@@ -26,7 +28,6 @@ const capabilityGroups = [
     title: 'Next Tesla Commands',
     description: 'Useful owner commands to add after virtual-key and confirmation flows are hardened.',
     items: [
-      ['Charging', 'Start/stop charging, set charge limit, manage charging windows'],
       ['Security', 'Lock/unlock, flash lights, honk horn'],
       ['Climate', 'Precondition cabin, defrost, adjust temperature'],
       ['Access', 'Open/close trunk or frunk where supported'],
@@ -171,6 +172,32 @@ export default function TeslaCapabilitiesPanel({
               >
                 AI Review
               </button>
+              {vehicle?.vin && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => onQueueCommand?.(
+                      `Start charging ${vehicle.name || vehicle.display_name || 'Tesla'}`,
+                      'HIGH',
+                      { teslaAction: { vin: vehicle.vin, action: 'start' } },
+                    )}
+                    className="rounded-lg border border-teal-400/30 bg-teal-400/10 px-4 py-3 text-left text-sm font-black text-teal-100 transition hover:bg-teal-400/20"
+                  >
+                    Start charging
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => onQueueCommand?.(
+                      `Stop charging ${vehicle.name || vehicle.display_name || 'Tesla'}`,
+                      'HIGH',
+                      { teslaAction: { vin: vehicle.vin, action: 'stop' } },
+                    )}
+                    className="rounded-lg border border-white/10 bg-white/5 px-4 py-3 text-left text-sm font-black text-slate-100 transition hover:bg-white/10"
+                  >
+                    Stop charging
+                  </button>
+                </>
+              )}
             </div>
 
             {wakeStatus && (

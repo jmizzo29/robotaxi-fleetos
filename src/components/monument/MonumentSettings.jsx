@@ -1,6 +1,8 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useFleetAuthStatus } from '../../auth/FleetAuthContext';
 import SignOutButton from '../SignOutButton';
+import TeslaChargingScopeNotice from '../TeslaChargingScopeNotice';
+import { getFleetOsSession } from '../../services/sessionService';
 import AccountSheet from './AccountSheet';
 import MonumentActionFooter from './MonumentActionFooter';
 import MonumentHero from './MonumentHero';
@@ -24,11 +26,30 @@ export default function MonumentSettings({
 }) {
   const { user } = useFleetAuthStatus();
   const [accountOpen, setAccountOpen] = useState(false);
+  const [missingChargingScope, setMissingChargingScope] = useState(false);
 
   const teslaConnected = useMemo(
     () => isTeslaConnected(realFleet, realSyncStatus),
     [realFleet, realSyncStatus],
   );
+
+  useEffect(() => {
+    if (!teslaConnected) {
+      setMissingChargingScope(false);
+      return undefined;
+    }
+    let cancelled = false;
+    getFleetOsSession()
+      .then((session) => {
+        if (!cancelled) setMissingChargingScope(session?.hasChargingCmds === false);
+      })
+      .catch(() => {
+        if (!cancelled) setMissingChargingScope(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [teslaConnected]);
 
   const hero = useMemo(() => getSettingsHero(realFleet), [realFleet]);
   const rows = useMemo(() => getSettingsRows(realFleet), [realFleet]);
@@ -62,6 +83,12 @@ export default function MonumentSettings({
         secondaryLabel="Terms"
         onSecondary={() => onNavigate('terms')}
       />
+
+      {missingChargingScope && (
+        <div className="shrink-0 px-5 pb-2">
+          <TeslaChargingScopeNotice compact />
+        </div>
+      )}
 
       <div className="shrink-0 px-5 pb-3 pt-2">
         <SignOutButton

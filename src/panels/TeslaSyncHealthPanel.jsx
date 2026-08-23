@@ -178,6 +178,16 @@ export default function TeslaSyncHealthPanel({
         status: health?.vehicles?.ok,
       },
       {
+        label: 'Charging Permission',
+        detail: health?.charging?.message
+          || (session?.hasChargingCmds
+            ? 'vehicle_charging_cmds is granted for this Tesla connection.'
+            : session?.teslaConnected
+              ? 'Charging history needs Tesla charging permission. Connect Tesla again to grant it. The app is not broken.'
+              : 'Connect Tesla to grant charging history and start/stop charging.'),
+        status: health?.charging?.ok ?? (session?.teslaConnected ? Boolean(session?.hasChargingCmds) : null),
+      },
+      {
         label: 'Location Scope',
         detail: hasLocation
           ? `${Number(vehicle.latitude).toFixed(5)}, ${Number(vehicle.longitude).toFixed(5)}`
