@@ -2,6 +2,7 @@ import { getBillingStatusForSession, getDefaultFleetForSession, teslaRequestForS
 import { ensureFleetSchema, hasPostgres, query } from './_lib/db.js';
 import { RATE_LIMITS } from './_lib/rateLimits.js';
 import { applyVehiclePrivacy, auditEvent, privacyMode } from './_lib/security.js';
+import { notifyOwnerAlertsForUser } from './_lib/ownerAlertNotify.js';
 
 const DEFAULT_FLEET_API_BASE = process.env.TESLA_API_BASE || 'https://fleet-api.prd.na.vn.cloud.tesla.com';
 const TESLA_REDIRECT_URI = process.env.TESLA_REDIRECT_URI || 'http://localhost:3001/callback';
@@ -237,6 +238,7 @@ export default async function handler(req, res) {
     );
 
     await saveVehicleTelemetry(context.fleet.id, response);
+    await notifyOwnerAlertsForUser(context.session.userId, context.fleet.id, { vehicles: response }).catch(() => {});
     await auditEvent({
       userId: context.session.userId,
       action: 'tesla_telemetry_synced',

@@ -418,6 +418,9 @@ export async function deleteCurrentUserData(req, res) {
   }
 
   await query('delete from fleetos_oauth_states where session_id in (select id from fleetos_sessions where user_id = $1)', [session.userId]);
+  await query('delete from fleetos_push_subscriptions where user_id = $1', [session.userId]);
+  await query('delete from fleetos_owner_alert_sends where user_id = $1', [session.userId]);
+  await query('delete from fleetos_owner_alert_prefs where user_id = $1', [session.userId]);
   await query('delete from fleetos_magic_links where user_id = $1', [session.userId]);
   await query('delete from fleetos_billing_entitlements where user_id = $1', [session.userId]);
   await query('delete from fleetos_tesla_connections where user_id = $1', [session.userId]);
