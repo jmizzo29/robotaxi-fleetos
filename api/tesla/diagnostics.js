@@ -1,4 +1,4 @@
-import { getTeslaConnectionForSession, teslaRequestForSession } from '../_lib/auth.js';
+import { getTeslaConnectionForSession, getTeslaScopeStatusForSession, teslaRequestForSession } from '../_lib/auth.js';
 import { auditEvent } from '../_lib/security.js';
 import { redirectUriFromRequest } from './login.js';
 
@@ -44,6 +44,7 @@ export default async function handler(req, res) {
     token: null,
     vehicles: null,
     location: null,
+    charging: null,
   };
 
   if (!connectionResult?.connection) {
@@ -64,7 +65,15 @@ export default async function handler(req, res) {
       baseURL: DEFAULT_FLEET_API_BASE,
     });
     const vehicles = payload.response || [];
-    checks.token = { ok: true };
+    const teslaScopes = await getTeslaScopeStatusForSession(req, res);
+    checks.token = { ok: true, scopes: teslaScopes.scopes, hasChargingCmds: teslaScopes.hasChargingCmds };
+    checks.charging = {
+      ok: teslaScopes.hasChargingCmds,
+      hasChargingCmds: teslaScopes.hasChargingCmds,
+      message: teslaScopes.hasChargingCmds
+        ? 'vehicle_charging_cmds is granted for this Tesla connection.'
+        : 'Charging history needs Tesla charging permission. Connect Tesla again to grant it. The app is not broken.',
+    };
     checks.vehicles = {
       ok: true,
       count: vehicles.length,

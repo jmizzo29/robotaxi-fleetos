@@ -1,9 +1,10 @@
 import crypto from 'crypto';
 import { getSession } from '../_lib/auth.js';
 import { ensureFleetSchema, hasPostgres, query } from '../_lib/db.js';
+import { DEFAULT_USER_SCOPES } from '../_lib/teslaScopes.js';
 
 const TESLA_AUTHORIZE_URL = process.env.TESLA_AUTHORIZE_URL || 'https://auth.tesla.com/oauth2/v3/authorize';
-const DEFAULT_SCOPES = process.env.TESLA_SCOPES || 'openid offline_access user_data vehicle_device_data vehicle_location';
+const DEFAULT_SCOPES = process.env.TESLA_SCOPES || DEFAULT_USER_SCOPES;
 const DEFAULT_PUBLIC_APP_URL = 'https://www.autofleeto.com';
 
 function originFromRequest(req) {

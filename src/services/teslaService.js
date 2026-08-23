@@ -119,6 +119,7 @@ export function mergeWithSimulation(realVehicles, simulatedVehicles) {
       heading: vehicle.heading,
       gpsAsOf: vehicle.gpsAsOf,
       chargingState: vehicle.chargingState,
+      chargeLimit: vehicle.chargeLimit ?? vehicle.charge_state?.charge_limit_soc,
       softwareVersion: vehicle.softwareVersion,
       locked: vehicle.locked,
       serviceMode: vehicle.serviceMode,

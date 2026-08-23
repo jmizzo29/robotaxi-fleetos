@@ -24,6 +24,7 @@ function normalizeVehicle(vehicle, telemetry = {}) {
     latitude: driveState.latitude ?? locationData.latitude,
     longitude: driveState.longitude ?? locationData.longitude,
     chargingState: chargeState.charging_state,
+    chargeLimit: chargeState.charge_limit_soc,
     softwareVersion: vehicleState.car_version,
     locked: vehicleState.locked,
     serviceMode: vehicleState.service_mode,

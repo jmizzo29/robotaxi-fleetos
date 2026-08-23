@@ -1,5 +1,8 @@
+import { useEffect, useState } from 'react';
+import TeslaChargeHistoryList from '../components/TeslaChargeHistoryList';
 import { AppCard, AppSection } from '../components/shell';
 import { colors, semantic, typography } from '../design/roboagentTokens';
+import { getTeslaChargeHistory, isMissingChargingScope } from '../services/teslaChargingService';
 
 function formatValue(value, suffix = '') {
   return Number.isFinite(value) ? `${Math.round(value).toLocaleString()}${suffix}` : 'Unavailable';
@@ -116,14 +119,42 @@ function VehicleChargeRow({ vehicle, onQueueCommand }) {
           <p className="mt-1 text-sm font-medium text-slate-600">{readiness.action}</p>
         </div>
 
-        <button
-          type="button"
-          onClick={handlePlan}
-          className="rounded-2xl px-4 py-2.5 text-sm font-bold text-white transition active:scale-[0.99]"
-          style={{ backgroundColor: colors.primary }}
-        >
-          Plan Charge
-        </button>
+        <div className="flex flex-col gap-2">
+          <button
+            type="button"
+            onClick={handlePlan}
+            className="rounded-2xl px-4 py-2.5 text-sm font-bold text-white transition active:scale-[0.99]"
+            style={{ backgroundColor: colors.primary }}
+          >
+            Plan Charge
+          </button>
+          {vehicle.isReal && vehicle.vin && (
+            <>
+              <button
+                type="button"
+                onClick={() => onQueueCommand?.(
+                  `Start charging ${vehicle.name || vehicle.display_name || vehicle.id}`,
+                  'HIGH',
+                  { teslaAction: { vin: vehicle.vin, action: 'start' } },
+                )}
+                className="rounded-2xl border border-white/10 px-4 py-2.5 text-sm font-bold text-[#F3F3F1]"
+              >
+                Start charging
+              </button>
+              <button
+                type="button"
+                onClick={() => onQueueCommand?.(
+                  `Stop charging ${vehicle.name || vehicle.display_name || vehicle.id}`,
+                  'HIGH',
+                  { teslaAction: { vin: vehicle.vin, action: 'stop' } },
+                )}
+                className="rounded-2xl border border-white/10 px-4 py-2.5 text-sm font-bold text-[#F3F3F1]"
+              >
+                Stop charging
+              </button>
+            </>
+          )}
+        </div>
       </div>
 
       <div className="mt-5 grid grid-cols-2 gap-3 lg:grid-cols-4">
@@ -153,6 +184,36 @@ function VehicleChargeRow({ vehicle, onQueueCommand }) {
 }
 
 export default function ChargingReadinessPanel({ fleet = [], onQueueCommand }) {
+  const [history, setHistory] = useState({ sessions: [], loading: false, error: null, missingScope: false });
+  const primaryReal = fleet.find((vehicle) => vehicle.isReal && vehicle.vin);
+
+  useEffect(() => {
+    if (!primaryReal?.vin) return undefined;
+    let cancelled = false;
+    setHistory((current) => ({ ...current, loading: true, error: null }));
+    getTeslaChargeHistory(primaryReal.vin)
+      .then((payload) => {
+        if (cancelled) return;
+        setHistory({
+          sessions: payload.sessions || [],
+          loading: false,
+          error: null,
+          missingScope: payload.hasChargingCmds === false,
+        });
+      })
+      .catch((error) => {
+        if (cancelled) return;
+        setHistory({
+          sessions: [],
+          loading: false,
+          error: isMissingChargingScope(error) ? null : (error.message || 'Unable to load charge history.'),
+          missingScope: isMissingChargingScope(error),
+        });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [primaryReal?.vin]);
   const enriched = fleet.map((vehicle) => ({
     ...vehicle,
     readiness: readinessFor(vehicle),
@@ -177,9 +238,20 @@ export default function ChargingReadinessPanel({ fleet = [], onQueueCommand }) {
 
       <AppCard variant="subdued" className="mb-4">
         <p className={typography.bodyMd}>
-          Tesla charge telemetry translated into dispatch decisions. Charge controls stage behind confirmation flow.
+          Tesla charge telemetry plus billed session history. Start/stop asks for confirmation and never fires on a single tap.
         </p>
       </AppCard>
+
+      {primaryReal && (
+        <AppCard className="mb-4">
+          <TeslaChargeHistoryList
+            sessions={history.sessions}
+            loading={history.loading}
+            error={history.error}
+            missingScope={history.missingScope}
+          />
+        </AppCard>
+      )}
 
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         {enriched

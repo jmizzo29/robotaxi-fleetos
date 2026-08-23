@@ -272,7 +272,7 @@ export default function VehicleDetailPanel({
     .join(' · ');
   const insight = buildInsight(vehicle, name);
 
-  const queueControl = (command, priority = 'NORMAL') => onQueueCommand?.(command, priority);
+  const queueControl = (command, priority = 'NORMAL', extras = {}) => onQueueCommand?.(command, priority, extras);
 
   return (
     <section className="animate-fade-up space-y-5">
@@ -421,7 +421,21 @@ export default function VehicleDetailPanel({
               icon={Zap}
               label="Start charging"
               hint="Begin a charge session"
-              onClick={() => queueControl(`Start a charging session for ${name}`, 'HIGH')}
+              onClick={() => queueControl(
+                `Start a charging session for ${name}`,
+                'HIGH',
+                vehicle.vin ? { teslaAction: { vin: vehicle.vin, action: 'start' } } : {},
+              )}
+            />
+            <ControlButton
+              icon={Zap}
+              label="Stop charging"
+              hint="End the charge session"
+              onClick={() => queueControl(
+                `Stop charging ${name}`,
+                'HIGH',
+                vehicle.vin ? { teslaAction: { vin: vehicle.vin, action: 'stop' } } : {},
+              )}
             />
             <ControlButton
               icon={vehicle.locked === false ? Lock : LockOpen}

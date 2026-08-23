@@ -12,6 +12,7 @@ export const legalCopy = {
     ],
     dataRows: [
       ['vehicle status', 'battery · charging · range'],
+      ['charge history', 'sessions · billed kWh · site when Tesla returns it'],
       ['location', 'GPS when permitted'],
       ['fleet health', 'odometer · software · alerts'],
     ],
