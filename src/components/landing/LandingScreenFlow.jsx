@@ -15,13 +15,13 @@ export default function LandingScreenFlow({
     <div className="min-h-screen bg-black text-white">
       <LandingHeader onNavigate={onNavigate} onConnect={onConnect} />
 
-      {/* Hero — Fleet OS positioning */}
+      {/* Hero — ROBOAGENT positioning */}
       <section className="relative overflow-hidden bg-black px-5 pb-10 pt-14 sm:pb-12">
         <LandingHeroAmbience />
 
         <div className="relative z-10 mx-auto w-full max-w-lg pt-4 sm:max-w-2xl sm:pt-6">
           <h1 className="text-[2rem] font-semibold leading-[1.06] tracking-[-0.03em] text-white sm:text-[2.65rem] lg:text-5xl">
-            The Fleet Operating System for Tesla Robotaxi Owners
+            ROBOAGENT for Tesla Robotaxi owners
           </h1>
           <p className="mt-4 max-w-xl text-[15px] leading-relaxed text-white/55 sm:mt-5 sm:text-base md:text-lg">
             Manage vehicles, maximize revenue, protect assets, and monitor your fleet from a single command center.

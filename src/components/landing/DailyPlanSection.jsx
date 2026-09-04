@@ -14,7 +14,7 @@ export default function DailyPlanSection() {
             Wake up to a plan — not another dashboard.
           </h2>
           <p className="mt-4 text-base leading-relaxed text-white/60 md:text-lg">
-            Every morning RoboAgent analyzes live Tesla data and recommends highest-impact actions
+            Every morning ROBOAGENT analyzes live Tesla data and recommends highest-impact actions
             for utilization, charging, maintenance, and profitability.
           </p>
         </div>

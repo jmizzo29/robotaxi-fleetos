@@ -20,7 +20,7 @@ export default function OnboardingPanel({ onNavigate }) {
 
   return (
     <div className="min-h-screen bg-[#1C1D21] text-white">
-      {/* Navbar — 3 menus with RoboAgent brand exactly in the middle */}
+      {/* Navbar — 3 menus with ROBOAGENT brand exactly in the middle */}
       <nav className="fixed top-0 z-50 w-full border-b border-white/10 bg-[#1C1D21]/95 backdrop-blur-xl">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center relative">
           {/* Left: one menu */}
@@ -31,7 +31,7 @@ export default function OnboardingPanel({ onNavigate }) {
             HOW IT WORKS
           </button>
 
-          {/* EXACT MIDDLE: RoboAgent (you will provide the file) */}
+          {/* EXACT MIDDLE: ROBOAGENT wordmark */}
           <div 
             className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer hover:opacity-90 transition"
             onClick={() => onNavigate('landing')}

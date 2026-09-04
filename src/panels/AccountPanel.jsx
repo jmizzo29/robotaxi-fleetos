@@ -298,7 +298,7 @@ function ProfileSection({ user, profileName, isBusy, onProfileNameChange, onSave
           {initials(user.name, user.email)}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-sm font-semibold text-ink">{user.name || 'RoboAgent owner'}</p>
+          <p className="text-sm font-semibold text-ink">{user.name || 'ROBOAGENT owner'}</p>
           <p className="mt-0.5 truncate text-sm text-ink-muted">{user.email || 'Signed in with Tesla'}</p>
           <Chip active className="mt-2 pointer-events-none">Signed in</Chip>
         </div>
@@ -688,7 +688,7 @@ export default function AccountPanel({ onNavigate, embedded = false }) {
             type="button"
             onClick={() => onNavigate?.('landing')}
             className="flex items-center gap-2.5 rounded-xl focus:outline-none focus-visible:ring-2 focus-visible:ring-status-active/30"
-            aria-label="RoboAgent home"
+            aria-label="ROBOAGENT home"
           >
             <RoboLogo className="h-8 w-8" />
             <RoboWordmark variant="calm" className="text-base" colorClass="text-ink" />

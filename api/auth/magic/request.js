@@ -32,7 +32,7 @@ export default async function handler(req, res) {
     magicUrl.searchParams.set('return_to', `${appOrigin(req).replace(/\/$/, '')}/#/account`);
     res.status(200).json({
       ok: true,
-      message: 'Magic link generated. Email delivery is not connected yet, so use this beta link directly.',
+      message: 'ROBOAGENT magic link generated. Email delivery is not connected yet, so use this beta link directly.',
       magicLink: magicUrl.toString(),
       expiresInMinutes: magic.expiresInMinutes,
       emailDelivery: 'manual_beta',
