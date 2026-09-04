@@ -6,6 +6,16 @@ export async function getFleetOsSession() {
   return fetchApiJson('/auth/session');
 }
 
+/** Fail closed: uncertain session errors must not open Command with a fake fleet. */
+export function sessionCheckFromError(error) {
+  void error;
+  return 'guest';
+}
+
+export function sessionCheckFromPayload(session) {
+  return session?.authenticated ? 'authed' : 'guest';
+}
+
 export async function registerFleetOsAccount(payload) {
   return fetchApiJson('/auth/register', {
     method: 'POST',

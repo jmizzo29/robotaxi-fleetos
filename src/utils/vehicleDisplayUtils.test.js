@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import {
+  getCommandEarningsHero,
   getFleetAvailabilitySummary,
   getFleetEarningsSummary,
   getFleetHeroMetric,
@@ -46,6 +47,41 @@ describe('getCommandOperationalSource', () => {
   it('falls back to simulated fleet when no real vehicles are synced', () => {
     const source = getCommandOperationalSource(simulatedFleet, [], 0, 'idle');
     expect(source).toEqual(simulatedFleet);
+  });
+});
+
+describe('getCommandEarningsHero', () => {
+  const demoFleet = [
+    { id: 'CAR-001', isReal: false, revenue: 4822, utilization: 72 },
+    { id: 'CAR-002', isReal: false, revenue: 3910, utilization: 64 },
+    { id: 'CAR-003', isReal: false, revenue: 6201, utilization: 81 },
+    { id: 'CAR-004', isReal: false, revenue: 5202, utilization: 69 },
+  ];
+
+  it('does not invent projected dollars or trips from demo cars', () => {
+    const hero = getCommandEarningsHero(demoFleet, [], 0, 'idle');
+    expect(hero.amount).toBe('—');
+    expect(hero.trips).toBe('—');
+    expect(hero.operational).toBe(false);
+    expect(hero.label).toBe('Net Earnings Today');
+  });
+
+  it('shows an honest empty hero when a Tesla is synced with no ledger revenue', () => {
+    const real = [{ id: 'tesla-1', isReal: true, display_name: 'Model Y', revenue: 0 }];
+    const hero = getCommandEarningsHero([...demoFleet, ...real], real, 0, 'success');
+    expect(hero.amount).toBe('—');
+    expect(hero.trips).toBe('—');
+    expect(hero.teslaShare).toBe('—');
+    expect(hero.hint).toMatch(/no verified trips/i);
+    expect(hero.operational).toBe(false);
+  });
+
+  it('shows trusted ledger dollars without inventing a trip count', () => {
+    const real = [{ id: 'tesla-1', isReal: true, revenue: 482, tripsToday: 0 }];
+    const hero = getCommandEarningsHero(real, real, 482, 'success');
+    expect(hero.amount).toBe('$482');
+    expect(hero.trips).toBe('—');
+    expect(hero.operational).toBe(false);
   });
 });
 

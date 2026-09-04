@@ -157,11 +157,17 @@ export function getOpenActionsBreakdown(commandQueue = [], fleet = [], realFleet
   };
 }
 
+function hasRecordedUtilization(source) {
+  return source.some((vehicle) => Number.isFinite(Number(vehicle.utilization)));
+}
+
 function buildPlanSummary(recommendation, breakdown, fleet, realFleet, totalEarnings, syncState) {
   const source = commandSource(fleet, realFleet, totalEarnings, syncState);
   const online = source.filter(isVehicleOnline).length;
+  const realOnly = realFleet.length > 0;
+  const canProjectDemand = !realOnly || hasRecordedUtilization(source);
 
-  if (breakdown.pricing > 0 || online >= 2) {
+  if (canProjectDemand && (breakdown.pricing > 0 || online >= 2)) {
     return 'Increase Orlando airport coverage after 4 PM';
   }
   if (breakdown.charging > 0 || recommendation?.route === 'charging') {
@@ -170,7 +176,10 @@ function buildPlanSummary(recommendation, breakdown, fleet, realFleet, totalEarn
   if (breakdown.maintenance > 0) {
     return 'Clear service vehicles before peak operating hours';
   }
-  if (source.length > 0) {
+  if (realOnly && !hasRecordedUtilization(source)) {
+    return 'Waiting for verified trips and demand data';
+  }
+  if (source.length > 0 && canProjectDemand) {
     return 'Orlando airport demand increasing after 4 PM';
   }
   return 'Connect fleet telemetry to unlock AI operations brief';
@@ -181,17 +190,27 @@ function buildPlanAction(fleet, realFleet, breakdown, totalEarnings, syncState) 
   const target = source.find((vehicle) => Number(vehicle.utilization) >= 65)
     || source.find(isVehicleOnline)
     || source[0];
-  if (!target) return 'Deploy first vehicle to MCO demand zone';
+  if (!target) {
+    return realFleet.length > 0
+      ? 'Review Tesla telemetry'
+      : 'Deploy first vehicle to MCO demand zone';
+  }
 
   const label = activityVehicleName(target, source.indexOf(target));
   if (breakdown.charging > 0) {
     return `Schedule ${label} for off-peak charging before 4 PM`;
+  }
+  if (realFleet.length > 0 && !hasRecordedUtilization(source)) {
+    return 'Review Tesla telemetry';
   }
   return `Move ${label} to MCO demand zone`;
 }
 
 function buildDemandIncrease(breakdown, fleet, realFleet, totalEarnings, syncState) {
   const source = commandSource(fleet, realFleet, totalEarnings, syncState);
+  if (realFleet.length > 0 && !hasRecordedUtilization(source) && breakdown.pricing === 0) {
+    return '—';
+  }
   let pct = 18;
   if (breakdown.pricing > 0) pct += 9;
   if (source.some((vehicle) => Number(vehicle.utilization) >= 72)) pct += 12;
@@ -235,6 +254,9 @@ function buildPlanChecklist(fleet, realFleet, recommendation, breakdown, totalEa
 
 function buildExpectedRevenueImpact(breakdown, fleet, realFleet, totalEarnings, syncState) {
   const source = commandSource(fleet, realFleet, totalEarnings, syncState);
+  if (realFleet.length > 0 && !hasRecordedUtilization(source) && breakdown.pricing === 0 && breakdown.charging === 0) {
+    return '—';
+  }
   let bump = 72;
   if (breakdown.pricing > 0) bump += 24;
   if (breakdown.charging > 0) bump += 18;
@@ -374,13 +396,7 @@ export function getFleetActivityFeed(fleet, realFleet, limit = 5, totalEarnings 
   });
 
   if (!events.length) {
-    return [
-      { id: 'demo-7-trip', vehicleName: 'CAB-07', description: 'CAB-07 completed airport trip', impact: '+$42 revenue', impactTone: 'positive', eventType: 'trip', timestamp: '2 min ago' },
-      { id: 'demo-surge', vehicleName: 'MCO', description: 'Orlando airport demand increasing', impact: 'MCO +24%', impactTone: 'surge', eventType: 'surge', timestamp: '5 min ago' },
-      { id: 'demo-2-charge', vehicleName: 'CAB-02', description: 'CAB-02 charging', impact: 'Ready in 22 min', impactTone: 'neutral', eventType: 'charging', timestamp: '8 min ago' },
-      { id: 'demo-5-milestone', vehicleName: 'CAB-05', description: 'CAB-05 completed 14th trip today', impact: 'High utilization', impactTone: 'positive', eventType: 'milestone', timestamp: '12 min ago' },
-      { id: 'demo-9-offline', vehicleName: 'CAB-09', description: 'CAB-09 offline unexpectedly', impact: 'Needs review', impactTone: 'alert', eventType: 'offline', timestamp: '18 min ago' },
-    ].slice(0, limit);
+    return [];
   }
 
   return events.slice(0, limit);

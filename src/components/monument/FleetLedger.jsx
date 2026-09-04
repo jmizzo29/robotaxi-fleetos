@@ -20,6 +20,11 @@ export default function FleetLedger({ ledger, compact = false, onSelectRow }) {
       )}
 
       <div className={monumentType.ledgerMono}>
+        {ledger.rows.length === 0 && (
+          <p className="py-3 text-center" style={{ color: monument.inkMuted }}>
+            No trips yet
+          </p>
+        )}
         {ledger.rows.map((row) => (
           <button
             key={`${row.time}-${row.cab}-${row.event}`}

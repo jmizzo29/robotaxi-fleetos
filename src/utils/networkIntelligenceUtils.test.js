@@ -16,30 +16,28 @@ const fleet = [
 ];
 
 describe('getCommandEarningsHero', () => {
-  it('returns net earnings, trips, tesla share, and net margin when revenue is trusted', () => {
+  it('returns net earnings and tesla share when revenue is trusted', () => {
     const hero = getCommandEarningsHero(fleet, [fleet[0], fleet[1]], 165, 'success');
     expect(hero.amount).toBe('$165');
     expect(hero.label).toBe('Net Earnings Today');
-    expect(Number(hero.trips)).toBeGreaterThan(0);
+    expect(hero.trips).toBe('—');
     expect(hero.teslaShare).toBe('$165');
-    expect(hero.netMargin).toMatch(/%$/);
+    expect(hero.netMargin).toBe('—');
     expect(hero.operational).toBe(false);
   });
 
-  it('shows operational earnings when Tesla is linked but revenue is not trusted', () => {
+  it('does not project earnings when Tesla is linked but revenue is not trusted', () => {
     const simulatedFleet = [
       ...fleet,
       { id: 'CAR-007', status: 'EN ROUTE', revenue: 4200, utilization: 74, isReal: false, city: 'Orlando' },
       { id: 'CAR-002', status: 'CHARGING', revenue: 3100, utilization: 61, isReal: false, city: 'Orlando' },
     ];
     const hero = getCommandEarningsHero(simulatedFleet, [{ ...fleet[0], revenue: 0 }], 0, 'success');
-    expect(hero.amount).not.toBe('$0');
-    expect(hero.amount).not.toBe('—');
-    expect(Number(hero.trips)).toBeGreaterThan(0);
-    expect(hero.operational).toBe(true);
-    expect(hero.liveLabel).toBe('Operating');
-    expect(hero.label).toBe('Projected Earnings Today');
-    expect(hero.delta).toBeNull();
+    expect(hero.amount).toBe('—');
+    expect(hero.trips).toBe('—');
+    expect(hero.operational).toBe(false);
+    expect(hero.label).toBe('Net Earnings Today');
+    expect(hero.hint).toMatch(/no verified trips/i);
   });
 });
 

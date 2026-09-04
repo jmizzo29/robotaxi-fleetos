@@ -281,6 +281,17 @@ function GrowthSignal({ expansion, onNavigate }) {
 }
 
 function FleetActivitySection({ events }) {
+  if (!events.length) {
+    return (
+      <AppSection title="Fleet Activity" tier="primary">
+        <AppCard variant="subdued">
+          <p className={typography.body}>No trips yet</p>
+          <p className="mt-1 text-[13px] text-[#8B8E94]">Activity appears after verified Tesla or ledger trips.</p>
+        </AppCard>
+      </AppSection>
+    );
+  }
+
   return (
     <AppSection title="Fleet Activity" tier="primary">
       <ul className={spacing.stackSm}>

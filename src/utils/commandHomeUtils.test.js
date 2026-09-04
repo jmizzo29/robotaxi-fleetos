@@ -41,6 +41,15 @@ describe('getCommandAiPlan', () => {
     expect(plan.expectedRevenueImpact).toMatch(/^\+\$/);
     expect(plan.confidenceLabel).toBeTruthy();
   });
+
+  it('does not invent Orlando demand dollars for a Tesla without utilization', () => {
+    const real = [{ id: 'tesla-1', status: 'PARKED', revenue: 0, isReal: true, display_name: 'Model Y' }];
+    const plan = getCommandAiPlan(real, real, { state: 'success' }, []);
+    expect(plan.summary).toMatch(/verified trips/i);
+    expect(plan.action).toMatch(/telemetry/i);
+    expect(plan.demandIncrease).toBe('—');
+    expect(plan.expectedRevenueImpact).toBe('—');
+  });
 });
 
 describe('getFleetActivityFeed', () => {
@@ -59,6 +68,19 @@ describe('getFleetActivityFeed', () => {
     ];
     const events = getFleetActivityFeed(simulatedFleet, [simulatedFleet[1]], 5, 0, 'success');
     expect(events.some((event) => event.description.includes('CAB-007'))).toBe(false);
+  });
+
+  it('does not invent CAB-07 / MCO surge rows when the feed is empty', () => {
+    const real = [{ id: 'tesla-1', status: 'PARKED', revenue: 0, isReal: true, display_name: 'Model Y' }];
+    const events = getFleetActivityFeed(real, real, 5, 0, 'success');
+    expect(events).toEqual([]);
+    expect(events.some((event) => /CAB-07|MCO \+24%|Ready in 22 min/.test(`${event.vehicleName} ${event.impact}`))).toBe(false);
+  });
+
+  it('does not invent a demand surge from a missing utilization default', () => {
+    const real = [{ id: 'tesla-1', status: 'ONLINE', revenue: 0, isReal: true, display_name: 'Model Y' }];
+    const events = getFleetActivityFeed(real, real, 5, 0, 'success');
+    expect(events.some((event) => event.eventType === 'surge')).toBe(false);
   });
 });
 

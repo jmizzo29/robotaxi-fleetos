@@ -50,7 +50,7 @@ import useHashRoute from './hooks/useHashRoute';
 import { useFleetSimulation } from './hooks/useFleetSimulation';
 import { useFleetAuthStatus } from './auth/FleetAuthContext';
 import { canUseTeslaTelemetry } from './services/betaCompliance';
-import { getFleetOsSession } from './services/sessionService';
+import { getFleetOsSession, sessionCheckFromError, sessionCheckFromPayload } from './services/sessionService';
 import { sendTeslaChargingCommand } from './services/teslaChargingService';
 import { routeToOperationsTab } from './utils/operationsUtils';
 import { shouldRestoreConnectedSessionToCommand } from './utils/teslaLaunchRoutes';
@@ -241,6 +241,8 @@ function FleetApp() {
   const isPublicAccountRoute = route === 'account';
   const shouldRestoreTeslaLaunchRoute = shouldRestoreConnectedSessionToCommand(route);
   const teslaConsentReady = canUseTeslaTelemetry();
+  const isMockPreview = typeof window !== 'undefined'
+    && new URLSearchParams(window.location.search).has('mock');
   const shouldAutoSyncReal = !(
     isPublicRoute ||
     isPublicLandingEntryRoute ||
@@ -318,13 +320,11 @@ function FleetApp() {
     setSessionCheck((current) => (current === 'authed' ? current : 'checking'));
     getFleetOsSession()
       .then((session) => {
-        if (!cancelled) setSessionCheck(session?.authenticated ? 'authed' : 'guest');
+        if (!cancelled) setSessionCheck(sessionCheckFromPayload(session));
       })
       .catch((error) => {
         if (cancelled) return;
-        // Only an explicit 401 proves the user is signed out. Network or server
-        // hiccups fail open so flaky connections don't eject signed-in users.
-        setSessionCheck(error.status === 401 ? 'guest' : 'authed');
+        setSessionCheck(sessionCheckFromError(error));
       });
     return () => {
       cancelled = true;
@@ -351,7 +351,7 @@ function FleetApp() {
     isLoadingReal,
     realSyncStatus,
   } = useFleetSimulation({
-    initialFleet,
+    initialFleet: isMockPreview ? initialFleet : [],
     chargingStations,
     replayModeInitial: false,
     autoSyncReal: shouldAutoSyncReal,
@@ -365,7 +365,9 @@ function FleetApp() {
   );
 
   const avgAnomalyRisk = useMemo(
-    () => Math.round(fleet.reduce((sum, vehicle) => sum + vehicle.anomalyRisk, 0) / fleet.length),
+    () => (fleet.length
+      ? Math.round(fleet.reduce((sum, vehicle) => sum + (vehicle.anomalyRisk || 0), 0) / fleet.length)
+      : 0),
     [fleet],
   );
 
@@ -758,8 +760,6 @@ function FleetApp() {
     shouldRestoreTeslaLaunchRoute &&
     (!isAuthReady || startupTeslaRestore.route !== route || startupTeslaRestore.status === 'checking')
   );
-  const isMockPreview = typeof window !== 'undefined'
-    && new URLSearchParams(window.location.search).has('mock');
   const hideFloatingDeleteAccount = isMockPreview || route === 'fleet';
 
   if (isRestoringTeslaSession) {

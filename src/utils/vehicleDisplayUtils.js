@@ -67,48 +67,24 @@ export function getCommandOperationalSource(fleet, realFleet, totalEarnings, syn
   return getSimulatedFleet(fleet);
 }
 
-function operationalTripsToday(vehicle, index) {
-  const explicit = Number(vehicle.tripsToday) || Number(vehicle.trips);
-  if (explicit > 0) return explicit;
-  const utilization = Number(vehicle.utilization);
-  if (Number.isFinite(utilization)) return Math.max(2, Math.round(utilization / 16));
-  return 3 + (index % 4);
-}
-
-function operationalEarningsToday(operationalFleet) {
-  return operationalFleet.reduce((sum, vehicle, index) => {
-    const explicit = Number(vehicle.revenueToday);
-    if (explicit > 0) return sum + explicit;
-    const trips = operationalTripsToday(vehicle, index);
-    const avgTrip = 36 + ((index + 1) * 5) % 14;
-    return sum + (trips * avgTrip);
-  }, 0);
-}
-
-function buildOperationalEarningsHero(fleet, realFleet, syncState) {
-  const operationalFleet = getSimulatedFleet(fleet);
-  const earningsToday = operationalEarningsToday(operationalFleet);
-  const trips = operationalFleet.reduce(
-    (sum, vehicle, index) => sum + operationalTripsToday(vehicle, index),
-    0,
-  );
-  const teslaShare = Math.round(earningsToday * 0.72);
-  const netMarginPct = Math.min(68, Math.max(54, 56 + Math.round(trips / 14)));
-
+function buildHonestEarningsHero(realFleet, syncState) {
+  const connected = syncState === 'success' && realFleet.length > 0;
   return {
-    amount: formatFleetDollars(earningsToday),
-    label: 'Projected Earnings Today',
-    trips: String(trips),
-    teslaShare: formatFleetDollars(teslaShare),
-    netMargin: `${netMarginPct}%`,
+    amount: '—',
+    label: 'Net Earnings Today',
+    trips: '—',
+    teslaShare: '—',
+    netMargin: '—',
     delta: null,
-    tone: 'positive',
-    operational: true,
-    liveLabel: 'Operating',
+    tone: 'neutral',
+    operational: false,
+    liveLabel: syncState === 'error' ? 'Sync failed' : connected ? 'Live' : 'Waiting',
     earningsContext: null,
-    hint: realFleet.length > 0
-      ? 'Verified Tesla earnings replace projections when trips complete'
-      : 'Simulated fleet activity until Tesla revenue is verified',
+    hint: connected
+      ? 'No verified trips yet'
+      : syncState === 'error'
+        ? 'Sync Tesla to load earnings'
+        : 'Connect Tesla to track earnings',
   };
 }
 
@@ -313,7 +289,7 @@ export function getFleetPreviewRows(fleet, realFleet, limit = 3, fleetLastSynced
   });
 }
 
-/** v3 Command hero — verified revenue when trusted; otherwise operational simulation. */
+/** Command hero — verified ledger revenue only. Never project dollars from demo cars. */
 export function getCommandEarningsHero(fleet, realFleet, totalEarnings, syncState) {
   if (syncState === 'loading') {
     return {
@@ -333,20 +309,16 @@ export function getCommandEarningsHero(fleet, realFleet, totalEarnings, syncStat
       (sum, vehicle) => sum + (Number(vehicle.tripsToday) || Number(vehicle.trips) || 0),
       0,
     );
-    const trips = explicitTrips > 0
-      ? explicitTrips
-      : Math.max(1, Math.round(totalEarnings / 61));
     const teslaShare = Math.round(
       realFleet.reduce((sum, vehicle) => sum + (Number(vehicle.revenue) || 0), 0),
     );
-    const netMarginPct = Math.min(72, Math.max(48, 58 + Math.round(trips / 12)));
 
     return {
       amount: formatFleetDollars(totalEarnings),
       label: 'Net Earnings Today',
-      trips: String(trips),
+      trips: explicitTrips > 0 ? String(explicitTrips) : '—',
       teslaShare: formatFleetDollars(teslaShare),
-      netMargin: `${netMarginPct}%`,
+      netMargin: '—',
       delta: formatEarningsDelta(realFleet, totalEarnings),
       tone: 'positive',
       operational: false,
@@ -354,7 +326,7 @@ export function getCommandEarningsHero(fleet, realFleet, totalEarnings, syncStat
     };
   }
 
-  return buildOperationalEarningsHero(fleet, realFleet, syncState);
+  return buildHonestEarningsHero(realFleet, syncState);
 }
 
 function isVehicleInService(vehicle) {
