@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { startTeslaOAuth } from '../services/teslaHealthService';
-import Logo from '../components/Logo';
+import RoboWordmark from '../components/RoboWordmark';
 import TeslaConnectMark from '../components/TeslaConnectMark';
 
 export default function AddVehiclePanel({ onNavigate }) {
@@ -17,9 +17,15 @@ export default function AddVehiclePanel({ onNavigate }) {
           Back to Fleet
         </button>
 
-        {/* Logo */}
-        <div className="flex items-center mb-10">
-          <Logo className="h-10" onClick={() => onNavigate('overview')} />
+        <div className="mb-10">
+          <button
+            type="button"
+            onClick={() => onNavigate('overview')}
+            className="inline-flex items-center bg-transparent p-0"
+            aria-label="ROBOAGENT"
+          >
+            <RoboWordmark className="text-[1.05rem] tracking-[0.22em]" colorClass="text-white" />
+          </button>
         </div>
 
         <div className="mb-10">

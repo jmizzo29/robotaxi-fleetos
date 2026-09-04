@@ -2,7 +2,7 @@
 import { Check } from 'lucide-react';
 import { canUseTeslaTelemetry } from '../services/betaCompliance';
 import { startTeslaOAuth } from '../services/teslaHealthService';
-import Logo from '../components/Logo';
+import RoboWordmark from '../components/RoboWordmark';
 import TeslaConnectMark from '../components/TeslaConnectMark';
 
 export default function OnboardingPanel({ onNavigate }) {
@@ -37,7 +37,7 @@ export default function OnboardingPanel({ onNavigate }) {
             className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer hover:opacity-90 transition"
             onClick={() => onNavigate('landing')}
           >
-            <Logo className="h-7 sm:h-8" />
+            <RoboWordmark className="text-[0.95rem] tracking-[0.28em] sm:text-[1.05rem]" colorClass="text-white" />
           </div>
 
           {/* Right: the other two menus */}
