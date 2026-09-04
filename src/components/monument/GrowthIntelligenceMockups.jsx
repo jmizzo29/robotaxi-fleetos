@@ -352,9 +352,9 @@ function OptionC({ expansion, events, scores }) {
 }
 
 export default function GrowthIntelligenceMockups({ fleet = [] }) {
-  const expansion = getExpansionRecommendation(fleet);
-  const events = getNetworkOpportunities(fleet);
-  const scores = getExpansionScoreboard();
+  const expansion = getExpansionRecommendation(fleet, { illustrative: true });
+  const events = getNetworkOpportunities(fleet, { illustrative: true });
+  const scores = getExpansionScoreboard({ illustrative: true });
 
   return (
     <div className="flex h-full min-h-0 flex-col" style={{ backgroundColor: monument.canvas }}>
@@ -368,7 +368,7 @@ export default function GrowthIntelligenceMockups({ fleet = [] }) {
               Growth Intelligence Center
             </h1>
             <p className="mt-2 text-[13px] leading-snug" style={{ color: monument.inkMuted }}>
-              Three mobile directions using current ROBOAGENT opportunity data.
+              Illustrative preview mockups — not live personal intelligence for a connected owner.
             </p>
           </div>
           <OptionA expansion={expansion} events={events} />

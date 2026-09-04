@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import { ClipboardList, TrendingUp } from 'lucide-react';
 import { AppCard, AppHeader, AppSection, AppShell } from '../components/shell';
 import {
+  ILLUSTRATIVE_PREVIEW_DISCLAIMER,
   getExpansionRecommendation,
   getExpansionScoreboard,
   getNetworkOpportunities,
@@ -15,6 +16,20 @@ const opportunityToneBorder = {
 };
 
 function ExpansionScoreboard({ markets }) {
+  if (!markets.length) {
+    return (
+      <AppSection title="Expansion Scoreboard" tier="secondary" className="!mt-0">
+        <AppCard>
+          <p className={typography.cardTitle}>No live market scores</p>
+          <p className="mt-2 text-sm leading-relaxed text-slate-600">
+            Hardcoded opportunity scores are not shown as personal intelligence.
+            {` ${ILLUSTRATIVE_PREVIEW_DISCLAIMER}`}
+          </p>
+        </AppCard>
+      </AppSection>
+    );
+  }
+
   return (
     <AppSection title="Expansion Scoreboard" tier="secondary" className="!mt-0">
       <ul className={spacing.stackSm}>
@@ -32,7 +47,7 @@ function ExpansionScoreboard({ markets }) {
               </div>
               <div className="text-right">
                 <p className={typography.metricSm} style={{ color: colors.primary }}>{market.score}</p>
-                <p className={typography.label}>Opportunity Score</p>
+                <p className={typography.label}>Preview score</p>
               </div>
             </AppCard>
           </li>
@@ -45,25 +60,34 @@ function ExpansionScoreboard({ markets }) {
 function DemandEventsSection({ events }) {
   return (
     <AppSection title="Upcoming Demand Events" tier="secondary">
-      <ul className={spacing.stackSm}>
-        {events.map((item) => (
-          <li key={item.id}>
-            <AppCard
-              variant="subdued"
-              className={`border-l-[4px] px-4 py-4 ${opportunityToneBorder[item.tone] || opportunityToneBorder.primary}`}
-            >
-              <div className="flex items-start justify-between gap-3">
-                <div>
-                  <p className={typography.cardTitle}>{item.title}</p>
-                  <p className="mt-0.5 text-[13px] font-medium text-slate-500">{item.place}</p>
+      {events.length === 0 ? (
+        <AppCard variant="subdued">
+          <p className={typography.cardTitle}>No live demand events</p>
+          <p className="mt-2 text-sm leading-relaxed text-slate-600">
+            Concert and stadium lifts are not computed from your Tesla fleet.
+          </p>
+        </AppCard>
+      ) : (
+        <ul className={spacing.stackSm}>
+          {events.map((item) => (
+            <li key={item.id}>
+              <AppCard
+                variant="subdued"
+                className={`border-l-[4px] px-4 py-4 ${opportunityToneBorder[item.tone] || opportunityToneBorder.primary}`}
+              >
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p className={typography.cardTitle}>{item.title}</p>
+                    <p className="mt-0.5 text-[13px] font-medium text-slate-500">{item.place}</p>
+                  </div>
+                  <p className="shrink-0 text-[15px] font-bold" style={{ color: colors.primary }}>{item.demandLabel}</p>
                 </div>
-                <p className="shrink-0 text-[15px] font-bold" style={{ color: colors.primary }}>{item.demandLabel}</p>
-              </div>
-              <p className="mt-2 text-[13px] font-semibold text-slate-600">{item.recommendation}</p>
-            </AppCard>
-          </li>
-        ))}
-      </ul>
+                <p className="mt-2 text-[13px] font-semibold text-slate-600">{item.recommendation}</p>
+              </AppCard>
+            </li>
+          ))}
+        </ul>
+      )}
     </AppSection>
   );
 }
@@ -84,7 +108,7 @@ function AiExpansionSection({ expansion, onNavigate }) {
           </div>
           <div>
             <p className={typography.label}>Confidence</p>
-            <p className={`mt-1.5 ${typography.metricSm}`} style={{ color: colors.primary }}>{expansion.confidenceLabel}</p>
+            <p className={`mt-1.5 ${typography.metricSm}`} style={{ color: colors.primary }}>{expansion.confidenceLabel || '—'}</p>
           </div>
         </div>
         <p className="mt-4 text-[13px] leading-snug text-slate-600">{expansion.rationale}</p>
@@ -99,7 +123,7 @@ function AiExpansionSection({ expansion, onNavigate }) {
           }}
         >
           <TrendingUp className="h-4 w-4" strokeWidth={icon.stroke} />
-          View expansion plan
+          View money
         </button>
       </AppCard>
     </AppSection>

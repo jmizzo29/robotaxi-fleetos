@@ -77,14 +77,39 @@ export function clearLocalComplianceState() {
   window.dispatchEvent(new CustomEvent('fleetos-compliance-updated'));
 }
 
-export async function deleteUserData() {
+export async function deleteUserData({ confirmation } = {}) {
   DATA_KEYS.forEach((key) => localStorage.removeItem(key));
   const apiBase = getApiBase();
   const token = await getAuthToken();
+  const headers = {
+    'Content-Type': 'application/json',
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+  };
+
+  const prepared = await fetch(`${apiBase}/auth/delete-data`, {
+    method: 'POST',
+    credentials: 'include',
+    headers,
+    body: JSON.stringify({ intent: 'prepare' }),
+  });
+  const preparedData = await prepared.json().catch(() => ({}));
+  if (!prepared.ok) {
+    throw new Error(preparedData.message || preparedData.error || `Delete prepare failed with ${prepared.status}`);
+  }
+
+  const phrase = preparedData.confirmationPhrase || 'DELETE';
+  if (String(confirmation || '').trim() !== phrase) {
+    throw new Error(`Type ${phrase} to confirm permanent deletion.`);
+  }
+
   const response = await fetch(`${apiBase}/auth/delete-data`, {
     method: 'DELETE',
     credentials: 'include',
-    headers: token ? { Authorization: `Bearer ${token}` } : {},
+    headers,
+    body: JSON.stringify({
+      confirmation: phrase,
+      confirmToken: preparedData.confirmToken,
+    }),
   });
   const data = await response.json().catch(() => ({}));
   if (!response.ok) {

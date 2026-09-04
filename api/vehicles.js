@@ -1,11 +1,11 @@
-import { getBillingStatusForSession, getDefaultFleetForSession, teslaRequestForSession } from './_lib/auth.js';
+import { getBillingStatusForSession, getDefaultFleetForSession, getSession, teslaRequestForSession } from './_lib/auth.js';
 import { ensureFleetSchema, hasPostgres, query } from './_lib/db.js';
+import { isProductionRuntime, vehiclesDebugAccess } from './_lib/prodGuards.js';
 import { RATE_LIMITS } from './_lib/rateLimits.js';
 import { applyVehiclePrivacy, auditEvent, privacyMode } from './_lib/security.js';
 import { notifyOwnerAlertsForUser } from './_lib/ownerAlertNotify.js';
 
 const DEFAULT_FLEET_API_BASE = process.env.TESLA_API_BASE || 'https://fleet-api.prd.na.vn.cloud.tesla.com';
-const TESLA_REDIRECT_URI = process.env.TESLA_REDIRECT_URI || 'http://localhost:3001/callback';
 
 function normalizeVehicle(vehicle, telemetry = {}) {
   const chargeState = telemetry.charge_state || vehicle.charge_state || {};
@@ -142,15 +142,22 @@ export default async function handler(req, res) {
   }
 
   if (req.query?.debug === '1') {
+    const session = await getSession(req, res, { create: false }).catch(() => null);
+    const debugAccess = vehiclesDebugAccess({
+      debug: req.query.debug,
+      authenticated: Boolean(session?.userId),
+      production: isProductionRuntime(),
+    });
+    if (!debugAccess.allow) {
+      res.status(debugAccess.status || 404).json({
+        error: debugAccess.error || 'NOT_FOUND',
+        message: debugAccess.message || 'Debug is not available.',
+      });
+      return;
+    }
     res.status(200).json({
       ok: true,
-      refreshFormKeys: [
-        'grant_type',
-        'client_id',
-        'refresh_token',
-        'redirect_uri',
-      ],
-      redirectUri: TESLA_REDIRECT_URI,
+      authenticated: true,
       teslaConfigured: Boolean(process.env.TESLA_CLIENT_ID),
     });
     return;

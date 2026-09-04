@@ -3,20 +3,30 @@ import BetaConsentPanel from '../components/BetaConsentPanel';
 import { deleteUserData, revokeTeslaConsent } from '../services/betaCompliance';
 import { disconnectTeslaForUser } from '../services/sessionService';
 import { AppCard } from '../components/shell';
-import { colors, semantic, typography } from '../design/roboagentTokens';
+import { semantic, typography } from '../design/roboagentTokens';
+
+const DELETE_PHRASE = 'DELETE';
 
 export default function DataPrivacyPanel() {
   const [message, setMessage] = useState('');
+  const [confirmation, setConfirmation] = useState('');
+  const [busy, setBusy] = useState(false);
 
   const deleteData = async () => {
-    const confirmed = window.confirm('Delete ROBOAGENT backend memory/assets/revenue records and local consent state? This cannot be undone.');
-    if (!confirmed) return;
+    if (confirmation.trim() !== DELETE_PHRASE) {
+      setMessage(`Type ${DELETE_PHRASE} to confirm permanent deletion.`);
+      return;
+    }
 
+    setBusy(true);
     try {
-      await deleteUserData();
+      await deleteUserData({ confirmation: DELETE_PHRASE });
       setMessage('ROBOAGENT beta data, Tesla connection, fleet records, and local consent state were deleted.');
+      setConfirmation('');
     } catch (error) {
       setMessage(error.message || 'ROBOAGENT data deletion failed.');
+    } finally {
+      setBusy(false);
     }
   };
 
@@ -50,13 +60,27 @@ export default function DataPrivacyPanel() {
         >
           Revoke ROBOAGENT Consent
         </button>
-        <button
-          type="button"
-          onClick={deleteData}
-          className="rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-bold text-rose-800 transition hover:bg-rose-100"
-        >
-          Delete My Data
-        </button>
+        <div className="space-y-2">
+          <label htmlFor="delete-confirm" className="block text-xs font-semibold uppercase tracking-[0.16em] text-slate-500">
+            Type {DELETE_PHRASE} to delete
+          </label>
+          <input
+            id="delete-confirm"
+            value={confirmation}
+            onChange={(event) => setConfirmation(event.target.value)}
+            autoComplete="off"
+            className="w-full rounded-2xl border border-slate-200 bg-white px-3 py-2.5 text-sm font-semibold tracking-wide text-slate-800"
+            placeholder={DELETE_PHRASE}
+          />
+          <button
+            type="button"
+            onClick={deleteData}
+            disabled={busy || confirmation.trim() !== DELETE_PHRASE}
+            className="w-full rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-bold text-rose-800 transition hover:bg-rose-100 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {busy ? 'Deleting…' : 'Delete My Data'}
+          </button>
+        </div>
       </div>
 
       <div className="mt-4 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-sm font-medium leading-6 text-slate-600">

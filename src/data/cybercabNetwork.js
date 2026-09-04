@@ -1,4 +1,4 @@
-/** Hard-coded Cybercab rollout dataset — v1 local only, no scraping. */
+/** Local preview dataset only — not verified Tesla Robotaxi operations. */
 export const recommendedExpansion = 'Orlando';
 
 export const cybercabMarkets = [
@@ -7,24 +7,24 @@ export const cybercabMarkets = [
     city: 'Austin',
     latitude: 30.2672,
     longitude: -97.7431,
-    phase: 'live',
-    notes: 'Tesla Robotaxi operations active.',
+    phase: 'preview',
+    notes: 'Unverified market preview. Not confirmed Tesla Robotaxi operations.',
   },
   {
     id: 'las-vegas',
     city: 'Las Vegas',
     latitude: 36.1699,
     longitude: -115.1398,
-    phase: 'live',
-    notes: 'Live autonomous ride service in select zones.',
+    phase: 'preview',
+    notes: 'Unverified market preview. Not confirmed live autonomous service.',
   },
   {
     id: 'sf-bay-area',
     city: 'SF Bay Area',
     latitude: 37.5485,
     longitude: -122.0825,
-    phase: 'live',
-    notes: 'Bay Area robotaxi corridor in active operation.',
+    phase: 'preview',
+    notes: 'Unverified market preview. Not confirmed Bay Area robotaxi service.',
   },
   {
     id: 'dallas',
@@ -32,7 +32,7 @@ export const cybercabMarkets = [
     latitude: 32.7767,
     longitude: -96.797,
     phase: 'planned',
-    notes: 'Infrastructure review and permitting in progress.',
+    notes: 'Watch market only. No verified Tesla Robotaxi operations.',
   },
   {
     id: 'houston',
@@ -40,7 +40,7 @@ export const cybercabMarkets = [
     latitude: 29.7604,
     longitude: -95.3698,
     phase: 'planned',
-    notes: 'Slated for Cybercab fleet staging after Texas expansion.',
+    notes: 'Watch market only. No verified Tesla Robotaxi operations.',
   },
   {
     id: 'phoenix',
@@ -48,7 +48,7 @@ export const cybercabMarkets = [
     latitude: 33.4484,
     longitude: -112.074,
     phase: 'planned',
-    notes: 'High sun-hour market targeted for autonomous density.',
+    notes: 'Watch market only. No verified Tesla Robotaxi operations.',
   },
   {
     id: 'miami',
@@ -56,7 +56,7 @@ export const cybercabMarkets = [
     latitude: 25.7617,
     longitude: -80.1918,
     phase: 'planned',
-    notes: 'Tourism and airport demand make this a priority market.',
+    notes: 'Watch market only. No verified Tesla Robotaxi operations.',
   },
   {
     id: 'tampa',
@@ -64,14 +64,14 @@ export const cybercabMarkets = [
     latitude: 27.9506,
     longitude: -82.4572,
     phase: 'planned',
-    notes: 'Connected to Orlando corridor planning.',
+    notes: 'Watch market only. No verified Tesla Robotaxi operations.',
   },
   {
     id: 'orlando',
     city: 'Orlando',
     latitude: 28.5383,
     longitude: -81.3792,
-    phase: 'early',
-    notes: 'Early Cybercab rollout — ideal for fleet owners near I-Drive and airport demand.',
+    phase: 'preview',
+    notes: 'Illustrative Florida watch market — not live owner intelligence.',
   },
 ];

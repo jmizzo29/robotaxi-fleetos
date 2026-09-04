@@ -1,5 +1,5 @@
 import { getCommandAiPlan, getFleetActivityFeed } from './commandHomeUtils';
-import { getExpansionRecommendation, getExpansionScoreboard } from './networkIntelligenceUtils';
+import { getExpansionRecommendation } from './networkIntelligenceUtils';
 import {
   getCommandEarningsHero,
   getCommandOperationalSource,
@@ -368,34 +368,28 @@ export function getAssetSheetPayload(
   };
 }
 
-/** Sheet C — explore expansion market. */
+/** Sheet C — explore expansion market. No invented weekly dollars for owners. */
 export function getGrowSheetPayload(fleet = [], city = 'Tampa') {
   const expansion = getExpansionRecommendation(fleet);
-  const scoreboard = getExpansionScoreboard();
-  const market = scoreboard.find((entry) => entry.city === city) || scoreboard[1];
-  const compare = scoreboard.find((entry) => entry.city === (city === 'Tampa' ? 'Jacksonville' : 'Tampa'));
-  const weekly = Math.round(((expansion.projectedMonthly || 4960) * (market?.score || 88) / 92) / 4);
-
-  const bodyByCity = {
-    Tampa: 'Two Orlando cabs are under-utilized Sunday evenings. Tampa demand fills that gap without new hardware.',
-    Jacksonville: 'Jacksonville airport volume is rising on weekend arrivals. One cab could test the corridor without fleet changes.',
-  };
+  const compareCity = city === 'Tampa' ? 'Jacksonville' : 'Tampa';
 
   return {
-    city: market?.city || city,
-    weeklyAmount: `+$${weekly.toLocaleString()}`,
-    weeklyLabel: 'per week potential',
-    body: bodyByCity[market?.city || city] || bodyByCity.Tampa,
+    city,
+    weeklyAmount: '—',
+    weeklyLabel: 'No personal weekly forecast',
+    body: expansion.rationale || 'Expansion dollars and event lifts are not computed from your Tesla data.',
     metrics: [
-      { label: 'demand gap', value: `+${Math.round((market?.score || 80) / 4)}%`, positive: true },
-      { label: 'headroom', value: `${expansion.deployCount || 2} cabs` },
-      { label: 'proj. weekly', value: weekly.toFixed(2) },
-      { label: 'assumptions', value: 'simulated', projected: true },
+      { label: 'demand gap', value: '—' },
+      { label: 'headroom', value: '—' },
+      { label: 'proj. weekly', value: '—' },
+      { label: 'assumptions', value: 'not live intel', projected: true },
     ],
-    primaryLabel: `Stage ${market?.city || city} plan`,
-    compareCity: compare?.city || 'Tampa',
-    command: `Stage ${expansion.deployCount || 2} vehicles for ${market?.city || city} expansion`,
-    score: market?.score || 88,
+    primaryLabel: 'Close preview',
+    compareCity,
+    command: null,
+    score: null,
+    empty: true,
+    illustrative: false,
   };
 }
 

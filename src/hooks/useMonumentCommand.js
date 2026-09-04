@@ -17,7 +17,7 @@ import {
 } from '../utils/monumentUtils';
 import { getTelemetryFocusTarget, getTelemetrySheetPayload } from '../utils/telemetryUtils';
 import { getCommandFleetStatusStrip } from '../utils/vehicleDisplayUtils';
-import { getExpansionRecommendation } from '../utils/networkIntelligenceUtils';
+import { getExpansionRecommendation, getGrowHero } from '../utils/networkIntelligenceUtils';
 
 export const FLEET_WAKE_CONFIRM = {
   title: 'Wake vehicle?',
@@ -77,6 +77,7 @@ export default function useMonumentCommand({
   );
 
   const expansion = useMemo(() => getExpansionRecommendation(fleet), [fleet]);
+  const growHero = useMemo(() => getGrowHero(expansion), [expansion]);
   const fleetCity = useMemo(() => {
     const city = fleet.find((vehicle) => vehicle.city)?.city;
     return city ? String(city).split(',')[0].trim() : 'Orlando';
@@ -217,18 +218,18 @@ export default function useMonumentCommand({
       id: 'grow',
       hero: {
         label: 'GROW',
-        amount: `+$${Math.round((expansion.projectedMonthly || 4960) / 4).toLocaleString()}`,
-        subline: `${expansion.city} · per week potential`,
+        amount: growHero.amount,
+        subline: growHero.subline,
         labelColor: monument.inkGhost,
       },
       footer: {
-        line: `${expansion.city} expansion ready when you are.`,
+        line: growHero.line,
         doItLabel: 'Explore',
         secondaryLabel: null,
         onSecondary: null,
       },
     },
-  ], [take, actionLine, action.secondary, strip, realFleet.length, fleetCity, offline, fleetAsleep, expansion, fleetSyncHint, isLoadingReal, wakingFleet, onSync, onNavigate]);
+  ], [take, actionLine, action.secondary, strip, realFleet.length, fleetCity, offline, fleetAsleep, growHero, fleetSyncHint, isLoadingReal, wakingFleet, onSync, onNavigate]);
 
   const handleHeroTap = (pageId) => {
     if (pageId === 'grow') {

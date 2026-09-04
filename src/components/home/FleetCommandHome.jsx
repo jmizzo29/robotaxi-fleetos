@@ -270,7 +270,9 @@ function GrowthSignal({ expansion, onNavigate }) {
       <div className="min-w-0">
         <p className={typography.label}>Where to grow next</p>
         <p className={`mt-1 ${typography.bodyMd}`}>
-          {expansion.city} · +${expansion.projectedDaily}/day potential
+          {expansion.empty || !expansion.city
+            ? 'No personal growth forecast yet'
+            : `${expansion.city} · illustrative preview`}
         </p>
       </div>
       <span className="shrink-0 text-[13px] font-semibold" style={{ color: colors.primary }}>

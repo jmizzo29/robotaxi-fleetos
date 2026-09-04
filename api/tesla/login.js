@@ -1,6 +1,8 @@
 import crypto from 'crypto';
 import { getSession } from '../_lib/auth.js';
+import { isClerkAuthRequired } from '../_lib/clerkAuth.js';
 import { ensureFleetSchema, hasPostgres, query } from '../_lib/db.js';
+import { teslaLoginMayCreateSession } from '../_lib/prodGuards.js';
 import { DEFAULT_USER_SCOPES } from '../_lib/teslaScopes.js';
 import { CANONICAL_APP_ORIGIN, resolveTeslaRedirectUri } from '../../src/utils/publicAppOrigins.js';
 
@@ -38,14 +40,27 @@ export default async function handler(req, res) {
   }
 
   await ensureFleetSchema();
+  const clerkRequired = isClerkAuthRequired();
   let session;
   try {
-    session = await getSession(req, res, { create: true });
+    session = await getSession(req, res, { create: false });
   } catch {
     session = null;
   }
 
+  if (!session && teslaLoginMayCreateSession({ clerkRequired, hasSession: false })) {
+    try {
+      session = await getSession(req, res, { create: true });
+    } catch {
+      session = null;
+    }
+  }
+
   if (!session?.id) {
+    if (clerkRequired) {
+      res.redirect(302, '/#/login');
+      return;
+    }
     res.status(503).send('Unable to start Tesla connection. Please try again.');
     return;
   }
