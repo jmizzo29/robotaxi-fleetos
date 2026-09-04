@@ -194,19 +194,22 @@ async function auditTeslaRateLimitGuards() {
 
 async function auditTeslaOAuthRedirect() {
   const loginFile = await read(path.join(API_DIR, 'tesla', 'login.js'));
+  const originsFile = await read(path.join(ROOT, 'src', 'utils', 'publicAppOrigins.js'));
   const diagnosticsFile = await read(path.join(API_DIR, 'tesla', 'diagnostics.js'));
   const requiredLoginSnippets = [
     'DEFAULT_PUBLIC_APP_URL',
     'PUBLIC_APP_URL',
     'configuredIsLocal',
-    '/api/tesla/callback',
+    'resolveTeslaRedirectUri',
   ];
   const missingLogin = requiredLoginSnippets.filter((snippet) => !loginFile.includes(snippet));
+  const hasCanonicalCallback = originsFile.includes('/api/tesla/callback') && originsFile.includes('resolveTeslaRedirectUri');
   const diagnosticsExposeRedirect = diagnosticsFile.includes('redirectUriFromRequest(req)') && diagnosticsFile.includes('expectedRegisteredRedirectUri');
 
-  if (missingLogin.length || !diagnosticsExposeRedirect) {
+  if (missingLogin.length || !hasCanonicalCallback || !diagnosticsExposeRedirect) {
     return fail('Tesla OAuth redirect registration', 'Tesla OAuth redirect URI is not clearly canonicalized or exposed for setup diagnostics.', {
       missingLogin,
+      hasCanonicalCallback,
       diagnosticsExposeRedirect,
     });
   }

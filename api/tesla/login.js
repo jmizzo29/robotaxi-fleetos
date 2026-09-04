@@ -2,33 +2,22 @@ import crypto from 'crypto';
 import { getSession } from '../_lib/auth.js';
 import { ensureFleetSchema, hasPostgres, query } from '../_lib/db.js';
 import { DEFAULT_USER_SCOPES } from '../_lib/teslaScopes.js';
-import { CANONICAL_APP_ORIGIN, isKnownAppHost, teslaCallbackUrl } from '../../src/utils/publicAppOrigins.js';
+import { CANONICAL_APP_ORIGIN, resolveTeslaRedirectUri } from '../../src/utils/publicAppOrigins.js';
 
 const TESLA_AUTHORIZE_URL = process.env.TESLA_AUTHORIZE_URL || 'https://auth.tesla.com/oauth2/v3/authorize';
 const DEFAULT_SCOPES = process.env.TESLA_SCOPES || DEFAULT_USER_SCOPES;
 const DEFAULT_PUBLIC_APP_URL = CANONICAL_APP_ORIGIN;
 
-function originFromRequest(req) {
-  const host = req.headers['x-forwarded-host'] || req.headers.host;
-  const proto = req.headers['x-forwarded-proto'] || (String(host).includes('localhost') ? 'http' : 'https');
-  return `${proto}://${host}`;
-}
-
-export function redirectUriFromRequest(req) {
+export function redirectUriFromRequest(_req) {
   const configured = process.env.TESLA_REDIRECT_URI || '';
-  const origin = originFromRequest(req);
-  const isProductionHost = isKnownAppHost(origin) || process.env.VERCEL === '1';
   const configuredIsLocal = configured.includes('localhost') || configured.includes('127.0.0.1');
-
-  if (configured && !(isProductionHost && configuredIsLocal)) {
-    return configured;
-  }
-
-  const canonicalOrigin = isProductionHost
-    ? (process.env.PUBLIC_APP_URL || DEFAULT_PUBLIC_APP_URL)
-    : origin;
-
-  return teslaCallbackUrl(canonicalOrigin);
+  const publicAppUrl = process.env.PUBLIC_APP_URL || DEFAULT_PUBLIC_APP_URL;
+  // Ignore Host, x-forwarded-host, and clientOrigin. Tesla requires one
+  // registered callback for every client, including iPhone Safari.
+  return resolveTeslaRedirectUri({
+    teslaRedirectUri: configuredIsLocal ? '' : configured,
+    publicAppUrl,
+  });
 }
 
 export default async function handler(req, res) {
