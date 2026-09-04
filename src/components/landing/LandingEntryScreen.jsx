@@ -17,7 +17,7 @@ export default function LandingEntryScreen({
       <div className="relative z-10 flex min-h-0 flex-1 flex-col px-6 pb-[max(1.75rem,env(safe-area-inset-bottom))] pt-16">
         <div className="mx-auto flex w-full max-w-5xl flex-1 flex-col items-center justify-center text-center">
           <h1 className="max-w-[16ch] text-[clamp(3.4rem,14vw,8.4rem)] font-medium leading-[0.86] tracking-[-0.055em] text-white">
-            Robotaxi
+            ROBOAGENT
           </h1>
           <p className="mt-6 text-[17px] font-normal tracking-[-0.01em] text-white/70 sm:text-[19px]">
             Command your fleet.

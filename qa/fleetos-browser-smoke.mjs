@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { chromium, devices } from 'playwright';
 
-const BASE_URL = (process.env.FLEETOS_QA_BASE_URL || process.argv[2] || 'https://www.autofleeto.com').replace(/\/$/, '');
+const BASE_URL = (process.env.FLEETOS_QA_BASE_URL || process.argv[2] || 'https://roboagent-fleet.vercel.app').replace(/\/$/, '');
 const REPORT_DIR = path.join(process.cwd(), 'qa', 'reports');
 
 function routeUrl(route = '') {

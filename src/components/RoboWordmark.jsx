@@ -6,7 +6,7 @@ export default function RoboWordmark({
   if (variant === 'calm') {
     return (
       <span className={`font-semibold tracking-[0.18em] ${colorClass} ${className}`}>
-        RoboAgent
+        ROBOAGENT
       </span>
     );
   }

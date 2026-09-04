@@ -2,10 +2,11 @@ import crypto from 'crypto';
 import { getSession } from '../_lib/auth.js';
 import { ensureFleetSchema, hasPostgres, query } from '../_lib/db.js';
 import { DEFAULT_USER_SCOPES } from '../_lib/teslaScopes.js';
+import { CANONICAL_APP_ORIGIN, isKnownAppHost, teslaCallbackUrl } from '../../src/utils/publicAppOrigins.js';
 
 const TESLA_AUTHORIZE_URL = process.env.TESLA_AUTHORIZE_URL || 'https://auth.tesla.com/oauth2/v3/authorize';
 const DEFAULT_SCOPES = process.env.TESLA_SCOPES || DEFAULT_USER_SCOPES;
-const DEFAULT_PUBLIC_APP_URL = 'https://www.autofleeto.com';
+const DEFAULT_PUBLIC_APP_URL = CANONICAL_APP_ORIGIN;
 
 function originFromRequest(req) {
   const host = req.headers['x-forwarded-host'] || req.headers.host;
@@ -16,7 +17,7 @@ function originFromRequest(req) {
 export function redirectUriFromRequest(req) {
   const configured = process.env.TESLA_REDIRECT_URI || '';
   const origin = originFromRequest(req);
-  const isProductionHost = origin.includes('autofleeto.com') || process.env.VERCEL === '1';
+  const isProductionHost = isKnownAppHost(origin) || process.env.VERCEL === '1';
   const configuredIsLocal = configured.includes('localhost') || configured.includes('127.0.0.1');
 
   if (configured && !(isProductionHost && configuredIsLocal)) {
@@ -27,7 +28,7 @@ export function redirectUriFromRequest(req) {
     ? (process.env.PUBLIC_APP_URL || DEFAULT_PUBLIC_APP_URL)
     : origin;
 
-  return `${canonicalOrigin.replace(/\/$/, '')}/api/tesla/callback`;
+  return teslaCallbackUrl(canonicalOrigin);
 }
 
 export default async function handler(req, res) {

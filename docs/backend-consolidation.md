@@ -7,12 +7,15 @@ The browser should not be configured with a public backend host for normal
 production use. Deployed pages call relative `/api` routes, which keeps the
 frontend and backend on the same origin.
 
-Canonical production domain:
+Canonical production host (Vercel project `roboagent-fleet`):
 
 ```bash
-PUBLIC_APP_URL=https://www.autofleeto.com
-TESLA_REDIRECT_URI=https://www.autofleeto.com/api/tesla/callback
+PUBLIC_APP_URL=https://roboagent-fleet.vercel.app
+TESLA_REDIRECT_URI=https://roboagent-fleet.vercel.app/api/tesla/callback
 ```
+
+`autofleeto.com` may stay attached in DNS and CORS/Clerk allowlists as a
+temporary bookmark origin. It is not the product URL.
 
 Register the same callback URL in the Tesla Developer Console for the active
 `TESLA_CLIENT_ID`. Tesla OAuth rejects the connection if this URL differs by

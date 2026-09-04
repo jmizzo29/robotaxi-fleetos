@@ -20,6 +20,7 @@ export default async function handler(req, res) {
   if (!code || !state) {
     res.status(400).send(`
       <html>
+        <head><title>ROBOAGENT</title></head>
         <body style="font-family: system-ui; background: #0b1120; color: white; padding: 32px; line-height: 1.5;">
           <h1>Tesla connection was not started correctly</h1>
           <p>This callback URL must be opened by Tesla after you click Connect Tesla inside ROBOAGENT.</p>
@@ -43,6 +44,7 @@ export default async function handler(req, res) {
   if (!oauthState) {
     res.status(400).send(`
       <html>
+        <head><title>ROBOAGENT</title></head>
         <body style="font-family: system-ui; background: #0b1120; color: white; padding: 32px; line-height: 1.5;">
           <h1>Tesla connection expired</h1>
           <p>The Tesla authorization state was invalid or expired. This can happen if the callback URL was opened directly, the browser session changed, or the redirect URI pointed at an old localhost callback.</p>

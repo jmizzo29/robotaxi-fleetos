@@ -32,6 +32,8 @@ const DEFAULT_ALLOWED_ORIGINS = [
   'http://127.0.0.1:5175',
   'http://127.0.0.1:5176',
   'http://127.0.0.1:5177',
+  'https://roboagent-fleet.vercel.app',
+  'https://roboagent-fleet-git-main-jmizzo29s-projects.vercel.app',
   'https://www.autofleeto.com',
   'https://autofleeto.com',
 ];

@@ -10,4 +10,10 @@ describe('legalCopy', () => {
   it('exposes legal nav links for About and menu', () => {
     expect(legalNavLinks.map((link) => link.route)).toEqual(['privacy', 'terms']);
   });
+
+  it('keeps the Tesla non-affiliation disclaimer', () => {
+    expect(legalCopy.terms.sections.some(([title, body]) => (
+      title === 'Tesla boundary' && /not affiliated with or endorsed by Tesla/i.test(body)
+    ))).toBe(true);
+  });
 });

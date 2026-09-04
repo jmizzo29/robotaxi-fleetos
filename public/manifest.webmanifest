@@ -1,7 +1,7 @@
 {
   "name": "ROBOAGENT",
   "short_name": "ROBOAGENT",
-  "description": "Owner command for your Tesla.",
+  "description": "ROBOAGENT — owner command for your Tesla.",
   "start_url": "/#/overview",
   "scope": "/",
   "display": "standalone",

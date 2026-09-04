@@ -1,4 +1,5 @@
 import { createClerkClient } from '@clerk/backend';
+import { ALLOWED_APP_ORIGINS } from '../../src/utils/publicAppOrigins.js';
 import { ensureFleetSchema, query } from './db.js';
 
 function publicClerkKey() {
@@ -31,8 +32,7 @@ function authorizedParties(req) {
       requestOrigin(req),
       'http://localhost:5173',
       'http://127.0.0.1:5173',
-      'https://www.autofleeto.com',
-      'https://autofleeto.com',
+      ...ALLOWED_APP_ORIGINS,
     ]),
   ];
 }

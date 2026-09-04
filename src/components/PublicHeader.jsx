@@ -12,7 +12,7 @@ export default function PublicHeader({ onNavigate }) {
           HOW IT WORKS
         </button>
 
-        {/* EXACT MIDDLE: RoboAgent (you will provide the file) */}
+        {/* EXACT MIDDLE: ROBOAGENT wordmark */}
         <div 
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer hover:opacity-90 transition"
           onClick={() => onNavigate('landing')}
