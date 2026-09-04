@@ -1,6 +1,6 @@
 import { useId } from 'react';
 
-export default function RoboLogo({ className = 'h-12 w-12', title = 'RoboAgent' }) {
+export default function RoboLogo({ className = 'h-12 w-12', title = 'ROBOAGENT' }) {
   const maskId = useId();
   const decorative = !title;
 
