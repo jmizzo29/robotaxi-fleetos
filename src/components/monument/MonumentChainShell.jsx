@@ -181,7 +181,7 @@ export default function MonumentChainShell({
         />
       )}
 
-      <div className="hidden min-h-0 min-w-0 flex-1 flex-col overflow-hidden lg:flex">
+      <div className={`hidden min-h-0 min-w-0 flex-1 flex-col overflow-hidden lg:flex ${command.todayOpen ? 'pr-[min(28rem,calc(100vw-16rem))]' : ''}`}>
         {route === 'overview' ? (
           <>
             <div className="shrink-0 border-b px-4" style={{ borderColor: monument.hairline }}>
@@ -192,7 +192,7 @@ export default function MonumentChainShell({
                 showSwipeHint={false}
               />
             </div>
-            <div className={`min-h-0 min-w-0 flex-1 overflow-hidden ${command.todayOpen ? 'lg:pr-[min(28rem,calc(100vw-16rem))]' : ''}`}>
+            <div className="min-h-0 min-w-0 flex-1 overflow-hidden">
               {command.pages.map((page) => (
                 page.id === commandTab ? (
                   <MonumentCommandSlide
