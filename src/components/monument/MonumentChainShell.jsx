@@ -4,8 +4,9 @@ import AssetDetailSheet from './AssetDetailSheet';
 import ConfirmActionSheet from './ConfirmActionSheet';
 import ExploreMarketSheet from './ExploreMarketSheet';
 import FleetBrowseSheet from './FleetBrowseSheet';
-import MonumentBottomChrome from './MonumentBottomChrome';
+import MonumentBottomChrome, { COMMAND_SWIPE_PAGES } from './MonumentBottomChrome';
 import MonumentCommandSlide from './MonumentCommandSlide';
+import MonumentSwipeStrip from './MonumentSwipeStrip';
 import MonumentIntegrations from './MonumentIntegrations';
 import MonumentMap from './MonumentMap';
 import MonumentNetwork from './MonumentNetwork';
@@ -179,16 +180,54 @@ export default function MonumentChainShell({
           onDismiss={ownerAlert.dismiss}
         />
       )}
+
+      <div className="hidden min-h-0 min-w-0 flex-1 flex-col overflow-hidden lg:flex">
+        {route === 'overview' ? (
+          <>
+            <div className="shrink-0 border-b px-4" style={{ borderColor: monument.hairline }}>
+              <MonumentSwipeStrip
+                active={commandTab}
+                pages={COMMAND_SWIPE_PAGES}
+                onSelect={handleCommandSelect}
+                showSwipeHint={false}
+              />
+            </div>
+            <div className={`min-h-0 min-w-0 flex-1 overflow-hidden ${command.todayOpen ? 'lg:pr-[min(28rem,calc(100vw-16rem))]' : ''}`}>
+              {command.pages.map((page) => (
+                page.id === commandTab ? (
+                  <MonumentCommandSlide
+                    key={page.id}
+                    page={page}
+                    strip={command.strip}
+                    onHeroTap={command.handleHeroTap}
+                    onDoIt={command.handleDoIt}
+                    onFleetStatusSelect={command.handleFleetStatusSelect}
+                  />
+                ) : null
+              ))}
+            </div>
+          </>
+        ) : route === 'map' ? (
+          <MonumentMap {...sharedUtilityProps} />
+        ) : route === 'network' ? (
+          <MonumentNetwork {...sharedUtilityProps} />
+        ) : route === 'integrations' ? (
+          <MonumentIntegrations {...sharedUtilityProps} />
+        ) : (
+          <MonumentSettings {...sharedUtilityProps} />
+        )}
+      </div>
+
       <div
         ref={pagerRef}
         onScroll={handlePagerScroll}
-        className="flex min-h-0 flex-1 snap-x snap-mandatory overflow-x-auto overscroll-x-contain touch-pan-x [&::-webkit-scrollbar]:hidden"
+        className="flex min-h-0 min-w-0 flex-1 snap-x snap-mandatory overflow-x-auto overscroll-x-contain touch-pan-x lg:hidden [&::-webkit-scrollbar]:hidden"
         style={{ WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none' }}
       >
         {command.pages.map((page) => (
           <section
             key={page.id}
-            className="flex min-h-0 w-full shrink-0 snap-center snap-always flex-col"
+            className="flex min-h-0 w-full min-w-0 shrink-0 snap-center snap-always flex-col"
             aria-label={page.id}
           >
             <MonumentCommandSlide
@@ -201,16 +240,16 @@ export default function MonumentChainShell({
           </section>
         ))}
 
-        <section className="flex min-h-0 w-full shrink-0 snap-center snap-always flex-col" aria-label="map">
+        <section className="flex min-h-0 w-full min-w-0 shrink-0 snap-center snap-always flex-col" aria-label="map">
           <MonumentMap {...sharedUtilityProps} />
         </section>
-        <section className="flex min-h-0 w-full shrink-0 snap-center snap-always flex-col" aria-label="network">
+        <section className="flex min-h-0 w-full min-w-0 shrink-0 snap-center snap-always flex-col" aria-label="network">
           <MonumentNetwork {...sharedUtilityProps} />
         </section>
-        <section className="flex min-h-0 w-full shrink-0 snap-center snap-always flex-col" aria-label="integrations">
+        <section className="flex min-h-0 w-full min-w-0 shrink-0 snap-center snap-always flex-col" aria-label="integrations">
           <MonumentIntegrations {...sharedUtilityProps} />
         </section>
-        <section className="flex min-h-0 w-full shrink-0 snap-center snap-always flex-col" aria-label="settings">
+        <section className="flex min-h-0 w-full min-w-0 shrink-0 snap-center snap-always flex-col" aria-label="settings">
           <MonumentSettings {...sharedUtilityProps} />
         </section>
       </div>

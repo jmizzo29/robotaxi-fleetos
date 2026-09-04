@@ -6,7 +6,7 @@ export default function TodayDetailSheet({ open, payload, onClose, onSelectRow }
   if (!payload) return null;
 
   return (
-    <MonumentSheet open={open} onClose={onClose}>
+    <MonumentSheet open={open} onClose={onClose} desktop="panel">
       <div className="px-[18px] pb-2">
         <div className="pt-1 text-center">
           <p
