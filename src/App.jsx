@@ -53,19 +53,11 @@ import { canUseTeslaTelemetry } from './services/betaCompliance';
 import { getFleetOsSession } from './services/sessionService';
 import { sendTeslaChargingCommand } from './services/teslaChargingService';
 import { routeToOperationsTab } from './utils/operationsUtils';
+import { shouldRestoreConnectedSessionToCommand } from './utils/teslaLaunchRoutes';
 
 const OPERATIONS_ROUTES = new Set(['dispatch', 'charging', 'health', 'readiness', 'alerts']);
 const MONUMENT_UTILITY_ROUTES = new Set(['map', 'network', 'integrations', 'settings']);
 const MONUMENT_CHAIN_ROUTES = new Set(['overview', ...MONUMENT_UTILITY_ROUTES]);
-const TESLA_CONNECT_ENTRY_ROUTES = new Set([
-  'landing',
-  'landing-entry',
-  'login',
-  'signup',
-  'signup-email',
-  'onboarding',
-  'add-vehicle',
-]);
 
 const FleetMap = lazy(() => import('./components/FleetMap'));
 const NetworkPanel = lazy(() => import('./panels/NetworkPanel'));
@@ -247,7 +239,7 @@ function FleetApp() {
   const isPublicOnboardingRoute = route === 'onboarding';
   const isPublicAddVehicleRoute = route === 'add-vehicle';
   const isPublicAccountRoute = route === 'account';
-  const shouldRestoreTeslaLaunchRoute = TESLA_CONNECT_ENTRY_ROUTES.has(route);
+  const shouldRestoreTeslaLaunchRoute = shouldRestoreConnectedSessionToCommand(route);
   const teslaConsentReady = canUseTeslaTelemetry();
   const shouldAutoSyncReal = !(
     isPublicRoute ||
