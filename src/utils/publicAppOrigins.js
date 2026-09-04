@@ -17,6 +17,32 @@ export function teslaCallbackUrl(origin = CANONICAL_APP_ORIGIN) {
   return `${String(origin).replace(/\/$/, '')}/api/tesla/callback`;
 }
 
+export const CANONICAL_TESLA_REDIRECT_URI = teslaCallbackUrl(CANONICAL_APP_ORIGIN);
+
+function stripTrailingSlash(value) {
+  return String(value || '').trim().replace(/\/$/, '');
+}
+
+function isLocalRedirect(value) {
+  return /localhost|127\.0\.0\.1/i.test(String(value || ''));
+}
+
+/**
+ * Tesla OAuth callback for Vercel / production login.
+ * Never uses the request Host or clientOrigin — iPhone and desktop must
+ * send Tesla the same registered URI.
+ */
+export function resolveTeslaRedirectUri({
+  teslaRedirectUri = '',
+  publicAppUrl = '',
+} = {}) {
+  const configured = stripTrailingSlash(teslaRedirectUri);
+  if (configured && !isLocalRedirect(configured)) {
+    return configured;
+  }
+  return teslaCallbackUrl(stripTrailingSlash(publicAppUrl) || CANONICAL_APP_ORIGIN);
+}
+
 export function isKnownAppHost(origin = '') {
   const value = String(origin).toLowerCase();
   return value.includes('roboagent-fleet.vercel.app')
