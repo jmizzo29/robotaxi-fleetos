@@ -2,6 +2,7 @@ import React from 'react';
 import { ArrowLeft } from 'lucide-react';
 import { startTeslaOAuth } from '../services/teslaHealthService';
 import Logo from '../components/Logo';
+import TeslaConnectMark from '../components/TeslaConnectMark';
 
 export default function AddVehiclePanel({ onNavigate }) {
   return (
@@ -31,8 +32,8 @@ export default function AddVehiclePanel({ onNavigate }) {
         </div>
 
         <div className="bg-zinc-900 border border-white/10 rounded-3xl p-10 mb-8 text-center">
-          <div className="mx-auto mb-6 w-20 h-20 bg-gradient-to-br from-blue-500 to-cyan-400 rounded-2xl flex items-center justify-center">
-            <span className="text-5xl font-light">T</span>
+          <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center text-[#F3F3F1]">
+            <TeslaConnectMark className="h-16 w-16" />
           </div>
           <h3 className="text-2xl font-semibold mb-3">Tesla Fleet API</h3>
           <p className="text-white/70">
