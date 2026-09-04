@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { getFleetMembersByTile, getMonumentTake } from './monumentUtils';
+import { getFleetMembersByTile, getGrowSheetPayload, getMonumentTake } from './monumentUtils';
 
 const fleet = [
   { id: 'CAR-001', status: 'REPOSITIONING', latitude: 28.5, longitude: -81.3 },
@@ -48,5 +48,15 @@ describe('getMonumentTake', () => {
     expect(take.amount).toBe('$120');
     expect(take.subline).toBe('3 trips · Tampa');
     expect(take.projected).toBe(false);
+  });
+});
+
+describe('getGrowSheetPayload', () => {
+  it('does not invent a +$700/week personal forecast', () => {
+    const payload = getGrowSheetPayload(fleet, 'Tampa');
+    expect(payload.weeklyAmount).toBe('—');
+    expect(payload.weeklyLabel).toMatch(/no personal weekly forecast/i);
+    expect(payload.score).toBeNull();
+    expect(payload.command).toBeNull();
   });
 });

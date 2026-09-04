@@ -439,11 +439,13 @@ function PlanSection({ billing }) {
         <Metric label="Synced" value={billing.vehicleCount || 0} tone="info" icon={Car} />
       </div>
 
-      {billing.billingRequired && (
-        <p className="mt-4 text-sm leading-relaxed text-ink-muted">
-          You have {billing.billableVehicles || 0} billable vehicle{(billing.billableVehicles || 0) === 1 ? '' : 's'} beyond your included limit.
-        </p>
-      )}
+      <p className="mt-4 text-sm leading-relaxed text-ink-muted">
+        Tesla OAuth is one account connection. The beta plan includes the first Tesla.
+        Extra VINs Tesla returns need plan coverage — connecting Tesla again does not create a second account.
+        {billing.billingRequired
+          ? ` ${billing.billableVehicles || 0} vehicle${(billing.billableVehicles || 0) === 1 ? '' : 's'} are beyond the included limit and will not sync until coverage is added.`
+          : ''}
+      </p>
     </Card>
   );
 }

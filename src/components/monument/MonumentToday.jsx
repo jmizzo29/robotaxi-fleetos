@@ -26,7 +26,7 @@ import {
 } from '../../utils/monumentUtils';
 import { getTelemetryFocusTarget, getTelemetrySheetPayload } from '../../utils/telemetryUtils';
 import { getCommandFleetStatusStrip } from '../../utils/vehicleDisplayUtils';
-import { getExpansionRecommendation } from '../../utils/networkIntelligenceUtils';
+import { getExpansionRecommendation, getGrowHero } from '../../utils/networkIntelligenceUtils';
 
 const TAB_ORDER = ['today', 'fleet', 'grow'];
 
@@ -101,6 +101,7 @@ export default function MonumentToday({
   );
 
   const expansion = useMemo(() => getExpansionRecommendation(fleet), [fleet]);
+  const growHero = useMemo(() => getGrowHero(expansion), [expansion]);
 
   const fleetCity = useMemo(() => {
     const city = fleet.find((vehicle) => vehicle.city)?.city;
@@ -312,18 +313,18 @@ export default function MonumentToday({
       id: 'grow',
       hero: {
         label: 'GROW',
-        amount: `+$${Math.round((expansion.projectedMonthly || 4960) / 4).toLocaleString()}`,
-        subline: `${expansion.city} · per week potential`,
+        amount: growHero.amount,
+        subline: growHero.subline,
         labelColor: monument.inkGhost,
       },
       footer: {
-        line: `${expansion.city} expansion ready when you are.`,
+        line: growHero.line,
         doItLabel: 'Explore',
         secondaryLabel: null,
         onSecondary: null,
       },
     },
-  ], [take, actionLine, action.secondary, strip, realFleet.length, fleetCity, offline, expansion, fleetSyncHint, isLoadingReal]);
+  ], [take, actionLine, action.secondary, strip, realFleet.length, fleetCity, offline, growHero, fleetSyncHint, isLoadingReal]);
 
   return (
     <div

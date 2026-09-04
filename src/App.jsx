@@ -237,7 +237,7 @@ function FleetApp() {
   const isPublicHowItWorksRoute = route === 'how-it-works';
   const isPublicLegalRoute = route === 'privacy' || route === 'terms';
   const isPublicOnboardingRoute = route === 'onboarding';
-  const isPublicAddVehicleRoute = route === 'add-vehicle';
+  const isAddVehicleRoute = route === 'add-vehicle';
   const isPublicAccountRoute = route === 'account';
   const shouldRestoreTeslaLaunchRoute = shouldRestoreConnectedSessionToCommand(route);
   const teslaConsentReady = canUseTeslaTelemetry();
@@ -254,11 +254,11 @@ function FleetApp() {
     isPublicHowItWorksRoute ||
     isPublicLegalRoute ||
     isPublicOnboardingRoute ||
-    isPublicAddVehicleRoute ||
+    isAddVehicleRoute ||
     isPublicAccountRoute
   );
-  // Every non-public route requires an authenticated session.
-  const isProtectedRoute = shouldAutoSyncReal;
+  // Add-vehicle stays signed-in (Clerk or cookie). It is not a guest OAuth side door.
+  const isProtectedRoute = shouldAutoSyncReal || isAddVehicleRoute;
 
   useEffect(() => {
     const refreshCompliance = () => setComplianceRevision((current) => current + 1);
@@ -825,10 +825,6 @@ function FleetApp() {
     );
   }
 
-  if (isPublicAddVehicleRoute) {
-    return <AddVehiclePanel onNavigate={navigate} />;
-  }
-
   if (isPublicAccountRoute) {
     return (
       <>
@@ -858,6 +854,10 @@ function FleetApp() {
         </div>
       </div>
     );
+  }
+
+  if (isAddVehicleRoute) {
+    return <AddVehiclePanel onNavigate={navigate} />;
   }
 
   // New premium dark dashboard (matches Landing + Auth + Onboarding style)

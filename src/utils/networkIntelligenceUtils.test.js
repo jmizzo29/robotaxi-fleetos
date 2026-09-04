@@ -6,6 +6,7 @@ import {
 import {
   getExpansionRecommendation,
   getExpansionScoreboard,
+  getGrowHero,
   getNetworkOpportunities,
 } from './networkIntelligenceUtils';
 
@@ -65,27 +66,47 @@ describe('getCommandFleetStatusStrip', () => {
 });
 
 describe('getNetworkOpportunities', () => {
-  it('returns event-driven opportunities', () => {
+  it('does not invent live personal demand events for a connected owner', () => {
     const items = getNetworkOpportunities(fleet);
+    expect(items).toEqual([]);
+  });
+
+  it('labels catalog events as illustrative preview only', () => {
+    const items = getNetworkOpportunities(fleet, { illustrative: true });
     expect(items.length).toBeGreaterThan(0);
-    expect(items[0]).toMatchObject({ title: expect.any(String), demandLabel: expect.any(String) });
+    expect(items[0].illustrative).toBe(true);
+    expect(items[0].disclaimer).toMatch(/not live personal intelligence/i);
   });
 });
 
 describe('getExpansionScoreboard', () => {
-  it('returns ranked Florida markets', () => {
-    const board = getExpansionScoreboard();
+  it('hides hardcoded scores from owner surfaces', () => {
+    expect(getExpansionScoreboard()).toEqual([]);
+  });
+
+  it('returns ranked Florida markets only as illustrative preview', () => {
+    const board = getExpansionScoreboard({ illustrative: true });
     expect(board[0].city).toBe('Orlando');
     expect(board[0].score).toBeGreaterThan(board[1].score);
+    expect(board[0].illustrative).toBe(true);
   });
 });
 
 describe('getExpansionRecommendation', () => {
-  it('returns Orlando expansion with monthly projection', () => {
+  it('does not invent weekly or monthly dollars for a connected owner', () => {
     const expansion = getExpansionRecommendation(fleet);
-    expect(expansion.city).toBe('Orlando');
-    expect(expansion.projectedLabel).toMatch(/^\+\$/);
-    expect(expansion.deployLabel).toContain('Deploy');
-    expect(expansion.confidenceLabel).toBeTruthy();
+    expect(expansion.empty).toBe(true);
+    expect(expansion.projectedMonthly).toBeNull();
+    expect(expansion.projectedLabel).toBe('—');
+    expect(expansion.city).toBeNull();
+  });
+});
+
+describe('getGrowHero', () => {
+  it('renders an em dash instead of +$700/week for empty intel', () => {
+    const hero = getGrowHero(getExpansionRecommendation(fleet));
+    expect(hero.amount).toBe('—');
+    expect(hero.subline).toMatch(/no personal weekly forecast/i);
+    expect(hero.line).not.toMatch(/\$700|Taylor Swift/i);
   });
 });

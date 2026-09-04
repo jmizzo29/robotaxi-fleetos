@@ -1,16 +1,21 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import {
   hasBetaAccess,
   verifyBetaInvite,
   hasTeslaConsent,
   acceptTeslaConsent,
   canUseTeslaTelemetry,
+  deleteUserData,
 } from './betaCompliance';
 
 describe('betaCompliance (security + trust)', () => {
   beforeEach(() => {
     localStorage.clear();
     vi.spyOn(window, 'dispatchEvent').mockImplementation(() => true);
+  });
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
   });
 
   it('hasBetaAccess is false by default', () => {
@@ -42,5 +47,16 @@ describe('betaCompliance (security + trust)', () => {
     expect(canUseTeslaTelemetry()).toBe(false);
     acceptTeslaConsent();
     expect(canUseTeslaTelemetry()).toBe(true);
+  });
+
+  it('deleteUserData refuses a one-click wipe without typed confirmation', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => ({ confirmationPhrase: 'DELETE', confirmToken: 'tok' }),
+    });
+    vi.stubGlobal('fetch', fetchMock);
+    await expect(deleteUserData()).rejects.toThrow(/Type DELETE/i);
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(fetchMock.mock.calls[0][1].body).toContain('prepare');
   });
 });

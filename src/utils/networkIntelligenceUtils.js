@@ -1,6 +1,8 @@
 import { cybercabMarkets, recommendedExpansion } from '../data/cybercabNetwork';
 import demandZones from '../data/demandZones';
 
+export const ILLUSTRATIVE_PREVIEW_DISCLAIMER = 'Illustrative preview — not live personal intelligence for your fleet.';
+
 const EXPANSION_SCOREBOARD = [
   { id: 'orlando', city: 'Orlando', score: 92 },
   { id: 'tampa', city: 'Tampa', score: 88 },
@@ -60,16 +62,42 @@ function zoneOpportunity(zone) {
     demandLabel: `+${surgePct}% demand`,
     recommendation: `Position fleet near ${zone.name}`,
     tone: zone.demand >= 90 ? 'primary' : 'success',
+    illustrative: true,
   };
 }
 
-/** Florida expansion scoreboard — strategic market ranking. */
-export function getExpansionScoreboard() {
-  return EXPANSION_SCOREBOARD;
+function emptyRecommendation() {
+  return {
+    city: null,
+    deployCount: 0,
+    deployLabel: 'No expansion forecast from your Tesla data.',
+    projectedMonthly: null,
+    projectedLabel: '—',
+    projectedPeriod: null,
+    confidenceLabel: null,
+    rationale: 'Market scores, weekly dollars, and event lifts are not live owner intelligence.',
+    nearbyLive: 0,
+    projectedDaily: null,
+    empty: true,
+    illustrative: false,
+    disclaimer: ILLUSTRATIVE_PREVIEW_DISCLAIMER,
+  };
 }
 
-/** Upcoming demand events — event-driven growth intelligence. */
-export function getNetworkOpportunities(fleet = []) {
+/** Florida expansion scoreboard — illustrative only unless explicitly requested. */
+export function getExpansionScoreboard({ illustrative = false } = {}) {
+  if (!illustrative) return [];
+  return EXPANSION_SCOREBOARD.map((entry) => ({
+    ...entry,
+    illustrative: true,
+    disclaimer: ILLUSTRATIVE_PREVIEW_DISCLAIMER,
+  }));
+}
+
+/** Upcoming demand events — empty for owners; illustrative catalog on request. */
+export function getNetworkOpportunities(fleet = [], { illustrative = false } = {}) {
+  if (!illustrative) return [];
+
   const cities = ownerCities(fleet);
   const zoneItems = demandZones
     .filter((zone) => {
@@ -79,11 +107,19 @@ export function getNetworkOpportunities(fleet = []) {
     .slice(0, 1)
     .map(zoneOpportunity);
 
-  return [...EVENT_OPPORTUNITIES, ...zoneItems].slice(0, 5);
+  return [...EVENT_OPPORTUNITIES, ...zoneItems].slice(0, 5).map((item) => ({
+    ...item,
+    illustrative: true,
+    disclaimer: ILLUSTRATIVE_PREVIEW_DISCLAIMER,
+  }));
 }
 
-/** AI expansion recommendation — monthly revenue projection. */
-export function getExpansionRecommendation(fleet = []) {
+/** Owner-facing expansion rec — no invented weekly/monthly dollars. */
+export function getExpansionRecommendation(fleet = [], { illustrative = false } = {}) {
+  if (!illustrative) {
+    return emptyRecommendation();
+  }
+
   const market = cybercabMarkets.find((entry) => entry.city === recommendedExpansion);
   const ownerNearMarket = ownerCities(fleet).some((city) => {
     const normalized = city.toLowerCase();
@@ -91,19 +127,37 @@ export function getExpansionRecommendation(fleet = []) {
       || recommendedExpansion.toLowerCase().includes(normalized.split(',')[0]);
   });
 
-  const deployCount = ownerNearMarket ? 2 : 2;
+  const deployCount = 2;
   const monthlyBump = ownerNearMarket ? 2800 : 2400;
 
   return {
     city: recommendedExpansion,
     deployCount,
-    deployLabel: `Deploy ${deployCount} additional vehicles to ${recommendedExpansion}`,
+    deployLabel: `Illustrative: deploy ${deployCount} additional vehicles to ${recommendedExpansion}`,
     projectedMonthly: monthlyBump,
     projectedLabel: `+$${monthlyBump.toLocaleString()}`,
-    projectedPeriod: 'monthly revenue increase',
-    confidenceLabel: ownerNearMarket ? 'High' : 'Medium',
-    rationale: market?.notes || 'High-demand market with strong tourism and airport volume.',
+    projectedPeriod: 'illustrative monthly revenue',
+    confidenceLabel: 'Preview',
+    rationale: market?.notes || ILLUSTRATIVE_PREVIEW_DISCLAIMER,
     nearbyLive: cybercabMarkets.filter((entry) => entry.phase === 'live').length,
     projectedDaily: ownerNearMarket ? 412 : 318,
+    empty: false,
+    illustrative: true,
+    disclaimer: ILLUSTRATIVE_PREVIEW_DISCLAIMER,
+  };
+}
+
+export function getGrowHero(expansion) {
+  if (!expansion || expansion.empty || expansion.projectedMonthly == null) {
+    return {
+      amount: '—',
+      subline: 'No personal weekly forecast',
+      line: 'Weekly dollars and market scores are not live owner intelligence.',
+    };
+  }
+  return {
+    amount: `+$${Math.round(expansion.projectedMonthly / 4).toLocaleString()}`,
+    subline: `${expansion.city} · illustrative preview`,
+    line: expansion.disclaimer || ILLUSTRATIVE_PREVIEW_DISCLAIMER,
   };
 }

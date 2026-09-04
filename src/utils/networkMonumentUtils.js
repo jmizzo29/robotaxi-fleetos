@@ -1,3 +1,4 @@
+import { getCybercabNetworkSummary } from './cybercabNetworkUtils';
 import {
   getExpansionRecommendation,
   getExpansionScoreboard,
@@ -5,32 +6,46 @@ import {
 } from './networkIntelligenceUtils';
 
 export function getNetworkConvoy(fleet = []) {
+  const summary = getCybercabNetworkSummary();
   const scoreboard = getExpansionScoreboard();
   const events = getNetworkOpportunities(fleet);
-  const orlando = scoreboard.find((entry) => entry.city === 'Orlando') || scoreboard[0];
-  const tampa = scoreboard.find((entry) => entry.city === 'Tampa') || scoreboard[1];
+  const orlando = scoreboard.find((entry) => entry.city === 'Orlando');
+  const tampa = scoreboard.find((entry) => entry.city === 'Tampa');
 
   return {
-    markets: 3,
-    orlando: orlando?.score ?? 92,
-    tampa: tampa?.score ?? 88,
-    events: Math.min(events.length, 5),
-    city: 'Florida',
-    topEvent: events[0],
+    markets: summary.preview + summary.planned + summary.early,
+    orlando: orlando?.score ?? '—',
+    tampa: tampa?.score ?? '—',
+    events: events.length,
+    city: 'Preview',
+    topEvent: events[0] || null,
     expansion: getExpansionRecommendation(fleet),
+    verifiedLive: summary.live,
+    empty: events.length === 0 && scoreboard.length === 0,
   };
 }
 
 export function getNetworkHero(convoy) {
   return {
     label: 'NETWORK',
-    amount: String(convoy.markets),
-    subline: `active markets · ${convoy.city}`,
+    amount: convoy.empty ? '—' : String(convoy.markets),
+    subline: convoy.verifiedLive > 0
+      ? `verified live markets · ${convoy.city}`
+      : 'preview markets · not verified live operations',
   };
 }
 
 export function getNetworkEventRows(fleet = [], limit = 3) {
-  return getNetworkOpportunities(fleet).slice(0, limit).map((event) => ({
+  const events = getNetworkOpportunities(fleet).slice(0, limit);
+  if (!events.length) {
+    return [{
+      cab: 'Preview',
+      event: 'No live demand events for this fleet',
+      value: '—',
+      tone: 'neutral',
+    }];
+  }
+  return events.map((event) => ({
     cab: event.place,
     event: event.title,
     value: event.demandLabel,
@@ -39,7 +54,9 @@ export function getNetworkEventRows(fleet = [], limit = 3) {
 }
 
 export function getNetworkFooterLine(convoy) {
+  if (convoy.empty || !convoy.topEvent) {
+    return 'Network scores and events are preview only — not live owner intelligence.';
+  }
   const event = convoy.topEvent;
-  if (!event) return 'Review Florida expansion opportunities.';
   return `${event.title} ${event.demandLabel} ${event.place}.`;
 }

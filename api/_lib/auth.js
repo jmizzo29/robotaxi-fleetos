@@ -1,6 +1,7 @@
 import crypto from 'crypto';
 import { getVerifiedClerkSession, isClerkAuthRequired } from './clerkAuth.js';
 import { ensureFleetSchema, query } from './db.js';
+import { resolveMissingSession } from './prodGuards.js';
 import { hasChargingCmds, scopesFromTokenAndRecord } from './teslaScopes.js';
 
 const SESSION_COOKIE = 'fleetos_session';
@@ -162,13 +163,16 @@ export async function getSession(req, res, { create = false } = {}) {
     }
   }
 
-  if (clerkError && !(create && clerkError.status === 401)) {
-    throw clerkError;
+  const fallback = resolveMissingSession({
+    clerkRequired: isClerkAuthRequired(),
+    create,
+    clerkError,
+  });
+  if (fallback.action === 'throw') {
+    throw fallback.error;
   }
+  if (fallback.action === 'deny') return null;
 
-  if (isClerkAuthRequired() && !create) return null;
-
-  if (!create) return null;
   const created = await createAnonymousSession(res);
   return {
     ...created,

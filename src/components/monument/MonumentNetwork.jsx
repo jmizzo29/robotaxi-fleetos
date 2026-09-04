@@ -96,7 +96,7 @@ export default function MonumentNetwork({
 
       <MonumentActionFooter
         line={footerLine}
-        doItLabel="Explore Tampa"
+        doItLabel="Review preview"
         onDoIt={() => {
           setGrowCity('Tampa');
           setExploreOpen(true);

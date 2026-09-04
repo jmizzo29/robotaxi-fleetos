@@ -6,7 +6,7 @@ import { clerkPublishableKey, isClerkConfigured } from './clerkConfig';
 import { FleetAuthContext } from './FleetAuthContext';
 import { SsoCallbackPage } from '../App';
 
-const PUBLIC_AUTH_ROUTES = new Set(['landing', 'landing-entry', 'login', 'signup', 'onboarding', 'add-vehicle']);
+const PUBLIC_AUTH_ROUTES = new Set(['landing', 'landing-entry', 'login', 'signup', 'onboarding']);
 
 function ClerkSessionBridge({ children }) {
   const { getToken, isLoaded, isSignedIn } = useAuth();
@@ -39,8 +39,8 @@ export default function ClerkAuthProvider({ children }) {
   const [route] = useHashRoute();
   const isSsoCallback = typeof window !== 'undefined' && window.location.pathname === '/sso-callback';
 
-  // Public Tesla-first routes bypass Clerk entirely to avoid the white Clerk UI and
-  // keep mobile auth on the fast direct backend OAuth redirect path.
+  // First-connect Tesla-first routes bypass Clerk UI. Add-vehicle stays inside
+  // ClerkProvider so a signed-in owner cannot mint a guest OAuth session.
   const isPublicAuthRoute = PUBLIC_AUTH_ROUTES.has(route);
 
   if (isPublicAuthRoute) {
