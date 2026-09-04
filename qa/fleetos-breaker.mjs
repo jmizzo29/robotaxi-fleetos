@@ -2,7 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { performance } from 'node:perf_hooks';
 
-const DEFAULT_BASE_URL = 'https://www.autofleeto.com';
+const DEFAULT_BASE_URL = 'https://roboagent-fleet.vercel.app';
 const BASE_URL = (process.env.FLEETOS_QA_BASE_URL || process.argv[2] || DEFAULT_BASE_URL).replace(/\/$/, '');
 const REPORT_DIR = path.join(process.cwd(), 'qa', 'reports');
 const startedAt = new Date();

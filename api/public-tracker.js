@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   try {
     const response = await fetch(url, {
       headers: {
-        'User-Agent': 'ROBOAGENT/1.0 (+https://www.autofleeto.com; public tracker integration)',
+        'User-Agent': 'ROBOAGENT/1.0 (+https://roboagent-fleet.vercel.app; public tracker integration)',
         'Accept': 'text/html,application/xhtml+xml'
       }
     });

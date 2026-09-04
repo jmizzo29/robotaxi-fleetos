@@ -162,7 +162,7 @@ async function sendWebPush(subscription, payload) {
   }
   const webpush = (await import('web-push')).default;
   webpush.setVapidDetails(
-    process.env.VAPID_CONTACT || 'mailto:ops@autofleeto.com',
+    process.env.VAPID_CONTACT || 'https://roboagent-fleet.vercel.app',
     vapidPublicKey(),
     vapidPrivateKey(),
   );
