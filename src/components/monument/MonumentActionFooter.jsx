@@ -18,7 +18,12 @@ export default function MonumentActionFooter({
   return (
     <div className="shrink-0 px-7 pb-2 text-center">
       <Hairline />
-      <p className={`mt-6 ${monumentType.actionLine}`} style={{ color: monument.ink }}>{line}</p>
+      <p
+        className={`mx-auto mt-6 max-w-xl break-words ${monumentType.actionLine}`}
+        style={{ color: monument.ink }}
+      >
+        {line}
+      </p>
       {onDoIt && (
         <button
           type="button"

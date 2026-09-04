@@ -875,7 +875,7 @@ function FleetApp() {
       <>
         <div className="flex h-screen min-h-0" style={{ backgroundColor: colors.canvas, backgroundImage: colors.canvasWash }}>
           <Sidebar commandQueue={commandQueue} route={route} onNavigate={navigate} />
-          <main className="flex min-h-0 flex-1 flex-col overflow-hidden">
+          <main className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
             <MonumentChainShell
               route={route}
               fleet={fleet}
@@ -901,7 +901,7 @@ function FleetApp() {
       <>
         <div className="flex h-screen min-h-0" style={{ backgroundColor: colors.canvas, backgroundImage: colors.canvasWash }}>
           <Sidebar commandQueue={commandQueue} route={route} onNavigate={navigate} />
-          <main className="flex min-h-0 flex-1 flex-col overflow-hidden">
+          <main className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
             <MonumentOperations
               fleet={fleet}
               realFleet={realVehicles}

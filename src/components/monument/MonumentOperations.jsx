@@ -5,6 +5,7 @@ import AssetDetailSheet from './AssetDetailSheet';
 import ConfirmActionSheet from './ConfirmActionSheet';
 import MonumentActionFooter from './MonumentActionFooter';
 import MonumentBottomChrome from './MonumentBottomChrome';
+import MonumentSwipeStrip from './MonumentSwipeStrip';
 import MonumentChargePanel from './MonumentChargePanel';
 import OperationsLedgerStrip from './OperationsLedgerStrip';
 import OperationsMonumentPanel from './OperationsMonumentPanel';
@@ -347,16 +348,74 @@ export default function MonumentOperations({
       className="flex h-full min-h-0 flex-col"
       style={{ backgroundColor: monument.canvas, backgroundImage: monument.canvasWash }}
     >
+      <div className="hidden min-h-0 min-w-0 flex-1 flex-col overflow-hidden lg:flex">
+        <div className="shrink-0 border-b px-4" style={{ borderColor: monument.hairline }}>
+          <MonumentSwipeStrip
+            active={tab}
+            pages={SWIPE_PAGES}
+            onSelect={scrollToTab}
+            showSwipeHint={false}
+            ariaLabel="Operations sections"
+          />
+        </div>
+        <div className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto">
+          {pages.filter((page) => page.id === tab).map((page) => (
+            <section key={page.id} className="flex h-full min-h-0 min-w-0 flex-col" aria-label={page.id}>
+              <MonumentHero
+                {...page.hero}
+                onTapAmount={() => handleHeroTap(page.id)}
+              />
+              {page.showConvoy && (
+                <OperationsMonumentPanel
+                  convoy={convoy}
+                  onSelectTile={handleTileSelect}
+                />
+              )}
+              {page.planRows?.length > 0 && (
+                <OperationsLedgerStrip
+                  rows={page.planRows}
+                  onSelectRow={handleLedgerRow}
+                />
+              )}
+              {page.ledgerRows.length > 0 && (
+                <OperationsLedgerStrip
+                  rows={page.ledgerRows}
+                  onSelectRow={handleLedgerRow}
+                />
+              )}
+              {page.id === 'charge' && (
+                <MonumentChargePanel
+                  realFleet={realFleet}
+                  teslaConnected={teslaConnected}
+                  onRequestChargeCommand={requestChargeCommand}
+                />
+              )}
+              <MonumentActionFooter
+                line={page.id === 'plan' && offline > 0 && !actionDone
+                  ? 'CAB offline — resolve before peak.'
+                  : page.footer.line}
+                onDoIt={handleDoIt}
+                doItLabel={page.footer.doItLabel}
+                secondaryLabel={page.footer.secondaryLabel}
+                onSecondary={page.footer.onSecondary}
+                tertiaryLabel={page.footer.tertiaryLabel}
+                onTertiary={page.footer.onTertiary}
+              />
+            </section>
+          ))}
+        </div>
+      </div>
+
       <div
         ref={pagerRef}
         onScroll={handlePagerScroll}
-        className="flex min-h-0 flex-1 snap-x snap-mandatory overflow-x-auto overscroll-x-contain touch-pan-x [&::-webkit-scrollbar]:hidden"
+        className="flex min-h-0 min-w-0 flex-1 snap-x snap-mandatory overflow-x-auto overscroll-x-contain touch-pan-x lg:hidden [&::-webkit-scrollbar]:hidden"
         style={{ WebkitOverflowScrolling: 'touch', scrollbarWidth: 'none' }}
       >
         {pages.map((page) => (
           <section
             key={page.id}
-            className="flex min-h-0 w-full shrink-0 snap-center snap-always flex-col"
+            className="flex min-h-0 w-full min-w-0 shrink-0 snap-center snap-always flex-col"
             aria-label={page.id}
           >
             <MonumentHero
