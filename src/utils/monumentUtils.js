@@ -3,6 +3,7 @@ import { getExpansionRecommendation, getExpansionScoreboard } from './networkInt
 import {
   getCommandEarningsHero,
   getCommandOperationalSource,
+  hasTrustedFleetRevenue,
   vehicleBatteryPercent,
   vehicleStateLabel,
 } from './vehicleDisplayUtils';
@@ -84,19 +85,43 @@ function actionBody(action = '') {
 }
 
 /** Monument hero block from existing earnings pipeline. */
-export function getMonumentTake(fleet, realFleet, totalEarnings, syncState, city = 'Orlando') {
+export function getMonumentTake(fleet, realFleet, totalEarnings, syncState, city) {
   const hero = getCommandEarningsHero(fleet, realFleet, totalEarnings, syncState);
-  const trips = hero.trips && hero.trips !== '—' ? hero.trips : '0';
+  const cityFromFleet = (realFleet.find((vehicle) => vehicle.city) || fleet.find((vehicle) => vehicle.isReal && vehicle.city))?.city;
+  const cityLabel = city || (cityFromFleet ? String(cityFromFleet).split(',')[0].trim() : null);
 
+  if (syncState === 'loading') {
+    return {
+      label: 'TODAY',
+      amount: hero.amount || '—',
+      subline: 'syncing Tesla',
+      projected: false,
+      loading: true,
+      margin: null,
+    };
+  }
+
+  if (hasTrustedFleetRevenue(realFleet, totalEarnings, syncState)) {
+    const trips = hero.trips && hero.trips !== '—' ? hero.trips : null;
+    const tripPart = trips ? `${trips} trips` : 'trips pending';
+    return {
+      label: 'TODAY',
+      amount: hero.amount,
+      subline: cityLabel ? `${tripPart} · ${cityLabel}` : tripPart,
+      projected: false,
+      loading: false,
+      margin: hero.netMargin && hero.netMargin !== '—' ? hero.netMargin : null,
+    };
+  }
+
+  const connected = realFleet.length > 0 || syncState === 'success';
   return {
-    label: syncState === 'loading' ? 'TODAY' : hero.operational ? 'PROJECTED' : 'TODAY',
-    amount: hero.amount,
-    subline: syncState === 'loading'
-      ? 'syncing Tesla'
-      : `${trips} trips · ${city}`,
-    projected: Boolean(hero.operational),
-    loading: syncState === 'loading',
-    margin: hero.netMargin && hero.netMargin !== '—' ? hero.netMargin : null,
+    label: 'TODAY',
+    amount: '—',
+    subline: connected ? 'no trips yet' : 'connect Tesla for live earnings',
+    projected: false,
+    loading: false,
+    margin: null,
   };
 }
 

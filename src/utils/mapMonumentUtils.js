@@ -7,12 +7,12 @@ export function getMapMonumentHero(fleet, realFleet, totalEarnings, syncState) {
   const strip = getCommandFleetStatusStrip(fleet, realFleet, totalEarnings, syncState);
   const source = getCommandOperationalSource(fleet, realFleet, totalEarnings, syncState);
   const city = source.find((vehicle) => vehicle.city)?.city;
-  const cityLabel = city ? String(city).split(',')[0].trim() : 'Orlando';
+  const cityLabel = city ? String(city).split(',')[0].trim() : null;
 
   return {
     label: 'MAP',
     amount: `${strip.active?.value || 0}/${strip.total || source.length || 0}`,
-    subline: `online now · ${cityLabel}`,
+    subline: cityLabel ? `online now · ${cityLabel}` : 'online now',
     active: Number(strip.active?.value) || 0,
     total: strip.total || source.length || 0,
   };

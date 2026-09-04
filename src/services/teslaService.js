@@ -4,10 +4,6 @@ import { getApiBase, readJsonResponse } from './apiClient';
 import { getAuthToken } from './authTokenStore';
 
 const API_BASE = getApiBase();
-const PARKED_TESLA_ANCHOR = {
-  latitude: 28.62,
-  longitude: -81.22,
-};
 
 export async function getTeslaVehicles({ force = false } = {}) {
   if (!API_BASE) {
@@ -74,14 +70,23 @@ export async function wakeTeslaVehicle(vehicle) {
   return data.response || data;
 }
 
-export function mergeWithSimulation(realVehicles, simulatedVehicles) {
+function finiteOrPrevious(current, previous) {
+  if (Number.isFinite(Number(current))) return Number(current);
+  if (Number.isFinite(Number(previous))) return Number(previous);
+  return undefined;
+}
+
+/** Map Tesla vehicles onto Command fleet. Never append demo cars or invent demand metrics. */
+export function mergeWithSimulation(realVehicles, currentFleet = []) {
+  const previousFleet = Array.isArray(currentFleet) ? currentFleet : [];
+
   if (!realVehicles || realVehicles.length === 0) {
-    return simulatedVehicles;
+    return previousFleet.filter((vehicle) => vehicle.isReal);
   }
 
-  const simulatedOnly = simulatedVehicles.filter((vehicle) => !vehicle.isReal);
-  const realMarked = realVehicles.map((vehicle, index) => {
-    const previousReal = simulatedVehicles.find((existing) => existing.isReal && existing.vin === vehicle.vin);
+  return realVehicles.map((vehicle) => {
+    const previousReal = previousFleet.find((existing) => existing.isReal && existing.vin === vehicle.vin);
+    const utilization = finiteOrPrevious(vehicle.utilization, previousReal?.utilization);
 
     const normalized = {
       ...vehicle,
@@ -95,25 +100,25 @@ export function mergeWithSimulation(realVehicles, simulatedVehicles) {
         vehicle.drive_state?.latitude ??
         vehicle.latitude ??
         previousReal?.latitude ??
-        PARKED_TESLA_ANCHOR.latitude + index * 0.018,
+        null,
       longitude:
         vehicle.drive_state?.longitude ??
         vehicle.longitude ??
         previousReal?.longitude ??
-        PARKED_TESLA_ANCHOR.longitude - index * 0.018,
-      targetLat: vehicle.targetLat ?? 28.4312,
-      targetLng: vehicle.targetLng ?? -81.3081,
+        null,
+      targetLat: vehicle.targetLat ?? previousReal?.targetLat ?? null,
+      targetLng: vehicle.targetLng ?? previousReal?.targetLng ?? null,
       assignment:
         vehicle.state === 'online'
           ? `Synced Tesla telemetry${vehicle.speed ? `, ${vehicle.speed} mph` : ''}`
           : `Tesla state: ${vehicle.state || 'unknown'}`,
       revenue: vehicle.revenue ?? 0,
-      utilization: vehicle.utilization ?? 72,
-      profitability: vehicle.profitability ?? 86,
-      anomalyRisk: vehicle.anomalyRisk ?? 4,
-      maintenanceScore: vehicle.maintenanceScore ?? 92,
-      efficiency: vehicle.efficiency ?? 96,
-      passengers: vehicle.passengers ?? 0,
+      ...(utilization !== undefined ? { utilization } : {}),
+      profitability: finiteOrPrevious(vehicle.profitability, previousReal?.profitability),
+      anomalyRisk: finiteOrPrevious(vehicle.anomalyRisk, previousReal?.anomalyRisk),
+      maintenanceScore: finiteOrPrevious(vehicle.maintenanceScore, previousReal?.maintenanceScore),
+      efficiency: finiteOrPrevious(vehicle.efficiency, previousReal?.efficiency),
+      passengers: vehicle.passengers ?? previousReal?.passengers ?? 0,
       odometer: vehicle.odometer,
       speed: vehicle.speed,
       heading: vehicle.heading,
@@ -132,6 +137,4 @@ export function mergeWithSimulation(realVehicles, simulatedVehicles) {
       ownership: getVehicleOwnership(normalized),
     };
   });
-
-  return [...realMarked, ...simulatedOnly].slice(0, Math.max(10, realMarked.length));
 }

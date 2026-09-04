@@ -75,23 +75,33 @@ export function useFleetSimulation({
     lastSyncedAt: null,
     message: 'Tesla telemetry has not synced yet.',
   });
-  const [timelineEvents, setTimelineEvents] = useState([
-    {
-      time: '7:42 PM',
-      severity: 'INFO',
-      message: 'Fleet orchestration engine initialized.',
-    },
-    {
-      time: '7:44 PM',
-      severity: 'SUCCESS',
-      message: 'AI demand balancing activated.',
-    },
-  ]);
-  const [commandQueue, setCommandQueue] = useState([
-    { priority: 'HIGH', command: 'Rebalance Orlando corridor fleet capacity' },
-    { priority: 'MEDIUM', command: 'Delay Miami charging cycle until off-peak pricing' },
-    { priority: 'CRITICAL', command: 'Investigate anomaly spike on CAR-003' },
-  ]);
+  const seedDemo = initialFleet.some((vehicle) => !vehicle.isReal);
+  const seedDemoRef = useRef(seedDemo);
+  const [timelineEvents, setTimelineEvents] = useState(() => (
+    seedDemo
+      ? [
+        {
+          time: '7:42 PM',
+          severity: 'INFO',
+          message: 'Fleet orchestration engine initialized.',
+        },
+        {
+          time: '7:44 PM',
+          severity: 'SUCCESS',
+          message: 'AI demand balancing activated.',
+        },
+      ]
+      : []
+  ));
+  const [commandQueue, setCommandQueue] = useState(() => (
+    seedDemo
+      ? [
+        { priority: 'HIGH', command: 'Rebalance Orlando corridor fleet capacity' },
+        { priority: 'MEDIUM', command: 'Delay Miami charging cycle until off-peak pricing' },
+        { priority: 'CRITICAL', command: 'Investigate anomaly spike on CAR-003' },
+      ]
+      : []
+  ));
 
   useEffect(() => {
     if (!syncOwnership) return undefined;
@@ -114,9 +124,14 @@ export function useFleetSimulation({
 
   useEffect(() => {
     const interval = setInterval(() => {
-      setFleet((current) => updateFleet({ fleet: current, chargingStations, replayMode }));
+      let simulating = false;
+      setFleet((current) => {
+        simulating = current.some((vehicle) => !vehicle.isReal);
+        if (!simulating) return current;
+        return updateFleet({ fleet: current, chargingStations, replayMode });
+      });
 
-      if (Math.random() < 0.16) {
+      if (simulating && Math.random() < 0.16) {
         const nextEvent = eventPool[Math.floor(Math.random() * eventPool.length)];
         const time = new Date().toLocaleTimeString([], {
           hour: 'numeric',
@@ -159,6 +174,9 @@ export function useFleetSimulation({
       const realVehicles = await getTeslaVehicles({ force });
 
       if (!realVehicles || realVehicles.length === 0) {
+        if (!seedDemoRef.current) {
+          setFleet((current) => current.filter((vehicle) => vehicle.isReal));
+        }
         setRealSyncStatus({
           state: 'error',
           lastSyncedAt: null,
@@ -204,6 +222,9 @@ export function useFleetSimulation({
         cacheTtlSeconds: realVehicles.syncMeta?.cacheTtlSeconds,
       });
     } catch (error) {
+      if (!seedDemoRef.current) {
+        setFleet((current) => current.filter((vehicle) => vehicle.isReal));
+      }
       setRealSyncStatus({
         state: 'error',
         lastSyncedAt: null,
