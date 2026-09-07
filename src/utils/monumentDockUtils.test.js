@@ -1,7 +1,9 @@
 import { describe, expect, it, vi } from 'vitest';
 import {
   DEFAULT_UTILITY_DOCK_ITEMS,
+  PRIMARY_COMMAND_DOCK_IDS,
   buildMonumentDockItems,
+  buildMonumentDockRows,
   isMonumentDockItemActive,
   selectMonumentDockItem,
 } from './monumentDockUtils';
@@ -76,6 +78,37 @@ describe('monumentDockUtils', () => {
       { commandPages: COMMAND_PAGES, onNavigate },
     )).toBe('overview');
     expect(onNavigate).toHaveBeenCalledWith('overview');
+  });
+
+  it('maps command chrome to the 5-slot stadium without inventing Submit', () => {
+    const [row] = buildMonumentDockRows({
+      commandPages: COMMAND_PAGES,
+      commandActive: 'today',
+    });
+    expect(row.map((item) => item.id)).toEqual(PRIMARY_COMMAND_DOCK_IDS);
+    expect(row.some((item) => item.id === 'submit')).toBe(false);
+    expect(row.find((item) => item.id === 'today')?.active).toBe(true);
+  });
+
+  it('keeps operations destinations visible so Plan/Charge/Alerts handlers stay tappable', () => {
+    const rows = buildMonumentDockRows({
+      commandPages: [
+        { id: 'plan', label: 'Plan' },
+        { id: 'charge', label: 'Charge' },
+        { id: 'alerts', label: 'Alerts' },
+      ],
+      commandActive: 'plan',
+    });
+    const ids = rows.flat().map((item) => item.id);
+    expect(ids).toEqual([
+      'map',
+      'network',
+      'integrations',
+      'settings',
+      'plan',
+      'charge',
+      'alerts',
+    ]);
   });
 
   it('can hide the command row without dropping utility handlers', () => {

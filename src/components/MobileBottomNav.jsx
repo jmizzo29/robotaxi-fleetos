@@ -2,14 +2,17 @@ import { Globe2, LayoutGrid, Map, Plug, Settings, Wrench } from 'lucide-react';
 import { mobileNavItems } from '../design/roboagentTokens';
 import FloatingPillDock from './FloatingPillDock';
 
-const ICONS = {
-  overview: LayoutGrid,
-  dispatch: Wrench,
-  map: Map,
-  network: Globe2,
-  integrations: Plug,
-  settings: Settings,
-};
+function navIconFor(id) {
+  switch (id) {
+    case 'overview': return LayoutGrid;
+    case 'dispatch': return Wrench;
+    case 'map': return Map;
+    case 'network': return Globe2;
+    case 'integrations': return Plug;
+    case 'settings': return Settings;
+    default: return LayoutGrid;
+  }
+}
 
 export default function MobileBottomNav({ route, onNavigate, pendingCount = 0 }) {
   const items = mobileNavItems.map(({ id, label, routes }) => {
@@ -19,7 +22,7 @@ export default function MobileBottomNav({ route, onNavigate, pendingCount = 0 })
     return {
       id,
       label,
-      icon: ICONS[id],
+      icon: navIconFor(id),
       active,
       badge: showBadge ? (pendingCount > 9 ? '9+' : pendingCount) : null,
       onSelect: () => onNavigate(id),

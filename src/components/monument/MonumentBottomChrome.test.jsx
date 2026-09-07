@@ -20,7 +20,7 @@ describe('MonumentBottomChrome', () => {
     expect(screen.getByTestId('mobile-pill-dock')).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: 'Submit' })).toBeNull();
 
-    for (const label of ['Today', 'Fleet', 'Grow', 'Map', 'Network', 'Integrations', 'Settings']) {
+    for (const label of ['Today', 'Map', 'Fleet', 'Network', 'Settings']) {
       expect(screen.getByRole('button', { name: label })).toBeInTheDocument();
     }
 

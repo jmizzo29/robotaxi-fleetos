@@ -12,28 +12,26 @@ import {
 } from 'lucide-react';
 import FloatingPillDock from '../FloatingPillDock';
 import {
-  buildMonumentDockItems,
+  COMMAND_SWIPE_PAGES,
+  buildMonumentDockRows,
   selectMonumentDockItem,
 } from '../../utils/monumentDockUtils';
 
-export const COMMAND_SWIPE_PAGES = [
-  { id: 'today', label: 'Today' },
-  { id: 'fleet', label: 'Fleet' },
-  { id: 'grow', label: 'Grow' },
-];
-
-const DOCK_ICONS = {
-  today: Home,
-  fleet: Car,
-  grow: TrendingUp,
-  plan: ClipboardList,
-  charge: BatteryCharging,
-  alerts: Bell,
-  map: Map,
-  network: Globe2,
-  integrations: Plug,
-  settings: Settings,
-};
+function dockIconFor(id) {
+  switch (id) {
+    case 'today': return Home;
+    case 'fleet': return Car;
+    case 'grow': return TrendingUp;
+    case 'plan': return ClipboardList;
+    case 'charge': return BatteryCharging;
+    case 'alerts': return Bell;
+    case 'map': return Map;
+    case 'network': return Globe2;
+    case 'integrations': return Plug;
+    case 'settings': return Settings;
+    default: return null;
+  }
+}
 
 export default function MonumentBottomChrome({
   utilityActive = null,
@@ -49,7 +47,7 @@ export default function MonumentBottomChrome({
 }) {
   const decorate = (item) => ({
     ...item,
-    icon: DOCK_ICONS[item.id],
+    icon: dockIconFor(item.id),
     onSelect: () => selectMonumentDockItem(item, {
       commandPages,
       onCommandSelect,
@@ -57,16 +55,12 @@ export default function MonumentBottomChrome({
     }),
   });
 
-  const { commandItems, utilityItems } = buildMonumentDockItems({
+  const dockRows = buildMonumentDockRows({
     commandPages,
     showCommandRow,
     commandActive,
     utilityActive,
-  });
-  const dockRows = [
-    utilityItems.map(decorate),
-    commandItems.map(decorate),
-  ];
+  }).map((row) => row.map(decorate));
 
   const activeIndex = commandPages.findIndex((page) => page.id === commandActive);
   const nextCommandLabel = activeIndex >= 0 && activeIndex < commandPages.length - 1
