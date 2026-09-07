@@ -16,7 +16,7 @@ export default function Sidebar({
       <div className="flex-1 px-6 py-7">
         <div className="mb-14">
           <button type="button" onClick={() => onNavigate('overview')} className="text-left">
-            <RoboWordmark className="text-[0.92rem] tracking-[0.28em]" colorClass={typography.wordmarkColor} />
+            <RoboWordmark variant="header" className="text-[0.92rem]" colorClass={typography.wordmarkColor} />
             <MonumentBetaBadge className="mt-3" />
           </button>
         </div>

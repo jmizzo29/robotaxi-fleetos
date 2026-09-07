@@ -17,9 +17,20 @@ export function getTeslaLoginUrl(returnRoute = 'tesla') {
 
 /** Direct backend Tesla Fleet OAuth — skips Clerk to avoid slow/failed mobile redirects. */
 export function startTeslaOAuth(returnRoute = 'overview') {
-  verifyBetaInvite('RoboAgent-BETA');
-  acceptTeslaConsent();
-  window.location.replace(getTeslaLoginUrl(returnRoute));
+  try {
+    verifyBetaInvite('RoboAgent-BETA');
+    acceptTeslaConsent();
+    if (typeof window === 'undefined' || typeof window.location?.replace !== 'function') {
+      return { ok: false, message: 'Tesla sign-in is not available in this browser.' };
+    }
+    window.location.replace(getTeslaLoginUrl(returnRoute));
+    return { ok: true };
+  } catch (error) {
+    return {
+      ok: false,
+      message: error?.message || 'Unable to start Tesla sign-in. Please try again.',
+    };
+  }
 }
 
 async function fetchJson(path) {
@@ -46,9 +57,9 @@ export async function getTeslaSyncHealth() {
     return {
       backend: { ok: Boolean(health.ok), runtime: 'health-fallback' },
       credentials: {
-        ok: Boolean(health.teslaConfigured),
+        ok: Boolean(health.envFingerprint?.clientId || health.teslaConfigured),
         clientId: Boolean(health.envFingerprint?.clientId || health.teslaConfigured),
-        refreshToken: Boolean(health.envFingerprint?.refreshToken || health.hasRefreshToken || health.teslaConfigured),
+        refreshToken: Boolean(health.envFingerprint?.refreshToken || health.hasRefreshToken),
         clientSecret: Boolean(health.hasClientSecret),
         redirectUri: health.redirectUri,
       },

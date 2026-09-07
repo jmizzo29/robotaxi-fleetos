@@ -1,15 +1,15 @@
-﻿import React, { useEffect, useState } from 'react';
+﻿import { useEffect, useState } from 'react';
 import { Check } from 'lucide-react';
 import { canUseTeslaTelemetry } from '../services/betaCompliance';
 import { startTeslaOAuth } from '../services/teslaHealthService';
-import RoboWordmark from '../components/RoboWordmark';
+import LandingHeader from '../components/landing/LandingHeader';
 import TeslaConnectMark from '../components/TeslaConnectMark';
 
 export default function OnboardingPanel({ onNavigate }) {
   const [step, setStep] = useState(1);
+  const [oauthError, setOauthError] = useState('');
 
   const nextStep = () => setStep(step + 1);
-  const prevStep = () => setStep(step - 1);
 
   // If consent is already present when this panel mounts (we just came back from the Tesla OAuth redirect),
   // immediately jump to the final success step instead of showing the "Connect" button again.
@@ -21,44 +21,9 @@ export default function OnboardingPanel({ onNavigate }) {
 
   return (
     <div className="min-h-screen bg-[#1C1D21] text-white">
-      {/* Navbar — 3 menus with ROBOAGENT brand exactly in the middle */}
-      <nav className="fixed top-0 z-50 w-full border-b border-white/10 bg-[#1C1D21]/95 backdrop-blur-xl">
-        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center relative">
-          {/* Left: one menu */}
-          <button 
-            onClick={() => onNavigate('how-it-works')}
-            className="text-sm sm:text-[13px] font-medium uppercase tracking-[0.5px] text-white/90 hover:text-white transition"
-          >
-            HOW IT WORKS
-          </button>
+      <LandingHeader onNavigate={onNavigate} variant="monument" />
 
-          {/* EXACT MIDDLE: ROBOAGENT wordmark */}
-          <div 
-            className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 cursor-pointer hover:opacity-90 transition"
-            onClick={() => onNavigate('landing')}
-          >
-            <RoboWordmark className="text-[0.95rem] tracking-[0.28em] sm:text-[1.05rem]" colorClass="text-white" />
-          </div>
-
-          {/* Right: the other two menus */}
-          <div className="ml-auto flex items-center gap-8 sm:gap-10 text-sm sm:text-[13px] font-medium uppercase tracking-[0.5px] text-white/90">
-            <button 
-              onClick={() => onNavigate('login')}
-              className="hover:text-white transition"
-            >
-              SIGN IN
-            </button>
-            <button 
-              onClick={() => onNavigate('about')}
-              className="hover:text-white transition"
-            >
-              ABOUT
-            </button>
-          </div>
-        </div>
-      </nav>
-
-      <div className="pt-16 flex items-center justify-center px-6 py-12">
+      <div className="flex items-center justify-center px-6 pb-12 pt-[4.75rem]">
       <div className="w-full max-w-[480px]">
         {step < 3 && (
           <>
@@ -93,11 +58,21 @@ export default function OnboardingPanel({ onNavigate }) {
             </div>
 
             <button
-              onClick={() => startTeslaOAuth('overview')}
-              className="w-full bg-white text-black py-5 rounded-2xl text-lg font-semibold hover:bg-white/90 active:scale-[0.985] transition flex items-center justify-center gap-3"
+              type="button"
+              onClick={() => {
+                setOauthError('');
+                const result = startTeslaOAuth('overview');
+                if (result?.ok === false) setOauthError(result.message);
+              }}
+              className="flex w-full items-center justify-center gap-3 rounded-2xl bg-white py-5 text-lg font-semibold text-black transition hover:bg-white/90 active:scale-[0.985]"
             >
               Connect Tesla Account
             </button>
+            {oauthError ? (
+              <p className="mt-4 text-center text-sm text-[#C45C4A]" role="alert">
+                {oauthError}
+              </p>
+            ) : null}
 
             <p className="text-center text-white/50 text-sm mt-8">
               Takes about 30 seconds • You can add more vehicles later

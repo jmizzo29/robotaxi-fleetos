@@ -37,7 +37,7 @@ export default function LegalMonument({ type = 'privacy', onNavigate }) {
     <div className="flex min-h-[100dvh] flex-col" style={{ backgroundColor: monument.canvas }}>
       <LandingHeader onNavigate={onNavigate} variant="monument" />
 
-      <div className="mx-auto flex w-full max-w-md flex-1 flex-col overflow-hidden px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-16">
+      <div className="mx-auto flex w-full max-w-md flex-1 flex-col overflow-hidden px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-[4.75rem]">
         <div className="shrink-0 pb-4 text-center">
           <p className={monumentType.label} style={{ color: monument.inkGhost }}>{content.eyebrow}</p>
           <h1 className={`mt-3 ${monumentType.sheetTitle}`} style={{ color: monument.ink }}>

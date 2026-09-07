@@ -1,6 +1,7 @@
 import crypto from 'node:crypto';
 import { getTeslaConnectionForSession } from './_lib/auth.js';
 import { isClerkAuthConfigured, isClerkAuthRequired } from './_lib/clerkAuth.js';
+import { isTeslaOAuthConfigured } from './_lib/teslaConfig.js';
 import { redirectUriFromRequest } from './tesla/login.js';
 
 function fingerprint(value) {
@@ -12,7 +13,7 @@ export default async function handler(req, res) {
 
   res.status(200).json({
     ok: true,
-    teslaConfigured: Boolean(process.env.TESLA_CLIENT_ID && connection?.connection),
+    teslaConfigured: isTeslaOAuthConfigured(),
     teslaConnected: Boolean(connection?.connection),
     hasClientSecret: Boolean(process.env.TESLA_CLIENT_SECRET),
     hasRedirectUri: Boolean(process.env.TESLA_REDIRECT_URI),

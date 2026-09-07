@@ -11,6 +11,14 @@ export default function RoboWordmark({
     );
   }
 
+  if (variant === 'header') {
+    return (
+      <span className={`whitespace-nowrap font-semibold uppercase tracking-[0.18em] ${colorClass} ${className}`}>
+        ROBOAGENT
+      </span>
+    );
+  }
+
   return (
     <span className={`font-semibold uppercase tracking-[0.28em] ${colorClass} ${className}`}>
       ROBOAGENT

@@ -5,6 +5,7 @@ import {
   isProductionRuntime,
   isValidDeleteConfirmation,
   resolveMissingSession,
+  resolveTeslaLoginStart,
   teslaLoginMayCreateSession,
   vehiclesDebugAccess,
   verifyDeleteConfirmToken,
@@ -62,11 +63,44 @@ describe('resolveMissingSession', () => {
 });
 
 describe('teslaLoginMayCreateSession', () => {
-  it('refuses a guest OAuth side door when Clerk is required', () => {
-    expect(teslaLoginMayCreateSession({ clerkRequired: true, hasSession: false })).toBe(false);
-    expect(teslaLoginMayCreateSession({ clerkRequired: true, hasSession: true })).toBe(false);
+  it('allows Tesla-first mint when there is no session, including when Clerk is required', () => {
+    expect(teslaLoginMayCreateSession({ clerkRequired: true, hasSession: false })).toBe(true);
     expect(teslaLoginMayCreateSession({ clerkRequired: false, hasSession: false })).toBe(true);
+  });
+
+  it('reuses an existing session and never remints for add-vehicle / signed-in', () => {
+    expect(teslaLoginMayCreateSession({ clerkRequired: true, hasSession: true })).toBe(false);
     expect(teslaLoginMayCreateSession({ clerkRequired: false, hasSession: true })).toBe(false);
+  });
+});
+
+describe('resolveTeslaLoginStart', () => {
+  it('starts Tesla OAuth for a signed-out visitor even when Clerk is required', () => {
+    expect(resolveTeslaLoginStart({
+      teslaConfigured: true,
+      hasSession: false,
+      clerkRequired: true,
+    })).toEqual({ action: 'mint_then_oauth', mint: true });
+  });
+
+  it('reuses the signed-in session instead of minting a guest identity', () => {
+    expect(resolveTeslaLoginStart({
+      teslaConfigured: true,
+      hasSession: true,
+      clerkRequired: true,
+    })).toEqual({ action: 'oauth', mint: false });
+  });
+
+  it('returns a clear error when Tesla credentials are missing', () => {
+    const result = resolveTeslaLoginStart({
+      teslaConfigured: false,
+      hasSession: false,
+      clerkRequired: true,
+    });
+    expect(result.action).toBe('error');
+    expect(result.status).toBe(503);
+    expect(result.error).toBe('TESLA_CONFIG_MISSING');
+    expect(result.message).toMatch(/TESLA_CLIENT_ID/);
   });
 });
 

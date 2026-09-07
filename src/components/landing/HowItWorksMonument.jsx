@@ -14,7 +14,7 @@ export default function HowItWorksMonument({ onNavigate }) {
       <LandingHeroAmbience />
       <LandingHeader onNavigate={onNavigate} variant="cinematic" />
 
-      <div className="relative z-10 mx-auto flex w-full max-w-lg flex-1 flex-col px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-16">
+      <div className="relative z-10 mx-auto flex w-full max-w-lg flex-1 flex-col px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-[4.75rem]">
         <div className="flex min-h-0 flex-1 flex-col items-center justify-center text-center">
           <p className={monumentType.label} style={{ color: monument.navIdle }}>How it works</p>
           <p className={`mt-6 ${monumentType.monument} text-white`}>3</p>

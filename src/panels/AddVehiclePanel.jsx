@@ -9,6 +9,7 @@ import { getAddVehicleCopy } from '../utils/addVehicleCopy';
 export default function AddVehiclePanel({ onNavigate }) {
   const [teslaConnected, setTeslaConnected] = useState(false);
   const [billing, setBilling] = useState(null);
+  const [oauthError, setOauthError] = useState('');
 
   useEffect(() => {
     let cancelled = false;
@@ -85,11 +86,20 @@ export default function AddVehiclePanel({ onNavigate }) {
 
         <button
           type="button"
-          onClick={() => startTeslaOAuth('overview')}
-          className="w-full bg-white text-black py-5 rounded-2xl text-lg font-semibold hover:bg-white/90 active:scale-[0.985] transition"
+          onClick={() => {
+            setOauthError('');
+            const result = startTeslaOAuth('overview');
+            if (result?.ok === false) setOauthError(result.message);
+          }}
+          className="w-full rounded-2xl bg-white py-5 text-lg font-semibold text-black transition hover:bg-white/90 active:scale-[0.985]"
         >
           {copy.cta}
         </button>
+        {oauthError ? (
+          <p className="mt-4 text-center text-sm text-[#C45C4A]" role="alert">
+            {oauthError}
+          </p>
+        ) : null}
 
         <p className="text-center text-white/50 text-sm mt-8 leading-relaxed">
           {copy.footnote}
