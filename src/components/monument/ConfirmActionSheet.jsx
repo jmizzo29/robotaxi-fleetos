@@ -11,8 +11,33 @@ export default function ConfirmActionSheet({
   if (!payload) return null;
 
   return (
-    <MonumentSheet open={open} onClose={onClose}>
-      <div className="px-[18px] pb-2">
+    <MonumentSheet
+      open={open}
+      onClose={onClose}
+      footer={(
+        <>
+          <button
+            type="button"
+            disabled={confirming}
+            onClick={onConfirm}
+            className={`w-full rounded-xl py-3 ${monumentType.buttonPrimary} text-white transition active:scale-[0.98] disabled:opacity-60`}
+            style={{ backgroundColor: monument.action }}
+            data-testid="monument-sheet-close"
+          >
+            {confirming ? 'Confirming…' : payload.primaryLabel}
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className={`mt-2.5 w-full py-2.5 ${monumentType.actionLink}`}
+            style={{ color: monument.inkMuted }}
+          >
+            Not now
+          </button>
+        </>
+      )}
+    >
+      <div className="px-[18px]">
         <p className={`${monumentType.label}`} style={{ color: monument.inkGhost }}>Confirm</p>
         <h2 className={`mt-3 ${monumentType.sheetTitle}`} style={{ color: monument.ink }}>
           {payload.title}
@@ -35,23 +60,6 @@ export default function ConfirmActionSheet({
           </div>
         )}
 
-        <button
-          type="button"
-          disabled={confirming}
-          onClick={onConfirm}
-          className={`mt-4 w-full rounded-xl py-3 ${monumentType.buttonPrimary} text-white transition active:scale-[0.98] disabled:opacity-60`}
-          style={{ backgroundColor: monument.action }}
-        >
-          {confirming ? 'Confirming…' : payload.primaryLabel}
-        </button>
-        <button
-          type="button"
-          onClick={onClose}
-          className={`mt-2.5 w-full py-2.5 ${monumentType.actionLink}`}
-          style={{ color: monument.inkMuted }}
-        >
-          Not now
-        </button>
       </div>
     </MonumentSheet>
   );

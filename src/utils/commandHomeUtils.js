@@ -464,28 +464,25 @@ export function getFleetVisibilityRows(fleet, realFleet, limit = 4, totalEarning
   return source.slice(0, limit).map(vehicleOperationalLine);
 }
 
-/** Map preview — vehicles with coordinates or synthetic positions. */
-export function getMapPreviewVehicles(fleet, realFleet, limit = 6, totalEarnings = 0, syncState = 'idle') {
-  const source = commandSource(fleet, realFleet, totalEarnings, syncState);
+/** Map preview — real GPS only. No synthetic pin positions for owners. */
+export function getMapPreviewVehicles(fleet, realFleet, limit = 6) {
+  const source = (Array.isArray(realFleet) && realFleet.length)
+    ? realFleet.filter((vehicle) => vehicle?.isReal !== false)
+    : (Array.isArray(fleet) ? fleet : []).filter((vehicle) => vehicle?.isReal);
   const withCoords = source.filter((vehicle) => {
     const lat = Number(vehicle.latitude);
     const lng = Number(vehicle.longitude);
     return Number.isFinite(lat) && Number.isFinite(lng);
   });
 
-  const pool = withCoords.length ? withCoords : source;
-  return pool.slice(0, limit).map((vehicle, index) => {
-    const lat = Number(vehicle.latitude);
-    const lng = Number(vehicle.longitude);
-    const hasCoords = Number.isFinite(lat) && Number.isFinite(lng);
-
+  return withCoords.slice(0, limit).map((vehicle, index) => {
     return {
       id: vehicle.id || `${index}`,
       name: fleetVehicleLabel(vehicle, index),
-      left: hasCoords ? null : 18 + (index * 14) % 62,
-      top: hasCoords ? null : 28 + (index * 17) % 48,
-      latitude: hasCoords ? lat : null,
-      longitude: hasCoords ? lng : null,
+      left: null,
+      top: null,
+      latitude: Number(vehicle.latitude),
+      longitude: Number(vehicle.longitude),
       tone: vehicleStateLabel(vehicle) === 'Charging' ? 'charging' : 'active',
       vehicle,
       isFeatured: index === 0,

@@ -17,6 +17,8 @@ const publicApiAllowlist = new Set([
   'api/auth/magic/verify.js',
   'api/tesla/callback.js',
   'api/social/x-updates.js',
+  'api/network/events.js',
+  'api/cron/network-events.js',
 ]);
 
 const routeSessionPatterns = [

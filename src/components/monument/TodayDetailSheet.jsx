@@ -21,15 +21,6 @@ export default function TodayDetailSheet({ open, payload, onClose, onSelectRow }
         </div>
 
         <FleetLedger ledger={payload.ledger} compact onSelectRow={onSelectRow} />
-
-        <button
-          type="button"
-          onClick={onClose}
-          className={`mt-2 w-full py-2.5 ${monumentType.actionLink}`}
-          style={{ color: monument.inkMuted }}
-        >
-          Close
-        </button>
       </div>
     </MonumentSheet>
   );

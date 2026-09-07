@@ -3,6 +3,10 @@
     {
       "path": "/api/cron/owner-alerts",
       "schedule": "0 * * * *"
+    },
+    {
+      "path": "/api/cron/network-events",
+      "schedule": "15 6 * * *"
     }
   ],
   "rewrites": [

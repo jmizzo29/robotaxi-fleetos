@@ -880,6 +880,7 @@ function FleetApp() {
               onNavigate={navigate}
               onSync={refreshRealTesla}
               onDisconnect={disconnectRealTesla}
+              mock={isMockPreview}
             />
           </main>
         </div>

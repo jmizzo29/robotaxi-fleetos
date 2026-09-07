@@ -38,6 +38,7 @@ export default function MonumentChainShell({
   onNavigate = () => {},
   onSync = () => {},
   onDisconnect = null,
+  mock = false,
 }) {
   const [commandTab, setCommandTab] = useState('today');
   const pagerRef = useRef(null);
@@ -166,6 +167,7 @@ export default function MonumentChainShell({
     onDisconnect,
     embedded: true,
     ownerAlert,
+    mock,
   };
 
   return (

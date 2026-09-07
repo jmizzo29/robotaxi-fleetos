@@ -29,14 +29,6 @@ export default function IntegrationDetailSheet({
             {disconnecting ? 'Disconnecting…' : 'Disconnect Tesla'}
           </button>
         )}
-        <button
-          type="button"
-          onClick={onClose}
-          className={`mt-4 w-full py-2.5 ${monumentType.actionLink}`}
-          style={{ color: monument.inkMuted }}
-        >
-          Close
-        </button>
       </div>
     </MonumentSheet>
   );
