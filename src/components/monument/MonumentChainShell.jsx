@@ -4,7 +4,7 @@ import AssetDetailSheet from './AssetDetailSheet';
 import ConfirmActionSheet from './ConfirmActionSheet';
 import ExploreMarketSheet from './ExploreMarketSheet';
 import FleetBrowseSheet from './FleetBrowseSheet';
-import MonumentBottomChrome, { COMMAND_SWIPE_PAGES } from './MonumentBottomChrome';
+import MonumentBottomChrome from './MonumentBottomChrome';
 import MonumentCommandSlide from './MonumentCommandSlide';
 import MonumentSwipeStrip from './MonumentSwipeStrip';
 import MonumentIntegrations from './MonumentIntegrations';
@@ -25,6 +25,7 @@ import {
   chainSwipeHint,
   MONUMENT_SWIPE_CHAIN,
 } from '../../utils/monumentSwipeChain';
+import { COMMAND_SWIPE_PAGES } from '../../utils/monumentDockUtils';
 
 export default function MonumentChainShell({
   route = 'overview',

@@ -1,12 +1,37 @@
-import MonumentSwipeStrip from './MonumentSwipeStrip';
-import MonumentUtilityLinks from './MonumentUtilityLinks';
-import { monument } from './monumentTokens';
+import {
+  BatteryCharging,
+  Bell,
+  Car,
+  ClipboardList,
+  Globe2,
+  Home,
+  Map,
+  Plug,
+  Settings,
+  TrendingUp,
+} from 'lucide-react';
+import FloatingPillDock from '../FloatingPillDock';
+import {
+  COMMAND_SWIPE_PAGES,
+  buildMonumentDockRows,
+  selectMonumentDockItem,
+} from '../../utils/monumentDockUtils';
 
-export const COMMAND_SWIPE_PAGES = [
-  { id: 'today', label: 'Today' },
-  { id: 'fleet', label: 'Fleet' },
-  { id: 'grow', label: 'Grow' },
-];
+function dockIconFor(id) {
+  switch (id) {
+    case 'today': return Home;
+    case 'fleet': return Car;
+    case 'grow': return TrendingUp;
+    case 'plan': return ClipboardList;
+    case 'charge': return BatteryCharging;
+    case 'alerts': return Bell;
+    case 'map': return Map;
+    case 'network': return Globe2;
+    case 'integrations': return Plug;
+    case 'settings': return Settings;
+    default: return null;
+  }
+}
 
 export default function MonumentBottomChrome({
   utilityActive = null,
@@ -20,54 +45,43 @@ export default function MonumentBottomChrome({
   showSwipeHint = true,
   swipeHint = null,
 }) {
-  const handleCommandSelect = (pageId) => {
-    if (onCommandSelect) {
-      onCommandSelect(pageId);
-      return;
-    }
-    onNavigate('overview');
-  };
+  const decorate = (item) => ({
+    ...item,
+    icon: dockIconFor(item.id),
+    onSelect: () => selectMonumentDockItem(item, {
+      commandPages,
+      onCommandSelect,
+      onNavigate,
+    }),
+  });
+
+  const dockRows = buildMonumentDockRows({
+    commandPages,
+    showCommandRow,
+    commandActive,
+    utilityActive,
+  }).map((row) => row.map(decorate));
+
+  const activeIndex = commandPages.findIndex((page) => page.id === commandActive);
+  const nextCommandLabel = activeIndex >= 0 && activeIndex < commandPages.length - 1
+    ? commandPages[activeIndex + 1].label
+    : null;
+  const hintLabel = swipeHint || nextCommandLabel;
+  const hint = showSwipeHint && Boolean(hintLabel) && (swipeHint || commandActive)
+    ? `Swipe for ${hintLabel}`
+    : null;
+  const ariaLabel = showCommandRow
+    ? `Fleet navigation, ${commandAriaLabel}`
+    : 'Fleet utilities';
 
   return (
-    <div className="shrink-0 border-t" style={{ borderColor: monument.hairline }}>
-      <MonumentUtilityLinks
-        layout="strip"
-        active={utilityActive}
-        onNavigate={onNavigate}
+    <div className="shrink-0">
+      <FloatingPillDock
+        rows={dockRows}
+        ariaLabel={ariaLabel}
+        onLongPress={onLongPress}
+        hint={hint}
       />
-
-      {showCommandRow ? (
-        <MonumentSwipeStrip
-          active={commandActive || ''}
-          pages={commandPages}
-          onSelect={handleCommandSelect}
-          onLongPress={onLongPress}
-          showSwipeHint={showSwipeHint && Boolean(swipeHint || commandActive)}
-          swipeHint={swipeHint}
-          ariaLabel={commandAriaLabel}
-        />
-      ) : (
-        <div
-          className="shrink-0 touch-manipulation pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-1"
-          onPointerDown={(event) => {
-            if (!onLongPress) return;
-            event.currentTarget.dataset.pressStart = String(Date.now());
-          }}
-          onPointerUp={(event) => {
-            if (!onLongPress) return;
-            const started = Number(event.currentTarget.dataset.pressStart || 0);
-            if (started && Date.now() - started >= 500) onLongPress();
-            delete event.currentTarget.dataset.pressStart;
-          }}
-          onPointerLeave={(event) => {
-            delete event.currentTarget.dataset.pressStart;
-          }}
-        >
-          <p className="text-center text-[10.8px] font-medium" style={{ color: monument.navIdle }}>
-            Long-press for Account
-          </p>
-        </div>
-      )}
     </div>
   );
 }
