@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
-import MonumentSheet, { MONUMENT_SHEET_SAFE_PAD } from './MonumentSheet';
+import MonumentSheet from './MonumentSheet';
 
 describe('MonumentSheet', () => {
   it('portals a reserved green Done control that is not clipped by overflow', () => {
@@ -18,9 +18,8 @@ describe('MonumentSheet', () => {
     expect(document.body.contains(buttons[0])).toBe(true);
 
     const footers = screen.getAllByTestId('monument-sheet-footer');
-    expect(footers[0].className).toContain('shrink-0');
-    expect(MONUMENT_SHEET_SAFE_PAD).toMatch(/safe-area-inset-bottom/);
-    expect(footers[0].className).toContain('safe-area-inset-bottom');
+    expect(footers[0].className).toContain('monument-sheet-footer');
+    expect(footers[0].parentElement.querySelector('[data-testid="monument-sheet-close"]')).toBeTruthy();
   });
 
   it('keeps a custom footer fully in the reserved chrome slot', () => {

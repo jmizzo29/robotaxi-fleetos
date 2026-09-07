@@ -39,7 +39,7 @@ export default function MapDetailSheet({
           syncState={syncState}
           teslaConnected={teslaConnected}
           mock={mock}
-          mapHeightClass="h-[52vh]"
+          mapHeightClass="h-[min(40dvh,360px)]"
           bare
           showChromeFooter={false}
         />

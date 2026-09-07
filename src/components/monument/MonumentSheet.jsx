@@ -1,9 +1,6 @@
 import { createPortal } from 'react-dom';
 import { monument, monumentType } from './monumentTokens';
 
-/** Shared sheet pad — keeps the green close/done control above home indicators and overflow clip. */
-export const MONUMENT_SHEET_SAFE_PAD = 'pb-[max(1.5rem,calc(env(safe-area-inset-bottom,0px)+1.25rem))]';
-
 export function MonumentSheetCloseButton({ onClick, children = 'Done' }) {
   return (
     <button
@@ -18,7 +15,7 @@ export function MonumentSheetCloseButton({ onClick, children = 'Done' }) {
   );
 }
 
-function SheetFrame({
+function SheetChrome({
   children,
   footer,
   maxWidth,
@@ -26,27 +23,36 @@ function SheetFrame({
   border = false,
   maxHeight,
   testId,
+  handle = false,
 }) {
   return (
-    <section
-      className={`relative flex w-full min-w-0 ${maxWidth} flex-col overflow-hidden ${roundedClass} ${border ? 'border' : ''}`}
+    <div
+      className={`relative flex w-full min-w-0 ${maxWidth} min-h-0 flex-col ${roundedClass} ${border ? 'border' : ''}`}
       style={{
         backgroundColor: monument.canvas,
         borderColor: border ? monument.hairline : undefined,
         maxHeight,
       }}
-      role="dialog"
-      aria-modal="true"
       data-testid={testId}
     >
-      {children}
-      <div
-        className={`shrink-0 px-[18px] pt-2 ${MONUMENT_SHEET_SAFE_PAD}`}
-        data-testid="monument-sheet-footer"
+      <section
+        className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden"
+        role="dialog"
+        aria-modal="true"
       >
+        {handle && (
+          <div className="flex shrink-0 justify-center pb-1 pt-2.5">
+            <div className="h-1 w-9 rounded-full" style={{ backgroundColor: monument.hairline }} />
+          </div>
+        )}
+        <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
+          {children}
+        </div>
+      </section>
+      <div className="monument-sheet-footer" data-testid="monument-sheet-footer">
         {footer}
       </div>
-    </section>
+    </div>
   );
 }
 
@@ -65,14 +71,11 @@ export default function MonumentSheet({
     ? <MonumentSheetCloseButton onClick={onClose} />
     : footer;
 
-  const scrollBody = (
-    <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden">
-      {children}
-    </div>
-  );
-
   const mobileSheet = (
-    <div className="lg:hidden fixed inset-0 z-[90] flex items-end justify-center" role="presentation">
+    <div
+      className="lg:hidden fixed inset-0 z-[90] flex items-end justify-center px-0 pb-4"
+      role="presentation"
+    >
       <button
         type="button"
         className="absolute inset-0"
@@ -80,18 +83,16 @@ export default function MonumentSheet({
         aria-label="Close"
         onClick={onClose}
       />
-      <SheetFrame
+      <SheetChrome
         footer={resolvedFooter}
         maxWidth={maxWidth}
         roundedClass="rounded-t-[20px]"
-        maxHeight="min(85dvh, 100dvh)"
+        maxHeight="min(85dvh, calc(100dvh - 1rem))"
         testId="monument-sheet-mobile"
+        handle
       >
-        <div className="flex shrink-0 justify-center pb-1 pt-2.5">
-          <div className="h-1 w-9 rounded-full" style={{ backgroundColor: monument.hairline }} />
-        </div>
-        {scrollBody}
-      </SheetFrame>
+        {children}
+      </SheetChrome>
     </div>
   );
 
@@ -107,10 +108,7 @@ export default function MonumentSheet({
       <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden px-1 pt-6">
         {children}
       </div>
-      <div
-        className={`shrink-0 px-[18px] pt-2 ${MONUMENT_SHEET_SAFE_PAD}`}
-        data-testid="monument-sheet-footer"
-      >
+      <div className="monument-sheet-footer" data-testid="monument-sheet-footer">
         {resolvedFooter}
       </div>
     </aside>
@@ -123,18 +121,18 @@ export default function MonumentSheet({
         aria-label="Close"
         onClick={onClose}
       />
-      <SheetFrame
+      <SheetChrome
         footer={resolvedFooter}
         maxWidth={maxWidth}
         roundedClass="rounded-[20px]"
         border
-        maxHeight="min(720px, 85dvh)"
+        maxHeight="min(720px, calc(85dvh - 2rem))"
         testId="monument-sheet-desktop"
       >
-        <div className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden pt-6">
+        <div className="pt-6">
           {children}
         </div>
-      </SheetFrame>
+      </SheetChrome>
     </div>
   );
 
