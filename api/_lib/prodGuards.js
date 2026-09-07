@@ -32,8 +32,9 @@ export function vehiclesDebugAccess({ debug, authenticated, production }) {
 }
 
 /**
- * When Clerk is required, never mint a guest cookie session.
- * Tesla OAuth must attach to the signed-in Clerk (or existing cookie) user.
+ * When Clerk is required, never mint a guest cookie session on ordinary APIs.
+ * Tesla-first login is the exception: it binds OAuth state to a cookie session
+ * via createAnonymousSession in /api/tesla/login, not through getSession().
  */
 export function resolveMissingSession({ clerkRequired, create, clerkError } = {}) {
   if (clerkRequired) {
@@ -49,8 +50,37 @@ export function resolveMissingSession({ clerkRequired, create, clerkError } = {}
   return { action: 'mint' };
 }
 
-export function teslaLoginMayCreateSession({ clerkRequired, hasSession } = {}) {
-  return !hasSession && !clerkRequired;
+/**
+ * Tesla-first login may mint a cookie session so OAuth can start.
+ * Clerk-required still blocks guest mint on other APIs (resolveMissingSession).
+ * Existing sessions (add-vehicle / signed-in) are reused, never reminted.
+ */
+export function teslaLoginMayCreateSession({ hasSession } = {}) {
+  return !hasSession;
+}
+
+/** Decision table for GET /api/tesla/login. Never silent-redirect to /#/login. */
+export function resolveTeslaLoginStart({ teslaConfigured, hasSession, clerkRequired } = {}) {
+  if (!teslaConfigured) {
+    return {
+      action: 'error',
+      status: 503,
+      error: 'TESLA_CONFIG_MISSING',
+      message: 'TESLA_CLIENT_ID is required for Tesla OAuth.',
+    };
+  }
+  if (hasSession) {
+    return { action: 'oauth', mint: false };
+  }
+  if (teslaLoginMayCreateSession({ clerkRequired, hasSession: false })) {
+    return { action: 'mint_then_oauth', mint: true };
+  }
+  return {
+    action: 'error',
+    status: 503,
+    error: 'TESLA_LOGIN_BLOCKED',
+    message: 'Unable to start Tesla connection. Please try again.',
+  };
 }
 
 function deleteConfirmSecret(env = process.env) {

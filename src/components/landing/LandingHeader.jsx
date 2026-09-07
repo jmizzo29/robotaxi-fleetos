@@ -1,15 +1,23 @@
 import { useState } from 'react';
 import { Menu, X } from 'lucide-react';
-import RoboLogo from '../RoboLogo';
 import RoboWordmark from '../RoboWordmark';
 import MonumentBetaBadge from '../monument/MonumentBetaBadge';
 import { monument } from '../monument/monumentTokens';
 
-export default function LandingHeader({ onNavigate, variant = 'default' }) {
+const NAV_ITEMS = [
+  { route: 'how-it-works', label: 'How it works' },
+  { route: 'login', label: 'Sign in' },
+  { route: 'about', label: 'About' },
+];
+
+export default function LandingHeader({
+  onNavigate,
+  variant = 'default',
+  showBrand = true,
+}) {
   const [open, setOpen] = useState(false);
-  const isEntry = variant === 'entry';
-  const isMonument = variant === 'monument';
   const isCinematic = variant === 'cinematic';
+  const isMonument = variant === 'monument';
   const homeRoute = 'landing';
 
   const go = (route) => {
@@ -17,109 +25,58 @@ export default function LandingHeader({ onNavigate, variant = 'default' }) {
     onNavigate(route);
   };
 
-  if (isMonument || isCinematic) {
-    const cinematic = isCinematic;
-    return (
-      <>
-        <header
-          className="fixed inset-x-0 top-0 z-50 flex h-14 items-center justify-between px-5"
-          style={{
-            backgroundColor: cinematic ? 'transparent' : 'rgba(28,29,33,0.88)',
-            backdropFilter: cinematic ? 'none' : 'blur(16px)',
-            paddingTop: 'env(safe-area-inset-top)',
-          }}
-        >
-          <button
-            type="button"
-            onClick={() => go(homeRoute)}
-            className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 flex-col items-center gap-1"
-            aria-label="ROBOAGENT home"
-          >
-            <RoboWordmark
-              className="text-[0.95rem] tracking-[0.28em]"
-              colorClass="text-white"
-            />
-            {!cinematic && <MonumentBetaBadge />}
-          </button>
-
-          <div className="w-10" aria-hidden="true" />
-
-          <button
-            type="button"
-            onClick={() => setOpen((current) => !current)}
-            className="flex h-10 w-10 items-center justify-center rounded-full text-[#C4C6CB] transition hover:text-white active:scale-[0.98]"
-            aria-label={open ? 'Close menu' : 'Open menu'}
-            aria-expanded={open}
-          >
-            {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-          </button>
-        </header>
-
-        {open && (
-          <button
-            type="button"
-            className="fixed inset-0 z-40"
-            style={{ backgroundColor: monument.scrim }}
-            onClick={() => setOpen(false)}
-            aria-label="Close menu"
-          />
-        )}
-
-        <nav
-          className={`fixed right-0 top-0 z-50 flex h-full w-[min(100%,280px)] flex-col px-6 pt-20 transition-transform duration-300 ${
-            open ? 'translate-x-0' : 'translate-x-full'
-          }`}
-          style={{ backgroundColor: monument.canvas }}
-          aria-hidden={!open}
-        >
-          <div className="flex flex-col">
-            {[
-              { route: 'how-it-works', label: 'How it works' },
-              { route: 'about', label: 'About' },
-            ].map((item) => (
-              <button
-                key={item.route}
-                type="button"
-                onClick={() => go(item.route)}
-                className="border-b border-white/10 py-4 text-left text-[15px] font-medium text-[#C4C6CB] transition hover:text-white"
-              >
-                {item.label}
-              </button>
-            ))}
-          </div>
-        </nav>
-      </>
-    );
-  }
+  const headerTone = isCinematic
+    ? { backgroundColor: 'transparent', backdropFilter: 'none' }
+    : isMonument
+      ? { backgroundColor: 'rgba(28,29,33,0.88)', backdropFilter: 'blur(16px)' }
+      : undefined;
 
   return (
     <>
-      <header className="fixed inset-x-0 top-0 z-50 flex h-14 items-center justify-between bg-black/40 px-5 backdrop-blur-md">
-        <button
-          type="button"
-          onClick={() => go(homeRoute)}
-          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-          aria-label="ROBOAGENT home"
-        >
-          {isEntry ? (
+      <header
+        className={`fixed inset-x-0 top-0 z-50 flex h-14 items-center justify-between gap-3 px-5 ${
+          headerTone ? '' : 'bg-black/40 backdrop-blur-md'
+        }`}
+        style={{
+          ...headerTone,
+          paddingTop: 'env(safe-area-inset-top)',
+        }}
+      >
+        {showBrand ? (
+          <button
+            type="button"
+            onClick={() => go(homeRoute)}
+            className="relative z-10 flex min-w-0 shrink items-center gap-2 text-left"
+            aria-label="ROBOAGENT home"
+          >
             <RoboWordmark
-              className="text-[1.0625rem] tracking-[0.28em] sm:text-[1.125rem]"
+              variant="header"
+              className="truncate text-[0.78rem] sm:text-[0.88rem]"
               colorClass="text-white"
             />
-          ) : (
-            <span className="flex items-center gap-2">
-              <RoboLogo className="h-7 w-7 shrink-0 text-white" />
-              <RoboWordmark className="text-[13px] tracking-[0.2em]" colorClass="text-white" />
-            </span>
-          )}
-        </button>
+            {isMonument && <MonumentBetaBadge />}
+          </button>
+        ) : (
+          <span className="h-10 w-10 shrink-0" aria-hidden="true" />
+        )}
 
-        <div className="w-10" aria-hidden="true" />
+        <nav className="relative z-10 hidden min-w-0 items-center gap-6 md:flex">
+          {NAV_ITEMS.map((item) => (
+            <button
+              key={item.route}
+              type="button"
+              onClick={() => go(item.route)}
+              className="text-[12px] font-medium uppercase tracking-[0.16em] text-white/70 transition hover:text-white"
+            >
+              {item.label}
+            </button>
+          ))}
+        </nav>
 
         <button
           type="button"
           onClick={() => setOpen((current) => !current)}
-          className="flex h-10 w-10 items-center justify-center rounded-full text-[#C4C6CB] transition hover:bg-white/10 hover:text-white"
+          className="relative z-10 flex h-10 w-10 shrink-0 items-center justify-center rounded-full text-[#C4C6CB] transition hover:text-white active:scale-[0.98] md:hidden"
           aria-label={open ? 'Close menu' : 'Open menu'}
           aria-expanded={open}
         >
@@ -128,20 +85,24 @@ export default function LandingHeader({ onNavigate, variant = 'default' }) {
       </header>
 
       {open && (
-        <div className="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm" onClick={() => setOpen(false)} aria-hidden="true" />
+        <button
+          type="button"
+          className="fixed inset-0 z-40 md:hidden"
+          style={{ backgroundColor: monument.scrim }}
+          onClick={() => setOpen(false)}
+          aria-label="Close menu"
+        />
       )}
 
       <nav
-        className={`fixed right-0 top-0 z-50 flex h-full w-[min(100%,280px)] flex-col bg-[#1C1D21] px-6 pt-20 transition-transform duration-300 ${
+        className={`fixed right-0 top-0 z-50 flex h-full w-[min(100%,280px)] flex-col px-6 pt-20 transition-transform duration-300 md:hidden ${
           open ? 'translate-x-0' : 'translate-x-full'
         }`}
+        style={{ backgroundColor: monument.canvas }}
         aria-hidden={!open}
       >
         <div className="flex flex-col">
-          {[
-            { route: 'how-it-works', label: 'How it works' },
-            { route: 'about', label: 'About' },
-          ].map((item) => (
+          {NAV_ITEMS.map((item) => (
             <button
               key={item.route}
               type="button"

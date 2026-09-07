@@ -1,8 +1,9 @@
 import crypto from 'crypto';
-import { getSession } from '../_lib/auth.js';
+import { createAnonymousSession, getSession } from '../_lib/auth.js';
 import { isClerkAuthRequired } from '../_lib/clerkAuth.js';
 import { ensureFleetSchema, hasPostgres, query } from '../_lib/db.js';
-import { teslaLoginMayCreateSession } from '../_lib/prodGuards.js';
+import { resolveTeslaLoginStart } from '../_lib/prodGuards.js';
+import { isTeslaOAuthConfigured, oauthStartErrorPage } from '../_lib/teslaConfig.js';
 import { DEFAULT_USER_SCOPES } from '../_lib/teslaScopes.js';
 import { CANONICAL_APP_ORIGIN, resolveTeslaRedirectUri } from '../../src/utils/publicAppOrigins.js';
 
@@ -30,12 +31,12 @@ export default async function handler(req, res) {
   }
 
   if (!hasPostgres()) {
-    res.status(503).send('Postgres DATABASE_URL is required for Tesla OAuth.');
+    res.status(503).send(oauthStartErrorPage('Postgres DATABASE_URL is required for Tesla OAuth.'));
     return;
   }
 
-  if (!process.env.TESLA_CLIENT_ID) {
-    res.status(503).send('TESLA_CLIENT_ID is required for Tesla OAuth.');
+  if (!isTeslaOAuthConfigured()) {
+    res.status(503).send(oauthStartErrorPage('TESLA_CLIENT_ID is required for Tesla OAuth.'));
     return;
   }
 
@@ -48,20 +49,31 @@ export default async function handler(req, res) {
     session = null;
   }
 
-  if (!session && teslaLoginMayCreateSession({ clerkRequired, hasSession: false })) {
+  const plan = resolveTeslaLoginStart({
+    teslaConfigured: true,
+    hasSession: Boolean(session?.id),
+    clerkRequired,
+  });
+
+  if (plan.action === 'error') {
+    res.status(plan.status || 503).send(oauthStartErrorPage(plan.message));
+    return;
+  }
+
+  if (plan.action === 'mint_then_oauth') {
     try {
-      session = await getSession(req, res, { create: true });
+      const created = await createAnonymousSession(res);
+      session = {
+        ...created,
+        user: { id: created.userId, email: null, name: null, role: 'owner' },
+      };
     } catch {
       session = null;
     }
   }
 
   if (!session?.id) {
-    if (clerkRequired) {
-      res.redirect(302, '/#/login');
-      return;
-    }
-    res.status(503).send('Unable to start Tesla connection. Please try again.');
+    res.status(503).send(oauthStartErrorPage('Unable to start Tesla connection. Please try again.'));
     return;
   }
   const redirectUri = redirectUriFromRequest(req);

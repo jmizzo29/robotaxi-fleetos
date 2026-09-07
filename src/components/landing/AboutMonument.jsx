@@ -13,7 +13,7 @@ export default function AboutMonument({ onNavigate }) {
     <div className="flex min-h-[100dvh] flex-col" style={{ backgroundColor: monument.canvas }}>
       <LandingHeader onNavigate={onNavigate} variant="monument" />
 
-      <div className="mx-auto flex w-full max-w-md flex-1 flex-col px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-16">
+      <div className="mx-auto flex w-full max-w-md flex-1 flex-col px-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-[4.75rem]">
         <div className="flex flex-1 flex-col justify-center">
           <article className="space-y-4 text-left">
             <h1 className={monumentType.sheetTitle} style={{ color: monument.ink }}>
