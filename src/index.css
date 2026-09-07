@@ -175,6 +175,15 @@ body,
   background: #1C1D21;
 }
 
+/* Reserved sheet chrome — always keep the green Done/close control fully visible. */
+.monument-sheet-footer {
+  flex-shrink: 0;
+  padding-top: 0.75rem;
+  padding-left: 18px;
+  padding-right: 18px;
+  padding-bottom: max(2rem, calc(env(safe-area-inset-bottom, 0px) + 1.5rem));
+}
+
 .mapboxgl-popup.fleetos-popup {
   z-index: 80;
   max-width: min(300px, calc(100vw - 32px)) !important;

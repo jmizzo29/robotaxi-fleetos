@@ -43,15 +43,6 @@ export default function TelemetryDetailSheet({ open, payload, onClose }) {
         <p className={`mt-4 ${monumentType.revealHint}`} style={{ color: monument.inkGhost }}>
           Fleet OS signals only — not vehicle controls.
         </p>
-
-        <button
-          type="button"
-          onClick={onClose}
-          className={`mt-3 w-full py-2.5 ${monumentType.actionLink}`}
-          style={{ color: monument.inkMuted }}
-        >
-          Close
-        </button>
       </div>
     </MonumentSheet>
   );

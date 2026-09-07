@@ -33,8 +33,43 @@ export default function AssetDetailSheet({
   if (!payload) return null;
 
   return (
-    <MonumentSheet open={open} onClose={onClose}>
-      <div className="px-[18px] pb-2">
+    <MonumentSheet
+      open={open}
+      onClose={onClose}
+      footer={(
+        <>
+          <button
+            type="button"
+            onClick={onLetItRun}
+            className={`w-full rounded-xl py-3 ${monumentType.buttonPrimary} text-white transition active:scale-[0.98]`}
+            style={{ backgroundColor: monument.action }}
+            data-testid="monument-sheet-close"
+          >
+            Let it run
+          </button>
+          <button
+            type="button"
+            disabled={nudging}
+            onClick={onNudgeRoute}
+            className={`mt-2.5 w-full py-2.5 ${monumentType.actionLink}`}
+            style={{ color: monument.inkMuted }}
+          >
+            {nudging ? 'Queuing…' : 'Nudge route'}
+          </button>
+          {onViewTelemetry && (
+            <button
+              type="button"
+              onClick={onViewTelemetry}
+              className={`mt-2.5 w-full py-2.5 ${monumentType.actionLink}`}
+              style={{ color: monument.action }}
+            >
+              View telemetry
+            </button>
+          )}
+        </>
+      )}
+    >
+      <div className="px-[18px]">
         <p className={monumentType.label} style={{ color: monument.inkGhost }}>Asset</p>
 
         <div className="mt-2.5 flex items-start justify-between gap-3">
@@ -79,33 +114,6 @@ export default function AssetDetailSheet({
           ))}
         </div>
 
-        <button
-          type="button"
-          onClick={onLetItRun}
-          className={`mt-4 w-full rounded-xl py-3 ${monumentType.buttonPrimary} text-white transition active:scale-[0.98]`}
-          style={{ backgroundColor: monument.action }}
-        >
-          Let it run
-        </button>
-        <button
-          type="button"
-          disabled={nudging}
-          onClick={onNudgeRoute}
-          className={`mt-2.5 w-full py-2.5 ${monumentType.actionLink}`}
-          style={{ color: monument.inkMuted }}
-        >
-          {nudging ? 'Queuing…' : 'Nudge route'}
-        </button>
-        {onViewTelemetry && (
-          <button
-            type="button"
-            onClick={onViewTelemetry}
-            className={`mt-2.5 w-full py-2.5 ${monumentType.actionLink}`}
-            style={{ color: monument.action }}
-          >
-            View telemetry
-          </button>
-        )}
       </div>
     </MonumentSheet>
   );

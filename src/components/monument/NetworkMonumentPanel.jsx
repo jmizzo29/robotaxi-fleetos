@@ -1,39 +1,31 @@
 import { monument, monumentType } from './monumentTokens';
 
-function tileValueColor(kind) {
-  if (kind === 'orlando') return monument.action;
-  if (kind === 'tampa') return monument.money;
-  return monument.projected;
-}
-
-export default function NetworkMonumentPanel({ convoy, onSelectTile }) {
+export default function NetworkMonumentPanel({ convoy }) {
   if (!convoy) return null;
 
   const tiles = [
-    { key: 'orlando', label: 'Orlando', value: String(convoy.orlando) },
-    { key: 'tampa', label: 'Tampa', value: String(convoy.tampa) },
-    { key: 'events', label: 'Events', value: String(convoy.events) },
+    { key: 'austin', label: 'Austin', value: String(convoy.austin ?? 0) },
+    { key: 'orlando', label: 'Orlando', value: String(convoy.orlando ?? 0) },
+    { key: 'events', label: 'Events', value: String(convoy.events ?? 0) },
   ];
 
   return (
     <div className="w-full px-5 pb-3">
       <div className="grid grid-cols-3 gap-2.5">
         {tiles.map((tile) => (
-          <button
+          <div
             key={tile.key}
-            type="button"
-            onClick={() => onSelectTile?.(tile.key)}
-            className="rounded-xl border px-2 py-3 text-center transition active:scale-[0.98]"
+            className="rounded-xl border px-2 py-3 text-center"
             style={{ borderColor: monument.hairline, backgroundColor: monument.surface }}
           >
             <p className={monumentType.label} style={{ color: monument.inkGhost }}>{tile.label}</p>
             <p
               className={`mt-2 ${monumentType.monumentSm}`}
-              style={{ color: tileValueColor(tile.key) }}
+              style={{ color: monument.ink }}
             >
-              {tile.value}
+              {convoy.configured ? tile.value : '—'}
             </p>
-          </button>
+          </div>
         ))}
       </div>
     </div>

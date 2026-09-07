@@ -1,72 +1,33 @@
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import Map, { Layer, Marker, Source } from 'react-map-gl/mapbox';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import HeatmapLayer from '../HeatmapLayer';
 import heatmapData from '../../data/heatmapData';
 import demandZones from '../../data/demandZones';
-import { getCommandOperationalSource, vehicleStateLabel } from '../../utils/vehicleDisplayUtils';
 import { AppSection } from '../shell';
 import { radius } from '../../design/roboagentTokens';
+import { monument, monumentType } from '../monument/monumentTokens';
+import { isMockPreviewEnabled } from '../../utils/mockPreview';
+import {
+  getMapEmptyCopy,
+  getMapLocatedVehicles,
+  getMapMarkerTone,
+  getMapTruthSource,
+  getMapVehicleLabel,
+  getMapViewState,
+  isVehicleMoving,
+  shouldShowMapDemoOverlays,
+} from '../../utils/mapTruthUtils';
 
-const ORLANDO_VIEW = {
-  longitude: -81.3792,
-  latitude: 28.5383,
-  zoom: 10,
-};
-
-function getVehicleLabel(vehicle, index) {
-  if (vehicle?.isReal) {
-    const name = vehicle.display_name || vehicle.name;
-    if (name) return name;
-  }
-  const id = String(vehicle?.id || vehicle?.name || '');
-  const carMatch = id.match(/CAR-(\d+)/i);
-  if (carMatch) return `CAB-${carMatch[1].padStart(2, '0')}`;
-  const match = id.match(/\d+/);
-  if (match) return `CAB-${String(match[0]).padStart(2, '0')}`;
-  return vehicle?.name || vehicle?.ownership?.tag || `CAB-${String(index + 1).padStart(2, '0')}`;
-}
-
-function isVehicleMoving(vehicle) {
-  const status = String(vehicle?.status || vehicle?.state || '').toUpperCase();
-  return status.includes('EN ROUTE')
-    || status.includes('REPOSITION')
-    || status.includes('PICKUP')
-    || status.includes('IN SERVICE');
-}
-
-function getMarkerColorClass(vehicle) {
-  const status = String(vehicle?.status || vehicle?.state || '').toUpperCase();
-  if (status.includes('OFFLINE') || status.includes('ASLEEP')) return 'bg-[#ef4444]';
-  if (status.includes('CHARG')) return 'bg-[#eab308]';
-  if (
-    status.includes('ONLINE')
-    || status.includes('READY')
-    || status.includes('EN ROUTE')
-    || status.includes('PICKUP')
-    || status.includes('REPOSITION')
-    || status.includes('IDLE')
-    || status.includes('SERVICE')
-  ) {
-    return 'bg-[#22c55e]';
-  }
-  return vehicleStateLabel(vehicle) === 'Charging' ? 'bg-[#eab308]' : 'bg-[#22c55e]';
-}
-
-function getMapFleet(fleet, realFleet, totalEarnings, syncState) {
-  const source = getCommandOperationalSource(fleet, realFleet, totalEarnings, syncState);
-  return source.filter((vehicle) => {
-    const lat = Number(vehicle.latitude);
-    const lng = Number(vehicle.longitude);
-    return Number.isFinite(lat) && Number.isFinite(lng);
-  });
-}
-
-function MapFooter({ total, active }) {
+function MapChrome({ total, active, mock }) {
   return (
     <div className="pointer-events-none absolute bottom-0 left-0 right-0 flex items-center justify-between gap-2 bg-gradient-to-t from-[#1C1D21] via-[#1C1D21]/80 to-transparent px-5 pb-4 pt-10">
       <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-white/80">
-        {total} vehicles <span className="text-white/30">·</span> {active} active
+        {mock ? 'Demo' : 'Live'}
+        <span className="text-white/30"> · </span>
+        {total} vehicle{total === 1 ? '' : 's'}
+        <span className="text-white/30"> · </span>
+        {active} active
       </p>
       <div className="flex items-center gap-3 text-[10px] font-medium uppercase tracking-[0.12em] text-white/45">
         <span className="inline-flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-[#5BA8A0]" />Active</span>
@@ -130,6 +91,7 @@ function DemandZoneLabel({ zone }) {
       <p className="text-[10px] font-bold uppercase tracking-[0.08em] text-cyan-200">{shortName}</p>
       <p className="text-[11px] font-bold text-emerald-300">~${hourlyEst}/hr</p>
       <p className="text-[10px] font-semibold text-white/75">+{surge}% demand</p>
+      <p className="text-[9px] font-medium uppercase tracking-[0.12em] text-amber-200/80">Demo</p>
     </div>
   );
 }
@@ -176,10 +138,11 @@ function TripTracesLayer({ vehicles, zones }) {
 }
 
 function LiveVehicleMarker({ vehicle, label }) {
-  const colorClass = getMarkerColorClass(vehicle);
+  const tone = getMapMarkerTone(vehicle);
+  const colorClass = tone === 'off' ? 'bg-[#ef4444]' : tone === 'charge' ? 'bg-[#eab308]' : 'bg-[#22c55e]';
   const isMoving = isVehicleMoving(vehicle);
-  const isActive = colorClass.includes('22c55e');
-  const isCharging = colorClass.includes('eab308');
+  const isActive = tone === 'active';
+  const isCharging = tone === 'charge';
   const statusWord = isMoving ? 'En route' : isCharging ? 'Charging' : isActive ? 'Active' : 'Offline';
 
   return (
@@ -201,10 +164,30 @@ function LiveVehicleMarker({ vehicle, label }) {
   );
 }
 
+function MapEmptyState({ copy, mock }) {
+  if (!copy) return null;
+  return (
+    <div
+      className="absolute inset-0 z-10 flex items-center justify-center px-6"
+      data-testid="map-empty-state"
+    >
+      <div
+        className="max-w-sm rounded-[10px] border px-5 py-4 text-center"
+        style={{ backgroundColor: monument.surface, borderColor: monument.hairline }}
+      >
+        {mock && (
+          <p className={`${monumentType.label} mb-2`} style={{ color: monument.projected }}>Demo preview</p>
+        )}
+        <p className={monumentType.sheetTitle} style={{ color: monument.ink }}>{copy.title}</p>
+        <p className={`mt-2 ${monumentType.sheetBody}`} style={{ color: monument.inkMuted }}>{copy.body}</p>
+      </div>
+    </div>
+  );
+}
+
 export default function CommandMapPreview({
   fleet = [],
   realFleet = [],
-  totalEarnings = 0,
   syncState = 'idle',
   onNavigate,
   activeCount = 0,
@@ -213,44 +196,61 @@ export default function CommandMapPreview({
   tier = 'primary',
   bare = false,
   flush = false,
+  mock = isMockPreviewEnabled(),
+  teslaConnected = false,
+  showChromeFooter = true,
 }) {
-  const [viewState, setViewState] = useState(ORLANDO_VIEW);
   const mapboxToken = import.meta.env.VITE_MAPBOX_TOKEN;
-  const vehicles = useMemo(
-    () => getMapFleet(fleet, realFleet, totalEarnings, syncState),
-    [fleet, realFleet, totalEarnings, syncState],
+  const showDemoOverlays = shouldShowMapDemoOverlays(mock);
+  const source = useMemo(
+    () => getMapTruthSource(fleet, realFleet, { mock }),
+    [fleet, realFleet, mock],
   );
+  const vehicles = useMemo(() => getMapLocatedVehicles(source), [source]);
+  const fittedView = useMemo(() => getMapViewState(vehicles, { mock }), [vehicles, mock]);
+  const fitKey = `${mock}:${vehicles.map((vehicle) => `${vehicle.id}:${vehicle.latitude}:${vehicle.longitude}`).join('|')}`;
+
   const featuredZones = useMemo(
-    () => [...demandZones].sort((a, b) => b.demand - a.demand).slice(0, 3),
-    [],
+    () => (showDemoOverlays ? [...demandZones].sort((a, b) => b.demand - a.demand).slice(0, 3) : []),
+    [showDemoOverlays],
   );
-  const total = totalCount || vehicles.length || getCommandOperationalSource(fleet, realFleet, totalEarnings, syncState).length;
-  const active = activeCount || vehicles.filter((vehicle) => {
-    const status = String(vehicle?.status || vehicle?.state || '').toUpperCase();
-    return !status.includes('OFFLINE') && !status.includes('ASLEEP') && !status.includes('CHARG');
-  }).length;
+  const total = totalCount || source.length;
+  const active = activeCount || vehicles.filter((vehicle) => getMapMarkerTone(vehicle) === 'active').length;
+  const emptyCopy = getMapEmptyCopy({
+    mock,
+    loading: syncState === 'loading',
+    teslaConnected: teslaConnected || realFleet.length > 0,
+    sourceCount: source.length,
+    locatedCount: vehicles.length,
+  });
+  const showEmpty = Boolean(emptyCopy) && vehicles.length === 0 && !showDemoOverlays;
 
   const mapFrame = (
-    <div className={flush ? 'h-full w-full' : bare ? 'w-full px-5' : `${radius.cardLg} bg-[#25262B] p-px`}>
+    <div className={flush ? 'flex h-full min-h-0 w-full flex-col' : bare ? 'w-full px-5' : `${radius.cardLg} bg-[#25262B] p-px`}>
       <div
-        className={`relative overflow-hidden ${flush ? 'h-full' : bare ? 'rounded-[8px] border border-white/[0.08]' : `${radius.card} border border-white/[0.08]`} ${mapHeightClass}`}
+        className={`relative min-h-0 overflow-hidden ${flush ? 'h-full min-h-0 flex-1' : bare ? 'rounded-[8px] border border-white/[0.08]' : `${radius.card} border border-white/[0.08]`} ${flush ? '' : mapHeightClass}`}
+        data-testid="command-map-frame"
+        data-map-mock={mock ? 'true' : 'false'}
+        data-map-pins={String(vehicles.length)}
       >
+        {showDemoOverlays && (
+          <p
+            className="pointer-events-none absolute left-4 top-4 z-20 rounded-full px-2.5 py-1 text-[10px] font-medium uppercase tracking-[0.16em]"
+            style={{ backgroundColor: monument.surface, color: monument.projected }}
+            data-testid="map-demo-banner"
+          >
+            Demo preview
+          </p>
+        )}
+
         {!mapboxToken ? (
-          <>
-            <div className="absolute inset-0">
-              <img
-                src="/landing/night-command.jpg"
-                alt=""
-                className="h-full w-full object-cover opacity-45"
-              />
-              <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(14,15,18,0.35)_0%,rgba(14,15,18,0.15)_40%,rgba(14,15,18,0.72)_100%)]" />
-            </div>
-            <MapFooter total={total} active={active} />
-          </>
+          <div className="absolute inset-0" style={{ backgroundColor: monument.canvas }}>
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(91,168,160,0.08),transparent_55%)]" />
+          </div>
         ) : (
           <Map
-            {...viewState}
-            onMove={(event) => setViewState(event.viewState)}
+            key={fitKey}
+            initialViewState={fittedView}
             mapStyle="mapbox://styles/mapbox/dark-v11"
             mapboxAccessToken={mapboxToken}
             style={{ width: '100%', height: '100%' }}
@@ -258,10 +258,10 @@ export default function CommandMapPreview({
             reuseMaps
             touchPitch={false}
           >
-            <HeatmapLayer heatmapData={heatmapData} />
-            <DemandZonesLayer />
-            <TripTracesLayer vehicles={vehicles} zones={featuredZones} />
-            {featuredZones.map((zone) => (
+            {showDemoOverlays && <HeatmapLayer heatmapData={heatmapData} />}
+            {showDemoOverlays && <DemandZonesLayer />}
+            {showDemoOverlays && <TripTracesLayer vehicles={vehicles} zones={featuredZones} />}
+            {showDemoOverlays && featuredZones.map((zone) => (
               <Marker
                 key={zone.name}
                 longitude={zone.longitude}
@@ -273,31 +273,37 @@ export default function CommandMapPreview({
             ))}
             {vehicles.map((vehicle, index) => (
               <Marker
-                key={vehicle.id || getVehicleLabel(vehicle, index)}
+                key={vehicle.id || getMapVehicleLabel(vehicle, index, { mock })}
                 longitude={Number(vehicle.longitude)}
                 latitude={Number(vehicle.latitude)}
                 anchor="bottom"
               >
-                <LiveVehicleMarker vehicle={vehicle} label={getVehicleLabel(vehicle, index)} />
+                <LiveVehicleMarker
+                  vehicle={vehicle}
+                  label={getMapVehicleLabel(vehicle, index, { mock })}
+                />
               </Marker>
             ))}
           </Map>
         )}
 
-        {mapboxToken && <MapFooter total={total} active={active} />}
+        {showEmpty && <MapEmptyState copy={emptyCopy} mock={mock} />}
+        {showChromeFooter && vehicles.length > 0 && (
+          <MapChrome total={total} active={active} mock={mock} />
+        )}
       </div>
     </div>
   );
 
-  if (bare) return mapFrame;
+  if (bare || flush) return mapFrame;
 
   return (
     <AppSection
-      title="Live Fleet Map"
+      title={mock ? 'Demo Fleet Map' : 'Fleet Map'}
       actionLabel="Full map"
       onAction={() => onNavigate?.('map')}
       tier={tier}
-      aria-label="Live fleet map"
+      aria-label={mock ? 'Demo fleet map' : 'Fleet map'}
     >
       {mapFrame}
     </AppSection>
