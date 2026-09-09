@@ -61,6 +61,9 @@ const MONUMENT_CHAIN_ROUTES = new Set(['overview', ...MONUMENT_UTILITY_ROUTES]);
 
 const FleetMap = lazy(() => import('./components/FleetMap'));
 const NetworkPanel = lazy(() => import('./panels/NetworkPanel'));
+const VibeGallery = import.meta.env.DEV
+  ? lazy(() => import('./dev/VibeGallery'))
+  : null;
 
 const initialFleet = [
   {
@@ -208,8 +211,7 @@ function EmailSignupFlow({ onNavigate }) {
 export default function App() {
   const [route] = useHashRoute();
 
-  if (import.meta.env.DEV && typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('vibe')) {
-    const VibeGallery = lazy(() => import('./dev/VibeGallery'));
+  if (import.meta.env.DEV && VibeGallery && typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('vibe')) {
     return (
       <Suspense fallback={<div className="min-h-screen bg-black" />}>
         <VibeGallery />
