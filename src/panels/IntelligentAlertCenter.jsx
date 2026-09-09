@@ -27,9 +27,9 @@ export default function IntelligentAlertCenter({ analysis, isAnalyzing }) {
 
       <div className="grid grid-cols-1 gap-3 xl:grid-cols-3">
         {alerts.length === 0 && (
-          <AppCard className="border-emerald-200 bg-emerald-50/80 xl:col-span-3">
-            <p className={`${typography.cardTitle} text-emerald-900`}>No prioritized alerts</p>
-            <p className="mt-1 text-sm font-medium text-emerald-800/80">
+          <AppCard className="xl:col-span-3" style={{ borderColor: colors.border, backgroundColor: colors.successBg }}>
+            <p className={typography.cardTitle} style={{ color: colors.success }}>No prioritized alerts</p>
+            <p className={`mt-1 text-sm font-medium ${typography.muted}`}>
               ROBOAGENT has not detected a high-priority operating risk in the current snapshot.
             </p>
           </AppCard>
@@ -49,13 +49,13 @@ export default function IntelligentAlertCenter({ analysis, isAnalyzing }) {
                   </p>
                   <h3 className={`mt-1 ${typography.cardTitle}`}>{alert.title}</h3>
                 </div>
-                <span className="rounded-md bg-white/70 px-2 py-1 text-xs font-bold text-slate-700">
+                <span className="rounded-md bg-white/10 px-2 py-1 text-xs font-bold text-[#F7F7F5]">
                   {Math.round(alert.priorityScore || 0)}
                 </span>
               </div>
 
-              <p className="text-sm font-medium text-slate-700">{alert.explanation}</p>
-              <p className="mt-3 border-t border-slate-200/80 pt-3 text-sm font-semibold text-slate-900">
+              <p className={`text-sm font-medium ${typography.muted}`}>{alert.explanation}</p>
+              <p className="mt-3 border-t border-white/10 pt-3 text-sm font-semibold text-[#F7F7F5]">
                 {alert.recommendedAction}
               </p>
             </AppCard>

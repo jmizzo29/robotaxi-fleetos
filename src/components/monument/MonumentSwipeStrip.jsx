@@ -58,7 +58,7 @@ export default function MonumentSwipeStrip({
               {isActive && (
                 <span
                   className="absolute inset-x-6 -bottom-0.5 h-px"
-                  style={{ backgroundColor: monument.action, boxShadow: '0 0 8px rgba(91,168,160,0.4)' }}
+                  style={{ backgroundColor: monument.action, boxShadow: '0 0 8px rgba(94,212,200,0.4)' }}
                   aria-hidden="true"
                 />
               )}

@@ -4,11 +4,11 @@ import { colors, icon as iconTokens, typography } from '../design/roboagentToken
 const LONG_PRESS_MS = 500;
 
 const DOCK_SHELL = {
-  background: 'rgba(28, 29, 33, 0.86)',
+  background: 'rgba(8, 9, 11, 0.78)',
   boxShadow: [
-    '0 12px 36px rgba(0, 0, 0, 0.42)',
-    '0 0 0 1px rgba(243, 243, 241, 0.06)',
-    'inset 0 1px 0 rgba(243, 243, 241, 0.1)',
+    '0 16px 40px rgba(0, 0, 0, 0.55)',
+    '0 0 0 1px rgba(94, 212, 200, 0.22)',
+    'inset 0 1px 0 rgba(247, 247, 245, 0.08)',
   ].join(', '),
 };
 
@@ -25,9 +25,10 @@ function DockItem({ item }) {
       className="relative flex min-h-11 min-w-0 flex-col items-center justify-center gap-0.5 px-0.5 py-1 touch-manipulation transition active:scale-[0.98]"
     >
       <span
-        className="relative flex h-8 w-8 items-center justify-center rounded-lg"
+        className="relative flex h-8 w-8 items-center justify-center rounded-full"
         style={{
           backgroundColor: active ? colors.primaryLight : 'transparent',
+          boxShadow: active ? `0 0 18px ${colors.primaryLight}` : 'none',
         }}
       >
         {Icon ? (
@@ -40,7 +41,7 @@ function DockItem({ item }) {
           />
         ) : null}
         {item.badge ? (
-          <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#C45C4A] px-1 text-[9px] font-bold text-white">
+          <span className="absolute -right-0.5 -top-0.5 flex h-4 min-w-4 items-center justify-center rounded-full bg-[#E06A56] px-1 text-[9px] font-bold text-white">
             {item.badge}
           </span>
         ) : null}
@@ -103,7 +104,7 @@ export default function FloatingPillDock({
       {hint ? (
         <p
           className="pb-1.5 text-center text-[10px] font-medium uppercase tracking-[0.16em]"
-          style={{ color: colors.navIdle }}
+          style={{ color: colors.inkSubtle }}
         >
           {hint}
         </p>
@@ -115,7 +116,7 @@ export default function FloatingPillDock({
         className={`${multiRow ? 'rounded-[1.85rem]' : 'rounded-full'} border backdrop-blur-xl`}
         style={{
           background: DOCK_SHELL.background,
-          borderColor: 'rgba(91, 168, 160, 0.16)',
+          borderColor: colors.border,
           boxShadow: DOCK_SHELL.boxShadow,
         }}
         onPointerDown={onLongPress ? startPress : undefined}

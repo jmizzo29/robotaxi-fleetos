@@ -20,7 +20,7 @@ export default function OnboardingPanel({ onNavigate }) {
   }, []); // only on initial mount
 
   return (
-    <div className="min-h-screen bg-[#1C1D21] text-white">
+    <div className="min-h-screen bg-[#08090B] text-white">
       <LandingHeader onNavigate={onNavigate} variant="monument" />
 
       <div className="flex items-center justify-center px-6 pb-12 pt-[4.75rem]">
@@ -47,7 +47,7 @@ export default function OnboardingPanel({ onNavigate }) {
             </p>
 
             <div className="bg-zinc-900 border border-white/10 rounded-3xl p-10 mb-8 text-center">
-              <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center text-[#F3F3F1]">
+              <div className="mx-auto mb-6 flex h-16 w-16 items-center justify-center text-[#F7F7F5]">
                 <TeslaConnectMark className="h-16 w-16" />
               </div>
               <h3 className="text-2xl font-semibold mb-3">Tesla Fleet API</h3>

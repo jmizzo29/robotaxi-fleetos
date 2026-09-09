@@ -1,33 +1,38 @@
 /** ROBOAGENT design system — Tesla-slick command layer. Single source of truth. */
 
 export const colors = {
-  primary: '#5BA8A0',
-  primaryLight: 'rgba(91,168,160,0.14)',
-  primaryDark: '#3E7D77',
-  canvas: '#1C1D21',
-  surface: '#25262B',
-  surfaceRaised: '#2C2D33',
-  ink: '#F3F3F1',
-  inkMuted: '#8B8E94',
-  inkSubtle: '#5C5F66',
-  navIdle: '#C4C6CB',
-  border: 'rgba(91,168,160,0.18)',
-  earningsGradient: 'linear-gradient(180deg, #2C2D33 0%, #1C1D21 100%)',
-  canvasWash: 'radial-gradient(ellipse 90% 55% at 50% -10%, rgba(91,168,160,0.09), transparent 58%)',
-  success: '#5BA8A0',
-  successBg: 'rgba(91,168,160,0.12)',
-  warning: '#C4A35A',
-  warningBg: 'rgba(196,163,90,0.12)',
-  error: '#C45C4A',
-  errorBg: 'rgba(196,92,74,0.12)',
-  service: '#C4A35A',
-  serviceBg: 'rgba(196,163,90,0.12)',
-  heroDelta: '#5BA8A0',
-  heroPulse: '#5BA8A0',
-  navActiveLabel: '#F3F3F1',
-  accent: '#5BA8A0',
-  accentHover: '#4A8F88',
-  scrim: 'rgba(6,7,9,0.72)',
+  primary: '#5ED4C8',
+  primaryLight: 'rgba(94,212,200,0.18)',
+  primaryDark: '#3E9E94',
+  canvas: '#08090B',
+  surface: '#121316',
+  surfaceRaised: '#1A1B20',
+  ink: '#F7F7F5',
+  inkMuted: '#C6C8CE',
+  inkSubtle: '#A8ABB3',
+  navIdle: '#D4D6DA',
+  border: 'rgba(94,212,200,0.30)',
+  earningsGradient: 'linear-gradient(180deg, #1C1E24 0%, #0C0D10 100%)',
+  canvasWash: 'radial-gradient(ellipse 92% 58% at 50% -12%, rgba(94,212,200,0.18), transparent 62%)',
+  success: '#5ED4C8',
+  successBg: 'rgba(94,212,200,0.16)',
+  warning: '#E0B45C',
+  warningBg: 'rgba(224,180,92,0.16)',
+  error: '#E06A56',
+  errorBg: 'rgba(224,106,86,0.16)',
+  service: '#E0B45C',
+  serviceBg: 'rgba(224,180,92,0.16)',
+  heroDelta: '#5ED4C8',
+  heroPulse: '#5ED4C8',
+  navActiveLabel: '#F7F7F5',
+  accent: '#5ED4C8',
+  accentHover: '#4BBBB0',
+  scrim: 'rgba(4,5,7,0.78)',
+  cardGlow: [
+    '0 0 0 1px rgba(94,212,200,0.22)',
+    '0 18px 44px rgba(0,0,0,0.55)',
+    'inset 0 1px 0 rgba(247,247,245,0.07)',
+  ].join(', '),
 };
 
 export const semantic = {
@@ -43,20 +48,22 @@ export const semantic = {
 
 export const typography = {
   wordmark: 'text-[0.92rem] font-semibold uppercase tracking-[0.28em]',
-  wordmarkColor: 'text-[#F3F3F1]',
-  screenBadge: 'text-[11px] font-medium uppercase tracking-[0.22em] text-[#8B8E94]',
-  display: 'text-[4.5rem] font-medium leading-[0.88] tracking-[-0.05em]',
-  pageTitle: 'text-[24px] font-medium tracking-[-0.03em] text-[#F3F3F1]',
-  section: 'text-[18px] font-medium tracking-[-0.02em] text-[#E8E8E6]',
-  sectionSm: 'text-[12px] font-medium uppercase tracking-[0.18em] text-[#8B8E94]',
-  cardTitle: 'text-[17px] font-medium leading-snug text-[#F3F3F1]',
-  body: 'text-[15px] font-normal leading-snug text-[#F3F3F1]',
-  bodyMd: 'text-[14px] font-normal text-[#F3F3F1]',
-  metric: 'text-[38px] font-medium leading-none tabular-nums',
-  metricSm: 'text-[24px] font-medium tabular-nums',
-  caption: 'text-[11px] font-normal text-[#5C5F66]',
-  label: 'text-[11px] font-medium uppercase tracking-[0.18em] text-[#5C5F66]',
+  wordmarkColor: 'text-[#F7F7F5]',
+  screenBadge: 'text-[11px] font-medium uppercase tracking-[0.22em] text-[#C6C8CE]',
+  display: 'text-[4.5rem] font-semibold leading-[0.88] tracking-[-0.05em]',
+  pageTitle: 'text-[24px] font-semibold tracking-[-0.03em] text-[#F7F7F5]',
+  section: 'text-[18px] font-semibold tracking-[-0.02em] text-[#F0F0EE]',
+  sectionSm: 'text-[12px] font-medium uppercase tracking-[0.18em] text-[#C6C8CE]',
+  cardTitle: 'text-[17px] font-semibold leading-snug text-[#F7F7F5]',
+  body: 'text-[15px] font-normal leading-snug text-[#F7F7F5]',
+  bodyMd: 'text-[14px] font-normal text-[#F0F0EE]',
+  metric: 'text-[38px] font-semibold leading-none tabular-nums',
+  metricSm: 'text-[24px] font-semibold tabular-nums',
+  caption: 'text-[11px] font-normal text-[#A8ABB3]',
+  label: 'text-[11px] font-medium uppercase tracking-[0.18em] text-[#A8ABB3]',
   navLabel: 'text-[10px] font-medium uppercase tracking-[0.14em] leading-tight',
+  muted: 'text-[#C6C8CE]',
+  subtle: 'text-[#A8ABB3]',
 };
 
 export const spacing = {
@@ -71,24 +78,24 @@ export const spacing = {
 };
 
 export const radius = {
-  card: 'rounded-[8px]',
-  cardLg: 'rounded-[10px]',
-  icon: 'rounded-[8px]',
+  card: 'rounded-[12px]',
+  cardLg: 'rounded-[14px]',
+  icon: 'rounded-[10px]',
   pill: 'rounded-full',
 };
 
 export const shadow = {
-  card: 'shadow-none',
-  cardSubdued: 'shadow-none',
-  hero: 'shadow-none',
-  map: 'shadow-none',
-  nav: 'shadow-none',
+  card: 'shadow-[0_18px_44px_rgba(0,0,0,0.55)]',
+  cardSubdued: 'shadow-[0_10px_28px_rgba(0,0,0,0.4)]',
+  hero: 'shadow-[0_0_48px_rgba(94,212,200,0.12)]',
+  map: 'shadow-[0_18px_44px_rgba(0,0,0,0.55)]',
+  nav: 'shadow-[0_12px_36px_rgba(0,0,0,0.5)]',
 };
 
 export const card = {
-  base: `${radius.card} border border-[rgba(91,168,160,0.18)] bg-[#25262B]`,
+  base: `${radius.card} border border-[rgba(94,212,200,0.28)] bg-[#121316] shadow-[0_18px_44px_rgba(0,0,0,0.45)]`,
   subdued: '',
-  accent: 'border-l-[2px] border-l-[#5BA8A0]',
+  accent: 'border-l-[2px] border-l-[#5ED4C8]',
 };
 
 export const icon = {
@@ -122,4 +129,29 @@ export function mobileScreenBadge(route) {
   if (route === 'fleet' || route === 'vehicle') return 'Fleet';
   if (['dispatch', 'charging', 'health', 'readiness', 'alerts'].includes(route)) return 'Operations';
   return null;
+}
+
+function hexToRgb(hex) {
+  const raw = hex.replace('#', '');
+  const value = raw.length === 3 ? raw.split('').map((ch) => ch + ch).join('') : raw;
+  return {
+    r: parseInt(value.slice(0, 2), 16) / 255,
+    g: parseInt(value.slice(2, 4), 16) / 255,
+    b: parseInt(value.slice(4, 6), 16) / 255,
+  };
+}
+
+function channel(value) {
+  return value <= 0.03928 ? value / 12.92 : ((value + 0.055) / 1.055) ** 2.4;
+}
+
+export function relativeLuminance(hex) {
+  const { r, g, b } = hexToRgb(hex);
+  return 0.2126 * channel(r) + 0.7152 * channel(g) + 0.0722 * channel(b);
+}
+
+export function contrastRatio(foreground, background) {
+  const lighter = Math.max(relativeLuminance(foreground), relativeLuminance(background));
+  const darker = Math.min(relativeLuminance(foreground), relativeLuminance(background));
+  return (lighter + 0.05) / (darker + 0.05);
 }

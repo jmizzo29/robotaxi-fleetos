@@ -12,7 +12,7 @@ import { monument } from './monumentTokens';
 const STATUS_META = {
   normal: {
     color: monument.action,
-    wash: 'rgba(91,168,160,0.12)',
+    wash: 'rgba(94,212,200,0.12)',
     Icon: CheckCircle2,
   },
   recommended: {
@@ -27,7 +27,7 @@ const STATUS_META = {
   },
   growth: {
     color: monument.action,
-    wash: 'rgba(91,168,160,0.12)',
+    wash: 'rgba(94,212,200,0.12)',
     Icon: TrendingUp,
   },
   neutral: {

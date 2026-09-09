@@ -60,7 +60,7 @@ export default function IntegrationsPanel({
           <article key={integration.name} className="rounded-lg border border-white/10 bg-slate-900/80 p-5 shadow-lg shadow-black/10">
             <div className="mb-4 flex items-start justify-between gap-4">
               <div>
-                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-slate-500">
+                <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-[#A8ABB3]">
                   Integration
                 </p>
                 <h2 className="text-2xl font-black tracking-tight">{integration.name}</h2>
@@ -71,7 +71,7 @@ export default function IntegrationsPanel({
             </div>
             <p className="text-sm leading-6 text-slate-400">{integration.description}</p>
             <div className="mt-5 rounded-lg border border-white/10 bg-slate-950/50 px-3 py-2 text-sm">
-              <span className="text-slate-500">Signal: </span>
+              <span className="text-[#A8ABB3]">Signal: </span>
               <span className="font-bold text-slate-100">{integration.signal}</span>
             </div>
           </article>
@@ -87,15 +87,15 @@ export default function IntegrationsPanel({
         <h2 className="text-2xl font-black tracking-tight">Current Connected State</h2>
         <div className="mt-5 grid grid-cols-1 gap-3 md:grid-cols-3">
           <div className="rounded-lg border border-white/10 bg-slate-950/50 p-4">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">Tesla Sync</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#A8ABB3]">Tesla Sync</p>
             <p className="mt-2 text-xl font-black text-emerald-300">{realSyncStatus?.state || 'idle'}</p>
           </div>
           <div className="rounded-lg border border-white/10 bg-slate-950/50 p-4">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">AI Provider</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#A8ABB3]">AI Provider</p>
             <p className="mt-2 text-xl font-black text-sky-300">{aiAnalysis?.provider || 'pending'}</p>
           </div>
           <div className="rounded-lg border border-white/10 bg-slate-950/50 p-4">
-            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-slate-500">AI Model</p>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-[#A8ABB3]">AI Model</p>
             <p className="mt-2 truncate text-xl font-black text-violet-300">{aiAnalysis?.model || 'pending'}</p>
           </div>
         </div>

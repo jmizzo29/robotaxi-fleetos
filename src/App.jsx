@@ -163,7 +163,7 @@ export function SsoCallbackPage({ onNavigate }) {
   // Render nothing (or an extremely minimal loader) so the transition feels automatic.
   // The Clerk AuthenticateWithRedirectCallback above us handles the session establishment.
   return (
-    <div className="min-h-screen bg-[#1C1D21] text-white flex items-center justify-center">
+    <div className="min-h-screen bg-[#08090B] text-white flex items-center justify-center">
       <div className="flex items-center gap-3 text-white/60 text-sm">
         <Loader2 className="w-4 h-4 animate-spin" />
         Returning to app...
@@ -176,7 +176,7 @@ export function SsoCallbackPage({ onNavigate }) {
 // so this route now points users to the Tesla-first signup screen instead of a fake form.
 function EmailSignupFlow({ onNavigate }) {
   return (
-    <div className="min-h-screen bg-[#1C1D21] text-white flex items-center justify-center px-6 py-12">
+    <div className="min-h-screen bg-[#08090B] text-white flex items-center justify-center px-6 py-12">
       <div className="w-full max-w-[440px]">
         <button
           onClick={() => onNavigate('landing')}
@@ -207,6 +207,15 @@ function EmailSignupFlow({ onNavigate }) {
 
 export default function App() {
   const [route] = useHashRoute();
+
+  if (import.meta.env.DEV && typeof window !== 'undefined' && new URLSearchParams(window.location.search).has('vibe')) {
+    const VibeGallery = lazy(() => import('./dev/VibeGallery'));
+    return (
+      <Suspense fallback={<div className="min-h-screen bg-black" />}>
+        <VibeGallery />
+      </Suspense>
+    );
+  }
 
   if (window.location.pathname === '/sso-callback' || route === 'sso-callback') {
     return (
@@ -425,25 +434,25 @@ function FleetApp() {
   ];
 
   const operationsStatus = (
-    <div className="w-full border border-[rgba(91,168,160,0.18)] bg-[#25262B] p-4 sm:min-w-[280px] sm:w-auto sm:p-5">
-      <p className="mb-3 text-xs font-medium uppercase tracking-[0.18em] text-[#8B8E94]">
+    <div className="w-full border border-[rgba(94,212,200,0.18)] bg-[#121316] p-4 sm:min-w-[280px] sm:w-auto sm:p-5">
+      <p className="mb-3 text-xs font-medium uppercase tracking-[0.18em] text-[#C6C8CE]">
         Operations Status
       </p>
 
       <div className="space-y-3">
         <div className="flex justify-between">
-          <span className="text-[#8B8E94]">Active Vehicles</span>
-          <span className="font-medium text-[#F3F3F1]">{fleet.length}</span>
+          <span className="text-[#C6C8CE]">Active Vehicles</span>
+          <span className="font-medium text-[#F7F7F5]">{fleet.length}</span>
         </div>
 
         <div className="flex justify-between">
-          <span className="text-[#8B8E94]">Real Tesla</span>
-          <span className="font-medium text-[#F3F3F1]">{realVehicles.length}</span>
+          <span className="text-[#C6C8CE]">Real Tesla</span>
+          <span className="font-medium text-[#F7F7F5]">{realVehicles.length}</span>
         </div>
 
         <div className="flex justify-between">
-          <span className="text-[#8B8E94]">Simulation Fleet</span>
-          <span className="font-medium text-[#F3F3F1]">{simulatedVehicles.length}</span>
+          <span className="text-[#C6C8CE]">Simulation Fleet</span>
+          <span className="font-medium text-[#F7F7F5]">{simulatedVehicles.length}</span>
         </div>
 
         <button
@@ -491,7 +500,7 @@ function FleetApp() {
     map: (
       <Suspense
         fallback={(
-          <div className="flex h-[70vh] min-h-[460px] items-center justify-center border border-[rgba(91,168,160,0.18)] bg-[#25262B] text-sm font-medium text-[#8B8E94] lg:h-[calc(100vh-8rem)]">
+          <div className="flex h-[70vh] min-h-[460px] items-center justify-center border border-[rgba(94,212,200,0.18)] bg-[#121316] text-sm font-medium text-[#C6C8CE] lg:h-[calc(100vh-8rem)]">
             Loading fleet map...
           </div>
         )}
@@ -749,8 +758,8 @@ function FleetApp() {
         style={{ backgroundColor: colors.canvas, backgroundImage: colors.canvasWash }}
       >
         <div className="flex flex-col items-center gap-3">
-          <Loader2 className="h-6 w-6 animate-spin" style={{ color: '#8B8E94' }} />
-          <p className="text-sm" style={{ color: '#8B8E94' }}>Loading…</p>
+          <Loader2 className="h-6 w-6 animate-spin" style={{ color: '#C6C8CE' }} />
+          <p className="text-sm" style={{ color: '#C6C8CE' }}>Loading…</p>
         </div>
       </div>
     );
@@ -764,7 +773,7 @@ function FleetApp() {
 
   if (isRestoringTeslaSession) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#1C1D21] text-white">
+      <div className="flex min-h-screen items-center justify-center bg-[#08090B] text-white">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="h-6 w-6 animate-spin text-white/60" />
           <p className="text-sm text-white/60">Checking your Tesla connection...</p>
@@ -834,7 +843,7 @@ function FleetApp() {
             <AccountPanel embedded onNavigate={navigate} />
           </AppShell>
         </div>
-        <div className="hidden min-h-screen bg-[#1C1D21] text-[#F3F3F1] lg:block">
+        <div className="hidden min-h-screen bg-[#08090B] text-[#F7F7F5] lg:block">
           <AccountPanel onNavigate={navigate} />
         </div>
         <FeedbackButton route={route} />
@@ -847,7 +856,7 @@ function FleetApp() {
   // passes; guests are redirected to #/landing by the guard effect above.
   if (!sessionAllowed) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-[#1C1D21] text-white">
+      <div className="flex min-h-screen items-center justify-center bg-[#08090B] text-white">
         <div className="flex flex-col items-center gap-3">
           <Loader2 className="h-6 w-6 animate-spin text-white/60" />
           <p className="text-sm text-white/60">Checking your session...</p>
@@ -915,14 +924,14 @@ function FleetApp() {
   }
 
   return (
-    <div className="robo-minimal flex min-h-screen text-[#F3F3F1] lg:bg-[#1C1D21]">
+    <div className="robo-minimal flex min-h-screen text-[#F7F7F5] lg:bg-[#08090B]">
       <Sidebar
         commandQueue={commandQueue}
         route={route}
         onNavigate={navigate}
       />
 
-      <main className="flex-1 overflow-y-auto lg:bg-[#1C1D21] lg:p-8">
+      <main className="flex-1 overflow-y-auto lg:bg-[#08090B] lg:p-8">
         <div className="mx-auto max-w-[1900px]">
           <div className="lg:hidden">
             <AppShell>

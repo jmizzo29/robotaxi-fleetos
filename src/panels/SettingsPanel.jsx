@@ -28,7 +28,7 @@ export default function SettingsPanel({
         <AppCard>
           <p className={typography.label}>Product Feedback</p>
           <h2 className={`mt-1 ${typography.cardTitle}`}>Beta Feedback</h2>
-          <p className="mt-2 text-sm font-medium text-slate-600">
+          <p className={`mt-2 text-sm font-medium ${typography.muted}`}>
             Report bugs, confusing flows, or feature ideas.
           </p>
           <div className="mt-5">
@@ -42,12 +42,12 @@ export default function SettingsPanel({
             <h2 className={`mt-1 ${typography.cardTitle}`}>Telemetry Sync</h2>
             <div className="mt-5 space-y-3 text-sm">
               <div className="flex justify-between gap-4">
-                <span className="font-medium text-slate-500">Status</span>
-                <span className="font-bold text-slate-900">{realSyncStatus?.state || 'idle'}</span>
+                <span className={`font-medium ${typography.muted}`}>Status</span>
+                <span className="font-bold text-[#F7F7F5]">{realSyncStatus?.state || 'idle'}</span>
               </div>
               <div className="flex justify-between gap-4">
-                <span className="font-medium text-slate-500">Last Message</span>
-                <span className="max-w-[60%] text-right font-bold text-slate-900">{realSyncStatus?.message || 'Unavailable'}</span>
+                <span className={`font-medium ${typography.muted}`}>Last Message</span>
+                <span className="max-w-[60%] text-right font-bold text-[#F7F7F5]">{realSyncStatus?.message || 'Unavailable'}</span>
               </div>
             </div>
             <button
@@ -66,19 +66,20 @@ export default function SettingsPanel({
             <h2 className={`mt-1 ${typography.cardTitle}`}>Agent Configuration</h2>
             <div className="mt-5 space-y-3 text-sm">
               <div className="flex justify-between">
-                <span className="font-medium text-slate-500">Provider</span>
-                <span className="font-bold text-slate-900">{aiAnalysis?.provider || 'pending'}</span>
+                <span className={`font-medium ${typography.muted}`}>Provider</span>
+                <span className="font-bold text-[#F7F7F5]">{aiAnalysis?.provider || 'pending'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="font-medium text-slate-500">Model</span>
-                <span className="font-bold text-slate-900">{aiAnalysis?.model || 'pending'}</span>
+                <span className={`font-medium ${typography.muted}`}>Model</span>
+                <span className="font-bold text-[#F7F7F5]">{aiAnalysis?.model || 'pending'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="font-medium text-slate-500">Replay Engine</span>
+                <span className={`font-medium ${typography.muted}`}>Replay Engine</span>
                 <button
                   type="button"
                   onClick={() => setReplayMode?.(!replayMode)}
-                  className="font-bold text-blue-600"
+                  className="font-bold"
+                  style={{ color: colors.primary }}
                 >
                   {replayMode ? 'On' : 'Off'}
                 </button>
