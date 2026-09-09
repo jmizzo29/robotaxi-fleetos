@@ -46,9 +46,9 @@ export default function SignOutButton({
         role="group"
         aria-label="Confirm sign out"
       >
-        <p className="text-[15px] font-medium text-[#F3F3F1]">Sign out?</p>
+        <p className="text-[15px] font-medium text-[#F7F7F5]">Sign out?</p>
         {!compact && (
-          <p className="mt-1 text-[13px] font-normal leading-5 text-[#8B8E94]">
+          <p className="mt-1 text-[13px] font-normal leading-5 text-[#C6C8CE]">
             You will need to sign in again to manage your fleet.
           </p>
         )}

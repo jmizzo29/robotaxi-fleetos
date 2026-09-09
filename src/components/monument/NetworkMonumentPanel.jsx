@@ -15,10 +15,10 @@ export default function NetworkMonumentPanel({ convoy }) {
         {tiles.map((tile) => (
           <div
             key={tile.key}
-            className="rounded-xl border px-2 py-3 text-center"
-            style={{ borderColor: monument.hairline, backgroundColor: monument.surface }}
+            className="command-glass-tile rounded-xl border px-2 py-3 text-center"
+            style={{ borderColor: monument.action, boxShadow: '0 0 24px rgba(94,212,200,0.12)' }}
           >
-            <p className={monumentType.label} style={{ color: monument.inkGhost }}>{tile.label}</p>
+            <p className={monumentType.label} style={{ color: monument.inkMuted }}>{tile.label}</p>
             <p
               className={`mt-2 ${monumentType.monumentSm}`}
               style={{ color: monument.ink }}

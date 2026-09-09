@@ -29,7 +29,7 @@ function Metric({ label, value, helper, accent = colors.ink }) {
     <AppCard variant="metric">
       <p className={typography.label}>{label}</p>
       <p className={`mt-2 ${typography.metricSm}`} style={{ color: accent }}>{value}</p>
-      {helper && <p className="mt-1 text-xs font-medium leading-5 text-slate-500">{helper}</p>}
+      {helper && <p className={`mt-1 text-xs font-medium leading-5 ${typography.muted}`}>{helper}</p>}
     </AppCard>
   );
 }
@@ -38,7 +38,7 @@ function ScoreBar({ value }) {
   const score = Math.max(0, Math.min(100, Number(value) || 0));
   const color = score >= 84 ? 'bg-emerald-500' : score >= 72 ? 'bg-amber-500' : 'bg-rose-500';
   return (
-    <div className="h-2 overflow-hidden rounded-full bg-slate-100">
+    <div className="h-2 overflow-hidden rounded-full bg-white/10">
       <div className={`h-full rounded-full ${color}`} style={{ width: `${score}%` }} />
     </div>
   );
@@ -51,15 +51,15 @@ function EstimateCard({ item, onQueueCommand }) {
         <div className="min-w-0">
           <p className={typography.label}>{item.ownership?.tag || item.vehicle.id || 'Fleet'}</p>
           <h3 className={`mt-1 truncate ${typography.cardTitle}`}>{item.name}</h3>
-          <p className="mt-1 text-xs font-medium text-slate-500">{item.revenueSource} · {Math.round(item.confidence)}% confidence</p>
+          <p className={`mt-1 text-xs font-medium ${typography.muted}`}>{item.revenueSource} · {Math.round(item.confidence)}% confidence</p>
         </div>
         <span className="text-3xl font-bold" style={{ color: toneForScore(item.healthScore) }}>{item.healthScore}</span>
       </div>
 
       <div className="mb-4">
         <div className="mb-2 flex justify-between text-sm">
-          <span className="font-semibold text-slate-500">Fleet health</span>
-          <span className="font-bold text-slate-900">{item.healthScore}/100</span>
+          <span className={`font-semibold ${typography.muted}`}>Fleet health</span>
+          <span className="font-bold text-[#F7F7F5]">{item.healthScore}/100</span>
         </div>
         <ScoreBar value={item.healthScore} />
       </div>
@@ -89,20 +89,20 @@ function EstimateCard({ item, onQueueCommand }) {
 function MaintenanceRow({ item, onQueueCommand }) {
   const badge = badgeStyle(item.priority);
   return (
-    <div className="rounded-2xl border border-slate-200/90 bg-slate-50 p-4">
+    <div className="rounded-2xl border border-[rgba(94,212,200,0.22)] bg-[#121316] p-4">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <div className="mb-2 flex flex-wrap gap-2">
             <span className={`rounded-full border px-3 py-1 text-[10px] font-bold uppercase ${badge.border}`} style={{ backgroundColor: badge.bg, color: badge.text }}>
               {item.priority}
             </span>
-            <span className="rounded-full border border-slate-200 bg-white px-3 py-1 text-[10px] font-bold uppercase text-slate-600">
+            <span className="rounded-full border border-white/12 bg-white/5 px-3 py-1 text-[10px] font-bold uppercase text-[#C6C8CE]">
               {item.window}
             </span>
           </div>
-          <p className="font-bold text-slate-900">{item.name}</p>
-          <p className="mt-1 text-sm font-semibold text-slate-700">{item.task}</p>
-          <p className="mt-1 text-xs font-medium leading-5 text-slate-500">{item.reason}</p>
+          <p className="font-bold text-[#F7F7F5]">{item.name}</p>
+          <p className="mt-1 text-sm font-semibold text-[#F0F0EE]">{item.task}</p>
+          <p className={`mt-1 text-xs font-medium leading-5 ${typography.muted}`}>{item.reason}</p>
         </div>
         <button
           type="button"
@@ -110,7 +110,8 @@ function MaintenanceRow({ item, onQueueCommand }) {
             `Schedule ${item.task} for ${item.name}: ${item.reason}`,
             item.priority,
           )}
-          className="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm font-bold text-emerald-800 transition hover:bg-emerald-100"
+          className="rounded-2xl border px-4 py-2.5 text-sm font-bold text-white transition"
+          style={{ backgroundColor: colors.primary, borderColor: colors.primary }}
         >
           Schedule
         </button>
@@ -122,10 +123,10 @@ function MaintenanceRow({ item, onQueueCommand }) {
 function InsightCard({ alert }) {
   const isWarning = alert.severity === 'WARNING';
   return (
-    <article className={`rounded-2xl border p-4 ${isWarning ? 'border-amber-200 bg-amber-50' : 'border-sky-200 bg-sky-50'}`}>
-      <p className={`text-[11px] font-bold uppercase tracking-[0.18em] ${isWarning ? 'text-amber-800' : 'text-sky-800'}`}>{alert.severity}</p>
+    <article className="rounded-2xl border p-4" style={{ borderColor: isWarning ? 'rgba(224,180,92,0.35)' : colors.border, backgroundColor: isWarning ? colors.warningBg : colors.primaryLight }}>
+      <p className="text-[11px] font-bold uppercase tracking-[0.18em]" style={{ color: isWarning ? colors.warning : colors.primary }}>{alert.severity}</p>
       <h3 className={`mt-2 ${typography.cardTitle}`}>{alert.title}</h3>
-      <p className="mt-2 text-sm font-medium leading-6 text-slate-700">{alert.detail}</p>
+      <p className={`mt-2 text-sm font-medium leading-6 ${typography.muted}`}>{alert.detail}</p>
     </article>
   );
 }
@@ -221,7 +222,7 @@ export default function FleetHealthDashboard({ fleet = [], onQueueCommand }) {
                 <InsightCard key={alert.title} alert={alert} />
               ))
             ) : (
-              <p className="text-sm font-medium text-slate-500">Insights become available once a real Tesla is connected.</p>
+              <p className={`text-sm font-medium ${typography.muted}`}>Insights become available once a real Tesla is connected.</p>
             )}
           </div>
         </AppCard>

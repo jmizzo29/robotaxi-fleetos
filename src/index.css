@@ -3,18 +3,18 @@
 @theme {
   --font-sans: Inter, ui-sans-serif, system-ui, sans-serif;
 
-  --color-surface: #1C1D21;
-  --color-surface-raised: #25262B;
-  --color-ink: #F3F3F1;
-  --color-ink-muted: #8B8E94;
-  --color-ink-subtle: #5C5F66;
-  --color-accent: #5BA8A0;
-  --color-accent-hover: #4A8F88;
+  --color-surface: #08090B;
+  --color-surface-raised: #121316;
+  --color-ink: #F7F7F5;
+  --color-ink-muted: #C6C8CE;
+  --color-ink-subtle: #A8ABB3;
+  --color-accent: #5ED4C8;
+  --color-accent-hover: #4BBBB0;
 
-  --color-status-ready: #5BA8A0;
-  --color-status-caution: #C4A35A;
-  --color-status-critical: #C45C4A;
-  --color-status-active: #5BA8A0;
+  --color-status-ready: #5ED4C8;
+  --color-status-caution: #E0B45C;
+  --color-status-critical: #E06A56;
+  --color-status-active: #5ED4C8;
 
   --radius-card: 0.5rem;
   --shadow-soft: none;
@@ -26,10 +26,10 @@ body,
   margin: 0;
   padding: 0;
   min-height: 100%;
-  background: #1C1D21;
-  background-image: radial-gradient(ellipse 90% 55% at 50% -10%, rgba(91,168,160,0.09), transparent 58%);
+  background: #08090B;
+  background-image: radial-gradient(ellipse 92% 58% at 50% -12%, rgba(94,212,200,0.18), transparent 62%);
   background-attachment: fixed;
-  color: #F3F3F1;
+  color: #F7F7F5;
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -101,13 +101,13 @@ body,
 }
 
 @keyframes command-status-live {
-  0%, 100% { box-shadow: inset 0 0 0 1px rgba(91, 168, 160, 0.12); }
-  50% { box-shadow: inset 0 0 0 1px rgba(91, 168, 160, 0.35), 0 0 18px rgba(91, 168, 160, 0.08); }
+  0%, 100% { box-shadow: inset 0 0 0 1px rgba(94, 212, 200, 0.16); }
+  50% { box-shadow: inset 0 0 0 1px rgba(94, 212, 200, 0.42), 0 0 22px rgba(94, 212, 200, 0.14); }
 }
 
 @keyframes command-led-live {
-  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(91, 168, 160, 0.5); }
-  50% { opacity: 0.75; box-shadow: 0 0 0 4px rgba(91, 168, 160, 0); }
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(94, 212, 200, 0.55); }
+  50% { opacity: 0.75; box-shadow: 0 0 0 4px rgba(94, 212, 200, 0); }
 }
 
 @keyframes command-led-charge {
@@ -168,11 +168,41 @@ body,
 }
 
 .robo-minimal {
-  background: #1C1D21;
-  color: #F3F3F1;
+  background: #08090B;
+  color: #F7F7F5;
 }
 .robo-minimal main {
-  background: #1C1D21;
+  background: #08090B;
+}
+
+.command-hero-bloom {
+  pointer-events: none;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 22rem;
+  height: 13rem;
+  transform: translate(-50%, -52%);
+  background: radial-gradient(ellipse at center, rgba(94, 212, 200, 0.42), rgba(94, 212, 200, 0.08) 42%, transparent 70%);
+  filter: blur(16px);
+}
+
+.command-empty-radar {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 48%, rgba(94, 212, 200, 0.16), transparent 28%),
+    repeating-radial-gradient(circle at 50% 48%, transparent 0 38px, rgba(94, 212, 200, 0.08) 38px 39px);
+  mask-image: radial-gradient(circle at 50% 48%, black 0%, transparent 72%);
+}
+
+.command-glass-tile {
+  background: linear-gradient(180deg, rgba(26, 27, 32, 0.96) 0%, rgba(12, 13, 16, 0.96) 100%);
+  box-shadow:
+    0 0 0 1px rgba(94, 212, 200, 0.22),
+    0 14px 32px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(247, 247, 245, 0.06);
 }
 
 /* Reserved sheet chrome — always keep the green Done/close control fully visible. */
@@ -198,8 +228,8 @@ body,
 }
 
 .mapboxgl-popup.fleetos-popup .mapboxgl-popup-tip {
-  border-top-color: #25262B;
-  border-bottom-color: #25262B;
+  border-top-color: #121316;
+  border-bottom-color: #121316;
 }
 
 .mapboxgl-popup.fleetos-popup .mapboxgl-popup-close-button {
@@ -209,15 +239,15 @@ body,
   width: 22px;
   z-index: 2;
   border-radius: 999px;
-  color: #8B8E94;
+  color: #C6C8CE;
   font-size: 16px;
   line-height: 20px;
-  background: rgba(28, 29, 33, 0.8);
+  background: rgba(8, 9, 11, 0.8);
 }
 
 .mapboxgl-popup.fleetos-popup .mapboxgl-popup-close-button:hover {
-  color: #F3F3F1;
-  background: rgba(44, 45, 51, 0.95);
+  color: #F7F7F5;
+  background: rgba(26, 27, 32, 0.95);
 }
 
 /* Clerk renders outside our component tree. */
@@ -229,9 +259,9 @@ body,
 
 .cl-card,
 .cl-cardBox {
-  background: #25262B !important;
-  color: #F3F3F1 !important;
-  border: 1px solid rgba(91, 168, 160, 0.18) !important;
+  background: #121316 !important;
+  color: #F7F7F5 !important;
+  border: 1px solid rgba(94, 212, 200, 0.28) !important;
   box-shadow: 0 30px 80px rgba(0, 0, 0, 0.45) !important;
 }
 
@@ -242,7 +272,7 @@ body,
 .cl-identityPreviewText,
 .cl-formHeaderTitle,
 .cl-formHeaderSubtitle {
-  color: #F3F3F1 !important;
+  color: #F7F7F5 !important;
 }
 
 .cl-headerTitle,
@@ -258,24 +288,24 @@ body,
 .cl-headerSubtitle,
 .cl-formHeaderSubtitle,
 .cl-footerAction {
-  color: #8B8E94 !important;
+  color: #C6C8CE !important;
 }
 
 .cl-formFieldInput,
 .cl-input {
-  background: #1C1D21 !important;
-  color: #F3F3F1 !important;
-  border-color: rgba(91, 168, 160, 0.22) !important;
+  background: #08090B !important;
+  color: #F7F7F5 !important;
+  border-color: rgba(94, 212, 200, 0.28) !important;
   box-shadow: none !important;
 }
 
 .cl-formFieldInput::placeholder,
 .cl-input::placeholder {
-  color: #5C5F66 !important;
+  color: #A8ABB3 !important;
 }
 
 .cl-formButtonPrimary {
-  background: #F3F3F1 !important;
+  background: #F7F7F5 !important;
   color: #0E0F12 !important;
   box-shadow: none !important;
 }
@@ -285,13 +315,13 @@ body,
 }
 
 .cl-socialButtonsBlockButton {
-  background: #25262B !important;
-  color: #F3F3F1 !important;
-  border-color: rgba(91, 168, 160, 0.18) !important;
+  background: #121316 !important;
+  color: #F7F7F5 !important;
+  border-color: rgba(94, 212, 200, 0.28) !important;
 }
 
 .cl-socialButtonsBlockButton:hover {
-  background: #2C2D33 !important;
+  background: #1A1B20 !important;
 }
 
 .cl-socialButtonsBlockButtonText,
@@ -299,18 +329,18 @@ body,
 .cl-footerActionText,
 .cl-footerActionLink,
 .cl-formResendCodeLink {
-  color: #F3F3F1 !important;
+  color: #F7F7F5 !important;
 }
 
 .cl-footer,
 .cl-footerPages {
-  background: #25262B !important;
-  border-color: rgba(91, 168, 160, 0.18) !important;
+  background: #121316 !important;
+  border-color: rgba(94, 212, 200, 0.28) !important;
 }
 
 .cl-internal-b3fm6y,
 .cl-internal-1dauvpw {
-  color: #8B8E94 !important;
+  color: #C6C8CE !important;
 }
 
 button[data-provider="github"],

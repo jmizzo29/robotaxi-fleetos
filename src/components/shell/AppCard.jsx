@@ -1,4 +1,4 @@
-import { card, spacing, radius, colors } from '../../design/roboagentTokens';
+import { card, spacing, radius, colors, shadow } from '../../design/roboagentTokens';
 
 const variants = {
   standard: card.base,
@@ -30,9 +30,11 @@ export default function AppCard({
 export function HeroCardFrame({ className = '', children }) {
   return (
     <div
-      className={`relative overflow-hidden ${radius.cardLg} border border-white/[0.08] ${spacing.cardPad} ${className}`}
+      className={`relative overflow-hidden ${radius.cardLg} border ${spacing.cardPad} ${shadow.hero} ${className}`}
       style={{
         background: colors.earningsGradient,
+        borderColor: colors.border,
+        boxShadow: colors.cardGlow,
       }}
     >
       {children}

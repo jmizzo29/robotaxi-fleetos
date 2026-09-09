@@ -10,7 +10,8 @@ import MonumentActionFooter from './MonumentActionFooter';
 import TelemetryDetailSheet from './TelemetryDetailSheet';
 import FleetBrowseSheet from './FleetBrowseSheet';
 import TodayDetailSheet from './TodayDetailSheet';
-import { monument, monumentType } from './monumentTokens';
+import MonumentHero from './MonumentHero';
+import { monument } from './monumentTokens';
 import { clearLocalComplianceState } from '../../services/betaCompliance';
 import { logoutFleetOsAccount } from '../../services/sessionService';
 import {
@@ -29,23 +30,6 @@ import { getCommandFleetStatusStrip } from '../../utils/vehicleDisplayUtils';
 import { getExpansionRecommendation, getGrowHero } from '../../utils/networkIntelligenceUtils';
 
 const TAB_ORDER = ['today', 'fleet', 'grow'];
-
-function MonumentHero({ label, amount, subline, labelColor, onTapAmount }) {
-  return (
-    <div className="flex flex-1 flex-col items-center justify-center px-6 text-center">
-      <p className={monumentType.label} style={{ color: labelColor || monument.inkGhost }}>{label}</p>
-      <button
-        type="button"
-        onClick={onTapAmount}
-        className={`mt-5 ${monumentType.monument}`}
-        style={{ color: monument.money }}
-      >
-        {amount}
-      </button>
-      <p className={`mt-4 ${monumentType.subline}`} style={{ color: monument.inkMuted }}>{subline}</p>
-    </div>
-  );
-}
 
 export default function MonumentToday({
   fleet = [],
@@ -281,7 +265,7 @@ export default function MonumentToday({
         label: take.label,
         amount: take.amount,
         subline: take.subline,
-        labelColor: take.projected ? monument.projected : monument.inkGhost,
+        labelColor: take.projected ? monument.projected : monument.inkMuted,
       },
       footer: {
         line: actionLine,
@@ -296,7 +280,7 @@ export default function MonumentToday({
         label: 'FLEET',
         amount: `${strip.active?.value || 0}/${strip.total || realFleet.length || 0}`,
         subline: fleetSyncHint || `active now · ${fleetCity}`,
-        labelColor: monument.inkGhost,
+        labelColor: monument.inkMuted,
       },
       footer: {
         line: fleetSyncHint || (offline > 0 ? 'CAB offline — needs reconnect.' : 'Fleet healthy.'),
@@ -315,7 +299,7 @@ export default function MonumentToday({
         label: 'GROW',
         amount: growHero.amount,
         subline: growHero.subline,
-        labelColor: monument.inkGhost,
+        labelColor: monument.inkMuted,
       },
       footer: {
         line: growHero.line,

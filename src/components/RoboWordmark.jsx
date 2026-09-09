@@ -1,6 +1,6 @@
 export default function RoboWordmark({
   className = '',
-  colorClass = 'text-[#F3F3F1]',
+  colorClass = 'text-[#F7F7F5]',
   variant = 'default',
 }) {
   if (variant === 'calm') {

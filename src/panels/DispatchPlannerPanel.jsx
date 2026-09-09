@@ -126,7 +126,7 @@ function PlanCard({ plan, onQueueCommand, onShowMap }) {
             </span>
           </div>
           <h3 className={`truncate ${typography.pageTitle}`}>{vehicleName}</h3>
-          <p className={`mt-1 ${typography.bodyMd} text-slate-600`}>{actionText}</p>
+          <p className={`mt-1 ${typography.bodyMd} ${typography.muted}`}>{actionText}</p>
         </div>
 
         <div className="grid grid-cols-2 gap-2 sm:min-w-[220px]">
@@ -141,7 +141,7 @@ function PlanCard({ plan, onQueueCommand, onShowMap }) {
           <button
             type="button"
             onClick={onShowMap}
-            className="rounded-[14px] border border-slate-200 bg-slate-50 px-3 py-2 text-sm font-bold text-slate-700 transition active:bg-slate-100"
+            className="rounded-[14px] border border-white/12 bg-transparent px-3 py-2 text-sm font-bold text-[#F7F7F5] transition active:bg-white/5"
           >
             Map
           </button>
@@ -226,7 +226,7 @@ export default function DispatchPlannerPanel({
         <AppCard variant="alert">
           <p className={typography.sectionSm}>AI Dispatch Planner</p>
           <p className={`mt-3 ${typography.cardTitle}`}>Stage, charge, and revenue windows for tonight</p>
-          <p className={`mt-2 ${typography.bodyMd} text-slate-600`}>
+          <p className={`mt-2 ${typography.bodyMd} ${typography.muted}`}>
             ROBOAGENT recommends where each vehicle should stage and whether it should charge first. Tesla controls autonomous execution.
           </p>
           <button

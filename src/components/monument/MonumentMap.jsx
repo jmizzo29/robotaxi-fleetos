@@ -79,14 +79,15 @@ export default function MonumentMap({
       data-testid="monument-map"
     >
       <div className="shrink-0 px-6 pb-3 pt-6 text-center">
-        <p className={monumentType.label} style={{ color: monument.inkGhost }}>{hero.label}</p>
+        <p className={monumentType.label} style={{ color: monument.ink }}>{hero.label}</p>
         <button
           type="button"
           onClick={() => setMapOpen(true)}
-          className={`mt-2 ${monumentType.monumentSm}`}
+          className={`relative mt-2 ${monumentType.monumentSm}`}
           style={{ color: monument.ink }}
         >
-          {hero.amount}
+          <span className="command-hero-bloom command-hero-glow" aria-hidden="true" />
+          <span className="relative">{hero.amount}</span>
         </button>
         <p className={`mt-2 ${monumentType.subline}`} style={{ color: monument.inkMuted }}>{hero.subline}</p>
       </div>

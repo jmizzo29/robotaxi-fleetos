@@ -90,7 +90,7 @@ export default function MonumentChargePanel({
               name: primary.name || primary.display_name || 'Tesla',
               action: 'start',
             })}
-            className="rounded-full border py-3 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#F3F3F1]"
+            className="rounded-full border py-3 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#F7F7F5]"
             style={{ borderColor: monument.hairline, backgroundColor: monument.surface }}
           >
             Start charging
@@ -103,7 +103,7 @@ export default function MonumentChargePanel({
               action: 'stop',
             })}
             disabled={!charging}
-            className="rounded-full border py-3 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#F3F3F1] disabled:opacity-40"
+            className="rounded-full border py-3 text-[12px] font-semibold uppercase tracking-[0.14em] text-[#F7F7F5] disabled:opacity-40"
             style={{ borderColor: monument.hairline, backgroundColor: monument.surface }}
           >
             Stop charging

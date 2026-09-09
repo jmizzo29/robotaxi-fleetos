@@ -28,11 +28,11 @@ function EventList({ convoy }) {
   if (!convoy.configured) {
     return (
       <div className="px-6 pb-4" data-testid="network-empty">
-        <p className={monumentType.sheetBody} style={{ color: monument.inkMuted }}>
+        <p className={monumentType.sheetBody} style={{ color: monument.ink }}>
           No public event feed is configured. This tab does not invent concerts, stadium lifts, or demand scores.
         </p>
         {convoy.setupNote && (
-          <p className={`mt-2 ${monumentType.revealHint}`} style={{ color: monument.inkGhost }}>
+          <p className={`mt-2 ${monumentType.sheetBody}`} style={{ color: monument.inkMuted }}>
             {convoy.setupNote}
           </p>
         )}
@@ -43,10 +43,10 @@ function EventList({ convoy }) {
   if (convoy.empty) {
     return (
       <div className="px-6 pb-4" data-testid="network-empty">
-        <p className={monumentType.sheetBody} style={{ color: monument.inkMuted }}>
+        <p className={monumentType.sheetBody} style={{ color: monument.ink }}>
           No upcoming public events in tracked cities for this window.
         </p>
-        <p className={`mt-2 ${monumentType.revealHint}`} style={{ color: monument.inkGhost }}>
+        <p className={`mt-2 ${monumentType.revealHint}`} style={{ color: monument.inkMuted }}>
           {[convoy.source, convoy.asOfLabel ? `as of ${convoy.asOfLabel}` : null].filter(Boolean).join(' · ')}
         </p>
       </div>
@@ -55,7 +55,7 @@ function EventList({ convoy }) {
 
   return (
     <div className="min-h-0 flex-1 overflow-y-auto px-5 pb-2" data-testid="network-events">
-      <p className={`px-1 pb-2 ${monumentType.revealHint}`} style={{ color: monument.inkGhost }}>
+      <p className={`px-1 pb-2 ${monumentType.revealHint}`} style={{ color: monument.inkMuted }}>
         {convoy.disclaimer}
       </p>
       <ul>
@@ -65,7 +65,7 @@ function EventList({ convoy }) {
             className="border-b py-3"
             style={{ borderColor: monument.hairline }}
           >
-            <p className={monumentType.label} style={{ color: monument.inkGhost }}>{event.city}</p>
+            <p className={monumentType.label} style={{ color: monument.inkMuted }}>{event.city}</p>
             <p className={`mt-1 ${monumentType.sheetBody}`} style={{ color: monument.ink }}>{event.title}</p>
             <p className={`mt-1 ${monumentType.revealHint}`} style={{ color: monument.inkMuted }}>
               {[event.startLabel, event.venue, event.category].filter(Boolean).join(' · ')}
@@ -133,8 +133,11 @@ export default function MonumentNetwork({
   return (
     <div className="flex h-full min-h-0 flex-col" style={{ backgroundColor: monument.canvas }} data-testid="monument-network">
       <div className="shrink-0 px-6 pb-3 pt-6 text-center">
-        <p className={monumentType.label} style={{ color: monument.inkGhost }}>{hero.label}</p>
-        <p className={`mt-2 ${monumentType.monumentSm}`} style={{ color: monument.action }}>{hero.amount}</p>
+        <p className={monumentType.label} style={{ color: monument.ink }}>{hero.label}</p>
+        <p className={`relative mt-2 ${monumentType.monumentSm}`} style={{ color: monument.action }}>
+          <span className="command-hero-bloom command-hero-glow" aria-hidden="true" />
+          <span className="relative">{hero.amount}</span>
+        </p>
         <p className={`mt-2 ${monumentType.subline}`} style={{ color: monument.inkMuted }}>{hero.subline}</p>
       </div>
 

@@ -26,7 +26,7 @@ export default function FleetMonumentPanel({ strip, onSelectStatus }) {
             onClick={() => onSelectStatus?.(tile.key)}
             className="px-2 py-4 text-center transition active:opacity-70"
           >
-            <p className={monumentType.label} style={{ color: monument.inkGhost }}>{tile.label}</p>
+            <p className={monumentType.label} style={{ color: monument.inkMuted }}>{tile.label}</p>
             <p
               className={`mt-2 ${monumentType.monumentSm}`}
               style={{ color: tileValueColor(tile.key, tile.value) }}

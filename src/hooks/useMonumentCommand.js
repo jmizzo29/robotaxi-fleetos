@@ -173,7 +173,7 @@ export default function useMonumentCommand({
         label: take.label,
         amount: take.amount,
         subline: take.subline,
-        labelColor: take.projected ? monument.projected : monument.inkGhost,
+        labelColor: take.projected ? monument.projected : monument.inkMuted,
       },
       footer: {
         line: actionLine,
@@ -188,7 +188,7 @@ export default function useMonumentCommand({
         label: 'FLEET',
         amount: `${strip.active?.value || 0}/${strip.total || realFleet.length || 0}`,
         subline: fleetSyncHint || `active now · ${fleetCity}`,
-        labelColor: monument.inkGhost,
+        labelColor: monument.inkMuted,
       },
       footer: fleetAsleep
         ? {
@@ -220,7 +220,7 @@ export default function useMonumentCommand({
         label: 'GROW',
         amount: growHero.amount,
         subline: growHero.subline,
-        labelColor: monument.inkGhost,
+        labelColor: monument.inkMuted,
       },
       footer: {
         line: growHero.line,

@@ -20,7 +20,7 @@ export const monument = {
 };
 
 export const monumentType = {
-  label: 'text-[11px] font-medium uppercase tracking-[0.28em]',
+  label: 'text-[12px] font-semibold uppercase tracking-[0.26em]',
   navLabel: 'text-[11px] font-medium uppercase tracking-[0.2em]',
   navLabelCompact: 'text-[10px] font-medium uppercase tracking-[0.16em]',
   monument: 'text-[clamp(4.25rem,17vw,6.25rem)] font-medium leading-none tracking-[-0.055em] tabular-nums',

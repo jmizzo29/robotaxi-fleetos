@@ -10,7 +10,7 @@ export default function Sidebar({
 }) {
   return (
     <aside
-      className="hidden w-64 flex-col border-r bg-[#1C1D21] lg:flex"
+      className="hidden w-64 flex-col border-r bg-[#08090B] lg:flex"
       style={{ borderColor: colors.border, paddingTop: 'env(safe-area-inset-top)' }}
     >
       <div className="flex-1 px-6 py-7">
@@ -52,7 +52,7 @@ export default function Sidebar({
       <div className="border-t px-6 py-6" style={{ borderColor: colors.border }}>
         <SignOutButton
           onSignedOut={() => onNavigate('landing')}
-          className="w-full py-2 text-left text-[12px] font-medium uppercase tracking-[0.16em] text-[#C4C6CB] transition hover:text-[#F3F3F1]"
+          className="w-full py-2 text-left text-[12px] font-medium uppercase tracking-[0.16em] text-[#C4C6CB] transition hover:text-[#F7F7F5]"
           label="Sign out"
           compact
         />

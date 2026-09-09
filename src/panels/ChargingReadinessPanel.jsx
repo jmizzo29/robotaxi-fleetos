@@ -116,7 +116,7 @@ function VehicleChargeRow({ vehicle, onQueueCommand }) {
           <h3 className={`truncate ${typography.cardTitle}`}>
             {vehicle.name || vehicle.display_name || vehicle.id}
           </h3>
-          <p className="mt-1 text-sm font-medium text-slate-600">{readiness.action}</p>
+          <p className={`mt-1 text-sm font-medium ${typography.muted}`}>{readiness.action}</p>
         </div>
 
         <div className="flex flex-col gap-2">
@@ -137,7 +137,7 @@ function VehicleChargeRow({ vehicle, onQueueCommand }) {
                   'HIGH',
                   { teslaAction: { vin: vehicle.vin, action: 'start' } },
                 )}
-                className="rounded-2xl border border-white/10 px-4 py-2.5 text-sm font-bold text-[#F3F3F1]"
+                className="rounded-2xl border border-white/10 px-4 py-2.5 text-sm font-bold text-[#F7F7F5]"
               >
                 Start charging
               </button>
@@ -148,7 +148,7 @@ function VehicleChargeRow({ vehicle, onQueueCommand }) {
                   'HIGH',
                   { teslaAction: { vin: vehicle.vin, action: 'stop' } },
                 )}
-                className="rounded-2xl border border-white/10 px-4 py-2.5 text-sm font-bold text-[#F3F3F1]"
+                className="rounded-2xl border border-white/10 px-4 py-2.5 text-sm font-bold text-[#F7F7F5]"
               >
                 Stop charging
               </button>

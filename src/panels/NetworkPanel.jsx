@@ -17,7 +17,7 @@ export default function NetworkPanel() {
         ) : !live.configured ? (
           <AppCard data-testid="network-empty">
             <p className={typography.cardTitle}>No event feed configured</p>
-            <p className="mt-2 text-sm leading-relaxed text-slate-600">
+            <p className={`mt-2 text-sm leading-relaxed ${typography.muted}`}>
               This tab does not invent concerts, stadium lifts, or demand scores.
               {live.setupNote ? ` ${live.setupNote}` : ''}
             </p>
@@ -25,7 +25,7 @@ export default function NetworkPanel() {
         ) : live.events.length === 0 ? (
           <AppCard data-testid="network-empty">
             <p className={typography.cardTitle}>No upcoming public events</p>
-            <p className="mt-2 text-sm leading-relaxed text-slate-600">
+            <p className={`mt-2 text-sm leading-relaxed ${typography.muted}`}>
               {live.disclaimer}
               {live.asOf ? ` As of ${live.asOf}.` : ''}
             </p>
@@ -35,9 +35,9 @@ export default function NetworkPanel() {
             {live.events.map((event) => (
               <li key={event.id}>
                 <AppCard variant="subdued" className="px-4 py-4">
-                  <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-slate-500">{event.city}</p>
+                  <p className={`text-[11px] font-medium uppercase tracking-[0.16em] ${typography.subtle}`}>{event.city}</p>
                   <p className={`mt-1 ${typography.cardTitle}`}>{event.title}</p>
-                  <p className="mt-1 text-[13px] text-slate-500">
+                  <p className={`mt-1 text-[13px] ${typography.muted}`}>
                     {[event.startLabel, event.venue, event.category].filter(Boolean).join(' · ')}
                   </p>
                 </AppCard>
@@ -52,7 +52,7 @@ export default function NetworkPanel() {
             <ClipboardList className="h-4 w-4" />
             <p className={typography.sectionSm}>Not live robotaxi operations</p>
           </div>
-          <p className="mt-3 text-sm leading-relaxed text-slate-600">
+          <p className={`mt-3 text-sm leading-relaxed ${typography.muted}`}>
             {live.disclaimer}
             {live.source ? ` Source: ${live.source}.` : ''}
           </p>

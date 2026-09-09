@@ -11,7 +11,7 @@ export default function TeslaChargingScopeNotice({ compact = false }) {
       style={{ borderColor: colors.border, backgroundColor: colors.surface }}
       role="status"
     >
-      <p className="text-[13px] leading-5 text-[#F3F3F1]">{MISSING_CHARGING_SCOPE_MESSAGE}</p>
+      <p className="text-[13px] leading-5 text-[#F7F7F5]">{MISSING_CHARGING_SCOPE_MESSAGE}</p>
       <button
         type="button"
         onClick={() => {

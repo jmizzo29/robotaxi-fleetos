@@ -21,16 +21,16 @@ import {
 
 function MapChrome({ total, active, mock }) {
   return (
-    <div className="pointer-events-none absolute bottom-0 left-0 right-0 flex items-center justify-between gap-2 bg-gradient-to-t from-[#1C1D21] via-[#1C1D21]/80 to-transparent px-5 pb-4 pt-10">
-      <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-white/80">
+    <div className="pointer-events-none absolute bottom-0 left-0 right-0 flex items-center justify-between gap-2 bg-gradient-to-t from-[#08090B] via-[#08090B]/80 to-transparent px-5 pb-4 pt-10">
+      <p className="text-[11px] font-medium uppercase tracking-[0.16em] text-white/90">
         {mock ? 'Demo' : 'Live'}
-        <span className="text-white/30"> · </span>
+        <span className="text-white/45"> · </span>
         {total} vehicle{total === 1 ? '' : 's'}
-        <span className="text-white/30"> · </span>
+        <span className="text-white/45"> · </span>
         {active} active
       </p>
-      <div className="flex items-center gap-3 text-[10px] font-medium uppercase tracking-[0.12em] text-white/45">
-        <span className="inline-flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-[#5BA8A0]" />Active</span>
+      <div className="flex items-center gap-3 text-[10px] font-medium uppercase tracking-[0.12em] text-white/70">
+        <span className="inline-flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-[#5ED4C8]" />Active</span>
         <span className="inline-flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-[#C4A35A]" />Charge</span>
         <span className="inline-flex items-center gap-1.5"><span className="h-1.5 w-1.5 rounded-full bg-[#C45C4A]" />Off</span>
       </div>
@@ -171,15 +171,16 @@ function MapEmptyState({ copy, mock }) {
       className="absolute inset-0 z-10 flex items-center justify-center px-6"
       data-testid="map-empty-state"
     >
+      <div className="command-empty-radar" aria-hidden="true" />
       <div
-        className="max-w-sm rounded-[10px] border px-5 py-4 text-center"
-        style={{ backgroundColor: monument.surface, borderColor: monument.hairline }}
+        className="command-glass-tile relative z-10 max-w-sm rounded-[14px] border px-5 py-4 text-center"
+        style={{ borderColor: monument.hairline }}
       >
         {mock && (
           <p className={`${monumentType.label} mb-2`} style={{ color: monument.projected }}>Demo preview</p>
         )}
         <p className={monumentType.sheetTitle} style={{ color: monument.ink }}>{copy.title}</p>
-        <p className={`mt-2 ${monumentType.sheetBody}`} style={{ color: monument.inkMuted }}>{copy.body}</p>
+        <p className={`mt-2 ${monumentType.sheetBody}`} style={{ color: monument.ink }}>{copy.body}</p>
       </div>
     </div>
   );
@@ -226,7 +227,7 @@ export default function CommandMapPreview({
   const showEmpty = Boolean(emptyCopy) && vehicles.length === 0 && !showDemoOverlays;
 
   const mapFrame = (
-    <div className={flush ? 'flex h-full min-h-0 w-full flex-col' : bare ? 'w-full px-5' : `${radius.cardLg} bg-[#25262B] p-px`}>
+    <div className={flush ? 'flex h-full min-h-0 w-full flex-col' : bare ? 'w-full px-5' : `${radius.cardLg} bg-[#121316] p-px`}>
       <div
         className={`relative min-h-0 overflow-hidden ${flush ? 'h-full min-h-0 flex-1' : bare ? 'rounded-[8px] border border-white/[0.08]' : `${radius.card} border border-white/[0.08]`} ${flush ? '' : mapHeightClass}`}
         data-testid="command-map-frame"
@@ -245,7 +246,8 @@ export default function CommandMapPreview({
 
         {!mapboxToken ? (
           <div className="absolute inset-0" style={{ backgroundColor: monument.canvas }}>
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(91,168,160,0.08),transparent_55%)]" />
+            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(94,212,200,0.16),transparent_55%)]" />
+            <div className="command-empty-radar opacity-70" aria-hidden="true" />
           </div>
         ) : (
           <Map

@@ -466,7 +466,7 @@ function SessionSection({ onSignedOut }) {
       <SignOutButton
         label="Sign out"
         onSignedOut={onSignedOut}
-        className="mt-5 w-full min-h-12 rounded-full border border-[rgba(91,168,160,0.18)] bg-[#25262B] px-5 py-3.5 text-center text-[13px] font-semibold uppercase tracking-[0.16em] text-[#F3F3F1] transition hover:bg-[#2C2D33] disabled:cursor-wait disabled:opacity-60"
+        className="mt-5 w-full min-h-12 rounded-full border border-[rgba(94,212,200,0.18)] bg-[#121316] px-5 py-3.5 text-center text-[13px] font-semibold uppercase tracking-[0.16em] text-[#F7F7F5] transition hover:bg-[#1A1B20] disabled:cursor-wait disabled:opacity-60"
         confirmClassName="mt-5"
       />
     </Card>

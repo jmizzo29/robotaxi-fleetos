@@ -18,7 +18,7 @@ export default function Signup({ onNavigate }) {
   };
 
   return (
-    <div className="min-h-screen bg-[#1C1D21] text-white">
+    <div className="min-h-screen bg-[#08090B] text-white">
       <LandingHeader onNavigate={onNavigate} variant="monument" />
 
       <div className="flex items-center justify-center px-6 pb-12 pt-[4.75rem]">
